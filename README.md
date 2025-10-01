@@ -1,9 +1,13 @@
-# [Download](https://github.com/jazz-ttv/Bannerlord-Twitch/releases/tag/4.5.2) | [Discord](https://discord.gg/AnStVFb2jG) | [Github](https://github.com/jazz-ttv/Bannerlord-Twitch) | [Installation Guide](https://youtu.be/ATf5zilwNWk)
+# 🎮 For Streamers: [Download Ready-to-Use Modules](https://github.com/DarkTiger512/BLTRefreshed/releases) 📥
 
-# Bannerlord Twitch (BLT) - Enhanced Edition v4.8.6
+> **Quick Setup**: Download `BLT-Enhanced-Modules-v4.9.0.zip` → Extract to your Bannerlord `Modules` folder → Enable in game launcher → Start streaming!
+
+---
+
+# Bannerlord Twitch (BLT) - Enhanced Edition v4.9.0
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
 
-## Enhanced Edition Features (v4.8.6)
+## Enhanced Edition Features (v4.9.0)
 This enhanced version includes significant improvements to the retinue and hero class systems:
 
 ### **Smart Retinue Hiring by Hero Class**
@@ -34,6 +38,22 @@ This enhanced version includes significant improvements to the retinue and hero 
 - **Direct Message Support**: Commands can now respond via Twitch whispers/DMs
 - **Formation Bug Fixes**: Corrected Infantry formation mapping and added Skirmisher support
 - **Improved Error Handling**: Better compatibility checking and fallback systems
+
+## 📥 Installation for Streamers
+
+### Option 1: Ready-to-Use Modules (Recommended)
+1. **[Download BLT Enhanced Modules v4.9.0](https://github.com/DarkTiger512/BLTRefreshed/releases)**
+2. **Extract** the ZIP file
+3. **Copy** all folders to your Bannerlord `Modules` directory:
+   - Steam: `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\`
+   - Epic: `C:\Program Files\Epic Games\Mount & Blade II Bannerlord\Modules\`
+4. **Enable** all BLT modules in the game launcher
+5. **Configure** using the BLTConfigure tool
+
+### Option 2: Build from Source (For Developers)
+- Clone this repository and build using the provided solution file
+
+---
 
 # Features
 - **Define Channel Point Rewards**, along with their in game effects (using the provided custom built configuration UI), they will be automatically added to your channel for you, and removed again when the game exits

@@ -1,0 +1,47 @@
+# BLT Enhanced Edition v4.9.0 - Installation Guide for Streamers
+
+## 📦 Quick Installation (5 minutes)
+
+### Step 1: Download
+- Download the latest release from the [Releases page](https://github.com/DarkTiger512/BLTRefreshed/releases)
+- Look for `BLT-Enhanced-Modules-v4.9.0.zip`
+
+### Step 2: Install
+1. **Find your Mount & Blade II: Bannerlord folder**
+   - Steam: `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\`
+   - Epic: `C:\Program Files\Epic Games\Mount & Blade II Bannerlord\`
+
+2. **Copy modules**
+   - Extract the downloaded zip
+   - Copy ALL folders to `[Game Folder]\Modules\`
+   - You should see: `BannerlordTwitch`, `BLTAdoptAHero`, `BLTBuffet`, `BLTConfigure`, etc.
+
+### Step 3: Enable in Game
+1. Launch Mount & Blade II: Bannerlord
+2. Go to "Mods" in the main menu
+3. Enable all BLT modules:
+   - ✅ BannerlordTwitch
+   - ✅ BLTAdoptAHero  
+   - ✅ BLTBuffet
+   - ✅ BLTConfigure
+
+### Step 4: Configure
+- Run `BLTConfigure.exe` from the BLTConfigure module folder
+- Connect your Twitch account
+- Customize viewer interaction settings
+
+## 🚀 What's New in Enhanced Edition v4.9.0
+
+- **Smart Retinue Hiring** - Intelligent troop recruitment based on your economy
+- **Hero Class System** - RPG-style classes with stat bonuses
+- **Gold Transfer Features** - Enhanced viewer-to-hero economy
+- **Better Performance** - Optimized for longer streaming sessions
+
+## 💡 Need Help?
+- Check the full documentation in the repository
+- Join the community discussions
+- Report issues on GitHub
+
+---
+**Compatible with**: Mount & Blade II: Bannerlord v1.2.12  
+**Framework**: .NET Framework 4.8
