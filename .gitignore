@@ -3,6 +3,9 @@ Bannersample/bin/
 Bannersample/obj/
 BannerlordTwitch/obj/
 
+# NuGet executable (should be downloaded on demand)
+nuget.exe
+
 BannerlordTwitch/packages/
 
 build/bin/
