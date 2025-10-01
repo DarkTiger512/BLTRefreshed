@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows;
 using BannerlordTwitch.Models;
 using BannerlordTwitch.Rewards;
+using BannerlordTwitch.UI;
 using BannerlordTwitch.Util;
 using BLTOverlay;
 using HarmonyLib;
@@ -81,6 +83,30 @@ namespace BannerlordTwitch
 
                     ActionManager.Init();
                     Log.LogFeedSystem("{=5G73vqNS}Action Manager initialized".Translate());
+                    
+                    // Check for updates asynchronously
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var updateInfo = await UpdateChecker.CheckForUpdatesAsync();
+                            if (updateInfo.IsUpdateAvailable)
+                            {
+                                UpdateNotificationHelper.ShowUpdateNotification(
+                                    updateInfo.LatestVersion, 
+                                    updateInfo.CurrentVersion, 
+                                    updateInfo.DownloadUrl);
+                            }
+                            else
+                            {
+                                UpdateNotificationHelper.ShowUpToDateNotification(updateInfo.CurrentVersion);
+                            }
+                        }
+                        catch (Exception updateEx)
+                        {
+                            Log.Trace($"Update check failed: {updateEx.Message}");
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {

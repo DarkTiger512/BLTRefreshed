@@ -660,6 +660,7 @@
     <Compile Include="UI\SliderFloatEditor.cs" />
     <Compile Include="UI\SoundEffectItemSource.cs" />
     <Compile Include="UI\UIRangeAttribute.cs" />
+    <Compile Include="UI\UpdateNotificationWidget.cs" />
     <Compile Include="Util\CloneHelpers.cs" />
     <Compile Include="Util\ConfigureContext.cs" />
     <Compile Include="Util\DisplayNameExtensions.cs" />
@@ -677,6 +678,7 @@
     <Compile Include="Util\RangeInt.cs" />
     <Compile Include="Util\StaticRandom.cs" />
     <Compile Include="Util\StringExtensions.cs" />
+    <Compile Include="Util\UpdateChecker.cs" />
     <Compile Include="Util\YamlHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
