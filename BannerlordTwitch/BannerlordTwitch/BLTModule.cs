@@ -84,29 +84,8 @@ namespace BannerlordTwitch
                     ActionManager.Init();
                     Log.LogFeedSystem("{=5G73vqNS}Action Manager initialized".Translate());
                     
-                    // Check for updates asynchronously
-                    Task.Run(async () =>
-                    {
-                        try
-                        {
-                            var updateInfo = await UpdateChecker.CheckForUpdatesAsync();
-                            if (updateInfo.IsUpdateAvailable)
-                            {
-                                UpdateNotificationHelper.ShowUpdateNotification(
-                                    updateInfo.LatestVersion, 
-                                    updateInfo.CurrentVersion, 
-                                    updateInfo.DownloadUrl);
-                            }
-                            else
-                            {
-                                UpdateNotificationHelper.ShowUpToDateNotification(updateInfo.CurrentVersion);
-                            }
-                        }
-                        catch (Exception updateEx)
-                        {
-                            Log.Trace($"Update check failed: {updateEx.Message}");
-                        }
-                    });
+                    // Update checker temporarily disabled for compatibility
+                    // TODO: Re-enable after troubleshooting loading issues
                 }
                 catch (Exception ex)
                 {
@@ -180,8 +159,16 @@ namespace BannerlordTwitch
 
         protected override void OnApplicationTick(float dt)
         {
-            base.OnApplicationTick(dt);
-            MainThreadSync.RunQueued();
+            try
+            {
+                base.OnApplicationTick(dt);
+                MainThreadSync.RunQueued();
+            }
+            catch (Exception ex)
+            {
+                // Silently log to avoid spam
+                Log.Trace($"BLT Application Tick Error: {ex.Message}");
+            }
         }
 
         public override void OnGameEnd(Game game)

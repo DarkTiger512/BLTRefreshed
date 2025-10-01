@@ -128,9 +128,14 @@
             <DynamicPackageFullPath>$(OutputPackageRoot)$(DynamicPackageName)</DynamicPackageFullPath>
             
             <!-- Set appropriate command arguments based on archiver type -->
-            <ArchiverArgs Condition="'$(ArchiverType)' == '7zip'">a &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure</ArchiverArgs>
-            <ArchiverArgs Condition="'$(ArchiverType)' == 'winrar'">a -r &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure</ArchiverArgs>
+            <ArchiverArgs Condition="'$(ArchiverType)' == '7zip'">a &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure UnblockBLT.bat UnblockBLT.ps1 INSTALLATION_GUIDE.md</ArchiverArgs>
+            <ArchiverArgs Condition="'$(ArchiverType)' == 'winrar'">a -r &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure UnblockBLT.bat UnblockBLT.ps1 INSTALLATION_GUIDE.md</ArchiverArgs>
         </PropertyGroup>
+        
+        <!-- Copy unblock scripts and installation guide to output directory -->
+        <Copy SourceFiles="$(SolutionDir)UnblockBLT.bat" DestinationFolder="$(OutputConfigRoot)" ContinueOnError="true"/>
+        <Copy SourceFiles="$(SolutionDir)UnblockBLT.ps1" DestinationFolder="$(OutputConfigRoot)" ContinueOnError="true"/>
+        <Copy SourceFiles="$(SolutionDir)..\INSTALLATION_GUIDE.md" DestinationFolder="$(OutputConfigRoot)" ContinueOnError="true"/>
         
         <Message Condition="'$(ArchiverExe)' != ''" Importance="High" Text="[BLT PACKAGE] Creating $(DynamicPackageName) using $(ArchiverType)..." />
         <MakeDir Directories="$(OutputPackageRoot)" />
