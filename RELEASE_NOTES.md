@@ -1,3 +1,23 @@
+# BLT Enhanced Edition v4.9.1 Release Notes
+
+## 🔧 Bug Fixes & Improvements
+
+### Smart Retinue Fallback System Enhancement
+- **Always-enabled fallback logic** - Removed optional configuration toggles for retinue hiring fallback system
+- **Guaranteed hiring success** - 4-tier fallback system now always active to prevent hiring failures
+- **Fixed Sturgian horse archer issue** - Cavalry heroes from cultures without cavalry troops (like Sturgia) can now reliably hire retinue
+- **Simplified configuration** - Fallback logic is now mandatory for better gameplay reliability
+
+### Technical Details
+- **Tier 1**: Perfect culture + class match
+- **Tier 2**: Cross-culture + class match (always enabled)
+- **Tier 3**: Same culture + any class (always enabled)  
+- **Tier 4**: Infantry emergency fallback (always enabled)
+
+This ensures no player will experience retinue hiring failures due to culture/class combinations.
+
+---
+
 # BLT Enhanced Edition v4.9.0 Release Notes
 
 ## 🚀 Major Features Added

@@ -1105,23 +1105,7 @@ namespace BLTAdoptAHero
             set => _hireByHeroClass = value;
         }
 
-        [LocDisplayName("{=BLTCrossCultureFallback}Cross-Culture Fallback"),
-         LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
-         LocDescription("{=BLTCrossCultureFallbackDesc}When hero class hiring fails in hero's culture (e.g., horse archer in Empire), search other cultures for compatible troops. Recommended: Enabled."),
-         PropertyOrder(6), UsedImplicitly]
-        public bool AllowCrossCultureFallback { get; set; } = true;
 
-        [LocDisplayName("{=BLTRelaxedClassFallback}Relaxed Class Fallback"),
-         LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
-         LocDescription("{=BLTRelaxedClassFallbackDesc}When cross-culture fallback fails, allow any troop type from hero's culture instead of strict class matching. Recommended: Enabled."),
-         PropertyOrder(7), UsedImplicitly]
-        public bool AllowRelaxedClassFallback { get; set; } = true;
-
-        [LocDisplayName("{=BLTInfantryFallback}Infantry Emergency Fallback"),
-         LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
-         LocDescription("{=BLTInfantryFallbackDesc}Ultimate fallback: use infantry troops from any culture if all else fails. This ensures retinue hiring never completely fails. Recommended: Enabled."),
-         PropertyOrder(8), UsedImplicitly]
-        public bool AllowInfantryFallback { get; set; } = true;
 
         public void GenerateDocumentation(IDocumentationGenerator generator)
             {
@@ -1134,11 +1118,8 @@ namespace BLTAdoptAHero
                 if (UseEliteTroops) allowed.Add("{=3gumlthG}Elite troops".Translate());
                 if (HireByHeroClass) allowed.Add("{=BLTHireByClassDoc}Hire by hero class".Translate());
                 
-                var fallbacks = new List<string>();
-                if (AllowCrossCultureFallback) fallbacks.Add("{=BLTCrossCultureDoc}Cross-culture".Translate());
-                if (AllowRelaxedClassFallback) fallbacks.Add("{=BLTRelaxedClassDoc}Relaxed class".Translate());
-                if (AllowInfantryFallback) fallbacks.Add("{=BLTInfantryDoc}Infantry emergency".Translate());
-                if (fallbacks.Any()) allowed.Add(("{=BLTFallbacksDoc}Fallbacks: " + string.Join(", ", fallbacks)).Translate());
+                var fallbacks = new List<string> { "{=BLTCrossCultureDoc}Cross-culture".Translate(), "{=BLTRelaxedClassDoc}Relaxed class".Translate(), "{=BLTInfantryDoc}Infantry emergency".Translate() };
+                allowed.Add(("{=BLTFallbacksDoc}Fallbacks: " + string.Join(", ", fallbacks)).Translate());
                 
                 generator.PropertyValuePair("{=uL7MfYPc}Allowed".Translate(), string.Join(", ", allowed));
             }
@@ -1352,11 +1333,11 @@ namespace BLTAdoptAHero
                     Log.Info($"[Retinue] Tier 1: Found {availableTroops.Count} perfect matches for {hero.Name} ({heroClass.ID})");
                     return availableTroops;
                 }
-                Log.Warning($"[Retinue] Tier 1 failed for {hero.Name} - no {heroClass.ID} troops in {hero.Culture.Name} culture");
+                Log.Info($"[Retinue] Tier 1 failed for {hero.Name} - no {heroClass.ID} troops in {hero.Culture.Name} culture");
             }
 
             // TIER 2: Cross-culture fallback (all cultures + hero class compatibility)
-            if (heroClass != null && settings.AllowCrossCultureFallback)
+            if (heroClass != null)
             {
                 availableTroops = getAllTroops(settings.IncludeBanditUnits)
                     .Where(troop => CanEventuallyBecomeCompatibleWithHeroClass(troop, heroClass))
@@ -1367,11 +1348,11 @@ namespace BLTAdoptAHero
                     Log.Info($"[Retinue] Tier 2: Found {availableTroops.Count} cross-culture matches for {hero.Name} ({heroClass.ID})");
                     return availableTroops;
                 }
-                Log.Warning($"[Retinue] Tier 2 failed for {hero.Name} - no {heroClass.ID} troops in any culture");
+                Log.Info($"[Retinue] Tier 2 failed for {hero.Name} - no {heroClass.ID} troops in any culture");
             }
 
             // TIER 3: Relaxed class matching (hero culture + any troop type)
-            if (settings.UseHeroesCultureUnits && settings.AllowRelaxedClassFallback)
+            if (settings.UseHeroesCultureUnits)
             {
                 availableTroops = getAllTroops(settings.IncludeBanditUnits)
                     .Where(troop => troop.Culture == hero.Culture)
@@ -1382,11 +1363,10 @@ namespace BLTAdoptAHero
                     Log.Info($"[Retinue] Tier 3: Found {availableTroops.Count} culture matches for {hero.Name} (any class)");
                     return availableTroops;
                 }
-                Log.Warning($"[Retinue] Tier 3 failed for {hero.Name} - no troops in {hero.Culture.Name} culture");
+                Log.Info($"[Retinue] Tier 3 failed for {hero.Name} - no troops in {hero.Culture.Name} culture");
             }
 
             // TIER 4: Infantry fallback (guaranteed to work - every culture has infantry)
-            if (settings.AllowInfantryFallback)
             {
                 availableTroops = getAllTroops(settings.IncludeBanditUnits)
                     .Where(troop => troop.DefaultFormationClass == FormationClass.Infantry || 
@@ -1395,7 +1375,7 @@ namespace BLTAdoptAHero
 
                 if (availableTroops.Any())
                 {
-                    Log.Warning($"[Retinue] Tier 4: Infantry fallback activated for {hero.Name} - found {availableTroops.Count} infantry units");
+                    Log.Info($"[Retinue] Tier 4: Infantry fallback activated for {hero.Name} - found {availableTroops.Count} infantry units");
                     return availableTroops;
                 }
             }
