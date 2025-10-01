@@ -2,25 +2,26 @@
 
 ## 📦 Installation Steps
 
-### Method 1: Automatic (Recommended)
+### Simple Installation
 1. Extract `BLT-v4.9.1-For-Game-Version-v1.2.12.rar` to your Bannerlord Modules folder
-2. **Run `UnblockBLT.bat` as Administrator** (fixes Windows file blocking)
-3. Launch Bannerlord and enable the modules
+2. Launch Bannerlord and enable the modules
+3. **Start streaming!**
 
-### Method 2: Manual  
-1. Extract the mod files to: `Mount & Blade II Bannerlord\Modules\`
-2. **If you get "Cannot load DLL" errors:**
-   - Open PowerShell as Administrator
+### Installation Paths
+- **Steam**: `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\`
+- **Epic**: `C:\Program Files\Epic Games\Mount & Blade II Bannerlord\Modules\`
+- **GOG**: `C:\Program Files (x86)\GOG Galaxy\Games\Mount & Blade II Bannerlord\Modules\`
+
+## ⚠️ Troubleshooting
+
+**If you get "Cannot load DLL" errors:**
+This happens when Windows blocks downloaded files. To fix:
+
+1. **Right-click the downloaded .rar file → Properties → Unblock → OK** (before extracting)
+2. **Or after extracting, unblock all DLL files:**
+   - Open PowerShell as Administrator  
    - Run: `Get-ChildItem "C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules" -Recurse -Filter "*.dll" | Unblock-File`
    - Restart Bannerlord
-
-## ⚠️ Troubleshooting "Cannot load DLL" Error
-
-This error occurs because Windows blocks files downloaded from the internet. 
-
-**Quick Fix:**
-1. Right-click `UnblockBLT.bat` → "Run as administrator"
-2. Or manually unblock files in Windows Explorer (right-click DLL → Properties → Unblock)
 
 ## 🎯 Module Load Order
 Make sure modules load in this order:
