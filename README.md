@@ -1,5 +1,6 @@
 # 🎮 For Streamers: [Download Ready-to-Use Modules](https://github.com/DarkTiger512/BLTRefreshed/releases/latest) 📥
 
+> **🎯 Compatible with**: Mount & Blade II: Bannerlord v1.2.11+ (Latest Game Version)  
 > **Quick Setup**: Download the latest module package → Extract to your Bannerlord `Modules` folder → Enable in game launcher → Start streaming!
 
 ---
