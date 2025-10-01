@@ -101,8 +101,42 @@
     </Target>
     
     <Target Name="Package" DependsOnTargets="SetModuleVersion">
-        <Message Importance="High" Text="[BLT PACKAGE] Creating deployment package $(PackageFullPath)..." />
-        <Delete Files="$(PackageFullPath)" ContinueOnError="true"/>
-        <Exec Command="C:\bin\7zr.exe a &quot;$(PackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure" WorkingDirectory="$(OutputConfigRoot)"/>
+        <Message Importance="High" Text="[BLT PACKAGE] Creating deployment package..." />
+        
+        <!-- Try different archiving tools in order of preference -->
+        <PropertyGroup>
+            <!-- First try 7-Zip locations -->
+            <ArchiverExe Condition="Exists('C:\bin\7zr.exe')">C:\bin\7zr.exe</ArchiverExe>
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files\7-Zip\7z.exe')">C:\Program Files\7-Zip\7z.exe</ArchiverExe>
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files (x86)\7-Zip\7z.exe')">C:\Program Files (x86)\7-Zip\7z.exe</ArchiverExe>
+            
+            <!-- Then try WinRAR locations -->
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files\WinRAR\WinRAR.exe')">C:\Program Files\WinRAR\WinRAR.exe</ArchiverExe>
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files (x86)\WinRAR\WinRAR.exe')">C:\Program Files (x86)\WinRAR\WinRAR.exe</ArchiverExe>
+            
+            <!-- Determine archiver type and set appropriate file extension and command arguments -->
+            <ArchiverType Condition="$(ArchiverExe.Contains('7z'))">7zip</ArchiverType>
+            <ArchiverType Condition="$(ArchiverExe.Contains('WinRAR'))">winrar</ArchiverType>
+            
+            <!-- Set file extension based on archiver type -->
+            <PackageExtension Condition="'$(ArchiverType)' == '7zip'">.7z</PackageExtension>
+            <PackageExtension Condition="'$(ArchiverType)' == 'winrar'">.rar</PackageExtension>
+            
+            <!-- Build dynamic package name with correct extension -->
+            <DynamicPackageName Condition="$(Configuration.StartsWith('Debug'))">BLT-v$(ModuleVersion)-For-Game-Version-v$(GameVersion)-Debug$(PackageExtension)</DynamicPackageName>
+            <DynamicPackageName Condition="$(Configuration.StartsWith('Release'))">BLT-v$(ModuleVersion)-For-Game-Version-v$(GameVersion)$(PackageExtension)</DynamicPackageName>
+            <DynamicPackageFullPath>$(OutputPackageRoot)$(DynamicPackageName)</DynamicPackageFullPath>
+            
+            <!-- Set appropriate command arguments based on archiver type -->
+            <ArchiverArgs Condition="'$(ArchiverType)' == '7zip'">a &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure</ArchiverArgs>
+            <ArchiverArgs Condition="'$(ArchiverType)' == 'winrar'">a -r &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure</ArchiverArgs>
+        </PropertyGroup>
+        
+        <Message Condition="'$(ArchiverExe)' != ''" Importance="High" Text="[BLT PACKAGE] Creating $(DynamicPackageName) using $(ArchiverType)..." />
+        <MakeDir Directories="$(OutputPackageRoot)" />
+        <Delete Files="$(DynamicPackageFullPath)" ContinueOnError="true"/>
+        <Exec Condition="'$(ArchiverExe)' != ''" Command="&quot;$(ArchiverExe)&quot; $(ArchiverArgs)" WorkingDirectory="$(OutputConfigRoot)" ContinueOnError="true"/>
+        <Message Condition="'$(ArchiverExe)' == ''" Importance="High" Text="[BLT PACKAGE] No supported archiver found (7-Zip or WinRAR) - skipping package creation. Install 7-Zip or WinRAR to enable packaging." />
+        <Message Condition="'$(ArchiverExe)' != ''" Importance="High" Text="[BLT PACKAGE] Using $(ArchiverType) at: $(ArchiverExe)" />
     </Target>
 </Project>

@@ -166,24 +166,24 @@ namespace BannerlordTwitch
                 }
             }
 
-            //public void SendWhisper(string userName, params string[] msg)
-            //{
-            //    if (client.IsConnected)
-            //    {
-            //        try
-            //        {
-            //            var parts = FormatMessage(msg);
-            //            foreach (string part in parts)
-            //            {
-            //                client.SendWhisper(userName, "Command heard");
-            //            }
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            Log.Error($"Failed to send reply: {e.Message}");
-            //        }
-            //    }
-            //}
+            public void SendWhisper(string userName, params string[] msg)
+            {
+                if (client.IsConnected)
+                {
+                    try
+                    {
+                        var parts = FormatMessage(msg);
+                        foreach (string part in parts)
+                        {
+                            client.SendWhisper(userName, BotPrefix + part);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error($"Failed to send whisper: {e.Message}");
+                    }
+                }
+            }
 
             private void Client_OnLog(object sender, OnLogArgs e)
             {

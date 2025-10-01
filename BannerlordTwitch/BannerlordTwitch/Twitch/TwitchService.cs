@@ -443,14 +443,13 @@ namespace BannerlordTwitch
                 //Log.Trace($"[{nameof(TwitchService)}] Feed Response to {context.UserName}: {Join(", ", messages)}");
             }
 
-            if (context.Source.RespondInTwitch && !IsSimTesting)
+            if (context.Source.RespondInDM && !IsSimTesting && context.UserName != null)
             {
-                // if (context.IsWhisper)
-                // {
-                //     bot.SendWhisper(context.UserName, messages);
-                //     Log.Trace($"[whisper][{context.UserName}] {string.Join(" - ", messages)}");
-                // }
-                // else 
+                bot.SendWhisper(context.UserName, messages);
+                Log.Trace($"[{nameof(TwitchService)}] Whisper to {context.UserName}: {string.Join(", ", messages)}");
+            }
+            else if (context.Source.RespondInTwitch && !IsSimTesting)
+            {
                 if (context.UserName != null)
                 {
                     bot.SendChatReply(context.UserName, messages);
@@ -470,7 +469,11 @@ namespace BannerlordTwitch
             {
                 Log.LogFeedMessage(messages);
             }
-            if (context.Source.RespondInTwitch && !IsSimTesting)
+            if (context.Source.RespondInDM && !IsSimTesting && context.UserName != null)
+            {
+                bot.SendWhisper(context.UserName, messages);
+            }
+            else if (context.Source.RespondInTwitch && !IsSimTesting)
             {
                 bot.SendChat(messages);
             }

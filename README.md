@@ -1,7 +1,39 @@
 # [Download](https://github.com/jazz-ttv/Bannerlord-Twitch/releases/tag/4.5.2) | [Discord](https://discord.gg/AnStVFb2jG) | [Github](https://github.com/jazz-ttv/Bannerlord-Twitch) | [Installation Guide](https://youtu.be/ATf5zilwNWk)
 
-# Bannerlord Twitch (BLT)
+# Bannerlord Twitch (BLT) - Enhanced Edition v4.8.6
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
+
+## Enhanced Edition Features (v4.8.6)
+This enhanced version includes significant improvements to the retinue and hero class systems:
+
+### **Smart Retinue Hiring by Hero Class**
+- **Hire by Hero Class**: Retinue troops are now automatically selected based on your hero's class
+  - **Archer heroes** recruit archer troops (ranged units)
+  - **Cavalry heroes** recruit mounted troops (cavalry, horse archers)
+  - **Infantry heroes** recruit foot soldiers (infantry, heavy infantry)
+  - **Horse Archer heroes** recruit specialized mounted archers
+  - **Skirmisher heroes** recruit versatile light infantry
+- **Formation Compatibility Matrix**: Comprehensive system ensuring troops match their commander's fighting style
+- **Class-Guided Upgrades**: Troop upgrades prioritize paths that maintain class compatibility
+- **Culture Integration**: Works seamlessly with existing culture-based troop selection
+
+### **Enhanced Hero Class System**
+- **Auto-Infantry Assignment**: New heroes automatically receive Infantry class to prevent retinue hiring lockouts
+- **12 Distinct Classes**: Infantry, Archer, Crossbow, Heavy Crossbow, Cavalry, Camelry, Horse Archer, Skirmisher, Berserker, Looter, and specialized variants
+- **Flexible Equipment**: "First Equip Is Free" when changing from default infantry class
+- **Smart Defaults**: Configuration-level class assignments ensure consistent experience
+
+### **Gold Transfer System**
+- **Hero-to-Hero Gold Transfers**: Viewers can send gold to other viewers' heroes
+- **Transaction Fees**: Configurable percentage fees for transfers
+- **Safety Limits**: Minimum and maximum transfer amounts
+- **Usage**: `!givegold (username) (amount)` - e.g., `!givegold TestUser 1000`
+
+### **Technical Improvements**
+- **Enhanced Build System**: Intelligent dual-archiver support (7-Zip/WinRAR)
+- **Direct Message Support**: Commands can now respond via Twitch whispers/DMs
+- **Formation Bug Fixes**: Corrected Infantry formation mapping and added Skirmisher support
+- **Improved Error Handling**: Better compatibility checking and fallback systems
 
 # Features
 - **Define Channel Point Rewards**, along with their in game effects (using the provided custom built configuration UI), they will be automatically added to your channel for you, and removed again when the game exits
@@ -31,6 +63,9 @@ Viewers can "adopt" an in-game hero of types that can be specified in the config
 # Instructions
 
 ## Installation
+
+### Enhanced Edition v4.8.6 Installation
+**Note**: This enhanced version (v4.8.6) includes significant improvements to retinue hiring and hero class systems. For best experience, existing users should start with a fresh campaign to fully utilize the new smart retinue features.
 
 ### [Installation Guide Video](https://youtu.be/ATf5zilwNWk)
 
@@ -94,7 +129,7 @@ You won't necessarily know if something has changed until you run the mod, the f
 5. If you have hooking errors and don't know where to start with addressing them then you are probably done, either go back to using an older game version and make the changes you want without updating the mod game version, or get ready to learn some .NET black magic, starting with what Harmony is.
 
 ## Sharing a New Build
-First you should make sure to update the `ModuleVersion` property in `BLTProperties.targets` at line 4. This uses an approximation of [semver versioning](https://semver.org/). Basically if you are updating only for a new game version or making a small tweak that doesn't suggest starting a new campaign, then increment the "patch" version, e.g., `1.1.1` becomes `1.1.2`. If the change is large enough that starting a new campaign would make sense then increment the "minor" version, e.g., `1.1.1` becomes `1.2.0`. Finally for large changes that would require a new campaign, or significantly change or add to the experience, you should increment the "major" version, e.g., `1.1.1` becomes `2.0.0`. Note that the smaller parts of the version are reset to zero when a higher part is changed.
+First you should make sure to update the `ModuleVersion` property in `BLTProperties.targets` at line 4. This uses an approximation of [semver versioning](https://semver.org/). Basically if you are updating only for a new game version or making a small tweak that doesn't suggest starting a new campaign, then increment the "patch" version, e.g., `4.8.6` becomes `4.8.7`. If the change is large enough that starting a new campaign would make sense then increment the "minor" version, e.g., `4.8.6` becomes `4.9.0`. Finally for large changes that would require a new campaign, or significantly change or add to the experience, you should increment the "major" version, e.g., `4.8.6` becomes `5.0.0`. Note that the smaller parts of the version are reset to zero when a higher part is changed.
 
 The Release config build process generates a sharable package which will be found in the `BannerlordTwitch\deploy\release` under the cloned repo. It should include the game and updated mod version number. This package can be released as is through appropriate channels.
 
@@ -102,4 +137,33 @@ As per the LGPL (under which this code is licensed), deployment of changes in bi
 
 # Credits
 This is a continuation of the project, originally started by somebody else.
-Original: [Author](https://github.com/billw2012) | [Github](https://github.com/billw2012/Bannerlord-Twitch) | [Discord](https://discord.gg/q2p4eHsxFn) | [Youtube](https://www.youtube.com/@billw2461)
+
+## Original Project
+**Original Creator**: [billw2012](https://github.com/billw2012) | [Github](https://github.com/billw2012/Bannerlord-Twitch) | [Discord](https://discord.gg/q2p4eHsxFn) | [Youtube](https://www.youtube.com/@billw2461)
+
+## Intermediate Development Chain
+**Lunki51 Fork**: [Github](https://github.com/Lunki51/Bannerlord-Twitch) - Continued development and maintenance  
+**Randomchair22/Kanboru Fork**: [Github](https://github.com/Randomchair22/Bannerlord-Twitch) - Added major clan and kingdom management features
+
+### Key Features Added by Randomchair22/Kanboru:
+- **Clan Management System**: Full clan creation, joining, leadership, and statistics
+- **Kingdom Management**: Kingdom joining, rebellion, creation, and political actions  
+- **Hero Marriage System**: Comprehensive marriage mechanics with culture/clan/name selection
+- **Hero Appearance Customization**: Gender changes and appearance modification system
+- **Enhanced UI Elements**: Hero nametags, improved widgets, and visual enhancements
+- **Negative Gold Rewards**: Battle lose mechanics that can grant gold instead of losing it
+
+## Enhanced Edition v4.8.6
+**Enhanced by**: Community development focusing on improved retinue systems, hero class compatibility, and quality-of-life improvements. This enhanced version builds upon all previous excellent work and maintains full compatibility with the existing BLT ecosystem.
+
+### Key Contributors to Enhanced Edition v4.8.6:
+- **Smart Retinue Hiring System**: Formation-based compatibility with hire-by-hero-class functionality
+- **Hero Class Enhancement**: Auto-assignment features and 12-class system refinements
+- **Gold Transfer System**: Viewer-to-viewer interactions with configurable fees and limits
+- **Technical Infrastructure**: Build system improvements, DM support, and packaging automation
+- **Stability Improvements**: Formation bug fixes, compatibility checking, and error handling
+
+## Development Philosophy
+Each iteration of this project has built upon the previous work while respecting the original vision. This enhanced edition maintains the same collaborative spirit, adding features that enhance the core experience while preserving compatibility with existing configurations and save games.
+
+**All contributions are provided under the same LGPL license as the original project.**

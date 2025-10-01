@@ -9,6 +9,7 @@ using BannerlordTwitch.Localization;
 using BannerlordTwitch.SaveSystem;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.Achievements;
+using BLTAdoptAHero.Util;
 using Newtonsoft.Json;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.MapEvents;
@@ -1070,19 +1071,41 @@ namespace BLTAdoptAHero
              PropertyOrder(2), UsedImplicitly]
             public bool IncludeBanditUnits { get; set; }
 
-            [LocDisplayName("{=E2RBmb1K}Use Basic Troops"),
-             LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
-             LocDescription("{=uPwaOKdT}Whether to allow basic troops"),
-             PropertyOrder(3), UsedImplicitly]
-            public bool UseBasicTroops { get; set; } = true;
+        private bool _useBasicTroops = true;
+        private bool _useEliteTroops = true;
+        private bool _hireByHeroClass = false;
 
-            [LocDisplayName("{=lnz7d1BI}Use Elite Troops"),
-             LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
-             LocDescription("{=EPr2clqT}Whether to allow elite troops"),
-             PropertyOrder(4), UsedImplicitly]
-            public bool UseEliteTroops { get; set; } = true;
+        [LocDisplayName("{=E2RBmb1K}Use Basic Troops"),
+         LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
+         LocDescription("{=uPwaOKdT}Whether to allow basic troops (automatically enabled when 'Hire By Hero Class' is active)"),
+         PropertyOrder(3), UsedImplicitly]
+        public bool UseBasicTroops 
+        { 
+            get => _hireByHeroClass || _useBasicTroops;
+            set => _useBasicTroops = value;
+        }
 
-            public void GenerateDocumentation(IDocumentationGenerator generator)
+        [LocDisplayName("{=lnz7d1BI}Use Elite Troops"),
+         LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
+         LocDescription("{=EPr2clqT}Whether to allow elite troops (automatically enabled when 'Hire By Hero Class' is active)"),
+         PropertyOrder(4), UsedImplicitly]
+        public bool UseEliteTroops 
+        { 
+            get => _hireByHeroClass || _useEliteTroops;
+            set => _useEliteTroops = value;
+        }
+
+        [LocDisplayName("{=BLTHireByClass}Hire By Hero Class"),
+         LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
+         LocDescription("{=BLTHireByClassDesc}Whether to hire retinue based on the hero's class (archers get archer troops, cavalry get cavalry troops, etc.). When enabled, both 'Use Basic Troops' and 'Use Elite Troops' are automatically activated for optimal functionality."),
+         PropertyOrder(5), UsedImplicitly]
+        public bool HireByHeroClass 
+        { 
+            get => _hireByHeroClass;
+            set => _hireByHeroClass = value;
+        }
+
+        public void GenerateDocumentation(IDocumentationGenerator generator)
             {
                 generator.PropertyValuePair("{=UhUpH8C8}Max retinue".Translate(), $"{MaxRetinueSize}");
                 generator.PropertyValuePair("{=VBuncBq5}Tier costs".Translate(), $"1={CostTier1}{Naming.Gold}, 2={CostTier2}{Naming.Gold}, 3={CostTier3}{Naming.Gold}, 4={CostTier4}{Naming.Gold}, 5={CostTier5}{Naming.Gold}, 5={CostTier5}{Naming.Gold}, 6={CostTier6}{Naming.Gold}");
@@ -1091,12 +1114,19 @@ namespace BLTAdoptAHero
                 if (IncludeBanditUnits) allowed.Add("{=c2qOsXvs}Bandits".Translate());
                 if (UseBasicTroops) allowed.Add("{=RmTwEFzy}Basic troops".Translate());
                 if (UseEliteTroops) allowed.Add("{=3gumlthG}Elite troops".Translate());
+                if (HireByHeroClass) allowed.Add("{=BLTHireByClassDoc}Hire by hero class".Translate());
                 generator.PropertyValuePair("{=uL7MfYPc}Allowed".Translate(), string.Join(", ", allowed));
             }
         }
 
         public (bool success, string status) UpgradeRetinue(Hero hero, RetinueSettings settings, int maxToUpgrade)
         {
+            // First, reroll any existing incompatible elite troops if hire-by-class is enabled
+            if (settings.HireByHeroClass)
+            {
+                RerollIncompatibleEliteTroops(hero, settings);
+            }
+
             var availableTroops = CampaignHelpers.AllCultures
                 .Where(c => settings.IncludeBanditUnits || c.IsMainCulture)
                 .SelectMany(c =>
@@ -1107,10 +1137,28 @@ namespace BLTAdoptAHero
                     return troopTypes;
                 })
                 // At least 2 upgrade tiers available
-                .Where(c => c.UpgradeTargets?.FirstOrDefault()?.UpgradeTargets?.Any() == true)
-                .ToList();
+                .Where(c => c.UpgradeTargets?.FirstOrDefault()?.UpgradeTargets?.Any() == true);
 
-            if (!availableTroops.Any())
+            // Filter by hero culture if enabled
+            if (settings.UseHeroesCultureUnits)
+            {
+                availableTroops = availableTroops.Where(troop => troop.Culture == hero.Culture);
+            }
+
+            // Filter by hero class if enabled - ensure troops can eventually become compatible with hero's class
+            if (settings.HireByHeroClass)
+            {
+                var heroClass = GetClass(hero);
+                if (heroClass != null)
+                {
+                    availableTroops = availableTroops.Where(troop => 
+                        CanEventuallyBecomeCompatibleWithHeroClass(troop, heroClass));
+                }
+            }
+
+            var availableTroopsList = availableTroops.ToList();
+
+            if (!availableTroopsList.Any())
             {
                 return (false, "{=bBCyH0vV}No valid troop types could be found, please check out settings".Translate());
             }
@@ -1129,11 +1177,8 @@ namespace BLTAdoptAHero
                 // first fill in any missing ones
                 if (heroRetinue.Count < settings.MaxRetinueSize)
                 {
-                    var troopType = availableTroops
+                    var troopType = availableTroopsList
                         .Shuffle()
-                        // Sort same culture units to the front if required, but still include other units in-case the hero
-                        // culture doesn't contain the requires units
-                        .OrderBy(c => settings.UseHeroesCultureUnits && c.Culture != hero.Culture)
                         .FirstOrDefault();
 
                     int cost = settings.GetTierCost(0);
@@ -1179,7 +1224,24 @@ namespace BLTAdoptAHero
                         totalCost += cost;
 
                         var oldTroopType = retinueToUpgrade.TroopType;
-                        retinueToUpgrade.TroopType = oldTroopType.UpgradeTargets.SelectRandom();
+                        
+                        // Choose upgrade target based on hero class if enabled
+                        CharacterObject upgradeTarget;
+                        if (settings.HireByHeroClass)
+                        {
+                            upgradeTarget = SelectClassGuidedUpgrade(oldTroopType, hero.GetClass());
+                            // If no class-compatible upgrade available, skip this upgrade to maintain class purity
+                            if (upgradeTarget == null)
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            upgradeTarget = oldTroopType.UpgradeTargets.SelectRandom();
+                        }
+                        
+                        retinueToUpgrade.TroopType = upgradeTarget;
                         retinueToUpgrade.Level++;
                         if (retinueChanges.TryGetValue(retinueToUpgrade, out var upgradeRecord))
                         {
@@ -1253,6 +1315,385 @@ namespace BLTAdoptAHero
         #endregion
 
         #region Helper Functions
+
+        private static bool IsTroopCompatibleWithHeroClass(CharacterObject troop, HeroClassDef heroClass)
+        {
+            var heroFormation = heroClass.Formation?.ToLower();
+            var isHeroMounted = heroClass.Mounted;
+            
+            // Handle specific formation types with strict matching
+            if (!string.IsNullOrEmpty(heroFormation))
+            {
+                switch (heroFormation)
+                {
+                    case "ranged":
+                        // Pure ranged class - ONLY accept foot archers, reject horse archers
+                        return troop.DefaultFormationClass == FormationClass.Ranged && !troop.IsMounted;
+                        
+                    case "horsearcher":
+                    case "horse archer":
+                        // Horse archer class - only accept mounted archers
+                        return troop.DefaultFormationClass == FormationClass.HorseArcher;
+                        
+                    case "cavalry":
+                    case "lightcavalry":
+                    case "heavycavalry":
+                        // Cavalry classes - accept cavalry but NOT horse archers (they're specialized)
+                        return (troop.DefaultFormationClass == FormationClass.Cavalry ||
+                                troop.DefaultFormationClass == FormationClass.HeavyCavalry ||
+                                troop.DefaultFormationClass == FormationClass.LightCavalry) && troop.IsMounted;
+                        
+                    case "infantry":
+                    case "heavyinfantry":
+                        // Infantry classes - only foot soldiers
+                        return (troop.DefaultFormationClass == FormationClass.Infantry ||
+                                troop.DefaultFormationClass == FormationClass.HeavyInfantry) && !troop.IsMounted;
+                        
+                    case "skirmisher":
+                        // Skirmisher classes - light infantry with throwing weapons or versatile troops
+                        return troop.DefaultFormationClass == FormationClass.Skirmisher && !troop.IsMounted;
+                }
+                
+                // For any other formation strings, fall back to basic formation matching
+                var compatibleFormations = GetCompatibleFormations(heroFormation);
+                if (compatibleFormations.Contains(troop.DefaultFormationClass))
+                    return true;
+            }
+
+            // If hero class is mounted but no specific formation, check mounted status
+            if (isHeroMounted)
+            {
+                if (troop.IsMounted || 
+                    troop.DefaultFormationClass == FormationClass.Cavalry ||
+                    troop.DefaultFormationClass == FormationClass.HeavyCavalry ||
+                    troop.DefaultFormationClass == FormationClass.LightCavalry ||
+                    troop.DefaultFormationClass == FormationClass.HorseArcher)
+                    return true;
+                
+                // For mounted classes, reject non-mounted troops
+                return false;
+            }
+
+            // Check weapon compatibility for classes without specific formation requirements
+            var heroWeapons = heroClass.Weapons.ToList();
+            if (heroWeapons.Any())
+            {
+                for (EquipmentIndex i = EquipmentIndex.WeaponItemBeginSlot; i < EquipmentIndex.NumEquipmentSetSlots; i++)
+                {
+                    var equipmentElement = troop.Equipment[i];
+                    if (!equipmentElement.IsEmpty && equipmentElement.Item.PrimaryWeapon != null)
+                    {
+                        var equipmentType = GetEquipmentTypeFromWeapon(equipmentElement.Item);
+                        if (equipmentType != EquipmentType.None && heroWeapons.Contains(equipmentType))
+                            return true;
+                    }
+                }
+                
+                // For classes with specific weapon requirements, reject troops without compatible weapons
+                return false;
+            }
+
+            // Fallback: if no specific requirements, allow the troop
+            return true;
+        }
+
+        private static EquipmentType GetEquipmentTypeFromWeapon(ItemObject weapon)
+        {
+            if (weapon.PrimaryWeapon == null) return EquipmentType.None;
+
+            return weapon.PrimaryWeapon.WeaponClass switch
+            {
+                WeaponClass.OneHandedSword => EquipmentType.OneHandedSword,
+                WeaponClass.TwoHandedSword => EquipmentType.TwoHandedSword,
+                WeaponClass.OneHandedAxe => EquipmentType.OneHandedAxe,
+                WeaponClass.TwoHandedAxe => EquipmentType.TwoHandedAxe,
+                WeaponClass.Mace => EquipmentType.OneHandedMace,
+                WeaponClass.TwoHandedMace => EquipmentType.TwoHandedMace,
+                WeaponClass.OneHandedPolearm => EquipmentType.OneHandedLance,
+                WeaponClass.TwoHandedPolearm => EquipmentType.TwoHandedLance,
+                WeaponClass.LowGripPolearm => EquipmentType.OneHandedLance,
+                WeaponClass.Bow => EquipmentType.Bow,
+                WeaponClass.Crossbow => EquipmentType.Crossbow,
+                WeaponClass.ThrowingKnife => EquipmentType.ThrowingKnives,
+                WeaponClass.ThrowingAxe => EquipmentType.ThrowingAxes,
+                WeaponClass.Javelin => EquipmentType.ThrowingJavelins,
+                WeaponClass.Pistol => EquipmentType.Crossbow, // Treat pistols like crossbows
+                WeaponClass.Musket => EquipmentType.Crossbow, // Treat muskets like crossbows
+                _ => EquipmentType.None
+            };
+        }
+
+        private static List<FormationClass> GetCompatibleFormations(string heroFormation)
+        {
+            return heroFormation.ToLower() switch
+            {
+                "infantry" => new() { FormationClass.Infantry, FormationClass.HeavyInfantry },
+                "ranged" => new() { FormationClass.Ranged },
+                "cavalry" => new() { FormationClass.Cavalry, FormationClass.HeavyCavalry, FormationClass.LightCavalry },
+                "horsearcher" => new() { FormationClass.HorseArcher },
+                "lightcavalry" => new() { FormationClass.LightCavalry, FormationClass.Cavalry },
+                "heavycavalry" => new() { FormationClass.HeavyCavalry, FormationClass.Cavalry },
+                "heavyinfantry" => new() { FormationClass.HeavyInfantry, FormationClass.Infantry },
+                "skirmisher" => new() { FormationClass.Skirmisher },
+                _ => new() { FormationClass.Infantry } // Default fallback
+            };
+        }
+
+        private static CharacterObject SelectClassGuidedUpgrade(CharacterObject currentTroop, HeroClassDef heroClass)
+        {
+            if (currentTroop?.UpgradeTargets == null || !currentTroop.UpgradeTargets.Any() || heroClass == null)
+                return null;
+
+            var upgradeTargets = currentTroop.UpgradeTargets.ToList();
+            
+            // Find upgrade targets that are compatible with the hero's class
+            var compatibleUpgrades = upgradeTargets.Where(upgrade => IsTroopCompatibleWithHeroClass(upgrade, heroClass)).ToList();
+            
+            if (compatibleUpgrades.Any())
+            {
+                return compatibleUpgrades.SelectRandom();
+            }
+            
+            // If no compatible upgrades found, provide specific fallbacks based on class type
+            var heroFormation = heroClass.Formation?.ToLower();
+            
+            // For pure ranged classes, use upgrade path analysis to ensure we can reach archers
+            if (heroFormation == "ranged")
+            {
+                var archerPathUpgrades = upgradeTargets.Where(u => CanEventuallyBecomeArcher(u, heroClass)).ToList();
+                    
+                if (archerPathUpgrades.Any())
+                    return archerPathUpgrades.SelectRandom();
+                else
+                    // No path to archers available - refuse upgrade to maintain class purity
+                    return null;
+            }
+            
+            // For cavalry classes, prioritize mounted upgrades but exclude horse archers
+            if (heroClass.Mounted && heroFormation != "horsearcher")
+            {
+                var mountedUpgrades = upgradeTargets.Where(u => 
+                    (u.DefaultFormationClass == FormationClass.Cavalry ||
+                     u.DefaultFormationClass == FormationClass.HeavyCavalry ||
+                     u.DefaultFormationClass == FormationClass.LightCavalry) && u.IsMounted).ToList();
+                    
+                if (mountedUpgrades.Any())
+                    return mountedUpgrades.SelectRandom();
+            }
+            
+            // For horse archer classes specifically
+            if (heroFormation == "horsearcher")
+            {
+                var horseArcherUpgrades = upgradeTargets.Where(u => 
+                    u.DefaultFormationClass == FormationClass.HorseArcher).ToList();
+                    
+                if (horseArcherUpgrades.Any())
+                    return horseArcherUpgrades.SelectRandom();
+            }
+            
+            // For strict class adherence, return null if no appropriate upgrades found
+            // This prevents upgrading to incompatible unit types
+            return null;
+        }
+
+        /// <summary>
+        /// Rerolls any existing elite troops that cannot become compatible with the hero's class.
+        /// Converts them to their culture's basic troop equivalent instead.
+        /// </summary>
+        private void RerollIncompatibleEliteTroops(Hero hero, RetinueSettings settings)
+        {
+            var heroClass = GetClass(hero);
+            if (heroClass == null) return;
+
+            var heroRetinue = GetHeroData(hero).Retinue;
+            var troopsToReroll = new List<HeroData.RetinueData>();
+
+            // Find all elite troops that cannot become compatible with hero's class
+            foreach (var retinueData in heroRetinue)
+            {
+                var troop = retinueData.TroopType;
+                
+                // Check if this is an elite troop (from EliteBasicTroop)
+                bool isEliteTroop = CampaignHelpers.AllCultures
+                    .Any(c => c.EliteBasicTroop != null && IsEliteLineage(troop, c.EliteBasicTroop));
+
+                if (isEliteTroop && !CanEventuallyBecomeCompatibleWithHeroClass(troop, heroClass))
+                {
+                    troopsToReroll.Add(retinueData);
+                }
+            }
+
+            // Reroll incompatible elite troops to basic troops from the same culture
+            foreach (var retinueData in troopsToReroll)
+            {
+                var culture = retinueData.TroopType.Culture;
+                var basicTroop = culture?.BasicTroop;
+                
+                if (basicTroop != null && settings.UseBasicTroops)
+                {
+                    // Check if the basic troop can become compatible with hero's class
+                    if (CanEventuallyBecomeCompatibleWithHeroClass(basicTroop, heroClass))
+                    {
+                        retinueData.TroopType = basicTroop;
+                        retinueData.Level = 1; // Reset to level 1 since we're starting with basic troop
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if a troop is part of an elite lineage by tracing back its upgrade tree.
+        /// </summary>
+        private static bool IsEliteLineage(CharacterObject troop, CharacterObject eliteBasicTroop)
+        {
+            if (troop == null || eliteBasicTroop == null) return false;
+            
+            // Direct match
+            if (troop.StringId == eliteBasicTroop.StringId) return true;
+            
+            // Check if troop can be traced back to the elite basic troop
+            return CanTraceBackToTroop(troop, eliteBasicTroop, new HashSet<string>());
+        }
+
+        /// <summary>
+        /// Recursively traces back upgrade paths to see if a troop originates from a specific source troop.
+        /// </summary>
+        private static bool CanTraceBackToTroop(CharacterObject currentTroop, CharacterObject sourceTroop, HashSet<string> visited)
+        {
+            if (currentTroop == null || sourceTroop == null) return false;
+            
+            // Prevent infinite loops
+            if (visited.Contains(currentTroop.StringId))
+                return false;
+                
+            visited.Add(currentTroop.StringId);
+            
+            // Direct match
+            if (currentTroop.StringId == sourceTroop.StringId)
+                return true;
+            
+            // Look through all possible troops in the same culture to find what could upgrade to this troop
+            foreach (var culture in CampaignHelpers.AllCultures)
+            {
+                if (culture.BasicTroop != null && CheckIfTroopCanUpgradeTo(culture.BasicTroop, currentTroop, new HashSet<string>()))
+                {
+                    if (CanTraceBackToTroop(culture.BasicTroop, sourceTroop, visited))
+                        return true;
+                }
+                if (culture.EliteBasicTroop != null && CheckIfTroopCanUpgradeTo(culture.EliteBasicTroop, currentTroop, new HashSet<string>()))
+                {
+                    if (CanTraceBackToTroop(culture.EliteBasicTroop, sourceTroop, visited))
+                        return true;
+                }
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a source troop can eventually upgrade to a target troop.
+        /// </summary>
+        private static bool CheckIfTroopCanUpgradeTo(CharacterObject source, CharacterObject target, HashSet<string> visited)
+        {
+            if (source == null || target == null) return false;
+            
+            if (visited.Contains(source.StringId))
+                return false;
+                
+            visited.Add(source.StringId);
+            
+            if (source.StringId == target.StringId)
+                return true;
+            
+            if (source.UpgradeTargets != null)
+            {
+                foreach (var upgrade in source.UpgradeTargets)
+                {
+                    if (CheckIfTroopCanUpgradeTo(upgrade, target, visited))
+                        return true;
+                }
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// Recursively checks if a troop can eventually become compatible with a hero class through its upgrade tree.
+        /// This prevents choosing upgrade paths that lead to dead-ends for the specified class.
+        /// </summary>
+        private static bool CanEventuallyBecomeCompatibleWithHeroClass(CharacterObject troop, HeroClassDef heroClass, HashSet<string> visited = null)
+        {
+            if (troop == null || heroClass == null) return false;
+            
+            // Initialize visited set to prevent infinite loops
+            visited ??= new HashSet<string>();
+            
+            // Prevent infinite recursion
+            if (visited.Contains(troop.StringId))
+                return false;
+            
+            visited.Add(troop.StringId);
+            
+            // Check if this troop is already compatible with the hero class
+            if (IsTroopCompatibleWithHeroClass(troop, heroClass))
+                return true;
+            
+            // If not compatible, check all upgrade paths
+            if (troop.UpgradeTargets != null)
+            {
+                foreach (var upgrade in troop.UpgradeTargets)
+                {
+                    if (CanEventuallyBecomeCompatibleWithHeroClass(upgrade, heroClass, visited))
+                        return true;
+                }
+            }
+            
+            return false;
+        }
+
+        /// <summary>
+        /// Recursively checks if a troop can eventually become an archer through its upgrade tree.
+        /// This prevents choosing upgrade paths that lead to dead-ends for archer classes.
+        /// </summary>
+        private static bool CanEventuallyBecomeArcher(CharacterObject troop, HeroClassDef heroClass, HashSet<string> visited = null)
+        {
+            if (troop == null) return false;
+            
+            // Initialize visited set to prevent infinite loops
+            visited ??= new HashSet<string>();
+            
+            // Prevent infinite recursion
+            if (visited.Contains(troop.StringId))
+                return false;
+            
+            visited.Add(troop.StringId);
+            
+            // Check if this troop is already an archer type we want
+            if (IsTroopCompatibleWithHeroClass(troop, heroClass))
+                return true;
+            
+            // If this is a foot archer and hero allows foot archers, it's valid
+            if (troop.DefaultFormationClass == FormationClass.Ranged && !troop.IsMounted)
+                return true;
+            
+            // If this is a horse archer and hero allows horse archers, it's valid
+            if (troop.DefaultFormationClass == FormationClass.HorseArcher && 
+                (heroClass.Formation?.ToLower() == "horsearcher" || heroClass.Mounted))
+                return true;
+            
+            // If no upgrade targets, this is a dead end
+            if (troop.UpgradeTargets == null || !troop.UpgradeTargets.Any())
+                return false;
+            
+            // Recursively check if any upgrade path leads to an archer
+            foreach (var upgrade in troop.UpgradeTargets)
+            {
+                if (CanEventuallyBecomeArcher(upgrade, heroClass, visited))
+                    return true;
+            }
+            
+            return false;
+        }
 
         public static void SetAgentStartingHealth(Hero hero, Agent agent)
         {

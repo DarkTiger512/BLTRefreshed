@@ -430,5 +430,27 @@
         <string id="bNX0NiQ9" text="sold {ItemName} for {ItemValue}{GoldIcon} (not needed)"/>
         <!-- received {ItemName} (put in storage) -->
         <string id="R7VwlLzg" text="received {ItemName} (put in storage)"/>
+        
+        <!-- Kingdom Creation -->
+        <!-- Enable creating kingdoms command -->
+        <string id="x5aY2Ryn" text="Enable creating kingdoms command"/>
+        <!-- Cost of creating a kingdom -->
+        <string id="KvYA5eAy" text="Cost of creating a kingdom"/>
+        <!-- Kingdom creation is disabled -->
+        <string id="MRstTtQa" text="Kingdom creation is disabled"/>
+        <!-- Your clan is already in a kingdom, you must leave or rebel first -->
+        <string id="NbvwN9z3" text="Your clan is already in a kingdom, you must leave or rebel first"/>
+        <!-- You cannot create a kingdom as you are not your clan's leader! -->
+        <string id="Nzm5bI4I" text="You cannot create a kingdom as you are not your clan's leader!"/>
+        <!-- Your clan is not high enough tier to create a kingdom -->
+        <string id="Ok94bnhi" text="Your clan is not high enough tier to create a kingdom"/>
+        <!-- (create) (kingdom name) -->
+        <string id="6vTxAMVx" text="(create) (kingdom name)"/>
+        <!-- A kingdom with the name {name} already exists -->
+        <string id="Aae45bKp" text="A kingdom with the name {name} already exists"/>
+        <!-- Created and ruling kingdom {name} -->
+        <string id="omDrEeDx" text="Created and ruling kingdom {name}"/>
+        <!-- {heroName} has created and is ruling kingdom {kingdomName}! -->
+        <string id="TsmDfvuz" text="{heroName} has created and is ruling kingdom {kingdomName}!"/>
     </strings>
 </base>

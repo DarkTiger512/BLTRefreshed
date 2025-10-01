@@ -498,6 +498,24 @@ namespace BLTAdoptAHero
                     BLTAdoptAHeroCampaignBehavior.Current.SetClass(newHero, classDef);
                 }
             }
+            
+            // Auto-assign infantry class if no class was specified to prevent retinue hiring lockout
+            if (classDef == null)
+            {
+                // Use infantry class as default (ID: 9fa426af-af3e-41f6-9b48-0ffef6dc3553)
+                var defaultInfantryClassId = new Guid("9fa426af-af3e-41f6-9b48-0ffef6dc3553");
+                var defaultClassDef = BLTAdoptAHeroModule.HeroClassConfig.GetClass(defaultInfantryClassId);
+                if (defaultClassDef != null)
+                {
+                    BLTAdoptAHeroCampaignBehavior.Current.SetClass(newHero, defaultClassDef);
+                    classDef = defaultClassDef;
+                    Log.Info($"AdoptAHero: Auto-assigned infantry class to {userName}");
+                }
+                else
+                {
+                    Log.Error($"AdoptAHero: Could not find infantry class for auto-assignment");
+                }
+            }
 
             // Setup skills first, THEN name, as skill changes can generate feed messages for adopted characters
             string oldName = newHero.Name.ToString();

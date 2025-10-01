@@ -18,7 +18,7 @@ namespace BLTAdoptAHero
         {
             [LocDisplayName("{=iLpDEiTq}First Equip Is Free"),
              LocCategory("Costs", "{=r7sc3Tvg}Costs"),
-             LocDescription("{=pRETwmGv}If this is free when the hero does not have a class already (this can only happen if Adopt does NOT specify a default class)"),
+             LocDescription("{=BLTFirstEquipFreeDesc}If this is free when changing from the default infantry class"),
              PropertyOrder(0), UsedImplicitly]
             public bool FirstEquipIsFree { get; set; } = true;
 
@@ -86,7 +86,7 @@ namespace BLTAdoptAHero
                     $"6={CostTier6}{Naming.Gold}");
                 if (FirstEquipIsFree)
                 {
-                    generator.P("{=lW1KcoWD}Free if you do not already have a class".Translate());
+                    generator.P("{=BLTFirstEquipFreeDocumentation}Free when changing from the default infantry class".Translate());
                 }
                 if (UpdateEquipment)
                 {

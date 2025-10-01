@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using System.Reflection;
 using BannerlordTwitch;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Localization;
@@ -105,6 +106,7 @@ namespace BLTAdoptAHero.Actions
                     EnabledCommands.Append("Mercenary, ");
                 if (RebelEnabled)
                     EnabledCommands.Append("Rebel, ");
+
                 if (LeaveEnabled)
                     EnabledCommands.Append("Leave, "); 
                 if (StatsEnabled)
@@ -129,6 +131,7 @@ namespace BLTAdoptAHero.Actions
                                     "</strong>" +
                                     "Price={price}{icon}, ".Translate(("price", RebelPrice.ToString()), ("icon", Naming.Gold)) +
                                     "Minimum Clan Tier={tier}".Translate(("tier", RebelClanTierMinimum.ToString())));
+
 
             }
         }
@@ -185,6 +188,7 @@ namespace BLTAdoptAHero.Actions
                 case "rebel":
                     HandleRebelCommand(settings, adoptedHero, onSuccess, onFailure);
                     break;
+
                 case "leave":
                     HandleLeaveCommand(settings, adoptedHero, onSuccess, onFailure);
                     break;

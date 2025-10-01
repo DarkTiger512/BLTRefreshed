@@ -339,6 +339,39 @@
         <string id="86rc4cz6" text="Respond In Twitch"/>
         <!-- Respond In Overlay -->
         <string id="0MgBhdtw" text="Respond In Overlay"/>
+        <!-- Respond In DM -->
+        <string id="kDm5Fh3w" text="Respond In DM"/>
+        <!-- Send response as a direct message (whisper) to the user -->
+        <string id="8Xr2Nq9p" text="Send response as a direct message (whisper) to the user"/>
+        
+        <!-- Gold Transfer Command Strings -->
+        <!-- Minimum Amount -->
+        <string id="Zx9K2mLp" text="Minimum Amount"/>
+        <!-- Minimum amount of gold that can be transferred -->
+        <string id="4Hn8VqWr" text="Minimum amount of gold that can be transferred"/>
+        <!-- Maximum Amount -->
+        <string id="Vp2X8nRe" text="Maximum Amount"/>
+        <!-- Maximum amount of gold that can be transferred in one transaction -->
+        <string id="9Bx4WzLs" text="Maximum amount of gold that can be transferred in one transaction"/>
+        <!-- Transaction Fee Percent -->
+        <string id="8Kj5RqNm" text="Transaction Fee Percent"/>
+        <!-- Percentage fee taken from the transferred amount (0-100) -->
+        <string id="7Yt3DnQp" text="Percentage fee taken from the transferred amount (0-100)"/>
+        <!-- Usage: (username) (amount) -->
+        <string id="9M2HqKfL" text="Usage: (username) (amount)"/>
+        <!-- You can't send gold to yourself -->
+        <string id="5Zx8NpQr" text="You can't send gold to yourself"/>
+        <!-- Invalid amount. Minimum is {MinAmount}{GoldIcon} -->
+        <string id="8Kj9NmPq" text="Invalid amount. Minimum is {MinAmount}{GoldIcon}"/>
+        <!-- Amount too large. Maximum is {MaxAmount}{GoldIcon} -->
+        <string id="3Vx7QnRt" text="Amount too large. Maximum is {MaxAmount}{GoldIcon}"/>
+        <!-- Sent {Amount}{GoldIcon} to @{TargetName} (received: {ReceivedAmount}{GoldIcon}, fee: {Fee}{GoldIcon}) -->
+        <string id="2Kx7NvRq" text="Sent {Amount}{GoldIcon} to @{TargetName} (received: {ReceivedAmount}{GoldIcon}, fee: {Fee}{GoldIcon})"/>
+        <!-- Sent {Amount}{GoldIcon} to @{TargetName} -->
+        <string id="9Jx4MnPv" text="Sent {Amount}{GoldIcon} to @{TargetName}"/>
+        <!-- @{TargetName} received {ReceivedAmount}{GoldIcon} from @{SenderName} -->
+        <string id="6Kx2NvRt" text="@{TargetName} received {ReceivedAmount}{GoldIcon} from @{SenderName}"/>
+        
         <!-- Handler -->
         <string id="dteVl09D" text="Handler"/>
         <!-- Handler Config -->

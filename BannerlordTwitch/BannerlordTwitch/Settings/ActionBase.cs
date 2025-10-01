@@ -28,6 +28,10 @@ namespace BannerlordTwitch
          LocDescription("{=UQRfOFjs}Show response in the overlay window feed"),
          PropertyOrder(-98), UsedImplicitly]
         public bool RespondInOverlay { get; set; }
+        [LocDisplayName("{=kDm5Fh3w}Respond In DM"), LocCategory("General", "{=C5T5nnix}General"),
+         LocDescription("{=8Xr2Nq9p}Send response as a direct message (whisper) to the user"),
+         PropertyOrder(-97), UsedImplicitly]
+        public bool RespondInDM { get; set; }
 
         [LocDisplayName("{=dteVl09D}Handler"), LocCategory("General", "{=C5T5nnix}General"),
          LocDescription("{=ErhzbqFu}Name of the handler"),
