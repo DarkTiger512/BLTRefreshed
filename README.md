@@ -1,6 +1,6 @@
-# 🎮 For Streamers: [Download Ready-to-Use Modules](https://github.com/DarkTiger512/BLTRefreshed/releases) 📥
+# 🎮 For Streamers: [Download Ready-to-Use Modules](https://github.com/DarkTiger512/BLTRefreshed/releases/latest) 📥
 
-> **Quick Setup**: Download `BLT-Enhanced-Modules-v4.9.0.zip` → Extract to your Bannerlord `Modules` folder → Enable in game launcher → Start streaming!
+> **Quick Setup**: Download the latest module package → Extract to your Bannerlord `Modules` folder → Enable in game launcher → Start streaming!
 
 ---
 
@@ -42,7 +42,7 @@ This enhanced version includes significant improvements to the retinue and hero 
 ## 📥 Installation for Streamers
 
 ### Option 1: Ready-to-Use Modules (Recommended)
-1. **[Download BLT Enhanced Modules v4.9.0](https://github.com/DarkTiger512/BLTRefreshed/releases)**
+1. **[Download Latest BLT Enhanced Modules](https://github.com/DarkTiger512/BLTRefreshed/releases/latest)**
 2. **Extract** the ZIP file
 3. **Copy** all folders to your Bannerlord `Modules` directory:
    - Steam: `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\`
