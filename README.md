@@ -1,11 +1,39 @@
-# 🎮 For Streamers: [Download Ready-to-Use Modules](https://github.com/DarkTiger512/BLTRefreshed/releases/latest) 📥
+# 🎮 Bannerlord Twitch Enhanced Edition
 
-> **🎯 Compatible with**: Mount & Blade II: Bannerlord v1.2.12 (Latest Game Version)  
-> **Quick Setup**: Download the latest module package → Extract to your Bannerlord `Modules` folder → Enable in game launcher → Start streaming!
+> **📥 For Streamers: [Download Ready-to-Use Modules](https://github.com/DarkTiger512/BLTRefreshed/releases/latest)**
+
+> **🎯 Compatible with**: Mount & Blade II: Bannerlord v1.2.12 (Latest Game Version)
+
+## 📦 **Quick Installation**
+
+1. **Download** the latest release package
+2. **Extract** to your Bannerlord `Modules` folder  
+3. **Enable** all BLT modules in the game launcher
+4. **Start streaming!**
+
+## ⚠️ **If You Get "Cannot Load" Errors**
+
+Windows blocks downloaded DLL files as a security measure. If the mod fails to load with "cannot load" errors:
+
+### **Fix: Unblock All BLT Files**
+Run this command in PowerShell as Administrator in your Bannerlord `Modules` folder:
+```powershell
+Get-ChildItem -Path ".\BLT*" -Recurse | Unblock-File
+```
+
+**How to run this:**
+1. Navigate to your Bannerlord `Modules` folder:
+   - Steam: `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules\`
+   - Epic: `C:\Program Files\Epic Games\Mount & Blade II Bannerlord\Modules\`
+2. Right-click in the folder → "Open PowerShell window here" or "Open in Terminal"
+3. Run as Administrator (if prompted)
+4. Paste the command above and press Enter
+
+*This is normal Windows behavior for downloaded files and affects all mods, not just BLT.*
 
 ---
 
-# Bannerlord Twitch (BLT) - Enhanced Edition v4.9.0
+# Bannerlord Twitch (BLT) - Enhanced Edition v4.9.1
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
 
 ## Enhanced Edition Features (v4.9.0)
