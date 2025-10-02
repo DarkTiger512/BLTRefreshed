@@ -4325,13 +4325,13 @@ SimTesting:
     Type: Command
     Weight: 0
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: tournament
     ID: ca586ddf-b9b0-4c59-954c-d166f5c9b644
     Type: Command
     Weight: 0
   - Args: '{=4tflp34a}archer'
-    Enabled: false
+    Enabled: true
     Id: '{=nV9iIsDC}class'
     ID: 0c4706d4-882f-40ba-b2ec-6077a957fc78
     Type: Command
@@ -4358,31 +4358,31 @@ SimTesting:
   IntervalMinMS: 50
   Use:
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: attack
     ID: 0711448a-2d82-42f2-b0e9-3e22faef2850
     Type: Command
     Weight: 0.5
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: summon
     ID: 8e98ab07-c93a-42a2-8a58-278028b48565
     Type: Command
     Weight: 0.5
   - Args: ''
     Enabled: true
-    Id: Daily Gold
+    Id: simgold
     ID: 7dc0e816-b2ec-42a4-ab70-b4e00c8501ba
-    Type: Reward
+    Type: Command
     Weight: 1
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: '{=wHqxd4kb}equip'
     ID: 06539d16-25cb-4314-8cdd-4aada76b27bc
     Type: Command
     Weight: 0.4
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: '{=fGfTaAoD}reequip'
     ID: 76efdf69-6fc5-4163-8271-4540402f28b3
     Type: Command
@@ -4424,7 +4424,7 @@ SimTesting:
     Type: Command
     Weight: 0.05
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: heal
     ID: f1f5a043-fdf6-43e5-9fe5-e70009c56bf5
     Type: Command
@@ -4494,7 +4494,7 @@ SimTesting:
     Id: '{=nV9iIsDC}class'
     ID: 71a8a8de-3be2-4e3c-8844-60bf9e9f08d7
     Type: Command
-    Weight: 0.1
+    Weight: 1
   - Args: '{=4JffsJMD}looter'
     Enabled: false
     Id: '{=nV9iIsDC}class'
@@ -4508,7 +4508,7 @@ SimTesting:
     Type: Command
     Weight: 0.05
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: power
     ID: d701da05-a87d-4f81-a94c-07aadb937636
     Type: Command
@@ -4537,5 +4537,5 @@ SimTesting:
     ID: 71a8a8de-3be2-4e3c-8844-60bf9e9f08d7
     Type: Command
     Weight: 0.1
-  UserCount: 15
-  UserStayTime: 300
+  UserCount: 1
+  UserStayTime: 30000
