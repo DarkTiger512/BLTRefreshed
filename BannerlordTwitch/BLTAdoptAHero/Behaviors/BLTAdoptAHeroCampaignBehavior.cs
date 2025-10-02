@@ -101,6 +101,9 @@ namespace BLTAdoptAHero
             // We put all initialization that relies on loading being complete into this listener
             CampaignEvents.OnGameLoadFinishedEvent.AddNonSerializedListener(this, () =>
             {
+                // Initialize the dynamic troop tree index for all cultures and mods
+                TroopTreeIndex.BuildIndex();
+                
                 // Ensure all existing heroes are registered
                 foreach (var hero in CampaignHelpers.AllHeroes.Where(h => h.IsAdopted()))
                 {
@@ -1187,20 +1190,7 @@ namespace BLTAdoptAHero
                     if (retinueToUpgrade != null)
                     {
                         int cost = settings.GetTierCost(retinueToUpgrade.Level);
-                        if (totalCost + cost > heroGold)
-                        {
-                            results.Add(retinueChanges.IsEmpty()
-                                ? Naming.NotEnoughGold(cost, heroGold)
-                                : "{=zcbOq6Tb}Spent {TotalCost}{GoldIcon}, {RemainingGold}{GoldIcon} remaining"
-                                    .Translate(
-                                        ("TotalCost", totalCost),
-                                        ("GoldIcon", Naming.Gold),
-                                        ("RemainingGold", heroGold - totalCost)));
-                            break;
-                        }
-
-                        totalCost += cost;
-
+                        
                         var oldTroopType = retinueToUpgrade.TroopType;
                         
                         // Choose upgrade target based on hero class if enabled
@@ -1218,6 +1208,21 @@ namespace BLTAdoptAHero
                         {
                             upgradeTarget = oldTroopType.UpgradeTargets.SelectRandom();
                         }
+
+                        // Only check/reserve gold AFTER we confirm the upgrade is possible
+                        if (totalCost + cost > heroGold)
+                        {
+                            results.Add(retinueChanges.IsEmpty()
+                                ? Naming.NotEnoughGold(cost, heroGold)
+                                : "{=zcbOq6Tb}Spent {TotalCost}{GoldIcon}, {RemainingGold}{GoldIcon} remaining"
+                                    .Translate(
+                                        ("TotalCost", totalCost),
+                                        ("GoldIcon", Naming.Gold),
+                                        ("RemainingGold", heroGold - totalCost)));
+                            break;
+                        }
+
+                        totalCost += cost;
                         
                         retinueToUpgrade.TroopType = upgradeTarget;
                         retinueToUpgrade.Level++;
@@ -1295,13 +1300,127 @@ namespace BLTAdoptAHero
         #region Helper Functions
 
         /// <summary>
-        /// Smart 4-Tier Fallback System for retinue hiring
+        /// Enhanced troop selection using dynamic troop tree indexing.
+        /// Finds TIER 1 troops that can eventually become compatible with hero class through upgrades.
+        /// </summary>
+        private List<CharacterObject> GetAvailableTroopsWithFallback(Hero hero, RetinueSettings settings)
+        {
+            var heroClass = settings.HireByHeroClass ? GetClass(hero) : null;
+            
+            if (heroClass != null)
+            {
+                // STEP 1: Check hero's own culture for upgrade paths to the desired class
+                var tier1TroopsFromHeroCulture = FindTier1TroopsForHeroClass(heroClass, hero.Culture, settings);
+                if (tier1TroopsFromHeroCulture.Any())
+                {
+                    Log.Info($"[Guided Hiring] Hero culture: Found {tier1TroopsFromHeroCulture.Count} tier 1 troops in {hero.Culture.Name} that can upgrade to {heroClass.ID}");
+                    return tier1TroopsFromHeroCulture;
+                }
+                
+                Log.Info($"[Guided Hiring] Hero culture: No upgrade paths to {heroClass.ID} in {hero.Culture.Name}");
+                
+                // STEP 2: If UseHeroesCultureUnits is enabled, respect that setting and don't cross cultures for hiring
+                if (settings.UseHeroesCultureUnits)
+                {
+                    Log.Info($"[Guided Hiring] UseHeroesCultureUnits enabled - staying within {hero.Culture.Name} culture, will guide upgrades during promotion");
+                    
+                    // Use basic troops from hero's culture - upgrades will be guided intelligently
+                    var basicTroops = new List<CharacterObject>();
+                    if (settings.UseBasicTroops && hero.Culture.BasicTroop != null)
+                        basicTroops.Add(hero.Culture.BasicTroop);
+                    if (settings.UseEliteTroops && hero.Culture.EliteBasicTroop != null)
+                        basicTroops.Add(hero.Culture.EliteBasicTroop);
+                    
+                    if (basicTroops.Any())
+                    {
+                        Log.Info($"[Guided Hiring] Using {basicTroops.Count} basic troops from {hero.Culture.Name} - upgrades will be guided towards {heroClass.ID}");
+                        return basicTroops;
+                    }
+                }
+                else
+                {
+                    // STEP 3: Cross-culture search for tier 1 troops that can upgrade to desired class
+                    var tier1TroopsFromOtherCultures = new List<CharacterObject>();
+                    
+                    foreach (var culture in MBObjectManager.Instance.GetObjectTypeList<CultureObject>()
+                        .Where(c => settings.IncludeBanditUnits || c.IsMainCulture)
+                        .Where(c => c != hero.Culture)) // Exclude hero's culture (already checked)
+                    {
+                        var cultureTier1Troops = FindTier1TroopsForHeroClass(heroClass, culture, settings);
+                        tier1TroopsFromOtherCultures.AddRange(cultureTier1Troops);
+                    }
+
+                    if (tier1TroopsFromOtherCultures.Any())
+                    {
+                        Log.Info($"[Guided Hiring] Cross-culture: Found {tier1TroopsFromOtherCultures.Count} tier 1 troops from other cultures that can upgrade to {heroClass.ID}");
+                        return tier1TroopsFromOtherCultures.Distinct().ToList();
+                    }
+                    
+                    Log.Info($"[Guided Hiring] Cross-culture search failed for {heroClass.ID} - no viable upgrade paths found");
+                }
+            }
+
+            // FALLBACK: Use legacy system when no class-guided hiring is possible
+            Log.Info($"[Guided Hiring] Falling back to legacy system for {hero.Name}");
+            return GetAvailableTroopsLegacy(hero, settings);
+        }
+        
+        /// <summary>
+        /// Finds tier 1 (basic) troops from a specific culture that can eventually upgrade to match the hero class.
+        /// This ensures we hire tier 1 troops but on the right upgrade path.
+        /// </summary>
+        private List<CharacterObject> FindTier1TroopsForHeroClass(HeroClassDef heroClass, CultureObject culture, RetinueSettings settings)
+        {
+            var tier1Troops = new List<CharacterObject>();
+            
+            // Get basic troops from this culture
+            var candidateTroops = new List<CharacterObject>();
+            if (settings.UseBasicTroops && culture.BasicTroop != null)
+                candidateTroops.Add(culture.BasicTroop);
+            if (settings.UseEliteTroops && culture.EliteBasicTroop != null)
+                candidateTroops.Add(culture.EliteBasicTroop);
+            
+            // Check each basic troop to see if it can eventually upgrade to the desired class
+            foreach (var troop in candidateTroops)
+            {
+                var troopInfo = TroopTreeIndex.GetTroopInfo(troop);
+                if (troopInfo != null && CanTroopEventuallyBecomeClass(troopInfo, heroClass))
+                {
+                    tier1Troops.Add(troop);
+                }
+            }
+            
+            return tier1Troops;
+        }
+        
+        /// <summary>
+        /// Checks if a troop can eventually upgrade to become compatible with the hero class.
+        /// Uses the TroopTreeIndex data to determine upgrade possibilities.
+        /// </summary>
+        private bool CanTroopEventuallyBecomeClass(TroopTreeIndex.TroopInfo troopInfo, HeroClassDef heroClass)
+        {
+            var heroFormation = heroClass.Formation?.ToLower();
+            
+            return heroFormation switch
+            {
+                "cavalry" or "lightcavalry" or "heavycavalry" => troopInfo.CanBecomeCavalry,
+                "ranged" => troopInfo.CanBecomeArcher,
+                "horsearcher" => troopInfo.CanBecomeHorseArcher,
+                "infantry" or "heavyinfantry" => troopInfo.CanBecomeFormation(FormationClass.Infantry) || 
+                                                troopInfo.CanBecomeFormation(FormationClass.HeavyInfantry),
+                "skirmisher" => troopInfo.CanBecomeFormation(FormationClass.Skirmisher),
+                _ => true // Unknown class, allow all
+            };
+        }
+
+        /// <summary>
+        /// Legacy 4-Tier Fallback System for retinue hiring (kept as backup)
         /// Tier 1: Perfect match (hero culture + hero class)
         /// Tier 2: Cross-culture fallback (all cultures + hero class)  
         /// Tier 3: Relaxed class matching (hero culture + any troop type)
         /// Tier 4: Infantry fallback (guaranteed to work)
         /// </summary>
-        private List<CharacterObject> GetAvailableTroopsWithFallback(Hero hero, RetinueSettings settings)
+        private List<CharacterObject> GetAvailableTroopsLegacy(Hero hero, RetinueSettings settings)
         {
             var heroClass = settings.HireByHeroClass ? GetClass(hero) : null;
             
@@ -1517,7 +1636,40 @@ namespace BLTAdoptAHero
 
             var upgradeTargets = currentTroop.UpgradeTargets.ToList();
             
-            // Find upgrade targets that are compatible with the hero's class
+            // Enhanced: Use TroopTreeIndex for intelligent upgrade selection
+            var bestUpgrades = new List<CharacterObject>();
+            var heroFormation = heroClass.Formation?.ToLower();
+            
+            // First, try to find upgrades that can eventually become the desired formation using the index
+            foreach (var upgrade in upgradeTargets)
+            {
+                var troopInfo = TroopTreeIndex.GetTroopInfo(upgrade);
+                if (troopInfo != null)
+                {
+                    bool canBecome = heroFormation switch
+                    {
+                        "cavalry" or "lightcavalry" or "heavycavalry" => troopInfo.CanBecomeCavalry,
+                        "ranged" => troopInfo.CanBecomeArcher,
+                        "horsearcher" => troopInfo.CanBecomeHorseArcher,
+                        "infantry" or "heavyinfantry" => troopInfo.CanBecomeFormation(FormationClass.Infantry) || 
+                                                        troopInfo.CanBecomeFormation(FormationClass.HeavyInfantry),
+                        "skirmisher" => troopInfo.CanBecomeFormation(FormationClass.Skirmisher),
+                        _ => true // Unknown class, allow all
+                    };
+                    
+                    if (canBecome)
+                    {
+                        bestUpgrades.Add(upgrade);
+                    }
+                }
+            }
+            
+            if (bestUpgrades.Any())
+            {
+                return bestUpgrades.SelectRandom();
+            }
+            
+            // Fallback to legacy compatibility check
             var compatibleUpgrades = upgradeTargets.Where(upgrade => IsTroopCompatibleWithHeroClass(upgrade, heroClass)).ToList();
             
             if (compatibleUpgrades.Any())
@@ -1525,7 +1677,13 @@ namespace BLTAdoptAHero
                 return compatibleUpgrades.SelectRandom();
             }
             
-            // If no compatible upgrades found, provide specific fallbacks based on class type
+            // Enhanced fallback with specific formation guidance
+            return SelectClassGuidedUpgradeFallback(currentTroop, heroClass);
+        }
+
+        private static CharacterObject SelectClassGuidedUpgradeFallback(CharacterObject currentTroop, HeroClassDef heroClass)
+        {
+            var upgradeTargets = currentTroop.UpgradeTargets.ToList();
             var heroFormation = heroClass.Formation?.ToLower();
             
             // For pure ranged classes, use upgrade path analysis to ensure we can reach archers
@@ -1562,8 +1720,53 @@ namespace BLTAdoptAHero
                     return horseArcherUpgrades.SelectRandom();
             }
             
+            // For infantry classes, accept any foot soldier upgrades
+            if (heroFormation == "infantry" || heroFormation == "heavyinfantry")
+            {
+                var infantryUpgrades = upgradeTargets.Where(u => 
+                    (u.DefaultFormationClass == FormationClass.Infantry ||
+                     u.DefaultFormationClass == FormationClass.HeavyInfantry ||
+                     u.DefaultFormationClass == FormationClass.Skirmisher) && !u.IsMounted).ToList();
+                    
+                if (infantryUpgrades.Any())
+                    return infantryUpgrades.SelectRandom();
+            }
+            
+            // For skirmisher classes (including berserker), accept light infantry upgrades
+            if (heroFormation == "skirmisher")
+            {
+                var skirmisherUpgrades = upgradeTargets.Where(u => 
+                    u.DefaultFormationClass == FormationClass.Skirmisher && !u.IsMounted).ToList();
+                    
+                if (skirmisherUpgrades.Any())
+                    return skirmisherUpgrades.SelectRandom();
+                    
+                // If no skirmisher upgrades, fall back to any infantry
+                var anyInfantryUpgrades = upgradeTargets.Where(u => 
+                    (u.DefaultFormationClass == FormationClass.Infantry ||
+                     u.DefaultFormationClass == FormationClass.HeavyInfantry) && !u.IsMounted).ToList();
+                     
+                if (anyInfantryUpgrades.Any())
+                    return anyInfantryUpgrades.SelectRandom();
+            }
+            
             // For strict class adherence, return null if no appropriate upgrades found
             // This prevents upgrading to incompatible unit types
+            
+            // HOWEVER: Add a final safety fallback for very basic troops (Tier 1-2) that should always be able to upgrade
+            // This prevents the money-theft bug for low-tier troops that should have valid upgrade paths
+            if (currentTroop.Tier <= 2)
+            {
+                // For very low tier troops, allow any reasonable infantry upgrade as emergency fallback
+                var emergencyInfantryFallback = upgradeTargets.Where(u => 
+                    (u.DefaultFormationClass == FormationClass.Infantry ||
+                     u.DefaultFormationClass == FormationClass.HeavyInfantry ||
+                     u.DefaultFormationClass == FormationClass.Skirmisher) && !u.IsMounted).ToList();
+                     
+                if (emergencyInfantryFallback.Any())
+                    return emergencyInfantryFallback.SelectRandom();
+            }
+            
             return null;
         }
 

@@ -1,0 +1,21 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build BannerlordTwitch Solution",
+			"type": "shell",
+			"command": "C:\\Program Files\\JetBrains\\JetBrains Rider 2025.2.2.1\\tools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+			"args": [
+				"BannerlordTwitch\\BannerlordTwitch.sln",
+				"/p:Configuration=Debug",
+				"/p:Platform=\"Any CPU\"",
+				"/verbosity:minimal"
+			],
+			"group": "build",
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"isBackground": false
+		}
+	]
+}
