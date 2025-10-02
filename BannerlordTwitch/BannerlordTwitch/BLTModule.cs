@@ -95,8 +95,26 @@ namespace BannerlordTwitch
                     ActionManager.Init();
                     Log.LogFeedSystem("{=5G73vqNS}Action Manager initialized".Translate());
                     
-                    // Update checker temporarily disabled for compatibility
-                    // TODO: Re-enable after troubleshooting loading issues
+                    // Re-enable update checker (runs asynchronously to avoid blocking the main menu)
+                    Task.Run(async () =>
+                    {
+                        try
+                        {
+                            var updateInfo = await UpdateChecker.CheckForUpdatesAsync();
+                            if (updateInfo?.IsUpdateAvailable == true)
+                            {
+                                UpdateNotificationHelper.ShowUpdateNotification(updateInfo.LatestVersion, updateInfo.CurrentVersion, updateInfo.DownloadUrl);
+                            }
+                            else
+                            {
+                                UpdateNotificationHelper.ShowUpToDateNotification(updateInfo?.CurrentVersion ?? "unknown");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Trace($"Update check background task failed: {ex.Message}");
+                        }
+                    });
                 }
                 catch (Exception ex)
                 {
