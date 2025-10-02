@@ -18,6 +18,9 @@ BannerlordTwitch/bin/
 
 deploy/
 
+# Release packages (published manually)
+BannerlordTwitch/deploy/
+
 build/
 
 BannerlordTwitch/BannerlordTwitch/obj/

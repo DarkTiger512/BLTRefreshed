@@ -33,7 +33,7 @@ Get-ChildItem -Path ".\BLT*" -Recurse | Unblock-File
 
 ---
 
-# Bannerlord Twitch (BLT) - Enhanced Edition v4.9.1
+# Bannerlord Twitch (BLT) - Enhanced Edition v4.9.2
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
 
 ## Enhanced Edition Features (v4.9.0)
@@ -42,7 +42,7 @@ This enhanced version includes significant improvements to the retinue and hero 
 ### **Smart Retinue Hiring by Hero Class**
 - **Hire by Hero Class**: Retinue troops are now automatically selected based on your hero's class
   - **Archer heroes** recruit archer troops (ranged units)
-  - **Cavalry heroes** recruit mounted troops (cavalry, horse archers)
+  - **Cavalry heroes** recruit mounted troops (cavalry only, excluding horse archers)
   - **Infantry heroes** recruit foot soldiers (infantry, heavy infantry)
   - **Horse Archer heroes** recruit specialized mounted archers
   - **Skirmisher heroes** recruit versatile light infantry

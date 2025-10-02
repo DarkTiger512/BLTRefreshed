@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using BannerlordTwitch.Models;
@@ -66,7 +67,17 @@ namespace BannerlordTwitch
                     return null;
                 }
                 Debug.Print($"[BLT] Resolved assembly {args.Name} with {assemblyPath}");
-                return Assembly.LoadFrom(assemblyPath);
+                try
+                {
+                    return Assembly.LoadFrom(assemblyPath);
+                }
+                catch (Exception ex) when (ex.Message.Contains("blocked") || ex.Message.Contains("security") || ex.Message.Contains("trust"))
+                {
+                    // This is likely due to Windows blocking downloaded DLLs
+                    ShowDllBlockedNotification();
+                    Debug.Print($"[BLT] Assembly blocked by Windows security: {assemblyPath}");
+                    throw; // Re-throw to maintain original behavior
+                }
             };
         }
 
@@ -203,6 +214,22 @@ namespace BannerlordTwitch
                 Log.Exception($"TwitchService could not start: {ex.Message}", ex);
                 return false;
             }
+        }
+
+        private static void ShowDllBlockedNotification()
+        {
+            Task.Run(() =>
+            {
+                // Wait a moment for the game to fully load before showing notification
+                Thread.Sleep(2000);
+                
+                InformationManager.ShowInquiry(
+                    new InquiryData(
+                        "{=x8mK3pNj}BLT Files Blocked by Windows".Translate(),
+                        "{=9Tz4kL5w}Windows has blocked BLT files for security. To fix this:\n\n1. Navigate to your Bannerlord Modules folder\n2. Open PowerShell as Administrator\n3. Run: Get-ChildItem -Path \".\\BLT*\" -Recurse | Unblock-File\n4. Restart Bannerlord\n\nThis is normal Windows behavior for downloaded files.".Translate(),
+                        true, false, "{=hpFXglKx}Okay".Translate(), null,
+                        () => { }, () => { }), true);
+            });
         }
     }
 }
