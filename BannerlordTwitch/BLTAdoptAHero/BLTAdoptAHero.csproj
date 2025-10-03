@@ -310,6 +310,7 @@
     <Compile Include="Actions\AddGoldToHero.cs" />
     <Compile Include="Actions\ItemStats.cs" />
     <Compile Include="Actions\HeroToHeroGold.cs" />
+    <Compile Include="Actions\SimGold.cs" />
     <Compile Include="Actions\AdoptAHero.cs" />
     <Compile Include="Actions\AttributePoints.cs" />
     <Compile Include="Actions\ClanManagement.cs" />
@@ -386,6 +387,7 @@
     <Compile Include="Util\HeroExtensions.cs" />
     <Compile Include="Util\Patches.cs" />
     <Compile Include="Util\TournamentHelpers.cs" />
+    <Compile Include="Util\TroopTreeIndex.cs" />
     <Compile Include="Util\UIExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
