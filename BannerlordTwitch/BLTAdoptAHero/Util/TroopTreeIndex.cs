@@ -223,7 +223,30 @@ namespace BLTAdoptAHero.Util
             
             foreach (var upgrade in allUpgrades)
             {
-                possibleFormations.Add(upgrade.DefaultFormationClass);
+                // Add formation class only if the upgrade meets formation-specific constraints
+                var formation = upgrade.DefaultFormationClass;
+                
+                // Special constraints for specific formations
+                bool isValidForFormation = formation switch
+                {
+                    // Skirmishers must be non-mounted
+                    FormationClass.Skirmisher => !upgrade.IsMounted,
+                    // Ranged (foot archers) must be non-mounted
+                    FormationClass.Ranged => !upgrade.IsMounted,
+                    // Horse archers must be mounted
+                    FormationClass.HorseArcher => upgrade.IsMounted,
+                    // Cavalry formations must be mounted
+                    FormationClass.Cavalry or FormationClass.HeavyCavalry or FormationClass.LightCavalry => upgrade.IsMounted,
+                    // Infantry can be either (though typically non-mounted)
+                    FormationClass.Infantry or FormationClass.HeavyInfantry => true,
+                    // Unknown formations - allow all
+                    _ => true
+                };
+                
+                if (isValidForFormation)
+                {
+                    possibleFormations.Add(formation);
+                }
             }
             
             troopInfo.PossibleFormations = possibleFormations.ToList();

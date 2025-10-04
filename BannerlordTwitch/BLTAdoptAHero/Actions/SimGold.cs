@@ -28,9 +28,9 @@ namespace BLTAdoptAHero.Actions
 
             public void GenerateDocumentation(IDocumentationGenerator generator)
             {
-                generator.PropertyValuePair("Default Amount", $"{DefaultAmount}{Naming.Gold}");
+                generator.PropertyValuePair("Default Amount", $"{DefaultAmount} gold");
                 if (MaxAmount > 0)
-                    generator.PropertyValuePair("Maximum Amount", $"{MaxAmount}{Naming.Gold}");
+                    generator.PropertyValuePair("Maximum Amount", $"{MaxAmount} gold");
                 else
                     generator.PropertyValuePair("Maximum Amount", "Unlimited");
             }
@@ -49,7 +49,7 @@ namespace BLTAdoptAHero.Actions
                 var args = context.Args.Trim();
                 if (!int.TryParse(args, out amount) || amount <= 0)
                 {
-                    onFailure("{=simgold007}Invalid amount. Please specify a positive number.".Translate());
+                    onFailure("Invalid amount. Please specify a positive number.");
                     return;
                 }
             }
@@ -57,20 +57,14 @@ namespace BLTAdoptAHero.Actions
             // Check max amount limit if set
             if (settings.MaxAmount > 0 && amount > settings.MaxAmount)
             {
-                onFailure("{=simgold008}Amount too large. Maximum is {MaxAmount}{GoldIcon}".Translate(
-                    ("MaxAmount", settings.MaxAmount),
-                    ("GoldIcon", Naming.Gold)));
+                onFailure($"Amount too large. Maximum is {settings.MaxAmount} gold.");
                 return;
             }
 
             // Give the gold
             int newGold = BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, amount);
 
-            onSuccess("{=simgold009}[SIM] Added {Amount}{GoldIcon} to {HeroName}. New balance: {NewGold}{GoldIcon}".Translate(
-                ("Amount", amount),
-                ("GoldIcon", Naming.Gold),
-                ("HeroName", adoptedHero.FirstName),
-                ("NewGold", newGold)));
+            onSuccess($"[SIM] Added {amount} gold to {adoptedHero.FirstName}. New balance: {newGold} gold.");
         }
     }
 }

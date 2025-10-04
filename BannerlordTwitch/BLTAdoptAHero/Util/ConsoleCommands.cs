@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch.Util;
+using BLTAdoptAHero;
 using HarmonyLib;
 using JetBrains.Annotations;
 using SandBox.View.Map;
@@ -150,6 +151,184 @@ namespace BLTAdoptAHero.Util
             // Game.Current.GameStateManager.PushState(partyState);
 
             return "Heroes screen opened";
+        }
+
+        [CommandLineFunctionality.CommandLineArgumentFunction("debug_troop_tree", "blt")]
+        [UsedImplicitly]
+        public static string DebugTroopTree(List<string> args)
+        {
+            if (args.Count == 0)
+            {
+                return "Usage: blt.debug_troop_tree [culture_name] - Shows troop tree and hiring validation for culture (e.g., blt.debug_troop_tree sturgia)";
+            }
+
+            string cultureName = args[0].ToLower();
+            
+            // Find the culture
+            var culture = Campaign.Current?.ObjectManager?.GetObjectTypeList<CultureObject>()
+                ?.FirstOrDefault(c => c.StringId.ToLower().Contains(cultureName) || 
+                                     c.Name.ToString().ToLower().Contains(cultureName));
+            
+            if (culture == null)
+            {
+                var availableCultures = string.Join(", ", Campaign.Current?.ObjectManager?.GetObjectTypeList<CultureObject>()
+                    ?.Select(c => c.StringId) ?? new List<string>());
+                return $"Culture '{cultureName}' not found. Available: {availableCultures}";
+            }
+
+            var behavior = Campaign.Current?.GetCampaignBehavior<BLTAdoptAHeroCampaignBehavior>();
+            if (behavior == null)
+            {
+                return "BLTAdoptAHeroCampaignBehavior not found. Make sure BLTAdoptAHero is loaded.";
+            }
+            
+            var output = $"=== {culture.Name} ({culture.StringId}) Troop Tree & Hiring Debug ===\n";
+            output += $"\n*** CULTURE BASIC TROOPS ***\n";
+            output += $"BasicTroop: {(culture.BasicTroop != null ? culture.BasicTroop.Name.ToString() : "NONE")} ({(culture.BasicTroop != null ? culture.BasicTroop.StringId : "N/A")})\n";
+            output += $"EliteBasicTroop: {(culture.EliteBasicTroop != null ? culture.EliteBasicTroop.Name.ToString() : "NONE")} ({(culture.EliteBasicTroop != null ? culture.EliteBasicTroop.StringId : "N/A")})\n";
+            
+            // Get all basic troops for this culture
+            var basicTroops = Campaign.Current.ObjectManager.GetObjectTypeList<CharacterObject>()
+                .Where(t => t.Culture == culture && t.IsBasicTroop && !t.IsHero)
+                .OrderBy(t => t.Tier)
+                .ToList();
+
+            foreach (var troop in basicTroops)
+            {
+                output += $"\n{'='} {troop.Name} (T{troop.Tier}) - {troop.StringId} {'='}\n";
+                
+                // Show if this is BasicTroop or EliteBasicTroop
+                bool isBasicTroop = culture.BasicTroop?.StringId == troop.StringId;
+                bool isEliteTroop = culture.EliteBasicTroop?.StringId == troop.StringId;
+                
+                if (isBasicTroop)
+                    output += $"  *** THIS IS BasicTroop FOR {culture.Name} ***\n";
+                if (isEliteTroop)
+                    output += $"  *** THIS IS EliteBasicTroop FOR {culture.Name} ***\n";
+                if (!isBasicTroop && !isEliteTroop)
+                    output += $"  (Not a culture recruitment troop)\n";
+                
+                output += $"\n  TROOP STATS:\n";
+                output += $"    Formation: {troop.DefaultFormationClass}\n";
+                output += $"    Mounted: {troop.IsMounted}\n";
+                output += $"    Tier: {troop.Tier}\n";
+                
+                // Show what's in the index for this troop
+                var troopInfo = TroopTreeIndex.GetTroopInfo(troop);
+                if (troopInfo != null)
+                {
+                    output += $"\n  TROOP TREE INDEX:\n";
+                    output += $"    Can become Cavalry: {troopInfo.CanBecomeCavalry}\n";
+                    output += $"    Can become Archer: {troopInfo.CanBecomeArcher}\n";
+                    output += $"    Can become Horse Archer: {troopInfo.CanBecomeHorseArcher}\n";
+                    output += $"    Possible Formations: {string.Join(", ", troopInfo.PossibleFormations)}\n";
+                }
+                else
+                {
+                    output += $"\n  **NOT IN TROOP TREE INDEX**\n";
+                }
+                
+                // Show upgrade paths
+                var upgrades = troop.UpgradeTargets;
+                if (upgrades?.Length > 0)
+                {
+                    output += $"\n  UPGRADE PATHS:\n";
+                    foreach (var upgrade in upgrades)
+                    {
+                        output += $"    → {upgrade.Name} (T{upgrade.Tier}) {upgrade.DefaultFormationClass} {(upgrade.IsMounted ? "MOUNTED" : "")}\n";
+                    }
+                }
+                else
+                {
+                    output += $"\n  UPGRADE PATHS: None (final tier)\n";
+                }
+                
+                // Show final destinations
+                var finalDestinations = behavior.GetFinalTierDestinationsForDebug(troop);
+                if (finalDestinations.Any())
+                {
+                    output += $"\n  FINAL DESTINATIONS (Tier 5-6):\n";
+                    foreach (var dest in finalDestinations)
+                    {
+                        output += $"    ⟹ {dest.Name} (T{dest.Tier}) {dest.DefaultFormationClass} {(dest.IsMounted ? "MOUNTED" : "")}\n";
+                    }
+                }
+                else
+                {
+                    output += $"\n  FINAL DESTINATIONS: None or already final tier\n";
+                }
+                
+                // VALIDATION CHECKS - Show if this troop would be hired for different hero classes
+                output += $"\n  HIRING VALIDATION (Would this be hired for...):\n";
+                
+                var heroClasses = new[] 
+                { 
+                    ("Skirmisher", "skirmisher"), 
+                    ("Infantry", "infantry"), 
+                    ("Cavalry", "cavalry"),
+                    ("Horse Archer", "horsearcher"),
+                    ("Ranged", "ranged")
+                };
+                
+                foreach (var (className, formation) in heroClasses)
+                {
+                    // Create a mock hero class for testing
+                    var testClass = new HeroClassDef { Formation = formation };
+                    
+                    if (troopInfo != null)
+                    {
+                        bool canBeHired = behavior.TestCanTroopEventuallyBecomeClass(troopInfo, testClass);
+                        output += $"    {className}: {(canBeHired ? "✓ YES - WOULD BE HIRED" : "✗ NO - REJECTED")}\n";
+                        
+                        if (!canBeHired && finalDestinations.Any())
+                        {
+                            // Show WHY it was rejected
+                            var incompatibleDests = finalDestinations.Where(dest =>
+                            {
+                                return formation.ToLower() switch
+                                {
+                                    "skirmisher" or "infantry" or "heavyinfantry" => 
+                                        dest.IsMounted || (dest.DefaultFormationClass != FormationClass.Infantry && 
+                                                          dest.DefaultFormationClass != FormationClass.HeavyInfantry),
+                                    "cavalry" or "lightcavalry" or "heavycavalry" =>
+                                        !dest.IsMounted || dest.DefaultFormationClass == FormationClass.HorseArcher,
+                                    "horsearcher" =>
+                                        dest.DefaultFormationClass != FormationClass.HorseArcher,
+                                    "ranged" =>
+                                        dest.IsMounted || dest.DefaultFormationClass != FormationClass.Ranged,
+                                    _ => false
+                                };
+                            }).ToList();
+                            
+                            if (incompatibleDests.Any())
+                            {
+                                output += $"      REASON: Has incompatible final destination(s):\n";
+                                foreach (var bad in incompatibleDests)
+                                {
+                                    output += $"        ✗ {bad.Name} ({bad.DefaultFormationClass}{(bad.IsMounted ? " MOUNTED" : "")})\n";
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        output += $"    {className}: ? UNKNOWN (not in index)\n";
+                    }
+                }
+            }
+            
+            // Write to log file for easier reading
+            string logPath = $"../../Modules/BLTAdoptAHero/debug_troop_tree_{culture.StringId}.txt";
+            try
+            {
+                System.IO.File.WriteAllText(logPath, output);
+                InformationManager.DisplayMessage(new InformationMessage($"Troop tree debug written to: {logPath}"));
+                return $"Debug analysis for {culture.Name} written to: {logPath}";
+            }
+            catch (System.Exception ex)
+            {
+                return $"Failed to write debug file: {ex.Message}";
+            }
         }
     }
 }

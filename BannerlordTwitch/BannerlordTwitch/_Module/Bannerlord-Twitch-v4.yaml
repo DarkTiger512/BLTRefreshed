@@ -67,7 +67,7 @@ Commands:
   ID: e317c63a-5a1f-455c-b953-6dcb92dc9424
   ModeratorOnly: false
   Name: '{=0grO6hB5}adopt'
-  RespondInDM: false
+  RespondInDM: true
   RespondInOverlay: true
   RespondInTwitch: true
 - Documentation: Adopt a randomly selected Hero, filtered by Clan
@@ -726,9 +726,9 @@ Commands:
   ID: afd51f50-caaf-40a8-bf29-d75447e34ef4
   ModeratorOnly: false
   Name: '{=kG6yjBBR}retinuelist'
-  RespondInDM: false
+  RespondInDM: true
   RespondInOverlay: true
-  RespondInTwitch: false
+  RespondInTwitch: true
 - Documentation: ''
   Enabled: true
   Handler: RetireMyHero
@@ -4332,8 +4332,14 @@ SimTesting:
     ID: 7698ddba-b00b-4243-bd54-3dc97a4e73cf
     Type: Reward
     Weight: 0
+  - Args: horsearcher
+    Enabled: true
+    Id: '{=nV9iIsDC}class'
+    ID: 0c4706d4-882f-40ba-b2ec-6077a957fc78
+    Type: Command
+    Weight: 1
   - Args: ''
-    Enabled: false
+    Enabled: true
     Id: retinue
     ID: a9933fab-58d4-492a-93fb-34c0d6606c09
     Type: Command
@@ -4344,12 +4350,6 @@ SimTesting:
     ID: ca586ddf-b9b0-4c59-954c-d166f5c9b644
     Type: Command
     Weight: 0
-  - Args: '{=4tflp34a}archer'
-    Enabled: true
-    Id: '{=nV9iIsDC}class'
-    ID: 0c4706d4-882f-40ba-b2ec-6077a957fc78
-    Type: Command
-    Weight: 1
   - Args: ''
     Enabled: false
     Id: Summon
@@ -4372,13 +4372,13 @@ SimTesting:
   IntervalMinMS: 50
   Use:
   - Args: ''
-    Enabled: false
+    Enabled: true
     Id: attack
     ID: 0711448a-2d82-42f2-b0e9-3e22faef2850
     Type: Command
     Weight: 0.5
   - Args: ''
-    Enabled: false
+    Enabled: true
     Id: summon
     ID: 8e98ab07-c93a-42a2-8a58-278028b48565
     Type: Command
@@ -4444,7 +4444,7 @@ SimTesting:
     Type: Command
     Weight: 0.05
   - Args: '{=m8bz4drX}infantry'
-    Enabled: false
+    Enabled: true
     Id: '{=nV9iIsDC}class'
     ID: a67ca1e9-d434-4af1-a3b6-69979b72d804
     Type: Command
@@ -4552,4 +4552,4 @@ SimTesting:
     Type: Command
     Weight: 0.1
   UserCount: 1
-  UserStayTime: 30000
+  UserStayTime: 300000
