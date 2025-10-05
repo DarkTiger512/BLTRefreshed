@@ -1431,10 +1431,7 @@ namespace BLTAdoptAHero
                 "cavalry" or "lightcavalry" or "heavycavalry" =>
                     finalDestinations.Any(dest =>
                         dest.IsMounted &&
-                        dest.DefaultFormationClass != FormationClass.HorseArcher &&
-                        (dest.DefaultFormationClass == FormationClass.Cavalry ||
-                         dest.DefaultFormationClass == FormationClass.HeavyCavalry ||
-                         dest.DefaultFormationClass == FormationClass.LightCavalry)),
+                        dest.DefaultFormationClass != FormationClass.HorseArcher),
                 
                 "horsearcher" =>
                     finalDestinations.Any(dest =>
@@ -1739,10 +1736,7 @@ namespace BLTAdoptAHero
                     "cavalry" or "lightcavalry" or "heavycavalry" => 
                         finalDestinations.Any(dest => 
                             dest.IsMounted && 
-                            dest.DefaultFormationClass != FormationClass.HorseArcher &&
-                            (dest.DefaultFormationClass == FormationClass.Cavalry ||
-                             dest.DefaultFormationClass == FormationClass.HeavyCavalry ||
-                             dest.DefaultFormationClass == FormationClass.LightCavalry)),
+                            dest.DefaultFormationClass != FormationClass.HorseArcher),
                     
                     "horsearcher" => 
                         finalDestinations.Any(dest => 
