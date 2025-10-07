@@ -356,8 +356,13 @@
     <Compile Include="Behaviors\BLTClanBannerSaveBehavior.cs" />
     <Compile Include="Behaviors\BLTClanBehavior.cs" />
     <Compile Include="Behaviors\PowerHandler.cs" />
+    <Compile Include="Behaviors\RandomEventManager.cs" />
     <Compile Include="BLTAdoptAHero.cs" />
+    <Compile Include="Events\RandomEventBase.cs" />
+    <Compile Include="Events\PriestCrusadeEvent.cs" />
+    <Compile Include="Events\ImmortalEncounterEvent.cs" />
     <Compile Include="GlobalConfigs\GlobalCommonConfig.cs" />
+    <Compile Include="GlobalConfigs\RandomEventsGlobalConfig.cs" />
     <Compile Include="GlobalConfigs\GlobalHeroClassConfig.cs" />
     <Compile Include="GlobalConfigs\GlobalHeroPowerConfig.cs" />
     <Compile Include="GlobalConfigs\GlobalTournamentConfig.cs" />
