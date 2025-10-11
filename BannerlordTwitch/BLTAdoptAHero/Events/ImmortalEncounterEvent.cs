@@ -582,12 +582,15 @@ namespace BLTAdoptAHero.Events
                 Log.Info($"[Immortal Encounter] Created mobile party for {leader.Name}");
 
                 // Get all high-tier troops from the game (tier 5-6 = elite troops)
+                // IMPORTANT: Only select troops with valid equipment to avoid invisible gear
                 var culture = leader.Culture;
                 var allTroops = CharacterObject.All.Where(c => 
                     c.IsHero == false && 
                     c.Occupation == Occupation.Soldier &&
                     c.Culture == culture &&
-                    c.Tier >= 5 // Tier 5-6 troops (elite)
+                    c.Tier >= 5 && // Tier 5-6 troops (elite)
+                    c.BattleEquipments != null && c.BattleEquipments.Any() && // Must have equipment
+                    c.BattleEquipments.Any(eq => eq.Horse.Item == null) // Exclude cavalry to avoid horse equipment issues
                 ).ToList();
 
                 // Fallback to any culture if player culture has no high tier troops
@@ -596,7 +599,9 @@ namespace BLTAdoptAHero.Events
                     allTroops = CharacterObject.All.Where(c => 
                         c.IsHero == false && 
                         c.Occupation == Occupation.Soldier &&
-                        c.Tier >= 5
+                        c.Tier >= 5 &&
+                        c.BattleEquipments != null && c.BattleEquipments.Any() &&
+                        c.BattleEquipments.Any(eq => eq.Horse.Item == null)
                     ).ToList();
                 }
 
@@ -607,7 +612,9 @@ namespace BLTAdoptAHero.Events
                         c.IsHero == false && 
                         c.Occupation == Occupation.Soldier &&
                         c.Culture == culture &&
-                        c.Tier >= 4
+                        c.Tier >= 4 &&
+                        c.BattleEquipments != null && c.BattleEquipments.Any() &&
+                        c.BattleEquipments.Any(eq => eq.Horse.Item == null)
                     ).ToList();
                 }
 
