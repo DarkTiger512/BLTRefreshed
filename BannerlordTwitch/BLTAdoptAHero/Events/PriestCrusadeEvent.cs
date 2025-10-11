@@ -12,6 +12,7 @@ using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
+using TaleWorlds.ObjectSystem;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace BLTAdoptAHero.Events
@@ -173,62 +174,173 @@ namespace BLTAdoptAHero.Events
 
         private Hero CreatePriestHero(Clan clan)
         {
-            // Create a character template
-            var culture = Hero.MainHero.Culture;
-            var template = culture.NotableAndWandererTemplates
-                .FirstOrDefault(t => t.Occupation == Occupation.Wanderer)
-                ?? culture.NotableAndWandererTemplates.FirstOrDefault();
-
-            if (template == null)
+            try
             {
-                Log.Error("Could not find character template for priest");
+                // Create a MALE character template for the priest
+                var culture = Hero.MainHero.Culture;
+                var template = culture.NotableAndWandererTemplates
+                    .FirstOrDefault(t => !t.IsFemale && (t.Occupation == Occupation.Wanderer || t.Occupation == Occupation.Preacher))
+                    ?? culture.NotableAndWandererTemplates.FirstOrDefault(t => !t.IsFemale);
+
+                if (template == null)
+                {
+                    Log.Error("[Priest Crusade Event] Could not find male character template for priest");
+                    return null;
+                }
+
+                // Create the priest hero
+                var priest = HeroCreator.CreateSpecialHero(template, clan.HomeSettlement);
+                priest.SetName(new TextObject(config.PriestName), new TextObject(config.PriestName));
+                
+                // Make him clan leader
+                clan.SetLeader(priest);
+                
+                // Give him some skills
+                priest.HeroDeveloper.SetInitialSkillLevel(DefaultSkills.Leadership, 200);
+                priest.HeroDeveloper.SetInitialSkillLevel(DefaultSkills.Tactics, 150);
+                priest.HeroDeveloper.SetInitialSkillLevel(DefaultSkills.Charm, 180);
+                
+                // Equip the priest with modest tier 2-3 equipment (priestly robes and basic weapons)
+                EquipPriest(priest);
+                
+                Log.Info($"[Priest Crusade Event] Created priest {priest.Name} with tier 2-3 equipment");
+                
+                return priest;
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Priest Crusade Event] Error creating priest: {ex.Message}\n{ex.StackTrace}");
                 return null;
             }
+        }
 
-            // Create the priest hero
-            var priest = HeroCreator.CreateSpecialHero(template, clan.HomeSettlement);
-            priest.SetName(new TextObject(config.PriestName), new TextObject(config.PriestName));
-            
-            // Make him clan leader
-            clan.SetLeader(priest);
-            
-            // Give him some skills
-            priest.HeroDeveloper.SetInitialSkillLevel(DefaultSkills.Leadership, 200);
-            priest.HeroDeveloper.SetInitialSkillLevel(DefaultSkills.Tactics, 150);
-            priest.HeroDeveloper.SetInitialSkillLevel(DefaultSkills.Charm, 180);
-            
-            return priest;
+        private void EquipPriest(Hero priest)
+        {
+            try
+            {
+                // Get tier 2-3 equipment for the priest (modest, priestly gear)
+                var equipment = new Equipment();
+                
+                // Get all tier 2-3 items using MBObjectManager
+                var weapons = MBObjectManager.Instance.GetObjectTypeList<ItemObject>()
+                    .Where(i => i.Type == ItemObject.ItemTypeEnum.OneHandedWeapon || i.Type == ItemObject.ItemTypeEnum.TwoHandedWeapon)
+                    .Where(i => i.Tier >= ItemObject.ItemTiers.Tier2 && i.Tier <= ItemObject.ItemTiers.Tier3)
+                    .ToList();
+                
+                var helmets = MBObjectManager.Instance.GetObjectTypeList<ItemObject>()
+                    .Where(i => i.Type == ItemObject.ItemTypeEnum.HeadArmor)
+                    .Where(i => i.Tier >= ItemObject.ItemTiers.Tier2 && i.Tier <= ItemObject.ItemTiers.Tier3)
+                    .ToList();
+                
+                var armors = MBObjectManager.Instance.GetObjectTypeList<ItemObject>()
+                    .Where(i => i.Type == ItemObject.ItemTypeEnum.BodyArmor)
+                    .Where(i => i.Tier >= ItemObject.ItemTiers.Tier2 && i.Tier <= ItemObject.ItemTiers.Tier3)
+                    .ToList();
+                
+                var boots = MBObjectManager.Instance.GetObjectTypeList<ItemObject>()
+                    .Where(i => i.Type == ItemObject.ItemTypeEnum.LegArmor)
+                    .Where(i => i.Tier >= ItemObject.ItemTiers.Tier2 && i.Tier <= ItemObject.ItemTiers.Tier3)
+                    .ToList();
+                
+                var capes = MBObjectManager.Instance.GetObjectTypeList<ItemObject>()
+                    .Where(i => i.Type == ItemObject.ItemTypeEnum.Cape)
+                    .Where(i => i.Tier >= ItemObject.ItemTiers.Tier2 && i.Tier <= ItemObject.ItemTiers.Tier3)
+                    .ToList();
+
+                // Equip with modest gear
+                if (weapons.Any())
+                    equipment.AddEquipmentToSlotWithoutAgent(EquipmentIndex.Weapon0, new EquipmentElement(weapons.GetRandomElement()));
+                if (helmets.Any())
+                    equipment.AddEquipmentToSlotWithoutAgent(EquipmentIndex.Head, new EquipmentElement(helmets.GetRandomElement()));
+                if (armors.Any())
+                    equipment.AddEquipmentToSlotWithoutAgent(EquipmentIndex.Body, new EquipmentElement(armors.GetRandomElement()));
+                if (boots.Any())
+                    equipment.AddEquipmentToSlotWithoutAgent(EquipmentIndex.Leg, new EquipmentElement(boots.GetRandomElement()));
+                if (capes.Any())
+                    equipment.AddEquipmentToSlotWithoutAgent(EquipmentIndex.Cape, new EquipmentElement(capes.GetRandomElement()));
+
+                // Set both battle and civilian equipment
+                priest.BattleEquipment.FillFrom(equipment);
+                priest.CivilianEquipment.FillFrom(equipment);
+                
+                Log.Info($"[Priest Crusade Event] Equipped {priest.Name} with tier 2-3 priestly gear");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Priest Crusade Event] Error equipping priest: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         private MobileParty CreateCrusaderArmy(Hero priest)
         {
-            // Calculate army size based on player's clan strength
-            int playerClanStrength = (int)Hero.MainHero.Clan.TotalStrength;
-            int targetArmySize = (int)((playerClanStrength * config.ArmySizePercent) / 100f);
-            targetArmySize = Math.Max(100, Math.Min(targetArmySize, 1000)); // Clamp between 100 and 1000
-
-            // Create the party
-            var party = priest.Clan.CreateNewMobileParty(priest);
-            Log.Info($"[Priest Crusade Event] Created mobile party for {priest.Name}");
-
-            // Add troops to the party
-            var culture = priest.Culture;
-            var eliteTroop = culture.EliteBasicTroop;
-            var basicTroop = culture.BasicTroop;
-
-            if (eliteTroop != null)
+            try
             {
-                party.MemberRoster.AddToCounts(eliteTroop, targetArmySize / 3);
+                // Calculate army size based on player's clan strength
+                int playerClanStrength = (int)Hero.MainHero.Clan.TotalStrength;
+                int targetArmySize = (int)((playerClanStrength * config.ArmySizePercent) / 100f);
+                targetArmySize = Math.Max(100, Math.Min(targetArmySize, 1000)); // Clamp between 100 and 1000
+
+                // Create the party
+                var party = priest.Clan.CreateNewMobileParty(priest);
+                Log.Info($"[Priest Crusade Event] Created mobile party for {priest.Name}");
+
+                // Get peasant mishmash troops - tier 1-3 from various cultures (with valid equipment)
+                var culture = priest.Culture;
+                
+                // Collect tier 1-3 troops with valid equipment from all cultures for variety
+                var allCrusaderTroops = CharacterObject.All.Where(c => 
+                    c.IsHero == false && 
+                    c.Occupation == Occupation.Soldier &&
+                    c.Tier >= 1 && c.Tier <= 3 && // Peasant tiers
+                    c.BattleEquipments != null && c.BattleEquipments.Any() && // Must have equipment
+                    c.BattleEquipments.Any(eq => eq.Horse.Item == null) // Exclude cavalry
+                ).ToList();
+
+                if (allCrusaderTroops.Any())
+                {
+                    // Create a true peasant mishmash - random groups from various cultures and tiers
+                    int remainingTroops = targetArmySize;
+                    int groupCount = Math.Min(8, allCrusaderTroops.Count); // Up to 8 different troop types for variety
+                    
+                    for (int i = 0; i < groupCount && remainingTroops > 0; i++)
+                    {
+                        var troopType = allCrusaderTroops[MBRandom.RandomInt(allCrusaderTroops.Count)];
+                        
+                        // Random group sizes to create a chaotic peasant mob feel
+                        int minGroupSize = Math.Max(1, remainingTroops / (groupCount * 2));
+                        int maxGroupSize = Math.Max(minGroupSize, remainingTroops / (groupCount - i));
+                        int count = MBRandom.RandomInt(minGroupSize, maxGroupSize + 1);
+                        count = Math.Min(count, remainingTroops);
+                        
+                        party.MemberRoster.AddToCounts(troopType, count);
+                        remainingTroops -= count;
+                        
+                        Log.Info($"[Priest Crusade Event] Added {count}x {troopType.Name} (Tier {troopType.Tier})");
+                    }
+                }
+                else
+                {
+                    // Fallback - use culture's basic troops
+                    Log.Info("[Priest Crusade Event] No valid low-tier troops found, using basic troops");
+                    var basicTroop = culture.BasicTroop;
+                    if (basicTroop != null)
+                    {
+                        party.MemberRoster.AddToCounts(basicTroop, targetArmySize);
+                    }
+                }
+
+                // Set party properties - allow them to move around
+                party.Ai.SetDoNotMakeNewDecisions(false);
+                
+                Log.Info($"[Priest Crusade Event] Created peasant crusader army with {party.MemberRoster.TotalManCount} troops");
+
+                return party;
             }
-            if (basicTroop != null)
+            catch (Exception ex)
             {
-                party.MemberRoster.AddToCounts(basicTroop, (targetArmySize * 2) / 3);
+                Log.Error($"[Priest Crusade Event] Error creating crusader army: {ex.Message}\n{ex.StackTrace}");
+                return null;
             }
-
-            // Set party properties
-            party.Ai.SetDoNotMakeNewDecisions(false);
-
-            return party;
         }
 
         private string GetRandomCrusadeQuote()

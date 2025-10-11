@@ -3912,7 +3912,7 @@ GlobalConfigs:
       ArmySizePercent: 120
       CooldownDays: 90
       CultName: Cult of the Eternal
-      Enabled: true
+      Enabled: false
       GoldRewardPerParticipant: 100000
       ImmortalName: The Immortal
       MinimumPlayerLevel: 1
@@ -3921,10 +3921,10 @@ GlobalConfigs:
       ArmySizePercent: 80
       CooldownDays: 60
       CrusadeClanName: Holy Crusaders
-      Enabled: false
+      Enabled: true
       MinimumKingdomTier: 1
       PriestName: Father Zealot
-      TriggerChance: 0.001
+      TriggerChance: 1
   Id: BLT Random Events Config
 Rewards:
 - Documentation: Adopt a randomly selected Hero, filtered by Culture.  Enter "list" to get a list of cultures
