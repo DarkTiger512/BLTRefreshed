@@ -1,10 +1,8 @@
 import argparse
 from lxml import etree
-import six
 from google.cloud import translate_v2
 import re
 import os
-import time
 import os.path
 import glob
 
@@ -84,7 +82,7 @@ def translate(source_file, language, language_code, subdir, service_account_file
         tchunk = translate_client.translate(c, source_language='en', target_language=language_code)
         ct = [t["translatedText"] for t in tchunk]
         translations.extend(ct)
-    print(f'100%')
+    print('100%')
 
     for tag, e, t, o in zip(source_string_tags, string_escapes, translations, strings):
         tag.set('text', unesc(t, e))
@@ -98,7 +96,7 @@ def translate(source_file, language, language_code, subdir, service_account_file
         target_strings_root = target_root.find('strings', ns_map)
         if target_strings_root is None:
             # Just save the translated source directly and return
-            print(INDENT + f'Target file has no "strings" element, replacing entirely')
+            print(INDENT + 'Target file has no "strings" element, replacing entirely')
             etree.ElementTree(source_root).write(target_file, encoding="utf-8", xml_declaration=True, pretty_print=True)
             return
         # Do merging by id

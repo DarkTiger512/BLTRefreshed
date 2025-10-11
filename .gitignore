@@ -3,6 +3,12 @@ Bannersample/bin/
 Bannersample/obj/
 BannerlordTwitch/obj/
 
+# Python virtual environment
+AutoTranslate/venv/
+AutoTranslate/.venv/
+AutoTranslate/__pycache__/
+AutoTranslate/*.pyc
+
 # NuGet executable (should be downloaded on demand)
 nuget.exe
 

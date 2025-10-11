@@ -1,6 +1,18 @@
 @echo off
 chcp 65001
 cd /d "%~dp0"
+
+REM Activate virtual environment
+if exist venv\Scripts\activate.bat (
+    call venv\Scripts\activate.bat
+    echo Using virtual environment...
+) else (
+    echo ERROR: Virtual environment not found!
+    echo Please run setup-venv.bat first to create the virtual environment.
+    pause
+    exit /b 1
+)
+
 python auto-translate-v2.py --lang "Português (BR)" --lang-code pt --subdir-override BR --update-changed --account ".key\bannerlordtwitch-d69ae5f7983a.json" "..\BannerlordTwitch\*\_Module\ModuleData\Languages\*.xml"
 python auto-translate-v2.py --lang 简体中文 --lang-code zh --subdir-override CNs --update-changed --account ".key\bannerlordtwitch-d69ae5f7983a.json" "..\BannerlordTwitch\*\_Module\ModuleData\Languages\*.xml"
 python auto-translate-v2.py --lang 繁體中文 --lang-code zh-TW --subdir-override CNt --update-changed --account ".key\bannerlordtwitch-d69ae5f7983a.json" "..\BannerlordTwitch\*\_Module\ModuleData\Languages\*.xml"
