@@ -28,14 +28,16 @@ namespace BannerlordTwitch
             private readonly string channel;
             private TwitchClient client;
             private readonly AuthSettings authSettings;
+            private readonly TwitchAPI api;
             private string botUserName;
+            private string botUserId;
 
             public Bot(string channel, AuthSettings authSettings)
             {
                 this.authSettings = authSettings;
                 this.channel = channel;
 
-                var api = new TwitchAPI();
+                api = new TwitchAPI();
 
                 //api.Settings.Secret = SECRET;
                 api.Settings.ClientId = authSettings.ClientID;
@@ -51,8 +53,9 @@ namespace BannerlordTwitch
                     }
                     var user = t.Result.Users.First();
 
-                    Log.Info($"Bot user is {user.Login}");
+                    Log.Info($"Bot user is {user.Login} (ID: {user.Id})");
                     botUserName = user.Login;
+                    botUserId = user.Id;
                     Connect();
                 });
             }
@@ -168,20 +171,33 @@ namespace BannerlordTwitch
 
             public void SendWhisper(string userName, params string[] msg)
             {
-                if (client.IsConnected)
+                // NOTE: Twitch deprecated IRC whispers and the current TwitchLib.Api version (3.8.0)
+                // doesn't support the Helix whisper endpoint. Additionally, Helix whispers require
+                // both users to follow each other and have the bot account to have verified status.
+                // 
+                // For now, we'll send a direct chat mention as a fallback which is more reliable.
+                // Users can see @ mentions in their chat, which serves a similar purpose.
+                
+                try
                 {
-                    try
+                    if (!client.IsConnected)
                     {
-                        var parts = FormatMessage(msg);
-                        foreach (string part in parts)
-                        {
-                            client.SendWhisper(userName, BotPrefix + part);
-                        }
+                        Log.Error($"Cannot send message: Bot not connected");
+                        return;
                     }
-                    catch (Exception e)
+
+                    var parts = FormatMessage(msg);
+                    foreach (string part in parts)
                     {
-                        Log.Error($"Failed to send whisper: {e.Message}");
+                        // Send as a chat message with @ mention - more reliable than whispers
+                        string mentionMessage = $"@{userName} {BotPrefix}{part}";
+                        client.SendMessage(channel, mentionMessage);
+                        Log.Trace($"Sent DM-style mention to {userName}: {mentionMessage}");
                     }
+                }
+                catch (Exception e)
+                {
+                    Log.Error($"Failed to send message to {userName}: {e.Message}");
                 }
             }
 

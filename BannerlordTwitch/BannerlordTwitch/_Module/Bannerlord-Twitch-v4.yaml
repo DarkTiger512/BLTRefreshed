@@ -2086,7 +2086,9 @@ GlobalConfigs:
     RetinueHealPerKill: 50
     RetinueUseHeroesFormation: false
     Shouts: []
+    ShowHeroFloatingLabels: true
     ShowKillStreakPopup: true
+    ShowNameMarkers: true
     StartHealthMultiplier: 2
     StartRetinueHealthMultiplier: 2
     StartWithFullHealth: true
@@ -3909,35 +3911,34 @@ GlobalConfigs:
     CursedArtifactSettings:
       AttributeBonus: 3
       BattlesToWin: 10
-      CooldownDays: 30
+      CooldownDays: 45
       DamageDealtPercent: 50
       DamageTakenPercent: 150
-      GoldDrainPerDay: 1000
-      GoldToBreakCurse: 100000
-      TriggerChancePerDay: 0.5
+      GoldDrainPerDay: 500
+      TriggerChancePerDay: 0.15
       WeaponDamageBonus: 150
       WeaponSkillBonus: 100
-      WeaponVanishChance: 10
-      XPDrainPerDay: 500
+      WeaponVanishChance: 5
+      XPDrainPerDay: 250
     EnableRandomEvents: true
-    GlobalChanceMultiplier: 1
+    GlobalChanceMultiplier: 0.8
     ImmortalEncounterSettings:
       ArmySizePercent: 120
-      CooldownDays: 90
+      CooldownDays: 120
       CultName: Cult of the Eternal
-      Enabled: false
-      GoldRewardPerParticipant: 100000
+      Enabled: true
+      GoldRewardPerParticipant: 75000
       ImmortalName: The Immortal
-      MinimumPlayerLevel: 1
-      TriggerChance: 1
+      MinimumPlayerLevel: 3
+      TriggerChance: 0.05
     PriestCrusadeSettings:
       ArmySizePercent: 80
-      CooldownDays: 60
+      CooldownDays: 90
       CrusadeClanName: Holy Crusaders
       Enabled: true
-      MinimumKingdomTier: 1
+      MinimumKingdomTier: 2
       PriestName: Father Zealot
-      TriggerChance: 1
+      TriggerChance: 0.08
   Id: BLT Random Events Config
 Rewards:
 - Documentation: Adopt a randomly selected Hero, filtered by Culture.  Enter "list" to get a list of cultures

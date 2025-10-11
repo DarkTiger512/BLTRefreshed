@@ -21,7 +21,7 @@ using TaleWorlds.MountAndBlade.GauntletUI.Widgets.Mission.NameMarker;
 
 namespace BLTAdoptAHero
 {
-    [DefaultView]
+    // [DefaultView] - Removed: Now controlled by ShowHeroFloatingLabels config setting
     public class HeroWidgetMissionView : MissionView
     {
         private GauntletLayer _layer;
