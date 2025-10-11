@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
     <PropertyGroup>
-        <ModuleVersion>4.12.20</ModuleVersion>
+        <ModuleVersion>4.12.22</ModuleVersion>
         <DefineConstants/>
         <OutputBuildRoot>$(SolutionDir)build\</OutputBuildRoot>
         <OutputConfigRoot>$(OutputBuildRoot)$(Configuration)\</OutputConfigRoot>
@@ -23,7 +23,8 @@
         <OutputPackageRoot>$(SolutionDir)deploy\release\</OutputPackageRoot>
         <Optimize>true</Optimize>
         <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
-        <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+        <CodeAnalysisRuleSet>RecommendedRules.ruleset</CodeAnalysisRuleSet>
+        <XamlDebuggingInformation>False</XamlDebuggingInformation>
     </PropertyGroup>
     <PropertyGroup>
         <GameVersion>1.2.12</GameVersion>

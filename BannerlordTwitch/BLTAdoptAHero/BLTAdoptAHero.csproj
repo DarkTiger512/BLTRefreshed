@@ -308,6 +308,7 @@
     <Compile Include="Achievements\StatisticClassSpecificRequirement.cs" />
     <Compile Include="Achievements\StatisticTotalRequirement.cs" />
     <Compile Include="Actions\AddGoldToHero.cs" />
+    <Compile Include="Actions\CampaignInfo.cs" />
     <Compile Include="Actions\ItemStats.cs" />
     <Compile Include="Actions\HeroToHeroGold.cs" />
     <Compile Include="Actions\SimGold.cs" />
@@ -355,6 +356,7 @@
     <Compile Include="Behaviors\BLTTournamentSkillAdjustBehavior.cs" />
     <Compile Include="Behaviors\BLTClanBannerSaveBehavior.cs" />
     <Compile Include="Behaviors\BLTClanBehavior.cs" />
+    <Compile Include="Behaviors\HarmonyPatches.cs" />
     <Compile Include="Behaviors\PowerHandler.cs" />
     <Compile Include="Behaviors\RandomEventManager.cs" />
     <Compile Include="BLTAdoptAHero.cs" />

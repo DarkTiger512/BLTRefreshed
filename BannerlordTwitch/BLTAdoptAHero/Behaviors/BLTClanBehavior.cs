@@ -14,10 +14,12 @@ namespace BLTAdoptAHero
         public BLTMarriageBehavior MarriageBehavior { get; } = new BLTMarriageBehavior();
         private BLTFamily _bltFamily;
         private CampaignTime _lastFamilyInitTime;
+        public BLTSocialSecurity SocialSecurity { get; } = new BLTSocialSecurity();
 
         public override void RegisterEvents()
         {
             MarriageBehavior.RegisterEvents();
+            SocialSecurity.RegisterEvents();
             CampaignEvents.DailyTickEvent.AddNonSerializedListener(this, () =>
             {
                 if (_bltFamily == null)
@@ -40,7 +42,7 @@ namespace BLTAdoptAHero
         }
         public override void SyncData(IDataStore dataStore)
         {
-            MarriageBehavior.SyncData(dataStore);
+
         }
 
         public class BLTMarriageBehavior
@@ -50,10 +52,6 @@ namespace BLTAdoptAHero
             {
                 CampaignEvents.OnHeroChangedClanEvent.AddNonSerializedListener(this, OnHeroChangedClanEvent);
                 CampaignEvents.HeroesMarried.AddNonSerializedListener(this, OnHeroesMarried);
-            }
-            public void SyncData(IDataStore dataStore)
-            {
-
             }
             private void OnHeroChangedClanEvent(Hero hero, Clan oldClan)
             {
@@ -196,6 +194,35 @@ namespace BLTAdoptAHero
             {
                 public Hero BltHero { get; set; }
                 public List<Hero> FamilyMembers { get; set; } = new List<Hero>();
+            }
+        }
+
+        public class BLTSocialSecurity
+        {
+            public void RegisterEvents()
+            {
+                CampaignEvents.WeeklyTickEvent.AddNonSerializedListener(this, OnWeeklyTick);
+            }
+            public void OnWeeklyTick()
+            {
+                foreach (var clan in Clan.All)
+                {
+                    var leader = clan.Leader;
+                    if (leader == null)
+                        continue; // skip minor or destroyed clans
+
+                    if (leader.IsAdopted())
+                    {
+                        if (leader.Gold <= 0)
+                        {
+                            leader.Gold = 25000;
+                        }
+                        else if (clan.Influence <= 0 && !clan.IsUnderMercenaryService && clan.Kingdom != null)
+                        {
+                            clan.Influence = 100f;
+                        }
+                    }
+                }
             }
         }
     }

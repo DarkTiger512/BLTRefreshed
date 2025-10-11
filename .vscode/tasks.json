@@ -16,6 +16,44 @@
 				"$msCompile"
 			],
 			"isBackground": false
+		},
+		{
+			"label": "Build BannerlordTwitch Solution (Fixed)",
+			"type": "shell",
+			"command": "C:\\Program Files\\JetBrains\\JetBrains Rider 2025.2.2.1\\tools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+			"args": [
+				"BannerlordTwitch\\BannerlordTwitch.sln",
+				"/p:Configuration=Debug",
+				"/p:Platform=AnyCPU",
+				"/verbosity:minimal"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Build BannerlordTwitch Solution (Corrected)",
+			"type": "shell",
+			"command": "C:\\Program Files\\JetBrains\\JetBrains Rider 2025.2.2.1\\tools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+			"args": [
+				"BannerlordTwitch\\BannerlordTwitch.sln",
+				"/p:Configuration=Release",
+				"/p:Platform=\"Any CPU\"",
+				"/verbosity:minimal"
+			],
+			"isBackground": false,
+			"group": "build"
+		},
+		{
+			"label": "Build BannerlordTwitch Solution (No Platform)",
+			"type": "shell",
+			"command": "C:\\Program Files\\JetBrains\\JetBrains Rider 2025.2.2.1\\tools\\MSBuild\\Current\\Bin\\MSBuild.exe",
+			"args": [
+				"BannerlordTwitch\\BannerlordTwitch.sln",
+				"/p:Configuration=Release",
+				"/verbosity:minimal"
+			],
+			"isBackground": false,
+			"group": "build"
 		}
 	]
 }
