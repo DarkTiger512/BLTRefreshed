@@ -446,7 +446,7 @@ namespace BLTAdoptAHero.Actions
             newClan.InitializeClan(new TextObject(fullClanName), new TextObject(fullClanName), clanCulture, clanBanner);
             newClan.UpdateHomeSettlement(Settlement.All.SelectRandom());
             adoptedHero.Clan = newClan;
-            newClan.AddRenown(settings.Renown, false);
+            newClan.AddRenown(settings.Renown, true);
             newClan.SetLeader(adoptedHero);
             if (!CampaignHelpers.IsEncyclopediaBookmarked(newClan))
                 CampaignHelpers.AddEncyclopediaBookmarkToItem(newClan);
