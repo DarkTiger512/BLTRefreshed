@@ -435,6 +435,13 @@ namespace BLTAdoptAHero
         private static void SummonInBattle(Hero adoptedHero, Settings settings, ReplyContext context, Action<string> onSuccess,
             Action<string> onFailure)
         {
+            // Check if this is the Immortal battle and prevent joining the enemy side
+            if (Events.ImmortalBattleRestrictions.ImmmortalBattleActive && !settings.OnPlayerSide)
+            {
+                onFailure("{=3PZq5cJW}You cannot join the Immortal's forces in this battle!".Translate());
+                return;
+            }
+
             if (Mission.Current.CurrentState != Mission.State.Continuing)
             {
                 onFailure("{=YZ4V5e4V}You cannot be summoned now, the mission has not started yet!".Translate());

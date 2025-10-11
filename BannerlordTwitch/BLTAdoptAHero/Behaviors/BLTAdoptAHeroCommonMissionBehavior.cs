@@ -4,6 +4,7 @@ using System.Linq;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Localization;
 using BannerlordTwitch.Util;
+using BLTAdoptAHero.Powers;
 using BLTAdoptAHero.UI;
 using HarmonyLib;
 using JetBrains.Annotations;
@@ -150,6 +151,12 @@ namespace BLTAdoptAHero
 
         protected override void OnEndMission()
         {
+            // Track curse battle progress for all cursed heroes who participated
+            foreach (var hero in activeHeroes.Where(Events.CursedArtifactEvent.IsHeroCursed).ToList())
+            {
+                Events.CursedArtifactEvent.OnBattleCompleted(hero);
+            }
+            
             MissionInfoHub.Clear();
         }
 
@@ -358,9 +365,16 @@ namespace BLTAdoptAHero
                     heroState.LastTeamIndex = agent.Team.TeamIndex;
                 }
 
+                // Check if hero is cursed and add asterisk indicator
+                string heroName = hero.FirstName?.Raw() ?? "";
+                if (IsHeroCursed(hero))
+                {
+                    heroName += " *";
+                }
+
                 MissionInfoHub.UpdateHero(new()
                 {
-                    Name = hero.FirstName?.Raw()??"",
+                    Name = heroName,
                     IsPlayerSide = summonState?.WasPlayerSide ?? IsHeroOnPlayerSide(hero),
                     TournamentTeam = MissionHelpers.InTournament() ? heroState.LastTeamIndex : -1,
                     MaxHP = agent?.HealthLimit ?? 100,
@@ -377,6 +391,12 @@ namespace BLTAdoptAHero
                     RetinueKills = heroState.RetinueKills,
                 });
             }
+        }
+
+        private static bool IsHeroCursed(Hero hero)
+        {
+            // Use the centralized curse tracking from CursedArtifactEvent
+            return Events.CursedArtifactEvent.IsHeroCursed(hero);
         }
 
         private static float ActivePowerFractionRemaining(Hero hero)

@@ -5,6 +5,8 @@ using System.Windows;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Rewards;
 using BannerlordTwitch.Util;
+using BLTAdoptAHero.Behaviors;
+using BLTAdoptAHero.Events;
 using BLTAdoptAHero.UI;
 using BLTAdoptAHero;
 using HarmonyLib;
@@ -38,6 +40,7 @@ namespace BLTAdoptAHero
         internal static GlobalTournamentConfig TournamentConfig { get; private set; }
         internal static GlobalHeroClassConfig HeroClassConfig { get; private set; }
         internal static GlobalHeroPowerConfig HeroPowerConfig { get; private set; }
+        internal static GlobalConfigs.RandomEventsGlobalConfig EventsConfig { get; private set; }
 
         public BLTAdoptAHeroModule()
         {
@@ -47,6 +50,7 @@ namespace BLTAdoptAHero
             GlobalTournamentConfig.Register();
             GlobalHeroClassConfig.Register();
             GlobalHeroPowerConfig.Register();
+            GlobalConfigs.RandomEventsGlobalConfig.Register();
 
             TournamentHub.Register();
             MissionInfoHub.Register();
@@ -148,6 +152,7 @@ namespace BLTAdoptAHero
                     TournamentConfig = GlobalTournamentConfig.Get();
                     HeroClassConfig = GlobalHeroClassConfig.Get();
                     HeroPowerConfig = GlobalHeroPowerConfig.Get();
+                    EventsConfig = GlobalConfigs.RandomEventsGlobalConfig.Get();
 
                     var campaignStarter = (CampaignGameStarter)gameStarterObject;
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
@@ -155,6 +160,28 @@ namespace BLTAdoptAHero
                     campaignStarter.AddBehavior(new BLTCustomItemsCampaignBehavior());
                     campaignStarter.AddBehavior(new BLTClanBannerSaveBehavior());
                     campaignStarter.AddBehavior(new BLTClanBehavior());
+                    
+                    // Initialize random events system
+                    if (EventsConfig.EnableRandomEvents)
+                    {
+                        var eventManager = new Behaviors.RandomEventManager();
+                        campaignStarter.AddBehavior(eventManager);
+                        
+                        // Register events
+                        var priestCrusade = new Events.PriestCrusadeEvent(EventsConfig.PriestCrusadeSettings);
+                        priestCrusade.TriggerChancePerDay *= EventsConfig.GlobalChanceMultiplier;
+                        eventManager.RegisterEvent(priestCrusade);
+
+                        var immortalEncounter = new Events.ImmortalEncounterEvent(EventsConfig.ImmortalEncounterSettings);
+                        immortalEncounter.TriggerChancePerDay *= EventsConfig.GlobalChanceMultiplier;
+                        eventManager.RegisterEvent(immortalEncounter);
+
+                        var cursedArtifact = new Events.CursedArtifactEvent(EventsConfig.CursedArtifactSettings);
+                        cursedArtifact.TriggerChancePerDay *= EventsConfig.GlobalChanceMultiplier;
+                        eventManager.RegisterEvent(cursedArtifact);
+                        
+                        Log.Info("[BLT Events] Random events system initialized");
+                    }
 
                     gameStarterObject.AddModel(new BLTAgentApplyDamageModel(gameStarterObject.Models
                         .OfType<AgentApplyDamageModel>().FirstOrDefault()));

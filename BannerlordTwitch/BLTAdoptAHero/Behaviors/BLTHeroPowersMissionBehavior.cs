@@ -45,6 +45,12 @@ namespace BLTAdoptAHero
                 if (hero != null && heroClass != null && activeHeroes.Add(hero))
                 {
                     heroClass.PassivePower?.OnHeroJoinedBattle(hero);
+                    
+                    // Apply curse powers if hero is cursed
+                    if (Events.CursedArtifactEvent.IsHeroCursed(hero))
+                    {
+                        Events.CursedArtifactEvent.ApplyCursePowersInBattle(hero, powerHandler);
+                    }
                 }
             });
         }

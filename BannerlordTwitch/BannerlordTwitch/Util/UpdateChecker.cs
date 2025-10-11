@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using TaleWorlds.Library;
 
@@ -9,7 +10,10 @@ namespace BannerlordTwitch.Util
     {
         private const string GITHUB_TAGS_API_URL = "https://api.github.com/repos/DarkTiger512/BLTRefreshed/tags";
         private const string GITHUB_RELEASES_URL = "https://github.com/DarkTiger512/BLTRefreshed/releases/tag/";
-            private const string CURRENT_VERSION = "4.12.22";
+        
+        // Get version from assembly info (automatically updated by build system from BLTProperties.targets)
+        private static readonly string CURRENT_VERSION = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+        
         private static readonly HttpClient httpClient = new HttpClient();
         
         public static async Task<UpdateInfo> CheckForUpdatesAsync()
