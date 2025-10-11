@@ -1105,7 +1105,17 @@ namespace BLTAdoptAHero
         public bool HireByHeroClass 
         { 
             get => _hireByHeroClass;
-            set => _hireByHeroClass = value;
+            set 
+            { 
+                _hireByHeroClass = value;
+                // When enabling HireByHeroClass, ensure both troop types are re-enabled
+                // This prevents UI state issues where users disabled them while HireByHeroClass was off
+                if (value)
+                {
+                    _useBasicTroops = true;
+                    _useEliteTroops = true;
+                }
+            }
         }
 
 
@@ -1322,6 +1332,7 @@ namespace BLTAdoptAHero
         {
             var heroClass = settings.HireByHeroClass ? GetClass(hero) : null;
             
+            // PATH 1: Hire by Hero Class (with or without culture restriction)
             if (heroClass != null)
             {
                 // STEP 1: Check hero's own culture for upgrade paths to the desired class
@@ -1365,8 +1376,35 @@ namespace BLTAdoptAHero
                     Log.Info($"[Guided Hiring] Cross-culture search failed for {heroClass.ID} - no viable upgrade paths found");
                 }
             }
+            // PATH 2: Hire by Culture ONLY (no class restriction)
+            else if (settings.UseHeroesCultureUnits)
+            {
+                Log.Info($"[Guided Hiring] Culture-only mode: Finding tier 1 troops from {hero.Culture.Name}");
+                
+                var tier1TroopsFromCulture = new List<CharacterObject>();
+                
+                // Respect UseBasicTroops and UseEliteTroops settings when NOT using class-based hiring
+                if (settings.UseBasicTroops && hero.Culture.BasicTroop != null)
+                {
+                    tier1TroopsFromCulture.Add(hero.Culture.BasicTroop);
+                    Log.Info($"[Guided Hiring] Culture-only: Added BasicTroop: {hero.Culture.BasicTroop.Name}");
+                }
+                if (settings.UseEliteTroops && hero.Culture.EliteBasicTroop != null)
+                {
+                    tier1TroopsFromCulture.Add(hero.Culture.EliteBasicTroop);
+                    Log.Info($"[Guided Hiring] Culture-only: Added EliteBasicTroop: {hero.Culture.EliteBasicTroop.Name}");
+                }
+                
+                if (tier1TroopsFromCulture.Any())
+                {
+                    Log.Info($"[Guided Hiring] Culture-only: Found {tier1TroopsFromCulture.Count} tier 1 troops from {hero.Culture.Name}: {string.Join(", ", tier1TroopsFromCulture.Select(t => t.Name))}");
+                    return tier1TroopsFromCulture;
+                }
+                
+                Log.Info($"[Guided Hiring] Culture-only: No tier 1 troops found in {hero.Culture.Name} (UseBasicTroops={settings.UseBasicTroops}, UseEliteTroops={settings.UseEliteTroops})");
+            }
 
-            // FALLBACK: Use legacy system when no class-guided hiring is possible
+            // FALLBACK: Use legacy system when no dynamic hiring is possible
             Log.Info($"[Guided Hiring] Falling back to legacy system for {hero.Name}");
             return GetAvailableTroopsLegacy(hero, settings);
         }
@@ -1374,25 +1412,41 @@ namespace BLTAdoptAHero
         /// <summary>
         /// Finds tier 1 (basic) troops from a specific culture that can eventually upgrade to match the hero class.
         /// This ensures we hire tier 1 troops but on the right upgrade path.
+        /// IMPROVED: Now dynamically searches for ALL tier 1 troops in the culture, not just BasicTroop/EliteBasicTroop.
         /// </summary>
         private List<CharacterObject> FindTier1TroopsForHeroClass(HeroClassDef heroClass, CultureObject culture, RetinueSettings settings)
         {
             var tier1Troops = new List<CharacterObject>();
             
-            // Get basic troops from this culture
-            var candidateTroops = new List<CharacterObject>();
-            if (settings.UseBasicTroops && culture.BasicTroop != null)
+            // DYNAMIC SEARCH: Find ALL tier 1 troops from this culture
+            var candidateTroops = CharacterObject.All
+                .Where(c => c.Culture == culture)
+                .Where(c => !c.IsHero)
+                .Where(c => c.Occupation == Occupation.Soldier)
+                .Where(c => c.Tier == 1) // Only tier 1 troops
+                .Where(c => c.UpgradeTargets != null && c.UpgradeTargets.Any()) // Must have upgrade paths
+                .ToList();
+            
+            // Also include culture's predefined basic troops if available
+            if (settings.UseBasicTroops && culture.BasicTroop != null && !candidateTroops.Contains(culture.BasicTroop))
                 candidateTroops.Add(culture.BasicTroop);
-            if (settings.UseEliteTroops && culture.EliteBasicTroop != null)
+            if (settings.UseEliteTroops && culture.EliteBasicTroop != null && !candidateTroops.Contains(culture.EliteBasicTroop))
                 candidateTroops.Add(culture.EliteBasicTroop);
             
-            // Check each basic troop to see if it can eventually upgrade to the desired class
+            Log.Info($"[Guided Hiring] Found {candidateTroops.Count} tier 1 troops in {culture.Name}: {string.Join(", ", candidateTroops.Select(t => t.Name))}");
+            
+            // Check each tier 1 troop to see if it can eventually upgrade to the desired class
             foreach (var troop in candidateTroops)
             {
                 var troopInfo = TroopTreeIndex.GetTroopInfo(troop);
                 if (troopInfo != null && CanTroopEventuallyBecomeClass(troopInfo, heroClass))
                 {
                     tier1Troops.Add(troop);
+                    Log.Info($"[Guided Hiring]   ✓ {troop.Name} can upgrade to {heroClass.Formation}");
+                }
+                else
+                {
+                    Log.Info($"[Guided Hiring]   ✗ {troop.Name} cannot reach {heroClass.Formation}");
                 }
             }
             
@@ -1515,23 +1569,21 @@ namespace BLTAdoptAHero
                 Log.Info($"[Retinue] Tier 3 failed for {hero.Name} - no compatible troops in {hero.Culture.Name} culture");
             }
 
-            // TIER 4: Infantry fallback - ONLY if HireByHeroClass is disabled
+            // TIER 4: All troops fallback - ONLY if HireByHeroClass is disabled
+            // When both HireByHeroClass and UseHeroesCultureUnits are disabled, allow ANY tier 1 troop
             if (!settings.HireByHeroClass)
             {
-                availableTroops = getAllTroops(settings.IncludeBanditUnits)
-                    .Where(troop => troop.DefaultFormationClass == FormationClass.Infantry || 
-                                   troop.DefaultFormationClass == FormationClass.HeavyInfantry)
-                    .ToList();
+                availableTroops = getAllTroops(settings.IncludeBanditUnits).ToList();
 
                 if (availableTroops.Any())
                 {
-                    Log.Info($"[Retinue] Tier 4: Infantry fallback activated for {hero.Name} - found {availableTroops.Count} infantry units");
+                    Log.Info($"[Retinue] Tier 4: All troops fallback activated for {hero.Name} - found {availableTroops.Count} tier 1 units from all cultures");
                     return availableTroops;
                 }
             }
             else
             {
-                Log.Info($"[Retinue] Tier 4: Infantry fallback skipped for {hero.Name} - HireByHeroClass prevents incompatible fallbacks");
+                Log.Info($"[Retinue] Tier 4: All troops fallback skipped for {hero.Name} - HireByHeroClass prevents incompatible fallbacks");
             }
 
             // Ultimate fallback - if HireByHeroClass is enabled, STILL enforce class compatibility
@@ -1704,61 +1756,198 @@ namespace BLTAdoptAHero
             
             Log.Info($"[Retinue Upgrade] Evaluating upgrades for {currentTroop.Name} (hero class: {heroFormation})");
             
-            // Evaluate each possible upgrade
+            // Evaluate each possible upgrade and track the highest tier reachable
+            var upgradeScores = new List<(CharacterObject upgrade, int maxTier, List<CharacterObject> compatibleDestinations)>();
+            
+            Log.Info($"[Retinue Upgrade] Current troop: {currentTroop.Name} (T{currentTroop.Tier} {currentTroop.DefaultFormationClass}{(currentTroop.IsMounted ? " MOUNTED" : "")})");
+            Log.Info($"[Retinue Upgrade] Has {currentTroop.UpgradeTargets.Count()} upgrade options: {string.Join(", ", currentTroop.UpgradeTargets.Select(u => u.Name))}");
+            
             foreach (var upgrade in currentTroop.UpgradeTargets)
             {
                 // Get all final tier destinations (T5-T6 endpoints) for this upgrade path
                 var finalDestinations = GetFinalTierDestinations(upgrade);
                 
-                Log.Info($"[Retinue Upgrade]   Checking {upgrade.Name}: {finalDestinations.Count()} final destinations");
+                Log.Info($"[Retinue Upgrade]   Checking {upgrade.Name} (T{upgrade.Tier} {upgrade.DefaultFormationClass}{(upgrade.IsMounted ? " MOUNTED" : "")}): {finalDestinations.Count()} final destinations");
                 
                 if (!finalDestinations.Any())
                 {
                     // No final destinations found - skip this upgrade
+                    Log.Info($"[Retinue Upgrade]   ✗ REJECTED {upgrade.Name} - no final destinations found");
                     continue;
                 }
                 
-                // Check if AT LEAST ONE final destination is compatible (same as hiring logic)
-                // This allows upgrading mixed-path troops and guiding them down the correct branch
-                bool hasCompatibleDestination = heroFormation switch
-                {
-                    "skirmisher" or "infantry" or "heavyinfantry" => 
-                        finalDestinations.Any(dest => 
-                            !dest.IsMounted && 
-                            (dest.DefaultFormationClass == FormationClass.Infantry ||
-                             dest.DefaultFormationClass == FormationClass.HeavyInfantry)),
-                    
-                    "ranged" => 
-                        finalDestinations.Any(dest => 
-                            !dest.IsMounted && 
-                            dest.DefaultFormationClass == FormationClass.Ranged),
-                    
-                    "cavalry" or "lightcavalry" or "heavycavalry" => 
-                        finalDestinations.Any(dest => 
-                            dest.IsMounted && 
-                            dest.DefaultFormationClass != FormationClass.HorseArcher),
-                    
-                    "horsearcher" => 
-                        finalDestinations.Any(dest => 
-                            dest.DefaultFormationClass == FormationClass.HorseArcher),
-                    
-                    _ => true // Unknown formation - allow upgrade
-                };
+                // Check if there's a valid continuous path to a compatible destination
+                // This prevents dead-ends where troops upgrade into incompatible branches
+                bool hasValidPath = HasValidUpgradePathToClass(upgrade, heroFormation);
                 
-                if (hasCompatibleDestination)
+                if (hasValidPath)
                 {
-                    validUpgrades.Add(upgrade);
+                    // Find all compatible final destinations this path can reach
+                    var compatibleDestinations = GetCompatibleFinalDestinations(upgrade, heroFormation);
+                    int maxTier = compatibleDestinations.Any() ? compatibleDestinations.Max(d => d.Tier) : 0;
+                    
+                    upgradeScores.Add((upgrade, maxTier, compatibleDestinations));
+                    
+                    string destinations = string.Join(", ", compatibleDestinations.Select(d => 
+                        $"{d.Name} (T{d.Tier} {d.DefaultFormationClass}{(d.IsMounted ? " MOUNTED" : "")})"));
+                    
+                    Log.Info($"[Retinue Upgrade]   ✓ ACCEPTED {upgrade.Name} - reaches max tier {maxTier}: {destinations}");
                 }
                 else
                 {
                     // Log rejected upgrades for debugging
-                    Log.Info($"[Retinue] REJECTED upgrade {currentTroop.Name} → {upgrade.Name} for {heroFormation}: " +
-                            $"Final destinations = [{string.Join(", ", finalDestinations.Select(d => $"{d.Name}({d.DefaultFormationClass}{(d.IsMounted ? " MOUNTED" : "")})"))}]");
+                    Log.Info($"[Retinue Upgrade]   ✗ REJECTED {upgrade.Name} - no valid continuous path to {heroFormation}");
                 }
             }
             
-            // Return a random valid upgrade, or null if none are valid
-            return validUpgrades.Any() ? validUpgrades.SelectRandom() : null;
+            if (!upgradeScores.Any())
+            {
+                return null; // No valid upgrades
+            }
+            
+            // PRIORITIZATION: Choose the upgrade path that reaches the HIGHEST tier
+            // This ensures fairness - all infantry heroes get Tier 6, not stuck at Tier 4
+            var maxTierReachable = upgradeScores.Max(s => s.maxTier);
+            var bestUpgrades = upgradeScores.Where(s => s.maxTier == maxTierReachable).ToList();
+            
+            if (bestUpgrades.Count > 1)
+            {
+                Log.Info($"[Retinue Upgrade] Multiple paths reach tier {maxTierReachable}, selecting randomly from: {string.Join(", ", bestUpgrades.Select(u => u.upgrade.Name))}");
+            }
+            else
+            {
+                Log.Info($"[Retinue Upgrade] Best path selected: {bestUpgrades[0].upgrade.Name} (reaches tier {maxTierReachable})");
+            }
+            
+            // Return the best upgrade (or random among equally good ones)
+            return bestUpgrades.SelectRandom().upgrade;
+        }
+        
+        /// <summary>
+        /// Gets all compatible final destinations reachable from this troop for the specified hero class.
+        /// Only returns TRUE final destinations (Tier 5+ or no upgrades) that match the class.
+        /// </summary>
+        private static List<CharacterObject> GetCompatibleFinalDestinations(CharacterObject troop, string heroFormation, HashSet<string> visited = null)
+        {
+            visited ??= new HashSet<string>();
+            var compatibleDestinations = new List<CharacterObject>();
+
+            // Check if this troop is compatible with hero class
+            bool isCompatible = heroFormation switch
+            {
+                "skirmisher" or "infantry" or "heavyinfantry" => 
+                    !troop.IsMounted && 
+                    (troop.DefaultFormationClass == FormationClass.Infantry ||
+                     troop.DefaultFormationClass == FormationClass.HeavyInfantry ||
+                     troop.DefaultFormationClass == FormationClass.Skirmisher),
+                
+                "ranged" => 
+                    !troop.IsMounted && 
+                    troop.DefaultFormationClass == FormationClass.Ranged,
+                
+                "cavalry" or "lightcavalry" or "heavycavalry" => 
+                    troop.IsMounted && 
+                    troop.DefaultFormationClass != FormationClass.HorseArcher,
+                
+                "horsearcher" => 
+                    troop.DefaultFormationClass == FormationClass.HorseArcher,
+                
+                _ => true
+            };
+            
+            // Check if this is a final destination
+            bool isFinalDestination = troop.UpgradeTargets == null || !troop.UpgradeTargets.Any() || troop.Tier >= 5;
+            
+            if (isFinalDestination && isCompatible)
+            {
+                // This is a compatible final destination
+                compatibleDestinations.Add(troop);
+            }
+            
+            // If not final or has more upgrades, recursively check upgrade paths
+            if (troop.UpgradeTargets != null && troop.UpgradeTargets.Any())
+            {
+                foreach (var upgrade in troop.UpgradeTargets)
+                {
+                    compatibleDestinations.AddRange(
+                        GetCompatibleFinalDestinations(upgrade, heroFormation, new HashSet<string>(visited))
+                    );
+                }
+            }
+            
+            return compatibleDestinations.Distinct().ToList();
+        }
+        
+        /// <summary>
+        /// Checks if a troop has a valid continuous upgrade path to the specified class.
+        /// Returns true only if the troop can reach a compatible FINAL DESTINATION (Tier 5+ or no upgrades).
+        /// Intermediate compatible troops don't count if they still upgrade to incompatible classes.
+        /// </summary>
+        private static bool HasValidUpgradePathToClass(CharacterObject troop, string heroFormation, HashSet<string> visited = null, int depth = 0)
+        {
+            if (troop == null || string.IsNullOrEmpty(heroFormation)) return false;
+            
+            visited ??= new HashSet<string>();
+            string indent = new string(' ', depth * 2);
+            
+            // Prevent infinite loops
+            if (visited.Contains(troop.StringId))
+            {
+                Log.Info($"[Path Validation] {indent}CYCLE: {troop.Name} - already visited");
+                return false;
+            }
+                
+            visited.Add(troop.StringId);
+            
+            // Check if this troop itself is compatible with the hero class
+            bool isCurrentTroopCompatible = heroFormation switch
+            {
+                "skirmisher" or "infantry" or "heavyinfantry" => 
+                    !troop.IsMounted && 
+                    (troop.DefaultFormationClass == FormationClass.Infantry ||
+                     troop.DefaultFormationClass == FormationClass.HeavyInfantry ||
+                     troop.DefaultFormationClass == FormationClass.Skirmisher),
+                
+                "ranged" => 
+                    !troop.IsMounted && 
+                    troop.DefaultFormationClass == FormationClass.Ranged,
+                
+                "cavalry" or "lightcavalry" or "heavycavalry" => 
+                    troop.IsMounted && 
+                    troop.DefaultFormationClass != FormationClass.HorseArcher,
+                
+                "horsearcher" => 
+                    troop.DefaultFormationClass == FormationClass.HorseArcher,
+                
+                _ => true // Unknown formation - allow
+            };
+            
+            // Determine if this is a FINAL DESTINATION (no upgrades OR tier 5+)
+            bool isFinalDestination = troop.UpgradeTargets == null || !troop.UpgradeTargets.Any() || troop.Tier >= 5;
+            
+            if (isFinalDestination)
+            {
+                // This is a final destination - only return true if it's compatible
+                string result = isCurrentTroopCompatible ? "COMPATIBLE" : "INCOMPATIBLE";
+                Log.Info($"[Path Validation] {indent}FINAL: {troop.Name} (T{troop.Tier} {troop.DefaultFormationClass}) -> {result}");
+                return isCurrentTroopCompatible;
+            }
+            
+            // Not a final destination - must check if ANY upgrade path leads to compatible final destination
+            string compat = isCurrentTroopCompatible ? "compatible" : "incompatible";
+            Log.Info($"[Path Validation] {indent}INTERMEDIATE: {troop.Name} (T{troop.Tier} {troop.DefaultFormationClass} {compat}) - checking {troop.UpgradeTargets.Count()} upgrades");
+            
+            foreach (var upgrade in troop.UpgradeTargets)
+            {
+                if (HasValidUpgradePathToClass(upgrade, heroFormation, new HashSet<string>(visited), depth + 1))
+                {
+                    Log.Info($"[Path Validation] {indent}  SUCCESS: Valid path through {upgrade.Name}");
+                    return true; // Found at least one valid path to compatible final destination
+                }
+            }
+            
+            Log.Info($"[Path Validation] {indent}  FAILED: No valid paths from {troop.Name} to {heroFormation}");
+            return false; // No valid upgrade paths found
         }
 
         private static CharacterObject SelectClassGuidedUpgradeFallback(CharacterObject currentTroop, HeroClassDef heroClass)
@@ -2370,6 +2559,65 @@ namespace BLTAdoptAHero
             {
                 Log.Error($"[Retinue] Failed to write upgrade log: {ex.Message}");
             }
+        }
+
+        #endregion
+
+        #region Dynamic Troop Tier Detection
+
+        /// <summary>
+        /// Dynamically detects the starting tier of troops in the troop tree.
+        /// Ensures compatibility with mods that alter troop trees.
+        /// </summary>
+        private CharacterObject GetStartingTierTroop(CultureObject culture, RetinueSettings settings)
+        {
+            var allTroops = CharacterObject.All
+                .Where(t => t.Culture == culture && t.Tier > 0 && t.Tier <= 3) // Consider Tier 1-3 as potential starting points
+                .OrderBy(t => t.Tier) // Sort by tier to find the lowest
+                .ToList();
+
+            if (settings.UseBasicTroops)
+            {
+                var basicTroop = allTroops.FirstOrDefault(t => t.Tier == 1);
+                if (basicTroop != null)
+                    return basicTroop;
+            }
+
+            if (settings.UseEliteTroops)
+            {
+                var eliteTroop = allTroops.FirstOrDefault(t => t.Tier == 2);
+                if (eliteTroop != null)
+                    return eliteTroop;
+            }
+
+            // Fallback to the lowest tier troop available
+            return allTroops.FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Updates the hiring logic to use dynamic troop tier detection.
+        /// </summary>
+        private List<CharacterObject> GetAvailableTroopsWithDynamicTiers(Hero hero, RetinueSettings settings)
+        {
+            var culture = hero.Culture;
+            if (culture == null)
+                return new List<CharacterObject>();
+
+            var startingTroop = GetStartingTierTroop(culture, settings);
+            if (startingTroop == null)
+                return new List<CharacterObject>();
+
+            var availableTroops = new List<CharacterObject> { startingTroop };
+
+            // Add upgrade paths dynamically
+            var currentTroop = startingTroop;
+            while (currentTroop.UpgradeTargets != null && currentTroop.UpgradeTargets.Any())
+            {
+                currentTroop = currentTroop.UpgradeTargets.First();
+                availableTroops.Add(currentTroop);
+            }
+
+            return availableTroops;
         }
 
         #endregion
