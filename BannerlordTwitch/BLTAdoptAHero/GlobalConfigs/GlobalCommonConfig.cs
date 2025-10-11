@@ -98,18 +98,6 @@ namespace BLTAdoptAHero
          Document, UsedImplicitly]
         public float MoraleLossFactor { get; set; } = 0.5f;
 
-        [LocDisplayName("{=}Show Name Markers"),
-         LocCategory("Battle", "{=9qAD6eZR}Battle"),
-         LocDescription("{=}Show overhead name markers for all agents in battles (siege, field battle, hideout). Disable this if you prefer the vanilla experience without names floating above characters."),
-         PropertyOrder(5), Document, UsedImplicitly]
-        public bool ShowNameMarkers { get; set; } = true;
-
-        [LocDisplayName("{=}Show Hero Floating Labels"),
-         LocCategory("Battle", "{=9qAD6eZR}Battle"),
-         LocDescription("{=}Show floating labels that follow adopted heroes in battle, displaying their name above their head. This is separate from the name markers feature."),
-         PropertyOrder(6), Document, UsedImplicitly]
-        public bool ShowHeroFloatingLabels { get; set; } = true;
-
         [LocDisplayName("{=bXdC2trk}Retinue Use Heroes Formation"),
          LocCategory("Battle", "{=9qAD6eZR}Battle"),
          LocDescription("{=D8uDzXlV}Whether an adopted heroes retinue should spawn in the same formation as the hero (otherwise they will go into default formations)"),
@@ -119,7 +107,7 @@ namespace BLTAdoptAHero
         [LocDisplayName("{=OlJrCEyE}Summon Cooldown In Seconds"),
          LocCategory("Battle", "{=9qAD6eZR}Battle"),
          LocDescription("{=DeGB2BGZ}Minimum time between summons for a specific hero"),
-         PropertyOrder(7),
+         PropertyOrder(6),
          Range(0, int.MaxValue),
          Document, UsedImplicitly]
         public int SummonCooldownInSeconds { get; set; } = 20;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch;
 using BannerlordTwitch.Localization;
+using BannerlordTwitch.Rewards;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.Annotations;
 using BLTAdoptAHero.Powers;
@@ -14,6 +15,19 @@ using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 
 namespace BLTAdoptAHero.Events
 {
+    // Helper class for creating overlay-only message contexts
+    internal class DummyOverlaySource : ActionBase
+    {
+        public DummyOverlaySource()
+        {
+            RespondInOverlay = true;
+            RespondInTwitch = false;
+            RespondInDM = false;
+        }
+        
+        public override string Handler { get; set; } = "DummyOverlay";
+    }
+    
     [CategoryOrder("Trigger", 1)]
     [CategoryOrder("Curse", 2)]
     [CategoryOrder("Breaking", 3)]
@@ -89,6 +103,9 @@ namespace BLTAdoptAHero.Events
         
         // Track cursed heroes: Hero -> (battles completed, curse powers)
         private static readonly Dictionary<Hero, CurseData> cursedHeroes = new();
+        
+        // Track heroes who have successfully broken the curse (they can't be cursed again)
+        private static readonly HashSet<Hero> heroesWhoCompletedCurse = new();
 
         private class CurseData
         {
@@ -118,31 +135,55 @@ namespace BLTAdoptAHero.Events
         public static void ApplyCursePowersInBattle(Hero hero, PowerHandler powerHandler)
         {
             if (!cursedHeroes.TryGetValue(hero, out var curseData))
+            {
+                Log.Info($"[Cursed Artifact] Hero {hero.Name} is not cursed");
                 return;
+            }
 
-            // Apply damage dealt debuff
-            ((IHeroPowerPassive)curseData.DamageDealtPower).OnHeroJoinedBattle(hero, null);
+            if (powerHandler == null)
+            {
+                Log.Error($"[Cursed Artifact] PowerHandler is null for {hero.Name}");
+                return;
+            }
 
-            // Apply damage taken debuff
-            ((IHeroPowerPassive)curseData.DamageTakenPower).OnHeroJoinedBattle(hero, null);
+            if (curseData.DamageDealtPower == null || curseData.DamageTakenPower == null)
+            {
+                Log.Error($"[Cursed Artifact] Curse powers are null for {hero.Name}");
+                return;
+            }
 
-            Log.Info($"[Cursed Artifact] Applied curse powers to {hero.Name} in battle");
+            try
+            {
+                // Register curse powers using the same pattern as PassivePowerGroup
+                powerHandler.ConfigureHandlers(hero, curseData.DamageDealtPower, 
+                    handlers => ((IHeroPowerPassive)curseData.DamageDealtPower).OnHeroJoinedBattle(hero, handlers));
+
+                powerHandler.ConfigureHandlers(hero, curseData.DamageTakenPower, 
+                    handlers => ((IHeroPowerPassive)curseData.DamageTakenPower).OnHeroJoinedBattle(hero, handlers));
+
+                Log.Info($"[Cursed Artifact] Applied curse powers to {hero.Name} in battle");
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Cursed Artifact] Failed to apply curse powers for {hero.Name}: {ex.Message}");
+                Log.Error(ex.StackTrace);
+            }
         }
 
         protected override bool CheckSpecificConditions()
         {
-            // Must have at least one hero who isn't already cursed
+            // Must have at least one hero who isn't already cursed and hasn't completed the curse before
             return BLTAdoptAHeroCampaignBehavior.GetAllAdoptedHeroes()
-                ?.Any(h => !IsHeroCursed(h)) == true;
+                ?.Any(h => !IsHeroCursed(h) && !heroesWhoCompletedCurse.Contains(h)) == true;
         }
 
         protected override void ExecuteEvent()
         {
             Log.Info("[Cursed Artifact Event] ExecuteEvent called");
             
-            // Find eligible heroes (not already cursed)
+            // Find eligible heroes (not already cursed and haven't completed curse before)
             var eligibleHeroes = BLTAdoptAHeroCampaignBehavior.GetAllAdoptedHeroes()
-                .Where(h => !IsHeroCursed(h))
+                ?.Where(h => !IsHeroCursed(h) && !heroesWhoCompletedCurse.Contains(h))
                 .ToList();
 
             if (!eligibleHeroes.Any())
@@ -155,6 +196,15 @@ namespace BLTAdoptAHero.Events
 
             // Apply curse
             ApplyCurse(victim);
+
+            // Get the viewer name for the overlay message
+            string viewerName = victim.FirstName?.ToString() ?? victim.Name.ToString();
+
+            // Send message to overlay
+            var overlaySource = new DummyOverlaySource();
+            var overlayContext = ReplyContext.FromUser(overlaySource, viewerName);
+            ActionManager.SendNonReply(overlayContext, 
+                $"💀 {viewerName} has been cursed! They must win {config.BattlesToWin} battles to break the curse and gain a legendary weapon!");
 
             Log.Info($"[Cursed Artifact Event] {victim.Name} has been cursed!");
             InformationManager.DisplayMessage(new InformationMessage(
@@ -201,12 +251,21 @@ namespace BLTAdoptAHero.Events
             
             Log.Info($"[Cursed Artifact] {hero.Name} completed battle {curseData.BattlesCompleted}/{battlesNeeded}");
 
+            // Get the viewer name for the overlay message
+            string viewerName = hero.FirstName?.ToString() ?? hero.Name.ToString();
+
             if (curseData.BattlesCompleted >= battlesNeeded)
             {
                 BreakCurse(hero);
             }
             else
             {
+                // Send progress update to overlay
+                var overlaySource = new DummyOverlaySource();
+                var overlayContext = ReplyContext.FromUser(overlaySource, viewerName);
+                ActionManager.SendNonReply(overlayContext, 
+                    $"💀 {viewerName} completed a cursed battle! Progress: {curseData.BattlesCompleted}/{battlesNeeded}");
+                
                 InformationManager.DisplayMessage(new InformationMessage(
                     $"{hero.Name} completed a battle while cursed! ({curseData.BattlesCompleted}/{battlesNeeded})",
                     Colors.Yellow));
@@ -223,12 +282,20 @@ namespace BLTAdoptAHero.Events
             // Remove from tracking (this automatically removes curse powers since we check IsHeroCursed)
             cursedHeroes.Remove(hero);
 
+            // Get the viewer name for the overlay message
+            string viewerName = hero.FirstName?.ToString() ?? hero.Name.ToString();
+            var overlaySource = new DummyOverlaySource();
+            var overlayContext = ReplyContext.FromUser(overlaySource, viewerName);
+
             // Check if weapon vanishes
             bool weaponVanished = MBRandom.RandomFloat * 100f < config.WeaponVanishChance;
 
             if (weaponVanished)
             {
                 // Weapon vanishes - no reward
+                ActionManager.SendNonReply(overlayContext, 
+                    $"💔 {viewerName}'s curse broke, but the artifact vanished into dark energy...");
+                
                 InformationManager.DisplayMessage(new InformationMessage(
                     $"The curse on {hero.Name} is broken! But the cursed artifact vanished in a burst of dark energy...",
                     Colors.Green));
@@ -238,10 +305,17 @@ namespace BLTAdoptAHero.Events
             {
                 // Give legendary weapon and bonuses
                 GiveRewards(hero, config);
+                
+                // Mark this hero as having completed the curse (they can't be cursed again)
+                heroesWhoCompletedCurse.Add(hero);
+                
+                ActionManager.SendNonReply(overlayContext, 
+                    $"⚔️ {viewerName} broke the curse and gained a LEGENDARY weapon! +{config.AttributeBonus} attributes, +{config.WeaponSkillBonus} weapon skill!");
+                
                 InformationManager.DisplayMessage(new InformationMessage(
                     $"The curse on {hero.Name} is broken! The artifact transforms into a legendary weapon! +{config.AttributeBonus} to all attributes, +{config.WeaponSkillBonus} weapon skill!",
                     Colors.Green));
-                Log.Info($"[Cursed Artifact] Curse broken for {hero.Name}, rewards granted");
+                Log.Info($"[Cursed Artifact] Curse broken for {hero.Name}, rewards granted, hero marked as completed");
             }
         }
 

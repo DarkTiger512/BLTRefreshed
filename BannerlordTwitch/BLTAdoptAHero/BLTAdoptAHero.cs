@@ -65,15 +65,6 @@ namespace BLTAdoptAHero
                 mission.AddMissionBehavior(new BLTSummonBehavior());
                 mission.AddMissionBehavior(new BLTRemoveAgentsBehavior());
                 mission.AddMissionBehavior(new BLTHeroPowersMissionBehavior());
-                
-                // Add hero floating labels if enabled in config
-                var config = GlobalCommonConfig.Get();
-                if (config?.ShowHeroFloatingLabels == true 
-                    && mission.CombatType == Mission.MissionCombatType.Combat 
-                    && mission.PlayerTeam != null)
-                {
-                    mission.AddMissionBehavior(new HeroWidgetMissionView());
-                }
             }
             catch (Exception e)
             {
@@ -85,13 +76,6 @@ namespace BLTAdoptAHero
         [UsedImplicitly, HarmonyPostfix, HarmonyPatch(typeof(MissionScreen), "TaleWorlds.MountAndBlade.IMissionSystemHandler.OnMissionAfterStarting")]
         static void OnMissionAfterStartingPostFix(MissionScreen __instance)
         {
-            // Check if name markers are enabled in config
-            var config = GlobalCommonConfig.Get();
-            if (config?.ShowNameMarkers != true)
-            {
-                return;
-            }
-
             if (__instance.Mission.GetMissionBehavior<MissionNameMarkerUIHandler>() == null
             && (__instance.Mission.GetMissionBehavior<BattleSpawnLogic>() != null
                 || __instance.Mission.GetMissionBehavior<TournamentFightMissionController>() != null))
@@ -104,13 +88,6 @@ namespace BLTAdoptAHero
          HarmonyPatch(typeof(MissionNameMarkerTargetVM), MethodType.Constructor, typeof(Agent), typeof(bool))]
         public static void MissionNameMarkerTargetVMConstructorPostfix(MissionNameMarkerTargetVM __instance, Agent agent)
         {
-            // Check if name markers are enabled in config
-            var config = GlobalCommonConfig.Get();
-            if (config?.ShowNameMarkers != true)
-            {
-                return;
-            }
-
             if (MissionHelpers.InSiegeMission() || MissionHelpers.InFieldBattleMission() || MissionHelpers.InHideOutMission())
             {
                 if (Agent.Main != null && agent.IsEnemyOf(Agent.Main) || Mission.Current.PlayerTeam?.IsValid == true && agent.Team.IsEnemyOf(Mission.Current.PlayerTeam))
@@ -142,13 +119,6 @@ namespace BLTAdoptAHero
         [UsedImplicitly, HarmonyPostfix, HarmonyPatch(typeof(NameMarkerScreenWidget), "OnLateUpdate")]
         public static void NameMarkerScreenWidget_OnLateUpdatePostfix(List<NameMarkerListPanel> ____markers)
         {
-            // Check if name markers are enabled in config
-            var config = GlobalCommonConfig.Get();
-            if (config?.ShowNameMarkers != true)
-            {
-                return;
-            }
-
             foreach (var marker in ____markers)
             {
                 marker.IsFocused = marker.IsInScreenBoundaries;

@@ -42,7 +42,7 @@ Complete overhaul of the random events system with three balanced events:
 **Mechanics:**
 - **Trigger:** 5% chance, 120-day cooldown
 - **Reward:** 75,000 gold for defeating immortal enemies
-- **Requirement:** Minimum hero level 3
+- **Requirement:** Minimum streamer hero level 10
 - **Challenge:** Epic late-game encounter with massive rewards
 
 #### **⛪ Priest Crusade Event**
@@ -82,45 +82,6 @@ Complete overhaul of the random events system with three balanced events:
 
 **Files Modified:**
 - `TwitchService.Bot.cs` (Lines 27-29, 40, 57-58, 172-195)
-
----
-
-## 🎨 UI & Visual Improvements
-
-### 🏷️ Overhead Name Markers
-
-**Status:** Always Enabled (Native game feature)
-
-**Color Coding:**
-- 🟢 **Green:** Friendly units
-- 🔴 **Red:** Enemy units
-- 🟡 **Yellow:** Tournament participants
-
-**Implementation:**
-
-| Harmony Patch | Purpose |
-|---------------|---------|
-| `MissionNameMarkerTargetVMConstructorPostfix` | Assigns team colors |
-| `NameMarkerScreenWidget_OnLateUpdatePostfix` | Real-time marker updates |
-| `OnMissionAfterStartingPostFix` | Mission initialization |
-
-**Files Modified:**
-- `BLTAdoptAHero.cs` (Lines 85-154)
-
-### ❌ Removed Features
-
-**Hero Floating Labels:** Completely removed
-
-**Reason:** Feature was non-functional and caused user confusion
-
-**Technical Cleanup:**
-- Removed `ShowHeroFloatingLabels` config setting
-- Removed widget instantiation code from `OnMissionBehaviorInitialize`
-- `BLTHeroWidgetBehavior.cs` remains in codebase (unused/dead code)
-
-**Files Modified:**
-- `GlobalCommonConfig.cs` (Removed lines 101-106)
-- `BLTAdoptAHero.cs` (Removed lines 70-76)
 
 ---
 

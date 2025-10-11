@@ -2086,9 +2086,7 @@ GlobalConfigs:
     RetinueHealPerKill: 50
     RetinueUseHeroesFormation: false
     Shouts: []
-    ShowHeroFloatingLabels: true
     ShowKillStreakPopup: true
-    ShowNameMarkers: true
     StartHealthMultiplier: 2
     StartRetinueHealthMultiplier: 2
     StartWithFullHealth: true
@@ -3915,18 +3913,18 @@ GlobalConfigs:
       DamageDealtPercent: 50
       DamageTakenPercent: 150
       GoldDrainPerDay: 500
-      TriggerChancePerDay: 0.15
+      TriggerChancePerDay: 100
       WeaponDamageBonus: 150
       WeaponSkillBonus: 100
       WeaponVanishChance: 5
       XPDrainPerDay: 250
     EnableRandomEvents: true
-    GlobalChanceMultiplier: 0.8
+    GlobalChanceMultiplier: 1
     ImmortalEncounterSettings:
       ArmySizePercent: 120
       CooldownDays: 120
       CultName: Cult of the Eternal
-      Enabled: true
+      Enabled: false
       GoldRewardPerParticipant: 75000
       ImmortalName: The Immortal
       MinimumPlayerLevel: 3
@@ -3935,7 +3933,7 @@ GlobalConfigs:
       ArmySizePercent: 80
       CooldownDays: 90
       CrusadeClanName: Holy Crusaders
-      Enabled: true
+      Enabled: false
       MinimumKingdomTier: 2
       PriestName: Father Zealot
       TriggerChance: 0.08
@@ -4445,7 +4443,7 @@ SimTesting:
   IntervalMinMS: 50
   Use:
   - Args: ''
-    Enabled: true
+    Enabled: false
     Id: attack
     ID: 0711448a-2d82-42f2-b0e9-3e22faef2850
     Type: Command
