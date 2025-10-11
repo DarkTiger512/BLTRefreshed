@@ -9,7 +9,7 @@ namespace BannerlordTwitch.Util
     {
         private const string GITHUB_TAGS_API_URL = "https://api.github.com/repos/DarkTiger512/BLTRefreshed/tags";
         private const string GITHUB_RELEASES_URL = "https://github.com/DarkTiger512/BLTRefreshed/releases/tag/";
-            private const string CURRENT_VERSION = "4.12.22";
+            private const string CURRENT_VERSION = "5.0.0";
         private static readonly HttpClient httpClient = new HttpClient();
         
         public static async Task<UpdateInfo> CheckForUpdatesAsync()

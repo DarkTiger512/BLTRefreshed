@@ -1,7 +1,7 @@
 # Feature Branch: Random Events System (WIP)
 
 **Branch:** `feature/random-events`  
-**Base:** `main` (v4.12.20)  
+**Base:** `main` (v5.0.0)  
 **Status:** 🚧 Work In Progress  
 **Created:** October 2025
 
