@@ -3913,30 +3913,30 @@ GlobalConfigs:
       DamageDealtPercent: 50
       DamageTakenPercent: 150
       GoldDrainPerDay: 500
-      TriggerChancePerDay: 100
+      TriggerChancePerDay: 0.15
       WeaponDamageBonus: 150
       WeaponSkillBonus: 100
-      WeaponVanishChance: 5
+      WeaponVanishChance: 10
       XPDrainPerDay: 250
     EnableRandomEvents: true
-    GlobalChanceMultiplier: 1
+    GlobalChanceMultiplier: 0.8
     ImmortalEncounterSettings:
       ArmySizePercent: 120
       CooldownDays: 120
       CultName: Cult of the Eternal
-      Enabled: false
-      GoldRewardPerParticipant: 75000
+      Enabled: true
+      GoldRewardPerParticipant: 100000
       ImmortalName: The Immortal
-      MinimumPlayerLevel: 3
-      TriggerChance: 0.05
+      MinimumPlayerLevel: 10
+      TriggerChance: 0.004
     PriestCrusadeSettings:
       ArmySizePercent: 80
       CooldownDays: 90
       CrusadeClanName: Holy Crusaders
-      Enabled: false
+      Enabled: true
       MinimumKingdomTier: 2
       PriestName: Father Zealot
-      TriggerChance: 0.08
+      TriggerChance: 0.0064
   Id: BLT Random Events Config
 Rewards:
 - Documentation: Adopt a randomly selected Hero, filtered by Culture.  Enter "list" to get a list of cultures
