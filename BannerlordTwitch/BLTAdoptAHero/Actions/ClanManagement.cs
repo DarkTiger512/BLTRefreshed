@@ -929,6 +929,20 @@ namespace BLTAdoptAHero.Actions
                 onFailure("{=yPeUCq8t}You are not in a clan".Translate());
                 return;
             }
+            
+            // ⚠️ SECURITY: Prevent clan leaders from abandoning their clan
+            if (adoptedHero.IsClanLeader)
+            {
+                onFailure("{=ClanLeaderCannotLeave}You cannot leave your clan as the leader! Transfer leadership or disband the clan first.".Translate());
+                return;
+            }
+            
+            // ⚠️ SECURITY: Prevent breaking BLT clans
+            if (adoptedHero.Clan.Name.ToString().Contains("[BLT Clan]"))
+            {
+                onFailure("{=BLTClanCannotLeave}You cannot leave a BLT clan using this command.".Translate());
+                return;
+            }
 
             var mobileParty = MobileParty.All.ToList().Where(p => p.LeaderHero?.CharacterObject == adoptedHero.CharacterObject).FirstOrDefault();
             if (mobileParty != null)
@@ -939,6 +953,7 @@ namespace BLTAdoptAHero.Actions
             adoptedHero.SetNewOccupation(Occupation.Wanderer);
             var targetSettlement = Settlement.All.Where(s => s.IsTown).SelectRandom();
             EnterSettlementAction.ApplyForCharacterOnly(adoptedHero, targetSettlement);
+            onSuccess("{=LeftClanSuccess}You have left your clan.".Translate());
         }
 
         //private void HandleDisbandCommand(Settings settings, Hero adoptedHero, Action<string> onSuccess, Action<string> onFailure)
@@ -1019,6 +1034,11 @@ namespace BLTAdoptAHero.Actions
             if (string.IsNullOrWhiteSpace(bannerCode))
             {
                 onFailure("{=PSDbhv3a}Make your banner at https://bannerlord.party/banner and paste it directly".Translate());
+                return;
+            }
+            if (bannerCode.Length > 500)
+            {
+                onFailure("{=BannerTooLong}Banner code is too long (max 500 characters)".Translate());
                 return;
             }
             try
