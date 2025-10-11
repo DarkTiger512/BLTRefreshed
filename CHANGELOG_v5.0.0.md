@@ -1,339 +1,213 @@
 # 🎉 BannerlordTwitch v5.0.0 - Enhanced Edition
 
-## 📋 Release Overview
-
-| Info | Details |
-|------|---------|
-| **Release Date** | October 11, 2025 |
-| **Game Version** | Mount & Blade II: Bannerlord v1.2.12 |
-| **Build Type** | Stable Release |
-| **Package** | `BLT-v5.0.0-For-Game-Version-v1.2.12.rar` |
+> **For Mount & Blade II: Bannerlord v1.2.12**  
+> Released: October 11, 2025
 
 ---
 
-## ✨ Major Features
+## 📑 Table of Contents
 
-### 🎭 Random Events System
-
-Complete overhaul of the random events system with three balanced events:
-
-#### **⚔️ Cursed Artifact Event**
-
-**Full Implementation:** Persistent curse tracking system with visual indicators
-
-**Mechanics:**
-- Heroes cursed for **10 consecutive battles**
-- **Asterisk (*)** indicator next to cursed hero names in battle overlay
-- **Combat Penalties:**
-  - 🗡️ 50% damage dealt penalty
-  - 🛡️ 150% damage received penalty
-- **Trigger:** 15% chance, 45-day cooldown
-- **Economic Impact:**
-  - 💰 500 gold drain per battle
-  - ⭐ 250 XP drain per battle
-  - 🎯 5% chance of weapon vanishing during curse
-- **Legendary Rewards:** Tier 6 legendary weapons upon curse completion
-- **Persistence:** Dictionary-based tracking across saves and sessions
-
-#### **👻 Immortal Encounter Event**
-
-**Status:** Enabled and balanced
-
-**Mechanics:**
-- **Trigger:** 5% chance, 120-day cooldown
-- **Reward:** 75,000 gold for defeating immortal enemies
-- **Requirement:** Minimum streamer hero level 10
-- **Challenge:** Epic late-game encounter with massive rewards
-
-#### **⛪ Priest Crusade Event**
-
-**Mechanics:**
-- **Trigger:** 8% chance, 90-day cooldown
-- **Requirement:** Kingdom tier 2+ for balanced progression
-- **Impact:** Religious warfare event with strategic implications
-
-#### **⚖️ Global Balancing**
-
-| Setting | Value | Effect |
-|---------|-------|--------|
-| `GlobalChanceMultiplier` | 0.8 | 20% reduction across all events |
-| `!simgold` | Disabled | Prevents economy exploits |
+- [🎮 What's New](#-whats-new)
+  - [⚔️ Cursed Artifact Event](#️-cursed-artifact-event)
+  - [👻 Immortal Encounter Event](#-immortal-encounter-event)
+  - [⛪ Priest Crusade Event](#-priest-crusade-event)
+- [🔧 Major Fixes](#-major-fixes)
+- [⚙️ Important Changes](#️-important-changes)
+- [📦 Installation](#-installation)
+- [❓ FAQ](#-faq)
+- [🔗 Links & Support](#-links--support)
 
 ---
 
-## 🔧 Critical Fixes
+## 🎮 What's New
 
-### 💬 Twitch Direct Messaging
+BannerlordTwitch v5.0.0 brings exciting new random events that add drama and excitement to your streams! Your viewers' heroes can now face curses, battle immortal enemies, and participate in religious crusades.
 
-| Aspect | Details |
-|--------|---------|
-| **Issue** | "Respond in DM" feature completely non-functional |
-| **Root Cause** | TwitchLib 3.8.0 removed IRC-based whisper support |
-| **Solution** | Implemented @ mention fallback system |
+### ⚔️ Cursed Artifact Event
 
-**Technical Implementation:**
-```csharp
-// TwitchService.Bot.cs changes:
-- Stores TwitchAPI instance and botUserId
-- SendWhisper() now uses @ mentions: @username message
-- Graceful degradation when Helix whispers endpoint unavailable
-- Full compatibility with modern Twitch API
-```
+**What is it?**  
+Random heroes get cursed and must fight through 10 battles to break the curse and earn legendary rewards!
 
-**Files Modified:**
-- `TwitchService.Bot.cs` (Lines 27-29, 40, 57-58, 172-195)
+**How it works:**
+- 🎯 **Cursed heroes** appear with an asterisk (*) next to their name in battle
+- ⚔️ **They fight weaker** - deal only 50% damage and take 150% more damage
+- 💰 **Daily costs** - Lose 500 gold and 250 XP per battle
+- 🎲 **10 battles to freedom** - Complete 10 battles to break the curse
+
+**Rewards for breaking the curse:**
+- 🗡️ **Legendary Tier 6 weapon** with 150% damage bonus
+- 💪 **+3 to ALL attributes** (Vigor, Control, Endurance, Cunning, Social, Intelligence)
+- ⭐ **+100 weapon skill XP** for the weapon type
+
+**Risk:**
+- � **10% chance** the cursed weapon vanishes and you get nothing (can be cursed again later)
+- 🏆 **90% chance** you get the rewards and become immune to future curses!
+
+**Event Settings:**
+- Happens rarely: 0.3% chance per day (about once every 2-3 weeks)
+- 45-day cooldown between curse events
 
 ---
 
-## 🛠️ Technical Improvements
+### 👻 Immortal Encounter Event
 
-### 📦 Build System
+**What is it?**  
+A mysterious immortal warrior appears and challenges your entire clan to an epic battle!
 
-**Enforced Compiler:**
-```
-C:\Program Files\JetBrains\JetBrains Rider 2025.2.2.1\tools\MSBuild\Current\Bin\MSBuild.exe
-```
+**How it works:**
+- 🏆 **Epic Boss Fight** - The immortal brings an army to challenge you
+- 👥 **All viewers can join** - Any BLT hero can participate in the battle
+- 💰 **Massive Rewards** - Each participating hero gets **100,000 gold** if you win!
 
-**Build Configurations:**
-- ✅ Debug builds validated
-- ✅ Release builds validated
-- ✅ Automated WinRAR packaging
+**Requirements:**
+- Streamer must be at least level 10 to trigger this event
+- Only happens when you're ready for a challenge
 
-**Output Package:**
-```
-BLT-v5.0.0-For-Game-Version-v1.2.12.rar
-```
+**Event Settings:**
+- Very rare: 0.4% chance per day (about once per season)
+- 120-day cooldown between immortal encounters
 
-### 🗂️ Repository Cleanup
+---
 
-**Merged Branches:**
-- ✅ `feature/random-events` → `main`
+### ⛪ Priest Crusade Event
 
-**Deleted Branches:**
-- 🗑️ `feature/random-events` (merged)
-- 🗑️ `dynamic-troop-tier-detection` (obsolete)
-- 🗑️ `Kanboru-New-1` (merged)
-- 🗑️ `randomchair-4.7.3-analysis` (temporary analysis)
+**What is it?**  
+Religious warfare erupts! A priest faction declares a crusade and spawns hostile parties.
 
-**Commits:**
-- Main commit: `517d557` (pushed to origin/main)
-- Final cleanup commit for v5.0.0
+**How it works:**
+- 🛡️ **Kingdom-wide event** - Affects your entire realm
+- ⚔️ **Strategic challenge** - Deal with religious warfare parties
+- 📈 **Mid-game event** - Requires Kingdom Tier 2+
 
-### 📝 Code Quality
+**Event Settings:**
+- Moderate rarity: 0.64% chance per day
+- 90-day cooldown between crusades
 
-**Improvements:**
-- Configuration cleanup in `GlobalCommonConfig.cs`
-- Removed deprecated config settings
-- Harmony patch optimizations
-- Persistent data structure improvements
-- Dictionary-based curse tracking system
+---
+
+## 🔧 Major Fixes
+
+### ✅ Twitch Direct Messages Now Work!
+
+**The Problem:**  
+The "Respond in DM" feature was completely broken and didn't send any messages to your viewers.
+
+**The Fix:**  
+We've rewritten the system to use @ mentions as a fallback. Now when someone should get a DM, they'll get an @ mention in chat instead. This works reliably with modern Twitch!
+
+---
+
+## ⚙️ Important Changes
+
+### What Changed From v4.x
+
+**🎲 Random Events Rebalanced**
+- Events now trigger 20% less often (better pacing for your streams)
+- All three random events have been completely rebalanced
+- Event cooldowns increased to prevent spam
+
+**❌ Removed Features**
+- `!simgold` command has been disabled (prevented economy exploits)
+- "Hero Floating Labels" feature removed (it didn't work properly)
+
+**💾 Better Save System**
+- Curse tracking now saves properly between sessions
+- Your progress won't be lost if you quit the game
 
 ---
 
 ## 📦 Installation
 
-### System Requirements
+### Requirements
+- Mount & Blade II: Bannerlord **v1.2.12**
+- .NET Framework 4.8 or higher
+- Twitch account with API credentials configured
 
-| Requirement | Version |
-|-------------|---------|
-| **Game** | Mount & Blade II: Bannerlord v1.2.12 |
-| **Framework** | .NET Framework 4.8+ |
-| **Twitch** | Valid account and API credentials |
+### How to Install
 
-### Included Modules
+1. **Download** `BLT-v5.0.0-For-Game-Version-v1.2.12.rar`
+2. **Extract** the archive
+3. **Copy** all mod folders to your Bannerlord `Modules` folder
+4. **Launch** Bannerlord and enable the modules in the launcher:
+   - BannerlordTwitch
+   - BLTAdoptAHero
+   - BLTBuffet
+   - BLTConfigure
+5. **Configure** your Twitch credentials using BLTConfigure
+6. **Start** the game and enjoy!
 
-1. **BannerlordTwitch** - Core integration module
-2. **BLTAdoptAHero** - Hero adoption and curse system
-3. **BLTBuffet** - Reward and buff system
-4. **BLTConfigure** - Configuration interface
-
-### Installation Steps
-
-1. Extract `BLT-v5.0.0-For-Game-Version-v1.2.12.rar`
-2. Copy all modules to Bannerlord `Modules` folder
-3. Enable modules in Bannerlord launcher
-4. Configure Twitch API credentials in BLTConfigure
-5. Launch game and enjoy!
+### Upgrading from v4.x
+Your existing saves are compatible! The mod will automatically update your config files on first load.
 
 ---
 
-## ⚙️ Configuration Changes
+## ❓ FAQ
 
-### New Settings
+**Q: Can cursed heroes still fight effectively?**  
+A: They're weaker (50% damage dealt, 150% damage taken), but with 10 battles they can earn amazing legendary rewards!
 
-| Setting | Location | Default | Description |
-|---------|----------|---------|-------------|
-| `GlobalChanceMultiplier` | `Bannerlord-Twitch-v4.yaml` | 0.8 | Global event trigger multiplier |
-| Curse Tracking | Automatic | N/A | Dictionary-based persistence |
+**Q: What happens if my viewer quits before completing the curse?**  
+A: The curse progress is saved! They can continue where they left off next time.
 
-### Removed Settings
+**Q: Can a hero be cursed multiple times?**  
+A: If they successfully break the curse (90% chance), they become immune. If the weapon vanishes (10% chance), they can be cursed again later.
 
-| Setting | Reason |
-|---------|--------|
-| `ShowHeroFloatingLabels` | Feature removed (non-functional) |
-| `ShowNameMarkers` | Always enabled (native feature) |
+**Q: Does the Immortal Encounter affect my viewers?**  
+A: All viewers can join the battle! The level 10 requirement is only for YOUR character (the streamer) to trigger the event.
 
-### Modified Settings
+**Q: How do I adjust event frequency?**  
+A: You can edit `GlobalChanceMultiplier` in the config file. Lower = fewer events, higher = more events. Default is 0.8.
 
-| Setting | Old Value | New Value | Impact |
-|---------|-----------|-----------|--------|
-| `GlobalChanceMultiplier` | 1.0 | 0.8 | 20% reduction in event triggers |
-| `CursedArtifact.TriggerChance` | N/A | 15% | Balanced trigger rate |
-| `CursedArtifact.Cooldown` | N/A | 45 days | Prevents spam |
-| `ImmortalEncounter.TriggerChance` | N/A | 5% | Rare late-game event |
-| `ImmortalEncounter.Cooldown` | N/A | 120 days | Epic event pacing |
-| `PriestCrusade.TriggerChance` | N/A | 8% | Mid-tier frequency |
-| `PriestCrusade.Cooldown` | N/A | 90 days | Balanced pacing |
-| `simgold.Enabled` | true | false | Prevents economy exploits |
+**Q: Are the events too hard/easy?**  
+A: All settings are configurable! Check the config files to adjust difficulty, rewards, and frequency to your liking.
 
 ---
 
-## 🐛 Known Issues
+## � Links & Support
 
-**Current Status:** ✅ No known critical issues
-
-**Warnings (Non-Critical):**
-- MSB3884: Missing ruleset files (cosmetic warning)
-- CS1998: Async methods without await (planned refactor)
-- CS0169: Unused `pubSub` field (legacy code)
-
----
-
-## 📊 Performance Metrics
-
-| Metric | Status |
-|--------|--------|
-| Build Time | ~15 seconds (Release) |
-| Memory Footprint | Optimized |
-| Save/Load Performance | Enhanced with Dictionary caching |
-| Twitch API Latency | < 100ms average |
-
----
-
-## 🔜 Future Roadmap
-
-### Planned for v5.1.0
-- [ ] Additional random events (Plague, Invasion, etc.)
-- [ ] Enhanced curse system with multiple curse types
-- [ ] Improved battle overlay customization
-
-### Planned for v5.2.0
-- [ ] Advanced Twitch integration (Predictions, Channel Points)
-- [ ] Performance optimizations
-- [ ] Multi-language support expansion
-
-### Long-Term Goals
-- [ ] Custom event scripting system
-- [ ] Enhanced viewer interaction mechanics
-- [ ] Tournament mode improvements
+- **📥 Download**: [GitHub Releases](https://github.com/DarkTiger512/BLTRefreshed/releases)
+- **🐛 Report Issues**: [Issue Tracker](https://github.com/DarkTiger512/BLTRefreshed/issues)
+- **📖 Documentation**: [Installation Guide](INSTALLATION_GUIDE.md)
+- **💬 Discord**: [Join our community]
+- **� Source Code**: [GitHub Repository](https://github.com/DarkTiger512/BLTRefreshed)
 
 ---
 
 ## 👥 Credits
 
-| Role | Contributor |
-|------|-------------|
-| **Lead Developer** | DarkTiger512 |
-| **Original Author** | randomchair (BLT 4.x foundation) |
-| **Community Testing** | BLT Discord community |
-| **Special Thanks** | TaleWorlds for Bannerlord modding API |
-| **AI Assistant** | GitHub Copilot (code review and optimization) |
+- **Lead Developer**: DarkTiger512
+- **Original Author**: randomchair (BLT 4.x foundation)
+- **Community Testing**: BLT Discord community
+- **Special Thanks**: TaleWorlds for the amazing Bannerlord modding API
 
 ---
 
-## 📄 License
+## 📝 Quick Summary of Changes
 
-This project is licensed under the terms specified in the LICENSE file.
+### ✨ Added
+- Three new balanced random events (Cursed Artifact, Immortal Encounter, Priest Crusade)
+- Legendary weapon rewards for completing curses
+- Asterisk (*) indicators for cursed heroes in battle
+- Persistent curse tracking across game sessions
+- Working Twitch DM system using @ mentions
 
-See [LICENSE](LICENSE) for full details.
+### 🔄 Changed
+- Event frequencies reduced by 20% for better pacing
+- Curse system now uses 10 battles instead of time-based
+- Overhead name markers always show (green for allies, red for enemies)
+- Better balance for all events
 
----
+### 🐛 Fixed
+- Twitch DMs now work properly with @ mentions
+- Curse progress saves correctly between sessions
+- Battle overlay shows curse indicators properly
 
-## 🔗 Links & Resources
-
-| Resource | URL |
-|----------|-----|
-| **GitHub Repository** | https://github.com/DarkTiger512/BLTRefreshed |
-| **Issue Tracker** | https://github.com/DarkTiger512/BLTRefreshed/issues |
-| **Releases** | https://github.com/DarkTiger512/BLTRefreshed/releases |
-| **Documentation** | [Installation Guide](INSTALLATION_GUIDE.md) |
-| **Discord** | [Join our community] |
-
----
-
-## 📈 Version Comparison
-
-### v5.0.0 vs v4.x
-
-| Feature | v4.x | v5.0.0 |
-|---------|------|--------|
-| Random Events | Basic/Broken | Fully Balanced ✅ |
-| Curse System | Placeholder | Complete Implementation ✅ |
-| Twitch DMs | Broken | Working (@ mentions) ✅ |
-| Overhead Names | Optional | Always On ✅ |
-| Hero Floating Labels | Buggy | Removed ❌ |
-| Event Balancing | Unbalanced | Professionally Tuned ✅ |
-| Code Quality | Mixed | Cleaned & Optimized ✅ |
-
----
-
-## 🎯 Breaking Changes
-
-⚠️ **Important:** This release contains breaking changes from v4.x
-
-1. **Removed Features:**
-   - Hero floating labels configuration removed
-   - ShowHeroFloatingLabels setting no longer exists
-
-2. **Configuration Changes:**
-   - `!simgold` command disabled by default
-   - Event trigger rates globally reduced by 20%
-
-3. **API Changes:**
-   - Twitch whispers replaced with @ mentions
-   - Curse tracking now uses persistent Dictionary
-
-**Migration Guide:** Existing saves are compatible, but config files will be automatically updated on first load.
-
----
-
-## 📝 Detailed Changelog
-
-### Added
-- ✨ Complete cursed artifact tracking system with Dictionary persistence
-- ✨ Visual asterisk indicators for cursed heroes in battle overlay
-- ✨ Legendary tier 6 weapon rewards for completing curses
-- ✨ Balanced Immortal Encounter event with 75k gold rewards
-- ✨ Priest Crusade event with kingdom tier requirements
-- ✨ Global event multiplier system (0.8 default)
-- ✨ @ mention fallback for Twitch DMs
-- ✨ Automated release packaging with WinRAR
-
-### Changed
-- 🔄 Event trigger chances globally reduced by 20%
-- 🔄 Curse duration standardized to 10 battles
-- 🔄 Overhead name markers now always enabled
-- 🔄 Event cooldowns increased for better pacing
-- 🔄 Build system enforces JetBrains Rider MSBuild
-
-### Fixed
-- 🐛 "Respond in DM" feature completely rewritten
-- 🐛 Curse tracking now persists across saves
-- 🐛 Battle overlay indicators update correctly
-- 🐛 TwitchLib 3.8.0 compatibility issues resolved
-- 🐛 Config setting conflicts removed
-
-### Removed
-- ❌ ShowHeroFloatingLabels config setting
-- ❌ Hero floating labels feature (non-functional)
-- ❌ ShowNameMarkers config (always-on now)
-- ❌ !simgold command (exploit prevention)
-- ❌ Obsolete merged branches cleaned up
-
----
-
-**Full Diff:** [`v4.0.0...v5.0.0`](https://github.com/DarkTiger512/BLTRefreshed/compare/v4.0.0...v5.0.0)
+### ❌ Removed
+- `!simgold` command (economy exploit prevention)
+- Hero floating labels (didn't work properly)
 
 ---
 
 *Released with ❤️ by the BannerlordTwitch team*
+
+**Full technical diff**: [`v4.0.0...v5.0.0`](https://github.com/DarkTiger512/BLTRefreshed/compare/v4.0.0...v5.0.0)
