@@ -41,6 +41,11 @@ namespace BLTAdoptAHero.GlobalConfigs
          PropertyOrder(11), UsedImplicitly, ExpandableObject]
         public ImmortalEncounterEvent.Settings ImmortalEncounterSettings { get; set; } = new ImmortalEncounterEvent.Settings();
 
+        [LocDisplayName("{=BLT_Events_CursedArtifact}The Cursed Artifact Event"),
+         LocDescription("{=BLT_Events_CursedArtifactDesc}A hero becomes cursed and must break the curse to gain a legendary weapon"),
+         PropertyOrder(12), UsedImplicitly, ExpandableObject]
+        public CursedArtifactSettings CursedArtifactSettings { get; set; } = new CursedArtifactSettings();
+
         public void GenerateDocumentation(IDocumentationGenerator generator)
         {
             generator.PropertyValuePair("Random Events Enabled", EnableRandomEvents ? "Yes" : "No");
@@ -63,6 +68,19 @@ namespace BLTAdoptAHero.GlobalConfigs
                 generator.PropertyValuePair("Army Size", $"{ImmortalEncounterSettings.ArmySizePercent}% of player clan strength");
                 generator.PropertyValuePair("Victory Gold Reward", $"{ImmortalEncounterSettings.GoldRewardPerParticipant} gold per participant");
                 generator.PropertyValuePair("Minimum Player Level", ImmortalEncounterSettings.MinimumPlayerLevel.ToString());
+            }
+
+            if (CursedArtifactSettings != null)
+            {
+                generator.H2("The Cursed Artifact Event");
+                generator.PropertyValuePair("Trigger Chance", $"{CursedArtifactSettings.TriggerChancePerDay:F2}% per day");
+                generator.PropertyValuePair("Gold Drain", $"{CursedArtifactSettings.GoldDrainPerDay} per day");
+                generator.PropertyValuePair("XP Drain", $"{CursedArtifactSettings.XPDrainPerDay} per day");
+                generator.PropertyValuePair("Damage Dealt", $"{CursedArtifactSettings.DamageDealtPercent}%");
+                generator.PropertyValuePair("Damage Taken", $"{CursedArtifactSettings.DamageTakenPercent}%");
+                generator.PropertyValuePair("Gold to Break", $"{CursedArtifactSettings.GoldToBreakCurse} gold");
+                generator.PropertyValuePair("Battles to Break", $"{CursedArtifactSettings.BattlesToWin} battles");
+                generator.PropertyValuePair("Weapon Vanish Chance", $"{CursedArtifactSettings.WeaponVanishChance}%");
             }
         }
     }

@@ -175,6 +175,10 @@ namespace BLTAdoptAHero
                         var immortalEncounter = new Events.ImmortalEncounterEvent(EventsConfig.ImmortalEncounterSettings);
                         immortalEncounter.TriggerChancePerDay *= EventsConfig.GlobalChanceMultiplier;
                         eventManager.RegisterEvent(immortalEncounter);
+
+                        var cursedArtifact = new Events.CursedArtifactEvent(EventsConfig.CursedArtifactSettings);
+                        cursedArtifact.TriggerChancePerDay *= EventsConfig.GlobalChanceMultiplier;
+                        eventManager.RegisterEvent(cursedArtifact);
                         
                         Log.Info("[BLT Events] Random events system initialized");
                     }
