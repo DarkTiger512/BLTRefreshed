@@ -3906,6 +3906,19 @@ GlobalConfigs:
     WinXP: 50000
   Id: Adopt A Hero - Tournament Config
 - Config:
+    CursedArtifactSettings:
+      AttributeBonus: 3
+      BattlesToWin: 10
+      CooldownDays: 30
+      DamageDealtPercent: 50
+      DamageTakenPercent: 150
+      GoldDrainPerDay: 1000
+      GoldToBreakCurse: 100000
+      TriggerChancePerDay: 0.5
+      WeaponDamageBonus: 150
+      WeaponSkillBonus: 100
+      WeaponVanishChance: 10
+      XPDrainPerDay: 500
     EnableRandomEvents: true
     GlobalChanceMultiplier: 1
     ImmortalEncounterSettings:

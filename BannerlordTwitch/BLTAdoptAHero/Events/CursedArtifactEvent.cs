@@ -52,19 +52,14 @@ namespace BLTAdoptAHero.Events
         public float DamageTakenPercent { get; set; } = 150f;
 
         // Breaking Conditions
-        [LocDisplayName("{=CursedArtifact_GoldToPay}Gold To Break Curse"),
-         LocDescription("{=CursedArtifact_GoldToPayDesc}Gold required to break the curse instantly"),
-         PropertyOrder(1), LocCategory("Breaking", "{=CursedArtifact_Breaking}Breaking"), UsedImplicitly]
-        public int GoldToBreakCurse { get; set; } = 100000;
-
         [LocDisplayName("{=CursedArtifact_BattlesToWin}Battles To Win"),
          LocDescription("{=CursedArtifact_BattlesToWinDesc}Number of battles cursed hero must participate in to break curse"),
-         PropertyOrder(2), LocCategory("Breaking", "{=CursedArtifact_Breaking}Breaking"), UsedImplicitly]
+         PropertyOrder(1), LocCategory("Breaking", "{=CursedArtifact_Breaking}Breaking"), UsedImplicitly]
         public int BattlesToWin { get; set; } = 10;
 
         [LocDisplayName("{=CursedArtifact_VanishChance}Weapon Vanish Chance %"),
          LocDescription("{=CursedArtifact_VanishChanceDesc}Chance weapon vanishes when curse breaks (0-100)"),
-         PropertyOrder(3), LocCategory("Breaking", "{=CursedArtifact_Breaking}Breaking"), UsedImplicitly]
+         PropertyOrder(2), LocCategory("Breaking", "{=CursedArtifact_Breaking}Breaking"), UsedImplicitly]
         public float WeaponVanishChance { get; set; } = 10f;
 
         // Rewards

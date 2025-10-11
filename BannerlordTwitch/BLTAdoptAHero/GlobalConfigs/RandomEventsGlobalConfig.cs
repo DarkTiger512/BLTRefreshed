@@ -78,7 +78,6 @@ namespace BLTAdoptAHero.GlobalConfigs
                 generator.PropertyValuePair("XP Drain", $"{CursedArtifactSettings.XPDrainPerDay} per day");
                 generator.PropertyValuePair("Damage Dealt", $"{CursedArtifactSettings.DamageDealtPercent}%");
                 generator.PropertyValuePair("Damage Taken", $"{CursedArtifactSettings.DamageTakenPercent}%");
-                generator.PropertyValuePair("Gold to Break", $"{CursedArtifactSettings.GoldToBreakCurse} gold");
                 generator.PropertyValuePair("Battles to Break", $"{CursedArtifactSettings.BattlesToWin} battles");
                 generator.PropertyValuePair("Weapon Vanish Chance", $"{CursedArtifactSettings.WeaponVanishChance}%");
             }
