@@ -39,9 +39,10 @@ namespace BannerlordTwitch.Twitch
             _eventSubWebsocketClient.WebsocketReconnected += OnWebsocketReconnected;
             _eventSubWebsocketClient.ErrorOccurred += OnErrorOccurred;
 
-            _eventSubWebsocketClient.ChannelPointsCustomRewardRedemptionAdd += async (object e, ChannelPointsCustomRewardRedemptionArgs args) =>
+            _eventSubWebsocketClient.ChannelPointsCustomRewardRedemptionAdd += (object e, ChannelPointsCustomRewardRedemptionArgs args) =>
             {
                 OnChannelPointsRewardsRedeemed.Invoke(e, args.Notification.Payload.Event);
+                return Task.CompletedTask;
             };
   
             _eventSubWebsocketClient.ChannelFollow += OnChannelFollow;
@@ -57,22 +58,25 @@ namespace BannerlordTwitch.Twitch
             await _eventSubWebsocketClient.DisconnectAsync();
         }
 
-        private async Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
+        private Task OnErrorOccurred(object sender, ErrorOccuredArgs e)
         {
+            return Task.CompletedTask;
         }
 
-        private async Task OnChannelFollow(object sender, ChannelFollowArgs e)
+        private Task OnChannelFollow(object sender, ChannelFollowArgs e)
         {
             var eventData = e.Notification.Payload.Event;
+            return Task.CompletedTask;
         }
 
-        private async Task OnWebsocketConnected(object sender, WebsocketConnectedArgs e)
+        private Task OnWebsocketConnected(object sender, WebsocketConnectedArgs e)
         {
             if (!e.IsRequestedReconnect)
             {
                 OnEventSubServiceConnected.Invoke(sender, e);
                 // subscribe to topics
             }
+            return Task.CompletedTask;
         }
 
         private async Task OnWebsocketDisconnected(object sender, EventArgs e)
@@ -84,8 +88,9 @@ namespace BannerlordTwitch.Twitch
             }
         }
 
-        private async Task OnWebsocketReconnected(object sender, EventArgs e)
+        private Task OnWebsocketReconnected(object sender, EventArgs e)
         {
+            return Task.CompletedTask;
         }
     }
 }
