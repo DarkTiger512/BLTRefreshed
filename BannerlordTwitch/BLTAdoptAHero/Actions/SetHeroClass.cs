@@ -108,7 +108,7 @@ namespace BLTAdoptAHero
                 return;
             }
 
-            var newClass = BLTAdoptAHeroModule.HeroClassConfig.FindClass(context.Args);
+            var newClass = BLTAdoptAHeroModule.HeroClassConfig.FindClass(context.Args, context.UserName);
             if (newClass == null)
             {
                 onFailure("{=prmHmdGE}Provide class name".Translate() +

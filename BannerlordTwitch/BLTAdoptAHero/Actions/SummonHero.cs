@@ -441,6 +441,12 @@ namespace BLTAdoptAHero
                 onFailure("{=3PZq5cJW}You cannot join the Immortal's forces in this battle!".Translate());
                 return;
             }
+            
+            // Register as participant if this is the Immortal battle
+            if (Events.ImmortalBattleRestrictions.ImmmortalBattleActive && settings.OnPlayerSide)
+            {
+                Events.ImmortalBattleRestrictions.RegisterParticipant(adoptedHero);
+            }
 
             if (Mission.Current.CurrentState != Mission.State.Continuing)
             {

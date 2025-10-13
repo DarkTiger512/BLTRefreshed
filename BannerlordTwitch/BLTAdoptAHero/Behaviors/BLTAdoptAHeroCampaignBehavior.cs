@@ -1345,36 +1345,33 @@ namespace BLTAdoptAHero
                 
                 Log.Info($"[Guided Hiring] Hero culture: No upgrade paths to {heroClass.ID} in {hero.Culture.Name}");
                 
-                // STEP 2: If UseHeroesCultureUnits is enabled, respect that setting and don't cross cultures for hiring
+                // STEP 2: When UseHeroesCultureUnits is enabled BUT hero's culture has no compatible troops,
+                // override the culture restriction to maintain class compatibility
                 if (settings.UseHeroesCultureUnits)
                 {
-                    Log.Info($"[Guided Hiring] UseHeroesCultureUnits enabled - staying within {hero.Culture.Name} culture");
-                    
-                    // Since we already checked for class-compatible troops in Step 1 and found none,
-                    // override UseHeroesCultureUnits to allow cross-culture hiring for class compatibility
-                    Log.Info($"[Guided Hiring] Hero culture {hero.Culture.Name} has no upgrade paths to class {heroClass.ID} - overriding UseHeroesCultureUnits to allow cross-culture hiring");
+                    Log.Info($"[Guided Hiring] UseHeroesCultureUnits enabled - but {hero.Culture.Name} has no upgrade paths to class {heroClass.ID}");
+                    Log.Info($"[Guided Hiring] Overriding UseHeroesCultureUnits to allow cross-culture hiring for class compatibility");
                 }
-                else
+                
+                // STEP 3: Cross-culture search for tier 1 troops that can upgrade to desired class
+                // This runs either when UseHeroesCultureUnits is false, OR when we override it due to no compatible troops
+                var tier1TroopsFromOtherCultures = new List<CharacterObject>();
+                
+                foreach (var culture in MBObjectManager.Instance.GetObjectTypeList<CultureObject>()
+                    .Where(c => settings.IncludeBanditUnits || c.IsMainCulture)
+                    .Where(c => c != hero.Culture)) // Exclude hero's culture (already checked)
                 {
-                    // STEP 3: Cross-culture search for tier 1 troops that can upgrade to desired class
-                    var tier1TroopsFromOtherCultures = new List<CharacterObject>();
-                    
-                    foreach (var culture in MBObjectManager.Instance.GetObjectTypeList<CultureObject>()
-                        .Where(c => settings.IncludeBanditUnits || c.IsMainCulture)
-                        .Where(c => c != hero.Culture)) // Exclude hero's culture (already checked)
-                    {
-                        var cultureTier1Troops = FindTier1TroopsForHeroClass(heroClass, culture, settings);
-                        tier1TroopsFromOtherCultures.AddRange(cultureTier1Troops);
-                    }
-
-                    if (tier1TroopsFromOtherCultures.Any())
-                    {
-                        Log.Info($"[Guided Hiring] Cross-culture: Found {tier1TroopsFromOtherCultures.Count} tier 1 troops from other cultures that can upgrade to {heroClass.ID}");
-                        return tier1TroopsFromOtherCultures.Distinct().ToList();
-                    }
-                    
-                    Log.Info($"[Guided Hiring] Cross-culture search failed for {heroClass.ID} - no viable upgrade paths found");
+                    var cultureTier1Troops = FindTier1TroopsForHeroClass(heroClass, culture, settings);
+                    tier1TroopsFromOtherCultures.AddRange(cultureTier1Troops);
                 }
+
+                if (tier1TroopsFromOtherCultures.Any())
+                {
+                    Log.Info($"[Guided Hiring] Cross-culture: Found {tier1TroopsFromOtherCultures.Count} tier 1 troops from other cultures that can upgrade to {heroClass.ID}");
+                    return tier1TroopsFromOtherCultures.Distinct().ToList();
+                }
+                
+                Log.Info($"[Guided Hiring] Cross-culture search failed for {heroClass.ID} - no viable upgrade paths found across ALL cultures");
             }
             // PATH 2: Hire by Culture ONLY (no class restriction)
             else if (settings.UseHeroesCultureUnits)

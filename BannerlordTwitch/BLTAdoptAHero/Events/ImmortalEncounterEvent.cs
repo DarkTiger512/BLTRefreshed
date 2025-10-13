@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch;
 using BannerlordTwitch.Helpers;
@@ -373,25 +374,38 @@ namespace BLTAdoptAHero.Events
                 }
 
                 int rewardedCount = 0;
-                var allAdoptedHeroes = BLTAdoptAHeroCampaignBehavior.GetAllAdoptedHeroes();
+                var participants = ImmortalBattleRestrictions.BattleParticipants;
                 
-                foreach (var hero in allAdoptedHeroes)
+                // Only reward heroes who actually participated in the battle
+                foreach (var hero in participants)
                 {
                     if (hero != null && hero.IsAlive)
                     {
                         adoptedHeroCampaign.ChangeHeroGold(hero, config.GoldRewardPerParticipant);
                         rewardedCount++;
+                        Log.Info($"[Immortal Encounter] Rewarded {hero.Name} with {config.GoldRewardPerParticipant} gold");
                     }
                 }
 
-                Log.ShowInformation(
-                    $"Victory! {config.ImmortalName} dissipates into smoke. 'Well fought, mortals... until we meet again.' " +
-                    $"{rewardedCount} BLT participants have been rewarded with {config.GoldRewardPerParticipant} gold each!",
-                    immortalHero?.CharacterObject,
-                    Log.Sound.Horns2
-                );
+                if (rewardedCount > 0)
+                {
+                    Log.ShowInformation(
+                        $"Victory! {config.ImmortalName} dissipates into smoke. 'Well fought, mortals... until we meet again.' " +
+                        $"{rewardedCount} BLT participant{(rewardedCount != 1 ? "s have" : " has")} been rewarded with {config.GoldRewardPerParticipant} gold each!",
+                        immortalHero?.CharacterObject,
+                        Log.Sound.Horns2
+                    );
+                }
+                else
+                {
+                    Log.ShowInformation(
+                        $"Victory! {config.ImmortalName} dissipates into smoke. 'Well fought, mortals... until we meet again.'",
+                        immortalHero?.CharacterObject,
+                        Log.Sound.Horns2
+                    );
+                }
 
-                Log.Info($"[Immortal Encounter] Rewarded {rewardedCount} participants with {config.GoldRewardPerParticipant} gold each");
+                Log.Info($"[Immortal Encounter] Rewarded {rewardedCount} participants (out of {participants.Count} tracked)");
             }
             catch (Exception ex)
             {
@@ -406,6 +420,7 @@ namespace BLTAdoptAHero.Events
             {
                 dialogueActive = false;
                 ImmortalBattleRestrictions.ImmmortalBattleActive = false;
+                ImmortalBattleRestrictions.ClearParticipants();
 
                 if (immortalParty != null && immortalParty.IsActive)
                 {
@@ -661,10 +676,35 @@ namespace BLTAdoptAHero.Events
     }
 
     /// <summary>
-    /// Static class to track immortal battle restrictions
+    /// Static class to track Immortal battle state for restricting enemy-side joins
     /// </summary>
     public static class ImmortalBattleRestrictions
     {
         public static bool ImmmortalBattleActive { get; set; } = false;
+        
+        /// <summary>
+        /// Tracks which BLT heroes have actually participated in the Immortal battle
+        /// </summary>
+        public static HashSet<Hero> BattleParticipants { get; set; } = new HashSet<Hero>();
+        
+        /// <summary>
+        /// Registers a hero as having participated in the Immortal battle
+        /// </summary>
+        public static void RegisterParticipant(Hero hero)
+        {
+            if (ImmmortalBattleActive && hero != null)
+            {
+                BattleParticipants.Add(hero);
+                Log.Info($"[Immortal Encounter] Registered battle participant: {hero.Name}");
+            }
+        }
+        
+        /// <summary>
+        /// Clears the participant list (called when battle ends or encounter is cleaned up)
+        /// </summary>
+        public static void ClearParticipants()
+        {
+            BattleParticipants.Clear();
+        }
     }
 }

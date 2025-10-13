@@ -1796,6 +1796,47 @@ GlobalConfigs:
       Slot4: Stone
       UseCamel: false
       UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_game_burning_agent
+          Sound: ''
+        DeactivateEffect:
+          ParticleEffect: ''
+          Sound: ''
+        Name: Explosive Ammunition
+        Powers:
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements: []
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: The true ruler of Calradia - a deadly sniper archer with 2H axe backup. Only accessible to FNC_Chair.
+      Enabled: false
+      Formation: Ranged
+      ID: baa11107-e77d-c1a5-5eee-0123456789ab
+      Name: bannerlord
+      PassivePower:
+        Name: Ranger Training
+        Powers:
+        - PowerID: fc1c4a1f-0000-4444-9999-deadbeef1337
+          Requirements: []
+        - PowerID: a3b16d6d-5a2f-416c-9098-55f13f626f34
+          Requirements: []
+        - PowerID: 79a9ca29-9a39-4cb3-b536-944d44bb92fd
+          Requirements: []
+      Slot1: Bow
+      Slot2: TwoHandedAxe
+      Slot3: None
+      Slot4: Arrows
+      UseCamel: false
+      UseHorse: false
     ClassLevelRequirements:
     - ClassLevel: 1
       Enabled: true
@@ -1830,6 +1871,838 @@ GlobalConfigs:
         RequiredClass: 00000000-0000-0000-0000-000000000000
         Statistic: Battles
         Value: 50
+    EditableClassDefs:
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=yEtkv5ML}Fireblade'
+        Powers:
+        - PowerID: 80e8009c-2a09-476a-bd71-0aedc6b14011
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 0302cfb6-9d38-468a-9a6d-e53cb1245848
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 66fe10bd-f8ff-4c36-9f4d-ef7b6e8fe12a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 355b4ff7-cfd4-4708-b795-adfec6fe5280
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: d83a689d-7e52-40a3-b1fe-8897fdd789d5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 4b5f06fc-4a12-4c0b-9264-4b94e1077dd5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 4be5a15a-82da-4c66-a5c1-979f30fa9239
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Basic foot soldier, the core around which every army is built.
+      Enabled: true
+      Formation: Infantry
+      ID: 9fa426af-af3e-41f6-9b48-0ffef6dc3553
+      Name: '{=m8bz4drX}infantry'
+      PassivePower:
+        Name: '{=ROXuJJq8}Healthy'
+        Powers:
+        - PowerID: 22ad10d6-34df-4d41-afec-7e98a56f8954
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: e5e7eff7-b59d-43cb-bc3b-eea7470f794b
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: c6356c32-c1e6-4e2a-ad09-e0f054eec108
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 718651fd-6056-4b05-bd6a-a0751ad9141e
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: a3b16d6d-5a2f-416c-9098-55f13f626f34
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 17574666-b91e-4656-a0b9-87a8f9bf59ba
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: a9d8e86d-4a15-4f35-9ebf-209dc085336f
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: OneHandedSword
+      Slot2: Shield
+      Slot3: None
+      Slot4: None
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=skyn1cL6}Explosive Arrows'
+        Powers:
+        - PowerID: bd57817e-6bb4-4412-ac8d-36d6ced6193a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 52e0f85f-c29a-413a-883c-0de4c7f12ead
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Ranged troop, quick on their feet, can use explosive arrows.
+      Enabled: true
+      Formation: Ranged
+      ID: 492c4b3a-d73e-4fe9-be31-f937d6461f93
+      Name: '{=4tflp34a}archer'
+      PassivePower:
+        Name: '{=NE9Li2Hb}Fleet Footed'
+        Powers:
+        - PowerID: 07dab6be-61f8-4cbe-953a-ece6c410c2bf
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 36ca0df1-85c9-49d6-9d6d-51773bd106d9
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 79a9ca29-9a39-4cb3-b536-944d44bb92fd
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 8dbbbf13-ceca-46d9-bc20-f3f2bc167094
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 0d6daf6f-cc83-4508-9833-2c212fcfd4eb
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: ec81e3ce-7510-4934-93b7-c1220d4ecfe3
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Bow
+      Slot2: Arrows
+      Slot3: Arrows
+      Slot4: OneHandedAxe
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=xgnH5owv}Explosive Arrows'
+        Powers:
+        - PowerID: bd57817e-6bb4-4412-ac8d-36d6ced6193a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 52e0f85f-c29a-413a-883c-0de4c7f12ead
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Ranged troop, quick on their feet, can use explosive arrows.
+      Enabled: true
+      Formation: Ranged
+      ID: bf9dd845-0ed3-4da0-bce7-f718ac52fad7
+      Name: '{=JncRD8tX}heavyarcher'
+      PassivePower:
+        Name: '{=ZrmsIMPE}Healthy'
+        Powers:
+        - PowerID: 22ad10d6-34df-4d41-afec-7e98a56f8954
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: c6356c32-c1e6-4e2a-ad09-e0f054eec108
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: a3b16d6d-5a2f-416c-9098-55f13f626f34
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Bow
+      Slot2: Arrows
+      Slot3: Arrows
+      Slot4: TwoHandedAxe
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=QZD9XdpC}Heavy Bolts'
+        Powers:
+        - PowerID: 2bc4d80a-d945-4fe5-801a-026708d3c660
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: d7b4d435-a3a1-4fd2-855d-fa3e044128f2
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: d157416b-6d38-41b2-9764-5be15823fd62
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Ranged troop that specializes in crossbow, tougher but slower than the archer. Can use exposive bolts
+      Enabled: true
+      Formation: Ranged
+      ID: eed616b6-bb68-48aa-8f92-87ab3d744458
+      Name: '{=wV6R9Si5}crossbow'
+      PassivePower:
+        Name: '{=FvNPPHLJ}Self Healing'
+        Powers:
+        - PowerID: 4a60ed27-334e-446e-8e75-9804b1980c8b
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 36ca0df1-85c9-49d6-9d6d-51773bd106d9
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: b3e5da20-1b82-4820-a373-ff9a8190dd98
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 8dbbbf13-ceca-46d9-bc20-f3f2bc167094
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: b3e5da20-1b82-4820-a373-ff9a8190dd98
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: ec81e3ce-7510-4934-93b7-c1220d4ecfe3
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Crossbow
+      Slot2: Bolts
+      Slot3: Bolts
+      Slot4: OneHandedSword
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=7GmE3SfQ}Explosive Bolts'
+        Powers:
+        - PowerID: 2bc4d80a-d945-4fe5-801a-026708d3c660
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: d7b4d435-a3a1-4fd2-855d-fa3e044128f2
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: d157416b-6d38-41b2-9764-5be15823fd62
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Ranged troop that specializes in crossbow, tougher but slower than the archer. Can use exposive bolts
+      Enabled: true
+      Formation: Ranged
+      ID: b7ff2652-db31-43bf-a75c-6fa906298da4
+      Name: '{=bpzytNbP}heavycrossbow'
+      PassivePower:
+        Name: '{=k7booFb2}Healthy'
+        Powers:
+        - PowerID: 22ad10d6-34df-4d41-afec-7e98a56f8954
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: c6356c32-c1e6-4e2a-ad09-e0f054eec108
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: a3b16d6d-5a2f-416c-9098-55f13f626f34
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Crossbow
+      Slot2: Bolts
+      Slot3: Bolts
+      Slot4: TwoHandedSword
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=ZEGEpycY}Trample'
+        Powers:
+        - PowerID: 6ad716bb-76e1-4cb1-9601-85f81f5d5425
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 0c2ecb3e-a4e6-4e54-b87d-b860cc486613
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: b2da61f2-a12e-4834-9f41-a79040e90ec4
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Mounted troop with a strong horse, capable of doing extra charge damage.
+      Enabled: true
+      Formation: Cavalry
+      ID: d1006ce9-cac9-4416-b8f9-efe55e9eb878
+      Name: '{=jNaFWF9t}cavalry'
+      PassivePower:
+        Name: '{=YghplAdF}A Good Horse'
+        Powers:
+        - PowerID: 4432f8ab-d1c0-4ea5-ae7f-d3478738f87d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 20f6817e-8f45-4dc3-a513-77707fb9c96d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 46a9624a-2560-4e97-9627-3c13be41f947
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 6cca75ef-a900-4593-8ea8-cf96163003c0
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: ce6f6302-4db2-4a34-bffb-530f0ceac9c1
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 64e3832f-9f08-40dd-b1ab-0be6a26ed091
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: OneHandedLance
+      Slot2: Shield
+      Slot3: OneHandedSword
+      Slot4: None
+      UseCamel: false
+      UseHorse: true
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=mmeJSrm9}Trample'
+        Powers:
+        - PowerID: 6ad716bb-76e1-4cb1-9601-85f81f5d5425
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 0c2ecb3e-a4e6-4e54-b87d-b860cc486613
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: b2da61f2-a12e-4834-9f41-a79040e90ec4
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Mounted troop with a strong horse, capable of doing extra charge damage.
+      Enabled: true
+      Formation: Cavalry
+      ID: 14f908f8-4983-479f-89f7-1dac81f7d0f9
+      Name: '{=mJ8RVORq}camelry'
+      PassivePower:
+        Name: '{=atGMPeNF}A Good Camel'
+        Powers:
+        - PowerID: 4432f8ab-d1c0-4ea5-ae7f-d3478738f87d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 20f6817e-8f45-4dc3-a513-77707fb9c96d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 46a9624a-2560-4e97-9627-3c13be41f947
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 6cca75ef-a900-4593-8ea8-cf96163003c0
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: ce6f6302-4db2-4a34-bffb-530f0ceac9c1
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 64e3832f-9f08-40dd-b1ab-0be6a26ed091
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: OneHandedLance
+      Slot2: Shield
+      Slot3: OneHandedMace
+      Slot4: None
+      UseCamel: true
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=YpIUHASp}Explosive Arrows'
+        Powers:
+        - PowerID: bd57817e-6bb4-4412-ac8d-36d6ced6193a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 52e0f85f-c29a-413a-883c-0de4c7f12ead
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Mounted ranged unit, with a good horse, that can use exposive arrows.
+      Enabled: true
+      Formation: HorseArcher
+      ID: 2942cdb2-30ec-400a-ba8e-ed9bb3b47f48
+      Name: '{=p5qJfkkp}horsearcher'
+      PassivePower:
+        Name: '{=zxgdfSIS}Mounted Archery'
+        Powers:
+        - PowerID: 36ca0df1-85c9-49d6-9d6d-51773bd106d9
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 4432f8ab-d1c0-4ea5-ae7f-d3478738f87d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 8dbbbf13-ceca-46d9-bc20-f3f2bc167094
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 46a9624a-2560-4e97-9627-3c13be41f947
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: ec81e3ce-7510-4934-93b7-c1220d4ecfe3
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: ce6f6302-4db2-4a34-bffb-530f0ceac9c1
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Bow
+      Slot2: Arrows
+      Slot3: Arrows
+      Slot4: OneHandedSword
+      UseCamel: false
+      UseHorse: true
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=FrX7AiyI}Heavy Arrows'
+        Powers:
+        - PowerID: 2bc4d80a-d945-4fe5-801a-026708d3c660
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: d7b4d435-a3a1-4fd2-855d-fa3e044128f2
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: d157416b-6d38-41b2-9764-5be15823fd62
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Mounted ranged unit on a good camel, wielding a glaive. Can use exposive arrows.
+      Enabled: true
+      Formation: HorseArcher
+      ID: df54336d-52df-4d4b-a9c6-c1fe91cdc70f
+      Name: '{=HreZWoyd}camelarcher'
+      PassivePower:
+        Name: '{=szdoTAQj}Mounted Archery'
+        Powers:
+        - PowerID: 36ca0df1-85c9-49d6-9d6d-51773bd106d9
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 4432f8ab-d1c0-4ea5-ae7f-d3478738f87d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 46a9624a-2560-4e97-9627-3c13be41f947
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 8dbbbf13-ceca-46d9-bc20-f3f2bc167094
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: ce6f6302-4db2-4a34-bffb-530f0ceac9c1
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: ec81e3ce-7510-4934-93b7-c1220d4ecfe3
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Bow
+      Slot2: Arrows
+      Slot3: Arrows
+      Slot4: TwoHandedGlaive
+      UseCamel: true
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll
+          Sound: 
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_water_coll_small
+          Sound: 
+        Name: '{=E3qGC3fs}Break Through'
+        Powers:
+        - PowerID: 98d5c8a7-a480-4f20-a219-e3c0af81e73a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 584fa61d-7016-43d1-b9c3-b690b5dd18b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 7ac9dfdb-5744-4dd6-b445-dab123e67e11
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: aa9fdb10-a928-4480-8838-cd3e72774d03
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 745a57aa-e674-4cd3-a57c-ee0c39f945f1
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 49e6de04-d7d2-4f00-9006-0e9b8d01cec9
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Foot soldier that can engage at range using javelins. Able to reflect a portion of incoming damage.
+      Enabled: true
+      Formation: Skirmisher
+      ID: 3d5b962a-f6ee-409e-940b-c2f2b8d4cf98
+      Name: '{=9euSgzCd}skirmisher'
+      PassivePower:
+        Name: '{=Lw8xQu1P}Retribution'
+        Powers:
+        - PowerID: 66b1245a-136d-4a11-b1f2-5368f0b78ca4
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 347cec61-aa6d-4002-87de-47d298ca3161
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 4341afec-1b6e-4ee9-8a70-c83a8d1c56c6
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: bd57817e-6bb4-4412-ac8d-36d6ced6193a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: TwoHandedSword
+      Slot2: ThrowingJavelins
+      Slot3: ThrowingJavelins
+      Slot4: None
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: psys_burning_projectile_default_coll
+          Sound: None
+        DeactivateEffect:
+          ParticleEffect: psys_burning_projectile_default_coll_small
+          Sound: None
+        Name: '{=1DSLInEJ}Berserker Rage'
+        Powers:
+        - PowerID: bb45ba09-ffe1-4320-9c7e-248f4ad47045
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 3f5613bb-9bb6-4436-9cf9-a7927cc75387
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 4be5a15a-82da-4c66-a5c1-979f30fa9239
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: e514dfef-57e4-44a5-acdb-c1214275e063
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 97970d70-c651-4462-9156-17f666259d1a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 087ec677-cb5b-4f4c-9773-1df8e8e69a1d
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: Foot soldier with lower health, that can gain health by doing damage.
+      Enabled: true
+      Formation: Skirmisher
+      ID: f04e7a10-950b-48a4-bed3-7aa2091aa268
+      Name: '{=wVjXAFal}berserker'
+      PassivePower:
+        Name: '{=nB4Qb0mD}Glass Cannon'
+        Powers:
+        - PowerID: b99d374b-84d0-495e-a430-1811ad6e712b
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 6a36fedb-0b2d-459c-b06b-c4230327589b
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 9cf5d507-92ea-4068-85e6-3938db7170e1
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: a3e50729-68f2-4a25-ac3f-e5c3738965cf
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 3d71f948-c58b-402f-a134-dfbcef1e28be
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 2355a51d-d813-48b3-9987-d997099d51ed
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 60582ddc-3b22-4052-9437-cd43882bf5f9
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: 98d5c8a7-a480-4f20-a219-e3c0af81e73a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+        - PowerID: b3e5da20-1b82-4820-a373-ff9a8190dd98
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: TwoHandedAxe
+      Slot2: None
+      Slot3: None
+      Slot4: None
+      UseCamel: false
+      UseHorse: false
+    - ActivePower:
+        ActivateEffect:
+          ParticleEffect: 
+          Sound: None
+        DeactivateEffect:
+          ParticleEffect: 
+          Sound: 
+        Name: '{=rzIl9tm3}Retribution'
+        Powers:
+        - PowerID: 66b1245a-136d-4a11-b1f2-5368f0b78ca4
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 347cec61-aa6d-4002-87de-47d298ca3161
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 4341afec-1b6e-4ee9-8a70-c83a8d1c56c6
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Description: ''
+      Enabled: true
+      Formation: Skirmisher
+      ID: ab0fb1fb-ecd9-4ed0-9822-27b7682d1742
+      Name: '{=4JffsJMD}looter'
+      PassivePower:
+        Name: '{=nmjVjakS}Grenades'
+        Powers:
+        - PowerID: bd57817e-6bb4-4412-ac8d-36d6ced6193a
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 1
+            MinLevel: 1
+        - PowerID: 52e0f85f-c29a-413a-883c-0de4c7f12ead
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 2
+            MinLevel: 2
+        - PowerID: 88aaee42-f3ef-4fff-8320-cc06ceb3d9b5
+          Requirements:
+          - !ClassLevelRequirement
+            MaxLevel: 3
+            MinLevel: 3
+      Slot1: Stone
+      Slot2: Stone
+      Slot3: Stone
+      Slot4: Stone
+      UseCamel: false
+      UseHorse: false
   Id: Adopt A Hero - Class Config
 - Config:
     Achievements:
@@ -2727,6 +3600,28 @@ GlobalConfigs:
           ModifierPercent: 200
           Skill: Ranged
       Name: '{=7YSCRTCg}Ranger III'
+      Pfx: []
+      PowerDurationSeconds: 120
+    - !StatModifyPower
+      ID: fc1c4a1f-0000-4444-9999-deadbeef1337
+      Modifiers:
+        ApplyToMount: false
+        Properties:
+        - Add: 0
+          ModifierPercent: 300
+          Name: AiShootFreq
+        - Add: 0
+          ModifierPercent: 25
+          Name: AiWaitBeforeShootFactor
+        ScalePercent: 100
+        Skills:
+        - Add: 0
+          ModifierPercent: 300
+          Skill: Ranged
+        - Add: 100
+          ModifierPercent: 100
+          Skill: Ranged
+      Name: Ranger IV
       Pfx: []
       PowerDurationSeconds: 120
     - !AddDamagePower
