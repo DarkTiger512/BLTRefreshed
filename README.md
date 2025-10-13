@@ -4,7 +4,7 @@
 
 > **🎯 Compatible with**: Mount & Blade II: Bannerlord v1.2.12 (Latest Game Version)
 
-> **📦 Current Version**: v5.0.2
+> **📦 Current Version**: v5.0.1
 
 ## 📦 **Quick Installation**
 
@@ -35,24 +35,8 @@ Get-ChildItem -Path ".\BLT*" -Recurse | Unblock-File
 
 ---
 
-# Bannerlord Twitch (BLT) - Enhanced Edition v5.0.2
+# Bannerlord Twitch (BLT) - Enhanced Edition v5.0.1
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
-
-## What's New in v5.0.2
-### ✨ New Features
-- **!ammo Command**: Archers and horse archers can now check their remaining ammunition during battles
-  - Shows detailed breakdown by ammo type (arrows, bolts, javelins)
-  - Real-time tracking of ammunition status
-  - Battle-only command for active missions
-
-### 🐛 Bug Fixes & Improvements
-- **Code Cleanup**: Removed 324 lines of dead code and cleaned up commented-out debug logs
-- **Hero Floating Labels Removed**: Eliminated the screen clutter feature that showed viewer names above adopted heroes
-  - Better experience for streamers with many adopted heroes
-  - Cleaner battle visuals without dozens of floating labels
-- **Clan Tier Progression Fixed**: Properly fixed clan tier calculation using reflection-based solution
-  - Clans now correctly start at the tier corresponding to their renown
-  - No more stuck at tier 1 regardless of starting renown
 
 ## Enhanced Edition Features (v5.0+)
 This enhanced version includes significant improvements to the retinue and hero class systems:
@@ -75,9 +59,8 @@ This enhanced version includes significant improvements to the retinue and hero 
 - **Smart Defaults**: Configuration-level class assignments ensure consistent experience
 
 ### **Quality of Life**
-- **!ammo Command**: Check remaining ammunition for archer heroes during battles
 - **Direct Message Support**: Commands can now respond via Twitch whispers/DMs
-- **Cleaner Battle Interface**: Removed screen clutter from floating hero labels
+- **Cleaner Battle Interface**: Standard overhead name markers without cluttered hero labels
 
 ### **Gold Transfer System**
 - **Hero-to-Hero Gold Transfers**: Viewers can send gold to other viewers' heroes
@@ -89,7 +72,6 @@ This enhanced version includes significant improvements to the retinue and hero 
 - **Enhanced Build System**: Intelligent dual-archiver support (7-Zip/WinRAR)
 - **Formation Bug Fixes**: Corrected Infantry formation mapping and added Skirmisher support
 - **Improved Error Handling**: Better compatibility checking and fallback systems
-- **Code Quality**: Removed dead code and improved maintainability
 
 ## 📥 Installation for Streamers
 
@@ -136,8 +118,8 @@ Viewers can "adopt" an in-game hero of types that can be specified in the config
 
 ## Installation
 
-### Enhanced Edition v5.0.2 Installation
-**Note**: This enhanced version includes the complete BLT experience with smart retinue systems, hero class compatibility, and quality-of-life improvements like the !ammo command.
+### Enhanced Edition v5.0.1 Installation
+**Note**: This enhanced version includes the complete BLT experience with smart retinue systems, hero class compatibility, and quality-of-life improvements.
 
 ### [Installation Guide Video](https://youtu.be/ATf5zilwNWk)
 
@@ -225,17 +207,16 @@ This is a continuation of the project, originally started by somebody else.
 - **Enhanced UI Elements**: Hero nametags, improved widgets, and visual enhancements
 - **Negative Gold Rewards**: Battle lose mechanics that can grant gold instead of losing it
 
-## Enhanced Edition v5.0.2
-**Enhanced by**: Community development focusing on improved retinue systems, hero class compatibility, quality-of-life improvements, and code quality. This enhanced version builds upon all previous excellent work and maintains full compatibility with the existing BLT ecosystem.
+## Enhanced Edition v5.0.1
+**Enhanced by**: Community development focusing on improved retinue systems, hero class compatibility, and quality-of-life improvements. This enhanced version builds upon all previous excellent work and maintains full compatibility with the existing BLT ecosystem.
 
-### Key Features in Enhanced Edition v5.0.2:
+### Key Features in Enhanced Edition v5.0.1:
 - **Smart Retinue Hiring System**: Formation-based compatibility with hire-by-hero-class functionality
 - **Hero Class Enhancement**: Auto-assignment features and 12-class system refinements
 - **Gold Transfer System**: Viewer-to-viewer interactions with configurable fees and limits
-- **Quality of Life**: !ammo command for archers, direct message support
-- **Code Quality**: Removed 324 lines of dead code, eliminated screen clutter features
-- **Bug Fixes**: Proper clan tier progression, formation compatibility fixes
+- **Quality of Life**: Direct message support, cleaner battle interface
 - **Technical Infrastructure**: Build system improvements and packaging automation
+- **Stability Improvements**: Formation bug fixes, compatibility checking, and error handling
 
 ## Development Philosophy
 Each iteration of this project has built upon the previous work while respecting the original vision. This enhanced edition maintains the same collaborative spirit, adding features that enhance the core experience while preserving compatibility with existing configurations and save games.
