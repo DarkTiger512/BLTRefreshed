@@ -910,7 +910,7 @@ Commands:
   RespondInOverlay: true
   RespondInTwitch: true
 - Documentation: 'Simulation command to give unlimited gold to heroes for testing purposes.<br>Usage: <code>!simgold (amount)</code> - e.g. <code>!simgold 50000</code> would give 50,000 gold to your hero.<br><strong>WARNING:</strong> This is a simulation command with no limits or cooldowns. Disabled by default.'
-  Enabled: false
+  Enabled: true
   Handler: SimGold
   HandlerConfig:
     DefaultAmount: 100000

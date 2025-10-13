@@ -247,7 +247,7 @@ namespace BLTAdoptAHero.Util
                 var finalDestinations = behavior.GetFinalTierDestinationsForDebug(troop);
                 if (finalDestinations.Any())
                 {
-                    output += $"\n  FINAL DESTINATIONS (Tier 5-6):\n";
+                    output += $"\n  FINAL DESTINATIONS (No Further Upgrades):\n";
                     foreach (var dest in finalDestinations)
                     {
                         output += $"    ⟹ {dest.Name} (T{dest.Tier}) {dest.DefaultFormationClass} {(dest.IsMounted ? "MOUNTED" : "")}\n";

@@ -1825,12 +1825,18 @@ namespace BLTAdoptAHero
         
         /// <summary>
         /// Gets all compatible final destinations reachable from this troop for the specified hero class.
-        /// Only returns TRUE final destinations (Tier 5+ or no upgrades) that match the class.
+        /// A "final destination" is dynamically determined - any troop with no further upgrades.
         /// </summary>
         private static List<CharacterObject> GetCompatibleFinalDestinations(CharacterObject troop, string heroFormation, HashSet<string> visited = null)
         {
             visited ??= new HashSet<string>();
             var compatibleDestinations = new List<CharacterObject>();
+
+            // Prevent infinite loops - check BEFORE processing
+            if (visited.Contains(troop.StringId))
+                return compatibleDestinations;
+                
+            visited.Add(troop.StringId);
 
             // Check if this troop is compatible with hero class
             bool isCompatible = heroFormation switch
@@ -1855,8 +1861,8 @@ namespace BLTAdoptAHero
                 _ => true
             };
             
-            // Check if this is a final destination
-            bool isFinalDestination = troop.UpgradeTargets == null || !troop.UpgradeTargets.Any() || troop.Tier >= 5;
+            // Check if this is a final destination (no more upgrades)
+            bool isFinalDestination = troop.UpgradeTargets == null || !troop.UpgradeTargets.Any();
             
             if (isFinalDestination && isCompatible)
             {
@@ -1864,13 +1870,14 @@ namespace BLTAdoptAHero
                 compatibleDestinations.Add(troop);
             }
             
-            // If not final or has more upgrades, recursively check upgrade paths
+            // If has upgrades, recursively check upgrade paths
             if (troop.UpgradeTargets != null && troop.UpgradeTargets.Any())
             {
                 foreach (var upgrade in troop.UpgradeTargets)
                 {
+                    // Use the SAME visited set to properly track cycles across all branches
                     compatibleDestinations.AddRange(
-                        GetCompatibleFinalDestinations(upgrade, heroFormation, new HashSet<string>(visited))
+                        GetCompatibleFinalDestinations(upgrade, heroFormation, visited)
                     );
                 }
             }
@@ -1922,8 +1929,9 @@ namespace BLTAdoptAHero
                 _ => true // Unknown formation - allow
             };
             
-            // Determine if this is a FINAL DESTINATION (no upgrades OR tier 5+)
-            bool isFinalDestination = troop.UpgradeTargets == null || !troop.UpgradeTargets.Any() || troop.Tier >= 5;
+            // Determine if this is a FINAL DESTINATION (no more upgrades available)
+            // This is dynamic and works for any troop tree depth (T4, T5, T6, T7, etc.)
+            bool isFinalDestination = troop.UpgradeTargets == null || !troop.UpgradeTargets.Any();
             
             if (isFinalDestination)
             {
@@ -1939,7 +1947,9 @@ namespace BLTAdoptAHero
             
             foreach (var upgrade in troop.UpgradeTargets)
             {
-                if (HasValidUpgradePathToClass(upgrade, heroFormation, new HashSet<string>(visited), depth + 1))
+                // Create a fresh copy of visited for each branch to avoid cross-contamination
+                var branchVisited = new HashSet<string>(visited);
+                if (HasValidUpgradePathToClass(upgrade, heroFormation, branchVisited, depth + 1))
                 {
                     Log.Info($"[Path Validation] {indent}  SUCCESS: Valid path through {upgrade.Name}");
                     return true; // Found at least one valid path to compatible final destination
@@ -2092,7 +2102,9 @@ namespace BLTAdoptAHero
         }
 
         /// <summary>
-        /// Gets the final tier destinations (tier 5-6) for a given troop's upgrade path.
+        /// Gets the final tier destinations for a given troop's upgrade path.
+        /// A "final destination" is a troop with NO further upgrades available.
+        /// This is dynamic and works regardless of max tier (T4, T5, T6, T7, etc.)
         /// </summary>
         private static List<CharacterObject> GetFinalTierDestinations(CharacterObject troop, HashSet<string> visited = null)
         {
@@ -2106,23 +2118,17 @@ namespace BLTAdoptAHero
                 
             visited.Add(troop.StringId);
             
-            // If this troop has no upgrades, it's a final destination
+            // If this troop has no upgrades, it IS a final destination (regardless of tier)
             if (troop.UpgradeTargets == null || !troop.UpgradeTargets.Any())
             {
                 return new List<CharacterObject> { troop };
             }
             
-            // If this is already tier 5+, consider it a final destination
-            if (troop.Tier >= 5)
-            {
-                return new List<CharacterObject> { troop };
-            }
-            
-            // Recursively get final destinations from all upgrade paths
+            // This troop has upgrades - recursively find final destinations
             var finalDestinations = new List<CharacterObject>();
             foreach (var upgrade in troop.UpgradeTargets)
             {
-                finalDestinations.AddRange(GetFinalTierDestinations(upgrade, new HashSet<string>(visited)));
+                finalDestinations.AddRange(GetFinalTierDestinations(upgrade, visited));
             }
             
             return finalDestinations.Distinct().ToList();
