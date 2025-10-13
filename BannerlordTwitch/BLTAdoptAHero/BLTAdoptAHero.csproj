@@ -331,6 +331,7 @@
     <Compile Include="Actions\Retinue.cs" />
     <Compile Include="Actions\RetireMyHero.cs" />
     <Compile Include="Actions\AuctionItem.cs" />
+    <Compile Include="Actions\CheckAmmo.cs" />
     <Compile Include="Actions\SetHeroClass.cs" />
     <Compile Include="Actions\SkillXP.cs" />
     <Compile Include="Actions\SmithItem.cs" />
@@ -345,7 +346,6 @@
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCommonMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCustomMissionBehavior.cs" />
-    <Compile Include="Behaviors\BLTHeroWidgetBehavior.cs" />
     <Compile Include="Behaviors\BLTTournamentBetMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTCustomItemsCampaignBehavior.cs" />
     <Compile Include="Behaviors\BLTHeroPowersMissionBehavior.cs" />

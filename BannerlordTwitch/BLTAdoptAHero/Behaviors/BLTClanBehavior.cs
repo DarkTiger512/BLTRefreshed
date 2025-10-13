@@ -134,7 +134,6 @@ namespace BLTAdoptAHero
                     familyData.FamilyMembers = familyMembers;
                 }
                 FamilyList = familyDict.Values.ToList();
-                //Log.Trace("familyList");
             }
             public void GiveDailyXpToFamily()
             {
@@ -160,7 +159,6 @@ namespace BLTAdoptAHero
                 {
                     var relevantSkill = GetRelevantSkill(target) ?? DefaultSkills.Athletics;
                     target.AddSkillXp(relevantSkill, DailyXpAmount);
-                    //Log.Trace("relevant");
 
                     var supportSkills = new[]
                     {
@@ -174,7 +172,6 @@ namespace BLTAdoptAHero
                     };
 
                     target.AddSkillXp(supportSkills.GetRandomElement(), DailyXpAmount);
-                    //Log.Trace("support");
                 }
 
                 foreach (var family in FamilyList)

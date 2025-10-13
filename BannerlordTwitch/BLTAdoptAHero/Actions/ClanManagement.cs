@@ -447,9 +447,30 @@ namespace BLTAdoptAHero.Actions
             newClan.UpdateHomeSettlement(Settlement.All.SelectRandom());
             //BLTClanBehavior.Current?.RegisterBLTClan(newClan);
             adoptedHero.Clan = newClan;
-            newClan.AddRenown(settings.Renown, true); // Keep true for tier progression fix
+            newClan.AddRenown(settings.Renown, false); // shouldNotify parameter only controls UI notifications, not tier calculation
             adoptedHero.Gold = 50000; // Add starting gold from randomchair
             newClan.SetLeader(adoptedHero);
+            
+            // Properly recalculate clan tier based on renown using reflection (Tier property is read-only)
+            // Bannerlord's clan tier thresholds: Tier 0=0, Tier 1=50, Tier 2=150, Tier 3=350, Tier 4=650, Tier 5=1150, Tier 6=2050
+            int calculatedTier = 0;
+            if (newClan.Renown >= 2050) calculatedTier = 6;
+            else if (newClan.Renown >= 1150) calculatedTier = 5;
+            else if (newClan.Renown >= 650) calculatedTier = 4;
+            else if (newClan.Renown >= 350) calculatedTier = 3;
+            else if (newClan.Renown >= 150) calculatedTier = 2;
+            else if (newClan.Renown >= 50) calculatedTier = 1;
+            
+            if (calculatedTier > 0)
+            {
+                // Use reflection to set the read-only Tier property
+                var tierProperty = typeof(Clan).GetProperty("Tier");
+                if (tierProperty != null)
+                {
+                    tierProperty.SetValue(newClan, calculatedTier);
+                }
+            }
+            
             if (!CampaignHelpers.IsEncyclopediaBookmarked(newClan))
                 CampaignHelpers.AddEncyclopediaBookmarkToItem(newClan);
             onSuccess("{=omDrEeDx}Created and leading clan {name}".Translate(("name", fullClanName)));

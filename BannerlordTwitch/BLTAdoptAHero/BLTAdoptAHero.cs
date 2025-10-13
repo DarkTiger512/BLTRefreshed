@@ -76,6 +76,7 @@ namespace BLTAdoptAHero
         [UsedImplicitly, HarmonyPostfix, HarmonyPatch(typeof(MissionScreen), "TaleWorlds.MountAndBlade.IMissionSystemHandler.OnMissionAfterStarting")]
         static void OnMissionAfterStartingPostFix(MissionScreen __instance)
         {
+            // Add name markers to missions
             if (__instance.Mission.GetMissionBehavior<MissionNameMarkerUIHandler>() == null
             && (__instance.Mission.GetMissionBehavior<BattleSpawnLogic>() != null
                 || __instance.Mission.GetMissionBehavior<TournamentFightMissionController>() != null))

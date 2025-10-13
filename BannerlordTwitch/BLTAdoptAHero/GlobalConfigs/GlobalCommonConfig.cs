@@ -107,7 +107,7 @@ namespace BLTAdoptAHero
         [LocDisplayName("{=OlJrCEyE}Summon Cooldown In Seconds"),
          LocCategory("Battle", "{=9qAD6eZR}Battle"),
          LocDescription("{=DeGB2BGZ}Minimum time between summons for a specific hero"),
-         PropertyOrder(6),
+         PropertyOrder(7),
          Range(0, int.MaxValue),
          Document, UsedImplicitly]
         public int SummonCooldownInSeconds { get; set; } = 20;

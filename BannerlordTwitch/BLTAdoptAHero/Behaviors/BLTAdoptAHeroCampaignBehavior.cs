@@ -383,8 +383,6 @@ namespace BLTAdoptAHero
                 var usedHeroList = heroData.Keys.ToList();
                 dataStore.SyncData("UsedHeroObjectList", ref usedHeroList);
 
-                // var heroImtes = heroData.Values.SelectMany(h => h.)
-
                 foreach (var r in heroData.Values.SelectMany(h => h.Retinue))
                 {
                     r.SavedTroopIndex = usedCharList.IndexOf(r.TroopType);

@@ -167,40 +167,5 @@ namespace BLTAdoptAHero
             customItemModifiers.Add(registeredModifier, modifierData);
             return registeredModifier;
         }
-
-        // public void InitializeCraftingElements()
-        // {
-        //     List<ItemObject> list = new List<ItemObject>();
-        //     foreach (KeyValuePair<ItemObject, CraftingCampaignBehavior.CraftedItemInitializationData> keyValuePair in this._craftedItemDictionary)
-        //     {
-        //         ItemObject itemObject = Crafting.InitializePreCraftedWeaponOnLoad(keyValuePair.Key, keyValuePair.Value.CraftedData, keyValuePair.Value.ItemName, keyValuePair.Value.Culture, keyValuePair.Value.OverrideData);
-        //         if (itemObject == DefaultItems.Trash)
-        //         {
-        //             list.Add(keyValuePair.Key);
-        //             if (MBObjectManager.Instance.GetObject(keyValuePair.Key.Id) != null)
-        //             {
-        //                 MBObjectManager.Instance.UnregisterObject(keyValuePair.Key);
-        //             }
-        //         }
-        //         else
-        //         {
-        //             ItemObject.InitAsPlayerCraftedItem(ref itemObject);
-        //         }
-        //     }
-        //     foreach (ItemObject key in list)
-        //     {
-        //         this._craftedItemDictionary.Remove(key);
-        //     }
-        //     foreach (KeyValuePair<Town, CraftingCampaignBehavior.CraftingOrderSlots> keyValuePair2 in this.CraftingOrders)
-        //     {
-        //         foreach (CraftingOrder craftingOrder in keyValuePair2.Value.Slots)
-        //         {
-        //             if (craftingOrder != null)
-        //             {
-        //                 craftingOrder.InitializeCraftingOrderOnLoad();
-        //             }
-        //         }
-        //     }
-        // }
     }
 }

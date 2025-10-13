@@ -305,6 +305,18 @@ Commands:
   RespondInDM: false
   RespondInOverlay: true
   RespondInTwitch: false
+- Documentation: Check how much ammunition your archer or horse archer hero has remaining in the current battle. Shows ammo count for arrows, bolts, and throwing weapons.
+  Enabled: true
+  Handler: CheckAmmo
+  HandlerConfig: 
+  Help: check remaining ammunition
+  HideHelp: false
+  ID: 7a8f9e2b-1c3d-4f5e-8a6b-9c0d1e2f3a4b
+  ModeratorOnly: false
+  Name: ammo
+  RespondInDM: false
+  RespondInOverlay: true
+  RespondInTwitch: false
 - Documentation: Start an auction on a custom item you own, with a specified reserve price. Other viewers are able to bid upon your item, and the highest bidder will receive it at the end of the auction.<br>Usage is <code>!auction (custom item index) (reserve price)</code>, e.g. <code>!auction 3 50000</code> would start a new auction for your custom item with the index of 3 (as shown by the 'customitems' command), with a reserve price of 50000.
   Enabled: true
   Handler: AuctionItem
@@ -2959,7 +2971,9 @@ GlobalConfigs:
     RetinueHealPerKill: 50
     RetinueUseHeroesFormation: false
     Shouts: []
+    ShowHeroFloatingLabels: true
     ShowKillStreakPopup: true
+    ShowNameMarkers: true
     StartHealthMultiplier: 2
     StartRetinueHealthMultiplier: 2
     StartWithFullHealth: true

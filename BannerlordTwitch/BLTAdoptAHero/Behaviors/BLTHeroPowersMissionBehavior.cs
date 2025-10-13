@@ -181,31 +181,6 @@ namespace BLTAdoptAHero
             collisionData = param.collisionData;
         }
 
-        // public override void OnAgentShootMissile(Agent shooterAgent, EquipmentIndex weaponIndex,
-        // Vec3 position, Vec3 velocity, Mat3 orientation,
-        //     bool hasRigidBody, int forcedMissileIndex)
-        // {
-        //     base.OnAgentShootMissile(shooterAgent, weaponIndex, position, velocity, orientation, hasRigidBody, forcedMissileIndex);
-        // }
-
-        // private void ApplyHitDamage(Agent attackerAgent, Agent victimAgent,
-        // ref AttackCollisionData attackCollisionData)
-        // {
-        //     if (attackerAgent?.IsMount == true)
-        //         attackerAgent = attackerAgent.RiderAgent;
-        //
-        //     var acdRef = new RefHandle<AttackCollisionData>(attackCollisionData);
-        //
-        //     if (CallHandlersForAgentPair(attackerAgent, victimAgent, 
-        //         handlers=> handlers.DoDamage(attackerAgent, victimHero,
-        // victimAgent, acdRef),
-        //         handlers=> handlers.TakeDamage(victimAgent, attackerHero,
-        // attackerAgent, acdRef))) 
-        //         return;
-        //
-        //     attackCollisionData = acdRef.Data;
-        // }
-
         public class RegisterBlowParams
         {
             public bool AttackerIsMount;
