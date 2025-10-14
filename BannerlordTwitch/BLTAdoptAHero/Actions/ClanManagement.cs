@@ -45,12 +45,13 @@ namespace BLTAdoptAHero.Actions
          CategoryOrder("Create", 1),
          CategoryOrder("Lead", 2),
          CategoryOrder("Rename", 3),
-         CategoryOrder("Stats", 4),
-         CategoryOrder("Party", 5),
-         CategoryOrder("Leave", 6),
+         CategoryOrder("Rename Fief", 4),
+         CategoryOrder("Stats", 5),
+         CategoryOrder("Party", 6),
+         CategoryOrder("Leave", 7),
          //CategoryOrder("Disband", 6),
-         CategoryOrder("Buy Noble Title", 7),
-         CategoryOrder("Edit Banner", 8)]
+         CategoryOrder("Buy Noble Title", 8),
+         CategoryOrder("Edit Banner", 9)]
         private class Settings : IDocumentable
         {
             [LocDisplayName("{=pYjIUlTE}Enabled"),
@@ -125,6 +126,18 @@ namespace BLTAdoptAHero.Actions
              PropertyOrder(2), UsedImplicitly]
             public int RenamePrice { get; set; } = 1000000;
 
+            [LocDisplayName("{=pYjIUlTE}Enabled"),
+             LocCategory("Rename Fief", "{=RenameFief}Rename Fief"),
+             LocDescription("{=RenameFiefDesc}Enable renaming fiefs command"),
+             PropertyOrder(1), UsedImplicitly]
+            public bool RenameFiefEnabled { get; set; } = true;
+
+            [LocDisplayName("{=d5WMYSvO}Gold Cost"),
+             LocCategory("Rename Fief", "{=RenameFief}Rename Fief"),
+             LocDescription("{=RenameFiefCostDesc}Cost of renaming a fief (settlement)"),
+             PropertyOrder(2), UsedImplicitly]
+            public int RenameFiefPrice { get; set; } = 500000;
+
             [LocDisplayName("{=mlayrmHr}Stats"),
              LocCategory("Stats", "{=mlayrmHr}Stats"),
              LocDescription("{=vNGlBZUB}Enable stats command"),
@@ -178,6 +191,8 @@ namespace BLTAdoptAHero.Actions
                     EnabledCommands = EnabledCommands.Append("{=TrSSHcbH}Lead, ".Translate());
                 if (RenameEnabled)
                     EnabledCommands = EnabledCommands.Append("{=ugFdRADy}Rename, ".Translate());
+                if (RenameFiefEnabled)
+                    EnabledCommands = EnabledCommands.Append("{=RenameFief}Rename Fief, ".Translate());
                 if (StatsEnabled)
                     EnabledCommands = EnabledCommands.Append("{=mlayrmHr}Stats, ".Translate());
                 if (FiefsEnabled)
@@ -218,6 +233,11 @@ namespace BLTAdoptAHero.Actions
                                     "Rename Config: " +
                                     "</strong>" +
                                     "Price={price}{icon}".Translate(("price", RenamePrice.ToString()), ("icon", Naming.Gold)));
+                if (RenameFiefEnabled)
+                    generator.Value("<strong>" +
+                                    "Rename Fief Config: " +
+                                    "</strong>" +
+                                    "Price={price}{icon}".Translate(("price", RenameFiefPrice.ToString()), ("icon", Naming.Gold)));
                 if (BuyTitleEnabled)
                     generator.Value("<strong>" +
                                     "Buy Noble Title Config: " +
@@ -283,12 +303,21 @@ namespace BLTAdoptAHero.Actions
             {
                 command = "buy title";
             }
+            // Special case: !clan rename fief
+            if (command.Equals("rename", StringComparison.OrdinalIgnoreCase) &&
+                splitArgs.Length > 1 &&
+                splitArgs[1].Equals("fief", StringComparison.OrdinalIgnoreCase))
+            {
+                command = "rename fief";
+                desiredName = string.Join(" ", splitArgs.Skip(2)).Trim();
+            }
             var bannerCodeOrUrl = desiredName;
 
             string joinCommand = "{=I2jEHyAY}join".Translate();
             string createCommand = "{=ymJh4yMY}create".Translate();
             string leadCommand = "{=pumBg7sU}lead".Translate();
             string renameCommand = "{=ek75vkTT}rename".Translate();
+            string renameFiefCommand = "{=RenameFiefCmd}rename fief".Translate();
             string statsCommand = "{=VB2W7FoL}stats".Translate();
             string partyCommand = "{=iXrUl79z}party".Translate();
             string fiefsCommand = "{=D909bAhX}fiefs".Translate();
@@ -310,6 +339,9 @@ namespace BLTAdoptAHero.Actions
                     break;
                 case var _ when command.ToLower() == renameCommand:
                     HandleRenameCommand(settings, adoptedHero, desiredName, onSuccess, onFailure);
+                    break;
+                case var _ when command.ToLower() == renameFiefCommand:
+                    HandleRenameFiefCommand(settings, adoptedHero, desiredName, onSuccess, onFailure);
                     break;
                 case var _ when command.ToLower() == statsCommand:
                     HandleStatsCommand(settings, adoptedHero, onSuccess, onFailure);
@@ -352,7 +384,7 @@ namespace BLTAdoptAHero.Actions
                         break;
                     }
                 default:
-                    onFailure("{=pkzDqw18}Invalid or empty clan action, try (join/create/lead/rename/stats/party/fiefs/leave/buy title/banner)".Translate());
+                    onFailure("{=pkzDqw18}Invalid or empty clan action, try (join/create/lead/rename/rename fief/stats/party/fiefs/leave/buy title/banner)".Translate());
                     break;
             }
         }
@@ -572,6 +604,87 @@ namespace BLTAdoptAHero.Actions
             adoptedHero.Clan.ChangeClanName(new TextObject(fullClanName), new TextObject(fullClanName));
             onSuccess("{=hNtBu8rx}Renamed clan to {name}".Translate(("name", fullClanName)));
             Log.ShowInformation("{=d3tUyvv3}{heroName} has renamed clan {oldName} to {clanName}!".Translate(("heroName", adoptedHero.Name.ToString()), ("oldName", oldName), ("clanName", adoptedHero.Clan.Name.ToString())), adoptedHero.CharacterObject, Log.Sound.Horns2);
+        }
+
+        private void HandleRenameFiefCommand(Settings settings, Hero adoptedHero, string args, Action<string> onSuccess, Action<string> onFailure)
+        {
+            if (!settings.RenameFiefEnabled)
+            {
+                onFailure("{=RenameFiefDisabled}Renaming fiefs is disabled".Translate());
+                return;
+            }
+            if (adoptedHero.Clan == null)
+            {
+                onFailure("{=yPeUCq8t}You are not in a clan".Translate());
+                return;
+            }
+            if (!adoptedHero.IsClanLeader)
+            {
+                onFailure("{=jQZ93EID}You are not the leader of your clan".Translate());
+                return;
+            }
+            if (adoptedHero.Clan.Fiefs.Count == 0)
+            {
+                onFailure("{=ssqRB9Ye}You have no fiefs".Translate());
+                return;
+            }
+
+            // Parse arguments: "current_fief_name" "new_name" or current_fief_name to new_name
+            string currentFiefName = null;
+            string newFiefName = null;
+
+            // Try to parse with "to" keyword: fief1 to fief2
+            var toIndex = args.IndexOf(" to ", StringComparison.OrdinalIgnoreCase);
+            if (toIndex > 0)
+            {
+                currentFiefName = args.Substring(0, toIndex).Trim();
+                newFiefName = args.Substring(toIndex + 4).Trim();
+            }
+            else
+            {
+                // Try to parse as two quoted strings or two space-separated words
+                var parts = args.Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2)
+                {
+                    currentFiefName = parts[0].Trim();
+                    newFiefName = parts[1].Trim();
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(currentFiefName) || string.IsNullOrWhiteSpace(newFiefName))
+            {
+                onFailure("{=RenameFiefUsage}Usage: rename fief <current name> to <new name>".Translate());
+                return;
+            }
+
+            // Find the fief
+            var fief = adoptedHero.Clan.Fiefs.FirstOrDefault(f => 
+                f.Name.ToString().Equals(currentFiefName, StringComparison.OrdinalIgnoreCase));
+
+            if (fief == null)
+            {
+                onFailure("{=FiefNotFound}Could not find fief '{fiefName}' in your clan's possessions".Translate(("fiefName", currentFiefName)));
+                return;
+            }
+
+            if (BLTAdoptAHeroCampaignBehavior.Current.GetHeroGold(adoptedHero) < settings.RenameFiefPrice)
+            {
+                onFailure(Naming.NotEnoughGold(settings.RenameFiefPrice, BLTAdoptAHeroCampaignBehavior.Current.GetHeroGold(adoptedHero)));
+                return;
+            }
+
+            // Rename the fief
+            BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, -settings.RenameFiefPrice, true);
+            var oldFiefName = fief.Name.ToString();
+            fief.Settlement.Name = new TextObject(newFiefName);
+            
+            onSuccess("{=FiefRenamed}Renamed fief from '{oldName}' to '{newName}'".Translate(("oldName", oldFiefName), ("newName", newFiefName)));
+            Log.ShowInformation("{=FiefRenamedInfo}{heroName} has renamed the fief '{oldName}' to '{newName}'!".Translate(
+                ("heroName", adoptedHero.Name.ToString()), 
+                ("oldName", oldFiefName), 
+                ("newName", newFiefName)), 
+                adoptedHero.CharacterObject, 
+                Log.Sound.Horns2);
         }
 
         private void HandleStatsCommand(Settings settings, Hero adoptedHero, Action<string> onSuccess, Action<string> onFailure)

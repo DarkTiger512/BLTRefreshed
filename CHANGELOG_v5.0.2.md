@@ -4,6 +4,61 @@
 
 ## ✨ New Features
 
+### Fief Renaming Command (!clan rename fief)
+
+**New clan management feature for settlement customization**
+
+Clan leaders can now rename their fiefs (towns and castles) with the `!clan rename fief` command.
+
+#### Features
+
+- **Rename your settlements:** Change the name of any fief owned by your clan
+- **Flexible syntax:** Use either `!clan rename fief <current name> to <new name>` format
+- **Clan leader only:** Must be the clan leader to rename fiefs
+- **Gold cost:** Configurable cost (default: 500,000 gold)
+- **Validation:** Checks ownership, ensures fief exists, and validates hero has sufficient gold
+- **Persistent:** Renamed fiefs persist in save games and appear on the campaign map
+
+#### Usage
+
+Type `!clan rename fief <current name> to <new name>` in chat as a clan leader.
+
+**Example commands:**
+- `!clan rename fief Danustica to Newtown`
+- `!clan rename fief Castle of Rovalt to Iron Fortress`
+- `!clan rename fief Epicrotea to Viking Bay`
+
+**Example outputs:**
+- `Renamed fief from 'Danustica' to 'Newtown'`
+- `Could not find fief 'NonExistentTown' in your clan's possessions`
+- `You are not the leader of your clan` (if not clan leader)
+- `Not enough gold! Need: 500,000💰 | Have: 250,000💰` (insufficient gold)
+
+#### Technical Implementation
+
+- Command handler: `ClanManagement.HandleRenameFiefCommand`
+- Uses `Settlement.Name` property setter with `TextObject`
+- Validates clan ownership through `Clan.Fiefs` collection
+- Case-insensitive fief name matching
+- Broadcasts rename event to all players via `Log.ShowInformation`
+
+#### Configuration
+
+Fief renaming can be configured in BLT Configure:
+
+**Settings:**
+- **Enabled:** Toggle fief renaming feature (default: enabled)
+- **Gold Cost:** Cost to rename a fief (default: 500,000 gold)
+
+Located under: `Clan Management → Rename Fief` category
+
+#### Requirements
+
+- Must be in a clan
+- Must be the clan leader
+- Must own at least one fief
+- Must have sufficient gold for the rename cost
+
 ### Ammo Check Command (!ammo)
 
 **New quality-of-life feature for ranged heroes**
