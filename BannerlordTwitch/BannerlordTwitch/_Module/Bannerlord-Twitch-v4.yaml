@@ -389,6 +389,8 @@ Commands:
     LeadPrice: 1000000
     LeaveEnabled: true
     RenameEnabled: true
+    RenameFiefEnabled: true
+    RenameFiefPrice: 500000
     RenamePrice: 100000
     Renown: 50
     StatsEnabled: true
@@ -2971,9 +2973,7 @@ GlobalConfigs:
     RetinueHealPerKill: 50
     RetinueUseHeroesFormation: false
     Shouts: []
-    ShowHeroFloatingLabels: true
     ShowKillStreakPopup: true
-    ShowNameMarkers: true
     StartHealthMultiplier: 2
     StartRetinueHealthMultiplier: 2
     StartWithFullHealth: true
