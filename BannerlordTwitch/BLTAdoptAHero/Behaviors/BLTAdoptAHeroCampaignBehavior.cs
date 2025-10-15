@@ -666,6 +666,15 @@ namespace BLTAdoptAHero
         public int GetAchievementTotalStat(Hero hero, AchievementStatsData.Statistic type)
             => GetHeroData(hero)?.AchievementStats?.GetTotalValue(type) ?? 0;
 
+        public void SetAchievementTotalStat(Hero hero, AchievementStatsData.Statistic type, int value)
+        {
+            var heroData = GetHeroData(hero);
+            if (heroData?.AchievementStats != null)
+            {
+                heroData.AchievementStats.TotalStats[type] = value;
+            }
+        }
+
         public int GetAchievementClassStat(Hero hero, AchievementStatsData.Statistic type)
             => GetHeroData(hero)?.AchievementStats?.GetClassValue(type, hero.GetClass()?.ID ?? Guid.Empty) ?? 0;
 
@@ -2382,6 +2391,8 @@ namespace BLTAdoptAHero
 
         public static void SetHeroAdoptedName(Hero hero, string userName) =>
             CampaignHelpers.SetHeroName(hero, new(GetFullName(userName)), new(userName));
+        public string GetHeroOwner(Hero hero) =>
+            GetHeroData(hero).Owner;
         public string GetHeroLegacyName(Hero hero) =>
             GetHeroData(hero).LegacyName;
         public bool GetIsCreatedHero(Hero hero) =>

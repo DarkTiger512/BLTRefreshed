@@ -4,7 +4,7 @@
 
 > **🎯 Compatible with**: Mount & Blade II: Bannerlord v1.2.12 (Latest Game Version)
 
-> **📦 Current Version**: v5.0.1
+> **📦 Current Version**: v5.1.0
 
 ## 📦 **Quick Installation**
 
@@ -35,7 +35,7 @@ Get-ChildItem -Path ".\BLT*" -Recurse | Unblock-File
 
 ---
 
-# Bannerlord Twitch (BLT) - Enhanced Edition v5.0.1
+# Bannerlord Twitch (BLT) - Enhanced Edition v5.1.0
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
 
 ## Enhanced Edition Features (v5.0+)
@@ -118,7 +118,7 @@ Viewers can "adopt" an in-game hero of types that can be specified in the config
 
 ## Installation
 
-### Enhanced Edition v5.0.1 Installation
+### Enhanced Edition v5.1.0 Installation
 **Note**: This enhanced version includes the complete BLT experience with smart retinue systems, hero class compatibility, and quality-of-life improvements.
 
 ### [Installation Guide Video](https://youtu.be/ATf5zilwNWk)
@@ -207,10 +207,10 @@ This is a continuation of the project, originally started by somebody else.
 - **Enhanced UI Elements**: Hero nametags, improved widgets, and visual enhancements
 - **Negative Gold Rewards**: Battle lose mechanics that can grant gold instead of losing it
 
-## Enhanced Edition v5.0.1
+## Enhanced Edition v5.1.0
 **Enhanced by**: Community development focusing on improved retinue systems, hero class compatibility, and quality-of-life improvements. This enhanced version builds upon all previous excellent work and maintains full compatibility with the existing BLT ecosystem.
 
-### Key Features in Enhanced Edition v5.0.1:
+### Key Features in Enhanced Edition v5.1.0:
 - **Smart Retinue Hiring System**: Formation-based compatibility with hire-by-hero-class functionality
 - **Hero Class Enhancement**: Auto-assignment features and 12-class system refinements
 - **Gold Transfer System**: Viewer-to-viewer interactions with configurable fees and limits

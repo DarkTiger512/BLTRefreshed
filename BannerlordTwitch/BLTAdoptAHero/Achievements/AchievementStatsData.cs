@@ -47,6 +47,14 @@ namespace BLTAdoptAHero.Achievements
             TotalTournamentRoundLosses,
             [LocDisplayName("{=WdZWU9GV}TotalTournament Final Wins")]
             TotalTournamentFinalWins,
+            [LocDisplayName("{=BLT_Duel_Wins}Duel Wins")]
+            DuelWins,
+            [LocDisplayName("{=BLT_Duel_Losses}Duel Losses")]
+            DuelLosses,
+            [LocDisplayName("{=BLT_Duel_WinStreak}Duel Win Streak")]
+            DuelWinStreak,
+            [LocDisplayName("{=BLT_Duel_BestStreak}Best Duel Win Streak")]
+            DuelBestStreak,
         }
 
         public Dictionary<Statistic, int> TotalStats { get; set; } = new();

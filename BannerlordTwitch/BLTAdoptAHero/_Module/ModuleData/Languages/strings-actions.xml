@@ -1215,5 +1215,57 @@
 		<string id="lJXxLdFz" text="Please enter the name of the leader you wish to adopt"/>
 		<!-- Error could not find a clan with the name {clanName} -->
 		<string id="bzsT7oy0" text="Error could not find a clan with the name {clanName}"/>
+		
+		<!-- Duel System -->
+		<string id="BLT_Duel_Name" text="Duel"/>
+		<string id="BLT_Duel_Desc" text="Challenge another viewer to a duel. Winner gets gold and leaderboard glory!"/>
+		<string id="BLT_Duel_Wins" text="Duel Wins"/>
+		<string id="BLT_Duel_Losses" text="Duel Losses"/>
+		<string id="BLT_Duel_WinStreak" text="Duel Win Streak"/>
+		<string id="BLT_Duel_BestStreak" text="Best Duel Win Streak"/>
+		<string id="BLT_Duel_GoldCost" text="Gold Cost"/>
+		<string id="BLT_Duel_GoldCostDesc" text="Gold cost to initiate a duel"/>
+		<string id="BLT_Duel_WinnerGold" text="Winner Gold Reward"/>
+		<string id="BLT_Duel_WinnerGoldDesc" text="Gold reward for the winner (loser pays this + cost)"/>
+		<string id="BLT_Duel_WinnerXP" text="Winner XP Reward"/>
+		<string id="BLT_Duel_WinnerXPDesc" text="XP reward for the winner"/>
+		<string id="BLT_Duel_TimeoutSeconds" text="Challenge Timeout"/>
+		<string id="BLT_Duel_TimeoutSecondsDesc" text="Seconds before a duel challenge expires"/>
+		<string id="BLT_Duel_Cooldown" text="Cooldown"/>
+		<string id="BLT_Duel_CooldownDesc" text="Cooldown between duels (in seconds)"/>
+		<string id="BLT_Duel_Usage" text="Usage: !duel {viewer_name} or !duel accept"/>
+		<string id="BLT_Duel_CantDuelSelf" text="You cannot duel yourself!"/>
+		<string id="BLT_Duel_NoHero" text="You must have an adopted hero to duel! Use !adopt first."/>
+		<string id="BLT_Duel_ChallengerDead" text="Your hero is dead and cannot duel!"/>
+		<string id="BLT_Duel_TargetNoHero" text="{target} does not have an adopted hero!"/>
+		<string id="BLT_Duel_TargetDead" text="{target}'s hero is dead!"/>
+		<string id="BLT_Duel_NotEnoughGold" text="You need {cost} gold to challenge someone to a duel! (You have {current})"/>
+		<string id="BLT_Duel_AlreadyChallenged" text="You have already challenged {target}! Wait for them to accept."/>
+		<string id="BLT_Duel_ChallengeSent" text="⚔️ You have challenged {target} to a duel! They have {timeout} seconds to !duel accept or the challenge will expire."/>
+		<string id="BLT_Duel_ChallengeReceived" text="⚔️ {challenger} challenges {target} to a duel! Type !duel accept within {timeout} seconds to fight!"/>
+		<string id="BLT_Duel_NoChallenge" text="You don't have any pending duel challenges!"/>
+		<string id="BLT_Duel_Expired" text="The duel challenge has expired!"/>
+		<string id="BLT_Duel_ChallengerGone" text="The challenger's hero is no longer available!"/>
+		<string id="BLT_Duel_Result" text="⚔️ DUEL COMPLETE! {winner} defeats {loser}! {winner} wins {gold} gold and gains {xp} XP! (W:{wins} Streak:{streak})"/>
+		
+		<!-- Duel Command Settings -->
+		<string id="BLT_Duel_GoldCost" text="Gold Cost"/>
+		<string id="BLT_Duel_GoldCost_Desc" text="How much gold it costs to challenge someone to a duel"/>
+		<string id="BLT_Duel_WinnerGold" text="Winner Gold"/>
+		<string id="BLT_Duel_WinnerGold_Desc" text="How much gold the winner receives"/>
+		<string id="BLT_Duel_WinnerXP" text="Winner XP"/>
+		<string id="BLT_Duel_WinnerXP_Desc" text="How much XP the winner receives"/>
+		<string id="BLT_Duel_Timeout" text="Timeout (Seconds)"/>
+		<string id="BLT_Duel_Timeout_Desc" text="How long the challenged player has to accept (in seconds)"/>
+		<string id="BLT_Duel_Cooldown" text="Cooldown (Seconds)"/>
+		<string id="BLT_Duel_Cooldown_Desc" text="Cooldown between duels (in seconds)"/>
+		
+		<!-- Leaderboard System -->
+		<string id="BLT_Leaderboard_Name" text="Duel Leaderboard"/>
+		<string id="BLT_Leaderboard_Desc" text="Display the top duel winners from the current save"/>
+		<string id="BLT_Leaderboard_TopCount" text="Top Count"/>
+		<string id="BLT_Leaderboard_TopCountDesc" text="Number of top duelers to display"/>
+		<string id="BLT_Leaderboard_Empty" text="🏆 No duels have been fought yet! Use !duel to challenge someone."/>
+		<string id="BLT_Leaderboard_Title" text="🏆 DUEL LEADERBOARD 🏆"/>
     </strings>
 </base>

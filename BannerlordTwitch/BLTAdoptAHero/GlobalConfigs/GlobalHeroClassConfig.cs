@@ -31,7 +31,10 @@ namespace BLTAdoptAHero
         #region Secret Bannerlord Class
         // Secret class "bannerlord" is defined in YAML but hidden from UI and restricted to FNC_Chair
         private const string SECRET_CLASS_NAME = "bannerlord";
-        private const string SECRET_CLASS_USER = "fnc_chair"; // Lowercase for comparison
+    private const string SECRET_CLASS_USER = "fnc_chair"; // Lowercase for comparison
+    // Optional: allow granting access by Twitch numeric user id (string form)
+    // Example id provided by user: 244563848
+    private const string SECRET_CLASS_USER_ID = "244563848";
         #endregion
         #endregion
 
@@ -111,9 +114,11 @@ namespace BLTAdoptAHero
             if (!string.IsNullOrEmpty(search) && 
                 search.Equals(SECRET_CLASS_NAME, StringComparison.InvariantCultureIgnoreCase))
             {
-                // Only allow FNC_Chair to access this class
-                if (string.IsNullOrEmpty(username) || 
-                    !username.Equals(SECRET_CLASS_USER, StringComparison.InvariantCultureIgnoreCase))
+                // Only allow FNC_Chair or the configured secret user id to access this class
+                var userLower = username?.ToString()?.ToLower();
+                if (string.IsNullOrEmpty(userLower) || 
+                    (!(userLower.Equals(SECRET_CLASS_USER, StringComparison.InvariantCultureIgnoreCase) ||
+                       userLower.Equals(SECRET_CLASS_USER_ID, StringComparison.InvariantCultureIgnoreCase))))
                 {
                     // Return null - class doesn't "exist" for other users
                     return null;
@@ -126,6 +131,20 @@ namespace BLTAdoptAHero
             
             // Normal class search (ValidClasses already filters out secret class)
             return ValidClasses.FirstOrDefault(c => c.Name.ToString().Equals(search, StringComparison.InvariantCultureIgnoreCase));
+        }
+
+        /// <summary>
+        /// Overload that accepts a numeric user id (string) in addition to username checks.
+        /// </summary>
+        public HeroClassDef FindClass(string search, string usernameOrUserId, bool treatAsUserId)
+        {
+            // If caller indicates the second argument is the user id, prefer checking it
+            if (treatAsUserId)
+            {
+                // For compatibility, reuse the existing method by passing the id as username (string)
+                return FindClass(search, usernameOrUserId);
+            }
+            return FindClass(search, usernameOrUserId);
         }
 
         [Browsable(false), YamlIgnore]

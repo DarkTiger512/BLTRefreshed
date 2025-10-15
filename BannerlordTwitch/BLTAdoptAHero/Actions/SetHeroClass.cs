@@ -108,7 +108,9 @@ namespace BLTAdoptAHero
                 return;
             }
 
-            var newClass = BLTAdoptAHeroModule.HeroClassConfig.FindClass(context.Args, context.UserName);
+            // Prefer passing numeric UserId when available so special access can be controlled by id
+            var userIdOrName = string.IsNullOrEmpty(context.UserId) ? context.UserName : context.UserId;
+            var newClass = BLTAdoptAHeroModule.HeroClassConfig.FindClass(context.Args, userIdOrName);
             if (newClass == null)
             {
                 onFailure("{=prmHmdGE}Provide class name".Translate() +

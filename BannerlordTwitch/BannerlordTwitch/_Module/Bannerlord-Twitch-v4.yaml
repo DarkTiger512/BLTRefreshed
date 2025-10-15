@@ -355,6 +355,35 @@ Commands:
   RespondInDM: false
   RespondInOverlay: true
   RespondInTwitch: true
+- Documentation: '{=BLT_Duel_Desc}Challenge another viewer to a duel. Winner gets gold and leaderboard glory!'
+  Enabled: true
+  Handler: DuelCommand
+  HandlerConfig:
+    Cooldown: 60
+    GoldCost: 1000
+    TimeoutSeconds: 30
+    WinnerGold: 2000
+    WinnerXP: 500
+  Help: challenge someone to a duel
+  HideHelp: false
+  ID: 2f3a9b5e-8a1c-4d3f-9c2b-7e6f5a4b3c2d
+  ModeratorOnly: false
+  Name: duel
+  RespondInDM: false
+  RespondInOverlay: true
+  RespondInTwitch: true
+- Documentation: '{=BLT_Leaderboard_Desc}View the duel leaderboard showing top winners'
+  Enabled: true
+  Handler: LeaderboardCommand
+  HandlerConfig: 
+  Help: view duel leaderboard
+  HideHelp: false
+  ID: 5e6f7a8b-1c2d-3e4f-5a6b-7c8d9e0f1a2b
+  ModeratorOnly: false
+  Name: leaderboard
+  RespondInDM: false
+  RespondInOverlay: true
+  RespondInTwitch: false
 - Documentation: Buy a randomly tiered mount for your Hero.Only for mounted classes.(1250000 gold)
   Enabled: true
   Handler: SmithItem
@@ -973,6 +1002,35 @@ Commands:
   ModeratorOnly: false
   Name: campaigninfo
   RespondInDM: false
+  RespondInOverlay: true
+  RespondInTwitch: true
+- Documentation: ''
+  Enabled: true
+  Handler: DuelCommand
+  HandlerConfig:
+    Cooldown: 60
+    GoldCost: 1000
+    TimeoutSeconds: 30
+    WinnerGold: 2000
+    WinnerXP: 500
+  Help: ''
+  HideHelp: false
+  ID: 71b92cde-fd53-4553-96f6-6a16ffd7524e
+  ModeratorOnly: false
+  Name: duel
+  RespondInDM: false
+  RespondInOverlay: true
+  RespondInTwitch: true
+- Documentation: ''
+  Enabled: true
+  Handler: LeaderboardCommand
+  HandlerConfig: 
+  Help: ''
+  HideHelp: false
+  ID: 38942b09-b648-460f-a551-27f9a3dbec37
+  ModeratorOnly: false
+  Name: leaderboard
+  RespondInDM: true
   RespondInOverlay: true
   RespondInTwitch: true
 DisableAutomaticFulfillment: false

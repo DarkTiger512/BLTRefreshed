@@ -23,8 +23,8 @@
 			"command": "C:\\Program Files\\JetBrains\\JetBrains Rider 2025.2.2.1\\tools\\MSBuild\\Current\\Bin\\MSBuild.exe",
 			"args": [
 				"BannerlordTwitch\\BannerlordTwitch.sln",
+				"/t:Rebuild",
 				"/p:Configuration=Debug",
-				"/p:Platform=AnyCPU",
 				"/verbosity:minimal"
 			],
 			"isBackground": false,
@@ -36,6 +36,7 @@
 			"command": "C:\\Program Files\\JetBrains\\JetBrains Rider 2025.2.2.1\\tools\\MSBuild\\Current\\Bin\\MSBuild.exe",
 			"args": [
 				"BannerlordTwitch\\BannerlordTwitch.sln",
+				"/t:Rebuild",
 				"/p:Configuration=Release",
 				"/p:Platform=\"Any CPU\"",
 				"/verbosity:minimal"

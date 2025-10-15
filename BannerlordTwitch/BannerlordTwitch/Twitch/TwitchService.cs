@@ -36,6 +36,7 @@ namespace BannerlordTwitch
     public class ReplyContext
     {
         [UsedImplicitly] public string UserName { get; private set; }
+        [UsedImplicitly] public string UserId { get; private set; }
         [UsedImplicitly] public string ReplyId { get; private set; }
         [UsedImplicitly] public string Args { get; private set; }
         [UsedImplicitly] public int Bits { get; private set; }
@@ -66,6 +67,7 @@ namespace BannerlordTwitch
             new()
             {
                 UserName = CleanDisplayName(msg.DisplayName),
+                UserId = msg.UserId,
                 ReplyId = msg.Id,
                 Args = args,
                 Bits = msg.Bits,

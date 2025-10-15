@@ -332,6 +332,8 @@
     <Compile Include="Actions\RetireMyHero.cs" />
     <Compile Include="Actions\AuctionItem.cs" />
     <Compile Include="Actions\CheckAmmo.cs" />
+    <Compile Include="Actions\DuelCommand.cs" />
+    <Compile Include="Actions\LeaderboardCommand.cs" />
     <Compile Include="Actions\SetHeroClass.cs" />
     <Compile Include="Actions\SkillXP.cs" />
     <Compile Include="Actions\SmithItem.cs" />
