@@ -180,6 +180,13 @@ namespace BLTAdoptAHero
                 ("challenger", "@" + challengerName), ("target", "@" + targetName), ("timeout", settings.TimeoutSeconds));
             
             ActionManager.SendNonReply(context, challengeMessage);
+
+            // Notify EBS overlay (if enabled) that a duel was queued
+            try
+            {
+                BannerlordTwitch.BLTModule.SendOverlayState(new { type = "duel", phase = "queued", challenger = challengerName, opponent = targetName });
+            }
+            catch { }
         }
 
         private void HandleAccept(ReplyContext context, Settings settings)
@@ -239,6 +246,13 @@ namespace BLTAdoptAHero
 
             // Execute the duel!
             ExecuteDuel(context, challenger, target, challengerName, acceptorName, settings);
+
+            // Notify EBS overlay that duel was accepted/starting
+            try
+            {
+                BannerlordTwitch.BLTModule.SendOverlayState(new { type = "duel", phase = "accepted", challenger = challengerName, opponent = acceptorName });
+            }
+            catch { }
         }
 
         private void ExecuteDuel(ReplyContext context, Hero challenger, Hero target, string challengerName, string targetName, Settings settings)

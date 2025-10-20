@@ -4905,6 +4905,17 @@ GlobalConfigs:
       PriestName: Father Zealot
       TriggerChance: 0.0064
   Id: BLT Random Events Config
+- Config:
+    AuthKey: ''
+    ChannelIdOverride: ''
+    ChannelLoginOverride: ''
+    Enabled: true
+    MirrorTwitchOutput: true
+    ServerUrl: wss://localhost:8443/ws
+  Id: Extension Link Config
+- Config:
+    UseOverlayFeed: true
+  Id: Output Config
 Rewards:
 - Documentation: Adopt a randomly selected Hero, filtered by Culture.  Enter "list" to get a list of cultures
   Enabled: true

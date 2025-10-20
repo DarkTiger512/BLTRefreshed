@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BetterBLT Config</title>
+    <link rel="stylesheet" href="config.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>BetterBLT – Config</h1>
+      <p id="role" class="muted">Waiting for auth…</p>
+
+      <form id="cfgForm">
+        <div class="field">
+          <label for="theme">Theme</label>
+          <select id="theme" name="theme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="classic">Classic</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="showToasts">Show Toasts</label>
+          <input type="checkbox" id="showToasts" name="showToasts" />
+        </div>
+
+        <div class="field">
+          <label for="primaryColor">Primary Color</label>
+          <input type="color" id="primaryColor" name="primaryColor" value="#9146ff" />
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="saveBtn" disabled>Save Config</button>
+          <span class="muted" id="status"></span>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="config.js"></script>
+  </body>
+  </html>
+

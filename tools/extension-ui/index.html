@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BetterBLT Extension Panel</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header>
+        <h1>BetterBLT</h1>
+        <span class="status" id="status">Waiting for auth…</span>
+      </header>
+
+      <section class="content">
+        <p>
+          Use this panel to send actions to the streamer (replacing raw chat commands).
+        </p>
+
+        <div class="controls">
+          <button id="btn-test" disabled>Send Test Action</button>
+        </div>
+
+        <pre id="log" class="log"></pre>
+      </section>
+    </div>
+
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="index.js"></script>
+  </body>
+  </html>
+
