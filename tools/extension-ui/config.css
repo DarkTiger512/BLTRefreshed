@@ -1,0 +1,13 @@
+:root { --bg: #0f0f10; --fg: #f0f0f0; --muted: #9aa0a6; --accent: #9146FF; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
+.container { max-width: 720px; margin: 0 auto; padding: 20px; }
+h1 { margin: 0 0 12px; font-size: 20px; }
+.muted { color: var(--muted); font-size: 12px; }
+.field { margin: 12px 0; display: grid; gap: 6px; }
+label { font-weight: 600; }
+input[type="text"], select, input[type="color"] { padding: 8px; border-radius: 6px; border: 1px solid #333; background: #1a1a1b; color: var(--fg); }
+.actions { margin-top: 16px; display: flex; align-items: center; gap: 10px; }
+button { background: var(--accent); color: white; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: not-allowed; }
+

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BetterBLT Overlay</title>
+    <link rel="stylesheet" href="video-overlay.css" />
+  </head>
+  <body>
+    <!--
+      Important: For overlays, keep the background transparent and avoid blocking
+      player interactions. We default to pointer-events:none on the root, and
+      enable pointer-events only for our controls.
+    -->
+    <div id="overlay-root" class="overlay-root">
+      <div class="hud">
+        <div class="hud-row">
+          <div class="badge" id="authStatus">Auth: …</div>
+          <div class="badge" id="ctxStatus">Ctx: …</div>
+        </div>
+      </div>
+
+      <div class="controls" id="controls">
+        <button class="ctrl-btn" id="btnAction" disabled>Send Test Action</button>
+      </div>
+    </div>
+
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <script src="video-overlay.js"></script>
+  </body>
+  </html>
+

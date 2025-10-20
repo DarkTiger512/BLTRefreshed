@@ -29,6 +29,11 @@ namespace BannerlordTwitch
         [YamlIgnore]
         public IEnumerable<Command> EnabledCommands => Commands.Where(r => r.Enabled);
         public ObservableCollection<GlobalConfig> GlobalConfigs { get; set; } = new();
+    // EBS / Extension overlay settings
+    public bool UseTwitchExtensionOverlay { get; set; } = false;
+    public string EBSEndpoint { get; set; } = "wss://localhost:8088";
+    public string EBSChannelId { get; set; } = string.Empty;
+    public string EBSModToken { get; set; } = string.Empty;
         public SimTestingConfig SimTesting { get; set; }
         [YamlIgnore, Browsable(false)]
         public IEnumerable<ActionBase> AllActions => Rewards.Cast<ActionBase>().Concat(Commands);

@@ -12,6 +12,7 @@ using BannerlordTwitch.Rewards;
 using BannerlordTwitch.UI;
 using BannerlordTwitch.Util;
 using BLTOverlay;
+using BannerlordTwitch.EBS;
 using HarmonyLib;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
@@ -28,6 +29,7 @@ namespace BannerlordTwitch
         private static Harmony harmony;
 
         public static TwitchService TwitchService { get; private set; }
+        private static EBSClient _ebsClient;
 
         [DllImport("user32.dll")]
         private static extern int SetWindowText(IntPtr hWnd, string text);
@@ -125,6 +127,21 @@ namespace BannerlordTwitch
                 ConsoleFeedHub.Register();
 
                 BLTOverlay.BLTOverlay.Start();
+
+                try
+                {
+                    var settings = Settings.Load();
+                    if (settings.UseTwitchExtensionOverlay && !string.IsNullOrEmpty(settings.EBSEndpoint) && !string.IsNullOrEmpty(settings.EBSChannelId) && !string.IsNullOrEmpty(settings.EBSModToken))
+                    {
+                        _ebsClient = new EBSClient(settings.EBSEndpoint, settings.EBSChannelId, settings.EBSModToken);
+                        _ebsClient.Start();
+                        Log.Info("EBSClient started");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception("EBSClient startup failed", ex);
+                }
             }
         }
 
@@ -205,6 +222,27 @@ namespace BannerlordTwitch
         {
             TwitchService?.Dispose();
             TwitchService = null;
+            try
+            {
+                _ebsClient?.Dispose();
+                _ebsClient = null;
+            }
+            catch (Exception ex)
+            {
+                Log.Exception("EBSClient dispose failed", ex);
+            }
+        }
+
+        public static void SendOverlayState(object state)
+        {
+            try
+            {
+                _ebsClient?.SendOverlayState(state).Wait(1000);
+            }
+            catch (Exception ex)
+            {
+                Log.Trace($"SendOverlayState failed: {ex.Message}");
+            }
         }
 
         public override void OnMissionBehaviorInitialize(Mission mission)

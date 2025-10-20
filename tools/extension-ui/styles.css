@@ -1,0 +1,17 @@
+:root { --bg: #111; --fg: #eee; --muted: #aaa; --accent: #9146FF; }
+body[data-theme="light"] { --bg: #fff; --fg: #111; --muted: #555; }
+
+html, body { height: 100%; }
+body {
+  margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg);
+}
+#app { padding: 12px; }
+header { display: flex; align-items: center; justify-content: space-between; }
+h1 { font-size: 16px; margin: 0; }
+.status { color: var(--muted); font-size: 12px; }
+.content { margin-top: 12px; }
+.controls { margin: 12px 0; display: flex; gap: 8px; }
+button { background: var(--accent); color: white; border: 0; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+button[disabled] { opacity: 0.6; cursor: not-allowed; }
+.log { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; max-height: 160px; overflow: auto; font-size: 12px; }
+

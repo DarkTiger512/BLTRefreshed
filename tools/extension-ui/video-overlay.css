@@ -1,0 +1,22 @@
+/* Fullscreen transparent overlay; only our controls accept clicks */
+:root { --accent: #9146FF; --fg: #fff; --bg: rgba(0,0,0,0.55); --badge: rgba(0,0,0,0.5); }
+html, body { height: 100%; }
+body { margin: 0; background: transparent; }
+
+.overlay-root {
+  position: absolute; inset: 0; pointer-events: none; font-family: system-ui, sans-serif; color: var(--fg);
+}
+
+.hud { position: absolute; top: 10px; left: 10px; display: grid; gap: 6px; pointer-events: none; }
+.hud-row { display: flex; gap: 6px; }
+.badge { background: var(--badge); backdrop-filter: blur(2px); padding: 4px 8px; border-radius: 6px; font-size: 12px; opacity: 0.9; }
+
+.controls { position: absolute; top: 10px; right: 10px; pointer-events: none; }
+.ctrl-btn { pointer-events: auto; background: var(--accent); color: white; border: 0; padding: 8px 12px; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.ctrl-btn[disabled] { opacity: 0.6; cursor: not-allowed; }
+
+@media (max-width: 480px) {
+  .ctrl-btn { padding: 6px 10px; font-size: 12px; }
+  .badge { font-size: 11px; }
+}
+
