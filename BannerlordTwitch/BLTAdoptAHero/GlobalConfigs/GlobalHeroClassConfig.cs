@@ -52,26 +52,49 @@ namespace BLTAdoptAHero
         {
             get
             {
-                // Filter out the secret bannerlord class for display
-                var filtered = new ObservableCollection<HeroClassDef>(
+                // Return a view excluding the secret class
+                return new ObservableCollection<HeroClassDef>(
                     ClassDefs.Where(c => !c.Name.ToString().Equals(SECRET_CLASS_NAME, StringComparison.InvariantCultureIgnoreCase))
                 );
-                return filtered;
             }
             set
             {
-                // When setting, preserve the secret class if it exists
-                var secretClass = ClassDefs.FirstOrDefault(c => 
+                // Persist edits back to the underlying ClassDefs collection while preserving the secret class
+                var secretClass = ClassDefs.FirstOrDefault(c =>
                     c.Name.ToString().Equals(SECRET_CLASS_NAME, StringComparison.InvariantCultureIgnoreCase));
-                
-                ClassDefs.Clear();
-                foreach (var classDef in value)
+
+                // Build a set of IDs from the incoming value for efficient lookup
+                var incomingById = value?.ToDictionary(v => v.ID) ?? new Dictionary<Guid, HeroClassDef>();
+
+                // Remove any existing non-secret class defs that are not present in incoming list
+                var toRemove = ClassDefs
+                    .Where(c => !c.Name.ToString().Equals(SECRET_CLASS_NAME, StringComparison.InvariantCultureIgnoreCase))
+                    .Where(c => !incomingById.ContainsKey(c.ID))
+                    .ToList();
+
+                foreach (var rem in toRemove)
                 {
-                    ClassDefs.Add(classDef);
+                    ClassDefs.Remove(rem);
                 }
-                
-                // Re-add secret class if it existed
-                if (secretClass != null)
+
+                // Update existing entries or add new ones
+                foreach (var incoming in incomingById.Values)
+                {
+                    var existingIndex = ClassDefs.ToList().FindIndex(c => c.ID == incoming.ID);
+                    if (existingIndex >= 0)
+                    {
+                        // Replace the existing object with the new incoming object to avoid assigning read-only properties
+                        ClassDefs[existingIndex] = incoming;
+                    }
+                    else
+                    {
+                        // New class - add to collection
+                        ClassDefs.Add(incoming);
+                    }
+                }
+
+                // Ensure secret class preserved at end
+                if (secretClass != null && !ClassDefs.Any(c => c.ID == secretClass.ID))
                 {
                     ClassDefs.Add(secretClass);
                 }

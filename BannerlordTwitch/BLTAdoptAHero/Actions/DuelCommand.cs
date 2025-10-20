@@ -57,9 +57,13 @@ namespace BLTAdoptAHero
             }
         }
 
-        // Track pending duel challenges: (challenger, target) -> challenge time
-        [YamlIgnore]
-        private static readonly Dictionary<(string challenger, string target), DateTime> pendingDuels = new();
+    // Track pending duel challenges: (challenger, target) -> challenge time
+    [YamlIgnore]
+    private static readonly Dictionary<(string challenger, string target), DateTime> pendingDuels = new();
+
+    // Track last duel time per user to enforce cooldowns
+    [YamlIgnore]
+    private static readonly Dictionary<string, DateTime> lastDuelTime = new();
         
         public Type HandlerConfigType => typeof(Settings);
 
@@ -140,6 +144,15 @@ namespace BLTAdoptAHero
                 return;
             }
 
+            // Check challenger cooldown
+            if (lastDuelTime.TryGetValue(challengerCanonical, out var last) &&
+                (DateTime.Now - last).TotalSeconds < settings.Cooldown)
+            {
+                var remaining = (int)(settings.Cooldown - (DateTime.Now - last).TotalSeconds);
+                ActionManager.SendReply(context, "{=BLT_Duel_CooldownDesc}You must wait {seconds} seconds before initiating another duel.".Translate(("seconds", remaining)));
+                return;
+            }
+
             // Check if there's already a pending challenge
             var challengeKey = (challengerCanonical, targetCanonical);
             if (pendingDuels.ContainsKey(challengeKey))
@@ -215,6 +228,15 @@ namespace BLTAdoptAHero
             // Remove the challenge
             pendingDuels.Remove(challenge.Key);
 
+            // Check acceptor cooldown (prevent accepting while on cooldown)
+            if (lastDuelTime.TryGetValue(acceptorCanonical, out var lastAccept) &&
+                (DateTime.Now - lastAccept).TotalSeconds < settings.Cooldown)
+            {
+                var remaining = (int)(settings.Cooldown - (DateTime.Now - lastAccept).TotalSeconds);
+                ActionManager.SendReply(context, "{=BLT_Duel_CooldownDesc}You must wait {seconds} seconds before accepting another duel.".Translate(("seconds", remaining)));
+                return;
+            }
+
             // Execute the duel!
             ExecuteDuel(context, challenger, target, challengerName, acceptorName, settings);
         }
@@ -237,13 +259,29 @@ namespace BLTAdoptAHero
             string loserName = challengerWins ? targetName : challengerName;
 
             // Award rewards
-            int goldReward = settings.WinnerGold + settings.GoldCost; // Winner gets reward + the entry fee
+            // Do NOT refund the challenger's entry fee. Winner should receive only the configured WinnerGold.
+            int goldReward = settings.WinnerGold;
             BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(winner, goldReward);
             winner.AddSkillXp(DefaultSkills.OneHanded, settings.WinnerXP);
 
             // Update stats
             UpdateDuelStats(winner, true);
             UpdateDuelStats(loser, false);
+
+            // Update last duel time for both participants to enforce cooldown
+            try
+            {
+                // Safely get string keys from TextObject (Name) or fallback to empty
+                string winnerKey = winner != null ? winner.Name?.ToString() ?? string.Empty : string.Empty;
+                string loserKey = loser != null ? loser.Name?.ToString() ?? string.Empty : string.Empty;
+                static string Sanitize(string s) => s?.Replace("@", string.Empty).Replace(" ", string.Empty).Replace("\\s", string.Empty);
+                if (!string.IsNullOrEmpty(winnerKey)) lastDuelTime[Sanitize(winnerKey)] = DateTime.Now;
+                if (!string.IsNullOrEmpty(loserKey)) lastDuelTime[Sanitize(loserKey)] = DateTime.Now;
+            }
+            catch
+            {
+                // non-critical, ignore
+            }
 
             // Get current stats for display
             int winnerWins = BLTAdoptAHeroCampaignBehavior.Current.GetAchievementTotalStat(winner, AchievementStatsData.Statistic.DuelWins);
