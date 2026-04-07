@@ -1,6 +1,6 @@
 ﻿const twitch = {};
 
-<!-- Twitch User Info -->
+// Twitch User Info
 $(document).ready(function () {
     const userDataMap = new Map();
 

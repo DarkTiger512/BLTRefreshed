@@ -41,7 +41,7 @@ namespace BannerlordTwitch.Twitch
 
             _eventSubWebsocketClient.ChannelPointsCustomRewardRedemptionAdd += (object e, ChannelPointsCustomRewardRedemptionArgs args) =>
             {
-                OnChannelPointsRewardsRedeemed.Invoke(e, args.Notification.Payload.Event);
+                OnChannelPointsRewardsRedeemed?.Invoke(e, args.Notification.Payload.Event);
                 return Task.CompletedTask;
             };
   
@@ -73,7 +73,7 @@ namespace BannerlordTwitch.Twitch
         {
             if (!e.IsRequestedReconnect)
             {
-                OnEventSubServiceConnected.Invoke(sender, e);
+                OnEventSubServiceConnected?.Invoke(sender, e);
                 // subscribe to topics
             }
             return Task.CompletedTask;

@@ -133,6 +133,32 @@ namespace BannerlordTwitch
                 throw new Exception($"Failed to load action/command settings, please use the BLT Configure Window to configure the mod");
             }
 
+            // Push the live command / reward list to the commands panel
+            CommandsHub.UpdateCommandList(
+                settings.EnabledCommands.Where(c => !c.HideHelp).Select(c => new CommandsHub.CommandInfo
+                {
+                    type = "command",
+                    name = c.Name.ToString(),
+                    description = !LocString.IsNullOrEmpty(c.Help)
+                        ? c.Help.ToString()
+                        : !LocString.IsNullOrEmpty(c.Documentation)
+                            ? c.Documentation.ToString()
+                            : null,
+                    moderatorOnly = c.ModeratorOnly,
+                }).Concat(settings.EnabledRewards.Select(r => new CommandsHub.CommandInfo
+                {
+                    type = "reward",
+                    name = r.RewardSpec.Title.ToString(),
+                    description = !LocString.IsNullOrEmpty(r.RewardSpec.Prompt)
+                        ? r.RewardSpec.Prompt.ToString()
+                        : !LocString.IsNullOrEmpty(r.Documentation)
+                            ? r.Documentation.ToString()
+                            : null,
+                    cost = r.RewardSpec.Cost,
+                    cooldownSeconds = r.RewardSpec.GlobalCooldownSeconds,
+                }))
+            );
+
             authSettings = AuthSettings.Load();
             if (authSettings == null)
             {

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLT Command Panel</title>
+    <style>
+        :root {
+            --gold:          #c9a84c;
+            --gold-bright:   #ffd700;
+            --bg-dark:       #0d0a05;
+            --bg-card:       #1a1409;
+            --bg-card-hover: #261e0e;
+            --text-primary:  #e8d5b0;
+            --text-secondary:#a89060;
+            --border:        #3a2c10;
+            --border-bright: #7a5e28;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: "Segoe UI", Verdana, sans-serif;
+            min-height: 100vh;
+        }
+
+        /* ── Header ───────────────────────────────────────── */
+        .page-header {
+            background: linear-gradient(to bottom, #1c1208, var(--bg-dark));
+            border-bottom: 2px solid var(--border-bright);
+            padding: 1.4rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-header::before,
+        .page-header::after {
+            content: '⚔';
+            color: var(--gold);
+            font-size: 1.4em;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .page-header::before { left: 1.8rem; }
+        .page-header::after  { right: 1.8rem; }
+
+        .page-title {
+            color: var(--gold-bright);
+            font-size: 1.7em;
+            font-weight: bold;
+            text-shadow: 0 0 0.6em rgba(255,215,0,.35);
+            letter-spacing: .1em;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: .82em;
+            margin-top: .3em;
+        }
+
+        /* ── Connection badge ─────────────────────────────── */
+        .connection-status {
+            display: inline-flex;
+            align-items: center;
+            gap: .4em;
+            padding: .2em .7em;
+            border-radius: 1em;
+            font-size: .75em;
+            margin-top: .55em;
+        }
+        .status-connected    { background:rgba(0,128,0,.2);   border:1px solid #2a8a2a; color:#4caf50; }
+        .status-disconnected { background:rgba(128,0,0,.2);   border:1px solid #8a2a2a; color:#e57373; }
+        .status-connecting   { background:rgba(128,128,0,.2); border:1px solid #8a8a2a; color:#ffca28; }
+
+        .status-dot {
+            width:.5em; height:.5em;
+            border-radius:50%;
+            background:currentColor;
+        }
+
+        /* ── Body ────────────────────────────────────────── */
+        .page-body {
+            padding: 1.5rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section { margin-bottom: 2rem; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: .6em;
+            margin-bottom: 1rem;
+            padding-bottom: .45em;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon  { font-size: 1.2em; }
+        .section-title { color: var(--gold); font-size: 1.15em; font-weight:bold; letter-spacing:.04em; text-transform:uppercase; }
+        .section-count { color: var(--text-secondary); font-size: .78em; }
+
+        /* ── Cards grid ───────────────────────────────────── */
+        .commands-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+            gap: .75rem;
+        }
+
+        .command-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: .4em;
+            padding: .85em 1em;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transition: border-color .18s, background .18s, transform .18s, box-shadow .18s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .command-card:hover {
+            border-color: var(--border-bright);
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(201,168,76,.12);
+        }
+
+        .command-card:active { transform: translateY(0); }
+
+        .reward-card { cursor: default; }
+        .reward-card:hover { cursor: default; transform: none; box-shadow: none; }
+
+        /* ── Card content ─────────────────────────────────── */
+        .command-name {
+            font-family: "Consolas","Courier New",monospace;
+            color: var(--gold-bright);
+            font-size: 1.05em;
+            font-weight: bold;
+            margin-bottom: .35em;
+        }
+
+        .command-desc {
+            color: var(--text-secondary);
+            font-size: .8em;
+            line-height: 1.45;
+            flex-grow: 1;
+            margin-bottom: .5em;
+        }
+
+        .badges { display:flex; gap:.3em; flex-wrap:wrap; margin-bottom:.45em; }
+
+        .badge {
+            font-size: .68em;
+            padding: .15em .5em;
+            border-radius: .25em;
+            font-weight: 600;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+        }
+        .badge-mod { background:#1a4a1a; border:1px solid #2a7a2a; color:#6abf6a; }
+        .badge-sub { background:#1a1a4a; border:1px solid #4a4aaa; color:#8a8aff; }
+
+        .reward-cost     { color:var(--gold); font-size:.83em; font-weight:bold; margin-bottom:.3em; }
+        .reward-cooldown { color:var(--text-secondary); font-size:.76em; margin-top:.2em; }
+
+        .copy-footer {
+            font-size: .7em;
+            color: var(--border-bright);
+            padding-top: .4em;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── "Copied!" flash overlay ──────────────────────── */
+        .copy-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(201,168,76,.93);
+            border-radius: .4em;
+            color: #0d0a05;
+            font-weight: bold;
+            font-size: 1em;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .15s;
+        }
+        .copy-overlay.show { opacity: 1; }
+
+        /* ── Empty / connecting states ────────────────────── */
+        .connecting-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .connecting-spinner {
+            display: inline-block;
+            width: 2.5em; height: 2.5em;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: .8rem;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 3rem;
+        }
+        .empty-state .empty-icon { font-size: 3em; margin-bottom: .4em; }
+
+        /* ── Footer ───────────────────────────────────────── */
+        .page-footer {
+            text-align: center;
+            padding: 1rem;
+            color: var(--border-bright);
+            font-size: .72em;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ── Responsive ───────────────────────────────────── */
+        @media (max-width: 600px) {
+            .page-header { padding: 1rem; }
+            .page-header::before, .page-header::after { display: none; }
+            .page-body { padding: 1rem; }
+            .commands-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- Header -->
+    <header class="page-header">
+        <div class="page-title">BLT Command Panel</div>
+        <div class="page-subtitle">Mount &amp; Blade II: Bannerlord — Twitch Integration</div>
+        <div>
+            <span class="connection-status" :class="statusClass">
+                <span class="status-dot"></span>
+                {{ statusText }}
+            </span>
+        </div>
+    </header>
+
+    <main class="page-body">
+
+        <!-- Connecting spinner -->
+        <div v-if="status === 'connecting'" class="connecting-state">
+            <div class="connecting-spinner"></div>
+            <div>Connecting to game…</div>
+        </div>
+
+        <!-- Chat Commands section -->
+        <section v-if="chatCommands.length > 0" class="section">
+            <div class="section-header">
+                <span class="section-icon">💬</span>
+                <span class="section-title">Chat Commands</span>
+                <span class="section-count">{{ chatCommands.length }} commands — click a card to copy</span>
+            </div>
+            <div class="commands-grid">
+                <div
+                    v-for="cmd in chatCommands"
+                    :key="cmd.name"
+                    class="command-card"
+                    :title="'Click to copy: !' + cmd.name"
+                    @click="copyCommand(cmd)">
+                    <div class="command-name">!{{ cmd.name }}</div>
+                    <div class="command-desc">{{ cmd.description || 'No description available.' }}</div>
+                    <div class="badges">
+                        <span v-if="cmd.moderatorOnly" class="badge badge-mod">Mod Only</span>
+                    </div>
+                    <div class="copy-footer">📋 Click to copy</div>
+                    <div class="copy-overlay" :class="{ show: cmd.copied }">✓ Copied!</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Channel Point Rewards section -->
+        <section v-if="rewards.length > 0" class="section">
+            <div class="section-header">
+                <span class="section-icon">⭐</span>
+                <span class="section-title">Channel Point Rewards</span>
+                <span class="section-count">{{ rewards.length }} rewards</span>
+            </div>
+            <div class="commands-grid">
+                <div
+                    v-for="reward in rewards"
+                    :key="reward.name"
+                    class="command-card reward-card">
+                    <div class="command-name">{{ reward.name }}</div>
+                    <div v-if="reward.cost" class="reward-cost">⚜ {{ formatNumber(reward.cost) }} points</div>
+                    <div class="command-desc">{{ reward.description || 'No description available.' }}</div>
+                    <div v-if="reward.cooldownSeconds" class="reward-cooldown">
+                        ⏱ {{ reward.cooldownSeconds }}s global cooldown
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Empty state after successful connection -->
+        <div v-if="status === 'connected' && chatCommands.length === 0 && rewards.length === 0"
+             class="empty-state">
+            <div class="empty-icon">⚔</div>
+            <div>No commands are currently enabled.</div>
+            <div style="margin-top:.5em;font-size:.85em">
+                Configure commands in the BLT Configure window.
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="page-footer">
+        BLT Command Panel &bull; Bannerlord Twitch Enhanced Edition
+    </footer>
+</div>
+
+<script src="Scripts/jquery-3.4.1.min.js"></script>
+<script src="Scripts/jquery.signalR-2.4.2.min.js"></script>
+<script src="Scripts/vue.min.js"></script>
+<script src="signalr/hubs"></script>
+<script>
+(function () {
+    var app = new Vue({
+        el: '#app',
+        data: {
+            status: 'connecting',   // 'connecting' | 'connected' | 'disconnected'
+            commands: [],
+        },
+        computed: {
+            statusClass: function () {
+                return {
+                    'status-connected':    this.status === 'connected',
+                    'status-disconnected': this.status === 'disconnected',
+                    'status-connecting':   this.status === 'connecting',
+                };
+            },
+            statusText: function () {
+                var texts = {
+                    connecting:   'Connecting to game…',
+                    connected:    'Connected to game',
+                    disconnected: 'Game disconnected',
+                };
+                return texts[this.status] || '';
+            },
+            chatCommands: function () {
+                return this.commands.filter(function (c) { return c.type === 'command'; });
+            },
+            rewards: function () {
+                return this.commands.filter(function (c) { return c.type === 'reward'; });
+            },
+        },
+        methods: {
+            copyCommand: function (cmd) {
+                var text = '!' + cmd.name;
+                var self = this;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(text).then(function () {
+                        self.flashCopy(cmd);
+                    }).catch(function () {
+                        self.fallbackCopy(text, cmd);
+                    });
+                } else {
+                    this.fallbackCopy(text, cmd);
+                }
+            },
+            fallbackCopy: function (text, cmd) {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                try { document.execCommand('copy'); } catch (e) {}
+                document.body.removeChild(ta);
+                this.flashCopy(cmd);
+            },
+            flashCopy: function (cmd) {
+                Vue.set(cmd, 'copied', true);
+                setTimeout(function () { Vue.set(cmd, 'copied', false); }, 1200);
+            },
+            formatNumber: function (n) {
+                if (n >= 1000) { return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'k'; }
+                return String(n);
+            },
+            setCommands: function (commandList) {
+                this.commands = commandList.map(function (c) {
+                    return Object.assign({}, c, { copied: false });
+                });
+            },
+        },
+    });
+
+    if (typeof $.connection !== 'undefined' && typeof $.connection.commandsHub !== 'undefined') {
+        $.connection.hub.url = window.location.origin + '/signalr';
+
+        $.connection.hub.reconnecting(function () { app.status = 'disconnected'; });
+        $.connection.hub.reconnected(function ()  { app.status = 'connected'; });
+        $.connection.hub.disconnected(function () { app.status = 'disconnected'; });
+
+        var commandsHub = $.connection.commandsHub;
+        commandsHub.client.updateCommands = function (commandList) {
+            app.setCommands(commandList);
+            app.status = 'connected';
+        };
+
+        $.connection.hub.start()
+            .done(function () { app.status = 'connected'; })
+            .fail(function () { app.status = 'disconnected'; });
+
+    } else {
+        // Testing / offline mode — show sample data so the layout is visible
+        app.status = 'connected';
+        app.setCommands([
+            { type: 'command', name: 'adopt',       description: 'Adopt a newly created hero to take part in the stream.',          moderatorOnly: false },
+            { type: 'command', name: 'stats',       description: 'Show your hero\'s gold, skills, location, and attributes.',        moderatorOnly: false },
+            { type: 'command', name: 'gold',        description: 'Show your hero\'s current gold balance.',                          moderatorOnly: false },
+            { type: 'command', name: 'summon',      description: 'Summon your adopted hero on the streamer\'s side in battle.',      moderatorOnly: false },
+            { type: 'command', name: 'attack',      description: 'Spawn your hero on the enemy side when a battle starts.',          moderatorOnly: false },
+            { type: 'command', name: 'equip',       description: 'Upgrade or reroll your hero\'s equipment.',                        moderatorOnly: false },
+            { type: 'command', name: 'retinue',     description: 'Hire or upgrade retinue troops for your hero.',                   moderatorOnly: false },
+            { type: 'command', name: 'heal',        description: 'Heal your hero over time while summoned in battle.',               moderatorOnly: false },
+            { type: 'command', name: 'class',       description: 'Select a new combat class for your hero.',                        moderatorOnly: false },
+            { type: 'command', name: 'powers',      description: 'Show your available hero powers.',                                 moderatorOnly: false },
+            { type: 'command', name: 'leaderboard', description: 'Display the top duel winners from the current save.',              moderatorOnly: false },
+            { type: 'command', name: 'clan',        description: 'Manage clan actions: join, create, rename, stats, leave.',        moderatorOnly: false },
+            { type: 'reward', name: 'Summon Hero',  description: 'Summon your adopted hero into the current battle.', cost: 1000 },
+            { type: 'reward', name: 'Attack Hero',  description: 'Spawn your adopted hero on the enemy side.',        cost: 2000, cooldownSeconds: 60 },
+        ]);
+    }
+}());
+</script>
+</body>
+</html>
