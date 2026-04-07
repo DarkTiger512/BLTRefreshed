@@ -3,325 +3,534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BLT Command Panel</title>
+    <title>BLT Command Overlay</title>
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
     <style>
         :root {
             --gold:          #c9a84c;
             --gold-bright:   #ffd700;
-            --bg-dark:       #0d0a05;
-            --bg-card:       #1a1409;
-            --bg-card-hover: #261e0e;
+            --glass-bg:      rgba(10, 8, 4, .72);
+            --glass-border:  rgba(201, 168, 76, .25);
+            --glass-hover:   rgba(201, 168, 76, .10);
             --text-primary:  #e8d5b0;
             --text-secondary:#a89060;
-            --border:        #3a2c10;
-            --border-bright: #7a5e28;
+            --text-dim:      rgba(168, 144, 96, .6);
+            --panel-width:   300px;
+            --tab-height:    42px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: var(--bg-dark);
+            background: transparent;
             color: var(--text-primary);
             font-family: "Segoe UI", Verdana, sans-serif;
-            min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
 
-        /* ── Header ───────────────────────────────────────── */
-        .page-header {
-            background: linear-gradient(to bottom, #1c1208, var(--bg-dark));
-            border-bottom: 2px solid var(--border-bright);
-            padding: 1.4rem 2rem;
-            text-align: center;
-            position: relative;
+        /* ── Overlay wrapper ──────────────────────────────── */
+        .overlay {
+            position: fixed;
+            top: 0; right: 0;
+            height: 100vh;
+            display: flex;
+            align-items: stretch;
+            z-index: 9999;
+            pointer-events: none;
         }
 
-        .page-header::before,
-        .page-header::after {
-            content: '⚔';
+        .overlay > * { pointer-events: auto; }
+
+        /* ── Toggle tab ───────────────────────────────────── */
+        .toggle-tab {
+            align-self: center;
+            width: 32px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-right: none;
+            border-radius: .4em 0 0 .4em;
             color: var(--gold);
-            font-size: 1.4em;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .page-header::before { left: 1.8rem; }
-        .page-header::after  { right: 1.8rem; }
-
-        .page-title {
-            color: var(--gold-bright);
-            font-size: 1.7em;
-            font-weight: bold;
-            text-shadow: 0 0 0.6em rgba(255,215,0,.35);
-            letter-spacing: .1em;
-        }
-
-        .page-subtitle {
-            color: var(--text-secondary);
-            font-size: .82em;
-            margin-top: .3em;
-        }
-
-        /* ── Connection badge ─────────────────────────────── */
-        .connection-status {
-            display: inline-flex;
-            align-items: center;
-            gap: .4em;
-            padding: .2em .7em;
-            border-radius: 1em;
-            font-size: .75em;
-            margin-top: .55em;
-        }
-        .status-connected    { background:rgba(0,128,0,.2);   border:1px solid #2a8a2a; color:#4caf50; }
-        .status-disconnected { background:rgba(128,0,0,.2);   border:1px solid #8a2a2a; color:#e57373; }
-        .status-connecting   { background:rgba(128,128,0,.2); border:1px solid #8a8a2a; color:#ffca28; }
-
-        .status-dot {
-            width:.5em; height:.5em;
-            border-radius:50%;
-            background:currentColor;
-        }
-
-        /* ── Body ────────────────────────────────────────── */
-        .page-body {
-            padding: 1.5rem 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .section { margin-bottom: 2rem; }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: .6em;
-            margin-bottom: 1rem;
-            padding-bottom: .45em;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-icon  { font-size: 1.2em; }
-        .section-title { color: var(--gold); font-size: 1.15em; font-weight:bold; letter-spacing:.04em; text-transform:uppercase; }
-        .section-count { color: var(--text-secondary); font-size: .78em; }
-
-        /* ── Cards grid ───────────────────────────────────── */
-        .commands-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-            gap: .75rem;
-        }
-
-        .command-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: .4em;
-            padding: .85em 1em;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            transition: border-color .18s, background .18s, transform .18s, box-shadow .18s;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .command-card:hover {
-            border-color: var(--border-bright);
-            background: var(--bg-card-hover);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(201,168,76,.12);
-        }
-
-        .command-card:active { transform: translateY(0); }
-
-        .reward-card { cursor: default; }
-        .reward-card:hover { cursor: default; transform: none; box-shadow: none; }
-
-        /* ── Card content ─────────────────────────────────── */
-        .command-name {
-            font-family: "Consolas","Courier New",monospace;
-            color: var(--gold-bright);
-            font-size: 1.05em;
-            font-weight: bold;
-            margin-bottom: .35em;
-        }
-
-        .command-desc {
-            color: var(--text-secondary);
             font-size: .8em;
-            line-height: 1.45;
-            flex-grow: 1;
-            margin-bottom: .5em;
-        }
-
-        .badges { display:flex; gap:.3em; flex-wrap:wrap; margin-bottom:.45em; }
-
-        .badge {
-            font-size: .68em;
-            padding: .15em .5em;
-            border-radius: .25em;
-            font-weight: 600;
-            letter-spacing: .03em;
-            text-transform: uppercase;
-        }
-        .badge-mod { background:#1a4a1a; border:1px solid #2a7a2a; color:#6abf6a; }
-        .badge-sub { background:#1a1a4a; border:1px solid #4a4aaa; color:#8a8aff; }
-
-        .reward-cost     { color:var(--gold); font-size:.83em; font-weight:bold; margin-bottom:.3em; }
-        .reward-cooldown { color:var(--text-secondary); font-size:.76em; margin-top:.2em; }
-
-        .copy-footer {
-            font-size: .7em;
-            color: var(--border-bright);
-            padding-top: .4em;
-            border-top: 1px solid var(--border);
-        }
-
-        /* ── "Copied!" flash overlay ──────────────────────── */
-        .copy-overlay {
-            position: absolute;
-            inset: 0;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(201,168,76,.93);
-            border-radius: .4em;
-            color: #0d0a05;
+            padding: .5em .2em;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            letter-spacing: .15em;
             font-weight: bold;
-            font-size: 1em;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity .15s;
+            transition: background .2s, border-color .2s;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            user-select: none;
         }
-        .copy-overlay.show { opacity: 1; }
 
-        /* ── Empty / connecting states ────────────────────── */
-        .connecting-state {
-            text-align: center;
-            padding: 4rem 2rem;
+        .toggle-tab:hover {
+            background: rgba(10, 8, 4, .88);
+            border-color: var(--gold);
+        }
+
+        .toggle-tab .tab-icon {
+            writing-mode: horizontal-tb;
+            font-size: 1.3em;
+            margin-bottom: .3em;
+        }
+
+        .toggle-tab .tab-arrow {
+            writing-mode: horizontal-tb;
+            font-size: .7em;
+            margin-top: .3em;
+            transition: transform .3s;
+        }
+
+        .overlay.open .toggle-tab .tab-arrow { transform: rotate(180deg); }
+
+        /* ── Panel ────────────────────────────────────────── */
+        .panel {
+            width: 0;
+            overflow: hidden;
+            background: var(--glass-bg);
+            border-left: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: width .3s cubic-bezier(.4,0,.2,1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .overlay.open .panel {
+            width: var(--panel-width);
+        }
+
+        /* ── Panel header ─────────────────────────────────── */
+        .panel-header {
+            padding: .7em .9em;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            min-width: var(--panel-width);
+        }
+
+        .panel-title {
+            color: var(--gold-bright);
+            font-size: .85em;
+            font-weight: bold;
+            letter-spacing: .06em;
+            text-shadow: 0 0 .5em rgba(255,215,0,.25);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .3em;
+            font-size: .65em;
+            padding: .15em .5em;
+            border-radius: 1em;
+        }
+        .status-badge.connected    { color: #4caf50; background: rgba(0,128,0,.2); border: 1px solid rgba(42,138,42,.4); }
+        .status-badge.disconnected { color: #e57373; background: rgba(128,0,0,.2); border: 1px solid rgba(138,42,42,.4); }
+        .status-badge.connecting   { color: #ffca28; background: rgba(128,128,0,.2); border: 1px solid rgba(138,138,42,.4); }
+
+        .status-dot {
+            width: .4em; height: .4em;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        /* ── Panel body ───────────────────────────────────── */
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-width: var(--panel-width);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(201,168,76,.3) transparent;
+        }
+
+        .panel-body::-webkit-scrollbar { width: 4px; }
+        .panel-body::-webkit-scrollbar-track { background: transparent; }
+        .panel-body::-webkit-scrollbar-thumb { background: rgba(201,168,76,.3); border-radius: 2px; }
+
+        /* ── Section ──────────────────────────────────────── */
+        .section-label {
+            padding: .5em .9em .3em;
+            font-size: .62em;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(201,168,76,.1);
+        }
+
+        /* ── Command row ──────────────────────────────────── */
+        .cmd-row {
+            display: flex;
+            align-items: center;
+            gap: .6em;
+            padding: .55em .9em;
+            cursor: pointer;
+            transition: background .15s;
+            position: relative;
+            border-bottom: 1px solid rgba(201,168,76,.06);
+            user-select: none;
+        }
+
+        .cmd-row:hover {
+            background: var(--glass-hover);
+        }
+
+        .cmd-row:active {
+            background: rgba(201,168,76,.18);
+        }
+
+        .cmd-icon {
+            flex-shrink: 0;
+            width: 1.8em; height: 1.8em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: .3em;
+            font-size: .75em;
+            background: rgba(201,168,76,.1);
+            border: 1px solid rgba(201,168,76,.15);
+            color: var(--gold);
+        }
+
+        .cmd-info {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        .cmd-name {
+            font-family: "Consolas","Courier New",monospace;
+            color: var(--gold-bright);
+            font-size: .82em;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cmd-desc {
             color: var(--text-secondary);
+            font-size: .68em;
+            line-height: 1.35;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .connecting-spinner {
-            display: inline-block;
-            width: 2.5em; height: 2.5em;
-            border: 3px solid var(--border);
+        .cmd-action {
+            flex-shrink: 0;
+            font-size: .6em;
+            color: var(--text-dim);
+            transition: color .15s;
+        }
+
+        .cmd-row:hover .cmd-action { color: var(--gold); }
+
+        /* ── Reward extras ────────────────────────────────── */
+        .reward-cost {
+            color: var(--gold);
+            font-size: .65em;
+            font-weight: 600;
+        }
+
+        .reward-cooldown {
+            color: var(--text-dim);
+            font-size: .6em;
+        }
+
+        .cmd-meta {
+            display: flex;
+            gap: .5em;
+            align-items: center;
+        }
+
+        /* ── Mod badge ────────────────────────────────────── */
+        .badge-mod {
+            font-size: .55em;
+            padding: .1em .35em;
+            border-radius: .2em;
+            background: rgba(42,122,42,.2);
+            border: 1px solid rgba(42,122,42,.4);
+            color: #6abf6a;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        /* ── Username bar ─────────────────────────────────── */
+        .username-bar {
+            padding: .5em .9em;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: .4em;
+            flex-shrink: 0;
+            min-width: var(--panel-width);
+        }
+
+        .username-input {
+            flex: 1;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(201,168,76,.2);
+            border-radius: .25em;
+            padding: .35em .5em;
+            color: var(--text-primary);
+            font-size: .72em;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .username-input::placeholder { color: var(--text-dim); }
+        .username-input:focus { border-color: var(--gold); }
+
+        .username-display {
+            color: var(--gold-bright);
+            font-size: .75em;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .username-label {
+            color: var(--text-dim);
+            font-size: .6em;
+            white-space: nowrap;
+        }
+
+        /* ── Toast notification ───────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 1.5em;
+            right: 1.5em;
+            background: rgba(10, 8, 4, .92);
+            border: 1px solid var(--gold);
+            border-radius: .4em;
+            padding: .55em 1em;
+            color: var(--gold-bright);
+            font-size: .78em;
+            font-weight: 600;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,.5), 0 0 15px rgba(201,168,76,.15);
+            transform: translateY(120%);
+            opacity: 0;
+            transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .3s;
+            pointer-events: none;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: .5em;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon { font-size: 1.1em; }
+
+        .toast.error {
+            border-color: #e57373;
+        }
+
+        .toast.error .toast-icon { color: #e57373; }
+
+        .toast-text-cmd {
+            font-family: "Consolas","Courier New",monospace;
+            color: #fff;
+        }
+
+        .toast-hint {
+            color: var(--text-secondary);
+            font-size: .85em;
+            font-weight: 400;
+        }
+
+        /* ── SVG icons ────────────────────────────────────── */
+        .ico {
+            width: 1em; height: 1em;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            vertical-align: -.125em;
+            flex-shrink: 0;
+        }
+
+        /* ── Connecting / empty states ────────────────────── */
+        .panel-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2em 1em;
+            color: var(--text-secondary);
+            font-size: .8em;
+            text-align: center;
+            min-width: var(--panel-width);
+        }
+
+        .spinner {
+            width: 1.6em; height: 1.6em;
+            border: 2px solid rgba(201,168,76,.2);
             border-top-color: var(--gold);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: .8rem;
+            animation: spin .8s linear infinite;
+            margin-bottom: .6em;
         }
 
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .empty-state {
+        /* ── Panel footer ─────────────────────────────────── */
+        .panel-footer {
+            padding: .4em .9em;
+            border-top: 1px solid var(--glass-border);
+            font-size: .55em;
+            color: var(--text-dim);
             text-align: center;
-            color: var(--text-secondary);
-            padding: 3rem;
-        }
-        .empty-state .empty-icon { font-size: 3em; margin-bottom: .4em; }
-
-        /* ── Footer ───────────────────────────────────────── */
-        .page-footer {
-            text-align: center;
-            padding: 1rem;
-            color: var(--border-bright);
-            font-size: .72em;
-            border-top: 1px solid var(--border);
-        }
-
-        /* ── Responsive ───────────────────────────────────── */
-        @media (max-width: 600px) {
-            .page-header { padding: 1rem; }
-            .page-header::before, .page-header::after { display: none; }
-            .page-body { padding: 1rem; }
-            .commands-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+            flex-shrink: 0;
+            min-width: var(--panel-width);
         }
     </style>
 </head>
 <body>
 
+<!-- Hidden SVG sprite sheet -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="ico-swords" viewBox="0 0 24 24"><path d="M2 2l6 6m-2-4l4 4-6 6-4-4 4-4M22 2l-6 6m2-4l-4 4 6 6 4-4-4-4"/><path d="M12 12l-2 2m4-4l-2 2"/></symbol>
+    <symbol id="ico-chevron-left" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></symbol>
+    <symbol id="ico-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+    <symbol id="ico-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="ico-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+    <symbol id="ico-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="ico-diamond" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/></symbol>
+    <symbol id="ico-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+    <symbol id="ico-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="ico-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+</svg>
+
 <div id="app">
-    <!-- Header -->
-    <header class="page-header">
-        <div class="page-title">BLT Command Panel</div>
-        <div class="page-subtitle">Mount &amp; Blade II: Bannerlord — Twitch Integration</div>
-        <div>
-            <span class="connection-status" :class="statusClass">
-                <span class="status-dot"></span>
-                {{ statusText }}
-            </span>
-        </div>
-    </header>
+    <!-- Overlay container -->
+    <div class="overlay" :class="{ open: panelOpen }">
 
-    <main class="page-body">
-
-        <!-- Connecting spinner -->
-        <div v-if="status === 'connecting'" class="connecting-state">
-            <div class="connecting-spinner"></div>
-            <div>Connecting to game…</div>
+        <!-- Toggle tab on the left edge of the panel -->
+        <div class="toggle-tab" @click="panelOpen = !panelOpen" title="Toggle command panel">
+            <span class="tab-icon"><svg class="ico" style="width:1.3em;height:1.3em"><use href="#ico-swords"/></svg></span>
+            <span>BLT</span>
+            <span class="tab-arrow"><svg class="ico" style="width:.7em;height:.7em"><use href="#ico-chevron-left"/></svg></span>
         </div>
 
-        <!-- Chat Commands section -->
-        <section v-if="chatCommands.length > 0" class="section">
-            <div class="section-header">
-                <span class="section-icon">💬</span>
-                <span class="section-title">Chat Commands</span>
-                <span class="section-count">{{ chatCommands.length }} commands — click a card to copy</span>
+        <!-- Slide-out panel -->
+        <div class="panel">
+            <!-- Header -->
+            <div class="panel-header">
+                <span class="panel-title"><svg class="ico"><use href="#ico-swords"/></svg> Commands</span>
+                <span class="status-badge" :class="status">
+                    <span class="status-dot"></span>
+                    {{ statusText }}
+                </span>
             </div>
-            <div class="commands-grid">
-                <div
-                    v-for="cmd in chatCommands"
-                    :key="cmd.name"
-                    class="command-card"
-                    :title="'Click to copy: !' + cmd.name"
-                    @click="copyCommand(cmd)">
-                    <div class="command-name">!{{ cmd.name }}</div>
-                    <div class="command-desc">{{ cmd.description || 'No description available.' }}</div>
-                    <div class="badges">
-                        <span v-if="cmd.moderatorOnly" class="badge badge-mod">Mod Only</span>
-                    </div>
-                    <div class="copy-footer">📋 Click to copy</div>
-                    <div class="copy-overlay" :class="{ show: cmd.copied }">✓ Copied!</div>
+
+            <!-- Username bar -->
+            <div class="username-bar">
+                <span class="username-label"><svg class="ico"><use href="#ico-user"/></svg></span>
+                <template v-if="twitchResolved">
+                    <span class="username-display">{{ userName }}</span>
+                </template>
+                <template v-else>
+                    <input
+                        class="username-input"
+                        v-model="userName"
+                        @change="saveUserName"
+                        placeholder="Enter your Twitch username…"
+                        maxlength="100"
+                        spellcheck="false" />
+                </template>
+            </div>
+
+            <!-- Body -->
+            <div class="panel-body">
+
+                <!-- Connecting state -->
+                <div v-if="status === 'connecting'" class="panel-state">
+                    <div class="spinner"></div>
+                    <div>Connecting…</div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Channel Point Rewards section -->
-        <section v-if="rewards.length > 0" class="section">
-            <div class="section-header">
-                <span class="section-icon">⭐</span>
-                <span class="section-title">Channel Point Rewards</span>
-                <span class="section-count">{{ rewards.length }} rewards</span>
-            </div>
-            <div class="commands-grid">
-                <div
-                    v-for="reward in rewards"
-                    :key="reward.name"
-                    class="command-card reward-card">
-                    <div class="command-name">{{ reward.name }}</div>
-                    <div v-if="reward.cost" class="reward-cost">⚜ {{ formatNumber(reward.cost) }} points</div>
-                    <div class="command-desc">{{ reward.description || 'No description available.' }}</div>
-                    <div v-if="reward.cooldownSeconds" class="reward-cooldown">
-                        ⏱ {{ reward.cooldownSeconds }}s global cooldown
+                <!-- Chat Commands -->
+                <template v-if="chatCommands.length > 0">
+                    <div class="section-label"><svg class="ico"><use href="#ico-chat"/></svg> Chat Commands</div>
+                    <div
+                        v-for="cmd in chatCommands"
+                        :key="'cmd-' + cmd.name"
+                        class="cmd-row"
+                        :title="'Click to activate: !' + cmd.name"
+                        @click="activateCommand(cmd)">
+                        <div class="cmd-icon">!</div>
+                        <div class="cmd-info">
+                            <div class="cmd-name">
+                                !{{ cmd.name }}
+                                <span v-if="cmd.moderatorOnly" class="badge-mod">MOD</span>
+                            </div>
+                            <div class="cmd-desc">{{ cmd.description || 'No description.' }}</div>
+                        </div>
+                        <div class="cmd-action"><svg class="ico"><use href="#ico-play"/></svg></div>
                     </div>
+                </template>
+
+                <!-- Channel Point Rewards -->
+                <template v-if="rewards.length > 0">
+                    <div class="section-label"><svg class="ico"><use href="#ico-star"/></svg> Channel Rewards</div>
+                    <div
+                        v-for="reward in rewards"
+                        :key="'rw-' + reward.name"
+                        class="cmd-row"
+                        :title="'Click to activate: ' + reward.name"
+                        @click="activateCommand(reward)">
+                        <div class="cmd-icon"><svg class="ico"><use href="#ico-star"/></svg></div>
+                        <div class="cmd-info">
+                            <div class="cmd-name">{{ reward.name }}</div>
+                            <div class="cmd-meta">
+                                <span v-if="reward.cost" class="reward-cost"><svg class="ico"><use href="#ico-diamond"/></svg> {{ formatNumber(reward.cost) }} pts</span>
+                                <span v-if="reward.cooldownSeconds" class="reward-cooldown"><svg class="ico"><use href="#ico-clock"/></svg> {{ reward.cooldownSeconds }}s</span>
+                            </div>
+                            <div class="cmd-desc">{{ reward.description || 'No description.' }}</div>
+                        </div>
+                        <div class="cmd-action"><svg class="ico"><use href="#ico-play"/></svg></div>
+                    </div>
+                </template>
+
+                <!-- Empty state -->
+                <div v-if="status === 'connected' && chatCommands.length === 0 && rewards.length === 0"
+                     class="panel-state">
+                    <svg class="ico-xl ico" style="margin-bottom:.3em"><use href="#ico-swords"/></svg>
+                    <div>No commands enabled.</div>
                 </div>
-            </div>
-        </section>
 
-        <!-- Empty state after successful connection -->
-        <div v-if="status === 'connected' && chatCommands.length === 0 && rewards.length === 0"
-             class="empty-state">
-            <div class="empty-icon">⚔</div>
-            <div>No commands are currently enabled.</div>
-            <div style="margin-top:.5em;font-size:.85em">
-                Configure commands in the BLT Configure window.
             </div>
+
+            <!-- Footer -->
+            <div class="panel-footer">Bannerlord Twitch Enhanced Edition</div>
         </div>
+    </div>
 
-    </main>
-
-    <footer class="page-footer">
-        BLT Command Panel &bull; Bannerlord Twitch Enhanced Edition
-    </footer>
+    <!-- Toast notification -->
+    <div class="toast" :class="{ show: toast.visible, error: toast.error }">
+        <span class="toast-icon"><svg v-if="toast.error" class="ico"><use href="#ico-x"/></svg><svg v-else class="ico"><use href="#ico-check"/></svg></span>
+        <span>{{ toast.message }}</span>
+    </div>
 </div>
 
 <script src="Scripts/jquery-3.4.1.min.js"></script>
@@ -330,25 +539,24 @@
 <script src="signalr/hubs"></script>
 <script>
 (function () {
+    var commandsHub = null;
+
     var app = new Vue({
         el: '#app',
         data: {
-            status: 'connecting',   // 'connecting' | 'connected' | 'disconnected'
+            status: 'connecting',
             commands: [],
+            panelOpen: false,
+            userName: localStorage.getItem('blt_username') || '',
+            twitchResolved: false,
+            toast: { visible: false, message: '', error: false, timer: null },
         },
         computed: {
-            statusClass: function () {
-                return {
-                    'status-connected':    this.status === 'connected',
-                    'status-disconnected': this.status === 'disconnected',
-                    'status-connecting':   this.status === 'connecting',
-                };
-            },
             statusText: function () {
                 var texts = {
-                    connecting:   'Connecting to game…',
-                    connected:    'Connected to game',
-                    disconnected: 'Game disconnected',
+                    connecting:   'Connecting…',
+                    connected:    'Live',
+                    disconnected: 'Offline',
                 };
                 return texts[this.status] || '';
             },
@@ -360,32 +568,52 @@
             },
         },
         methods: {
-            copyCommand: function (cmd) {
-                var text = '!' + cmd.name;
-                var self = this;
-                if (navigator.clipboard) {
-                    navigator.clipboard.writeText(text).then(function () {
-                        self.flashCopy(cmd);
-                    }).catch(function () {
-                        self.fallbackCopy(text, cmd);
-                    });
+            saveUserName: function () {
+                var name = this.userName.trim();
+                this.userName = name;
+                if (name) {
+                    localStorage.setItem('blt_username', name);
                 } else {
-                    this.fallbackCopy(text, cmd);
+                    localStorage.removeItem('blt_username');
                 }
             },
-            fallbackCopy: function (text, cmd) {
-                var ta = document.createElement('textarea');
-                ta.value = text;
-                ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
-                document.body.appendChild(ta);
-                ta.select();
-                try { document.execCommand('copy'); } catch (e) {}
-                document.body.removeChild(ta);
-                this.flashCopy(cmd);
+            activateCommand: function (cmd) {
+                var self = this;
+                var name = cmd.name;
+
+                if (!this.userName.trim()) {
+                    this.showToast('Enter your Twitch username first', true);
+                    return;
+                }
+
+                // If we have a live SignalR connection, execute on the server
+                if (commandsHub && commandsHub.server && this.status === 'connected') {
+                    commandsHub.server.executeCommand(name, this.userName.trim())
+                        .done(function (success) {
+                            if (success) {
+                                self.showToast('Activated !' + name, false);
+                            } else {
+                                self.showToast('!' + name + ' failed — command not found or not enabled', true);
+                            }
+                        })
+                        .fail(function () {
+                            self.showToast('!' + name + ' failed — server error', true);
+                        });
+                } else {
+                    // Offline demo mode — just show a simulated activation
+                    this.showToast('Activated !' + name + ' (demo)', false);
+                }
             },
-            flashCopy: function (cmd) {
-                Vue.set(cmd, 'copied', true);
-                setTimeout(function () { Vue.set(cmd, 'copied', false); }, 1200);
+            showToast: function (message, isError) {
+                var self = this;
+                if (this.toast.timer) clearTimeout(this.toast.timer);
+                this.toast.message = message;
+                this.toast.error = !!isError;
+                this.toast.visible = true;
+                this.toast.timer = setTimeout(function () {
+                    self.toast.visible = false;
+                    self.toast.timer = null;
+                }, 2500);
             },
             formatNumber: function (n) {
                 if (n >= 1000) { return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'k'; }
@@ -399,6 +627,41 @@
         },
     });
 
+    // ── Twitch Extension identity detection ──────────────
+    // Uses the documented Twitch.ext.viewer API and helixToken
+    // Reference: https://dev.twitch.tv/docs/extensions/reference/#helper-viewer
+    if (typeof Twitch !== 'undefined' && Twitch.ext) {
+        Twitch.ext.onAuthorized(function (auth) {
+            var viewer = Twitch.ext.viewer;
+            if (!viewer) return;
+
+            // viewer.id is the Twitch user ID (available when identity is linked)
+            if (viewer.isLinked && viewer.id) {
+                $.ajax({
+                    url: 'https://api.twitch.tv/helix/users?id=' + encodeURIComponent(viewer.id),
+                    headers: {
+                        'Client-ID': auth.clientId,
+                        'Authorization': 'Extension ' + auth.helixToken,
+                    },
+                    success: function (resp) {
+                        if (resp.data && resp.data.length > 0) {
+                            app.userName = resp.data[0].display_name;
+                            app.twitchResolved = true;
+                        }
+                    },
+                    error: function () {
+                        // Fallback: use the opaque ID (U-prefixed = stable logged-in user)
+                        app.userName = viewer.opaqueId;
+                        app.twitchResolved = true;
+                    },
+                });
+            } else if (viewer.opaqueId && viewer.opaqueId.charAt(0) === 'U') {
+                // Logged-in but hasn't shared identity — prompt them
+                Twitch.ext.actions.requestIdShare();
+            }
+        });
+    }
+
     if (typeof $.connection !== 'undefined' && typeof $.connection.commandsHub !== 'undefined') {
         $.connection.hub.url = window.location.origin + '/signalr';
 
@@ -406,7 +669,7 @@
         $.connection.hub.reconnected(function ()  { app.status = 'connected'; });
         $.connection.hub.disconnected(function () { app.status = 'disconnected'; });
 
-        var commandsHub = $.connection.commandsHub;
+        commandsHub = $.connection.commandsHub;
         commandsHub.client.updateCommands = function (commandList) {
             app.setCommands(commandList);
             app.status = 'connected';
@@ -417,23 +680,62 @@
             .fail(function () { app.status = 'disconnected'; });
 
     } else {
-        // Testing / offline mode — show sample data so the layout is visible
+        // Testing / offline mode
         app.status = 'connected';
         app.setCommands([
-            { type: 'command', name: 'adopt',       description: 'Adopt a newly created hero to take part in the stream.',          moderatorOnly: false },
-            { type: 'command', name: 'stats',       description: 'Show your hero\'s gold, skills, location, and attributes.',        moderatorOnly: false },
-            { type: 'command', name: 'gold',        description: 'Show your hero\'s current gold balance.',                          moderatorOnly: false },
-            { type: 'command', name: 'summon',      description: 'Summon your adopted hero on the streamer\'s side in battle.',      moderatorOnly: false },
-            { type: 'command', name: 'attack',      description: 'Spawn your hero on the enemy side when a battle starts.',          moderatorOnly: false },
-            { type: 'command', name: 'equip',       description: 'Upgrade or reroll your hero\'s equipment.',                        moderatorOnly: false },
-            { type: 'command', name: 'retinue',     description: 'Hire or upgrade retinue troops for your hero.',                   moderatorOnly: false },
-            { type: 'command', name: 'heal',        description: 'Heal your hero over time while summoned in battle.',               moderatorOnly: false },
-            { type: 'command', name: 'class',       description: 'Select a new combat class for your hero.',                        moderatorOnly: false },
-            { type: 'command', name: 'powers',      description: 'Show your available hero powers.',                                 moderatorOnly: false },
-            { type: 'command', name: 'leaderboard', description: 'Display the top duel winners from the current save.',              moderatorOnly: false },
-            { type: 'command', name: 'clan',        description: 'Manage clan actions: join, create, rename, stats, leave.',        moderatorOnly: false },
-            { type: 'reward', name: 'Summon Hero',  description: 'Summon your adopted hero into the current battle.', cost: 1000 },
-            { type: 'reward', name: 'Attack Hero',  description: 'Spawn your adopted hero on the enemy side.',        cost: 2000, cooldownSeconds: 60 },
+            // ── Chat Commands ────────────────────────────────
+            { type: 'command', name: 'adopt',        description: 'Adopt a newly created hero to take part in the stream.',          moderatorOnly: false },
+            { type: 'command', name: 'summon',       description: 'Summon your adopted hero on the streamer\'s side in battle.',     moderatorOnly: false },
+            { type: 'command', name: 'attack',       description: 'Spawn your hero on the enemy side when a battle starts.',         moderatorOnly: false },
+            { type: 'command', name: 'heal',         description: 'Heal your hero over time while summoned in battle.',              moderatorOnly: false },
+            { type: 'command', name: 'power',        description: 'Use your hero class power in battle.',                            moderatorOnly: false },
+            { type: 'command', name: 'ammo',         description: 'Check your archer\'s remaining ammunition in battle.',            moderatorOnly: false },
+            { type: 'command', name: 'equip',        description: 'Upgrade your hero\'s equipment tier.',                            moderatorOnly: false },
+            { type: 'command', name: 'reequip',      description: 'Randomize your hero\'s equipment loadout.',                       moderatorOnly: false },
+            { type: 'command', name: 'retinue',      description: 'Hire or upgrade retinue troops for your hero.',                   moderatorOnly: false },
+            { type: 'command', name: 'class',        description: 'Select a new combat class for your hero.',                        moderatorOnly: false },
+            { type: 'command', name: 'buyattribute', description: 'Buy attribute points for your hero.',                             moderatorOnly: false },
+            { type: 'command', name: 'stats',        description: 'Show your hero\'s gold, skills, location, and attributes.',       moderatorOnly: false },
+            { type: 'command', name: 'gold',         description: 'Show your hero\'s current gold balance.',                         moderatorOnly: false },
+            { type: 'command', name: 'inv',          description: 'Show your equipped loadout and inventory.',                       moderatorOnly: false },
+            { type: 'command', name: 'powers',       description: 'Show your available hero powers.',                                moderatorOnly: false },
+            { type: 'command', name: 'ach',          description: 'Show your achievements and stats.',                               moderatorOnly: false },
+            { type: 'command', name: 'retinuelist',  description: 'Show your current retinue troops.',                               moderatorOnly: false },
+            { type: 'command', name: 'customitems',  description: 'Show your custom item storage.',                                  moderatorOnly: false },
+            { type: 'command', name: 'family',       description: 'Show your hero\'s family info.',                                  moderatorOnly: false },
+            { type: 'command', name: 'itemstats',    description: 'Show detailed stats for an item.',                                moderatorOnly: false },
+            { type: 'command', name: 'givegold',     description: 'Transfer gold to another viewer\'s hero (5% fee).',               moderatorOnly: false },
+            { type: 'command', name: 'giveitem',     description: 'Give a custom item to another viewer.',                           moderatorOnly: false },
+            { type: 'command', name: 'discarditem',  description: 'Throw away a custom item.',                                       moderatorOnly: false },
+            { type: 'command', name: 'auction',      description: 'Start an auction on one of your custom items.',                   moderatorOnly: false },
+            { type: 'command', name: 'bid',          description: 'Place a bid on an active auction.',                               moderatorOnly: false },
+            { type: 'command', name: 'smithweapon',  description: 'Smith a custom weapon for your hero.',                            moderatorOnly: false },
+            { type: 'command', name: 'smitharmor',   description: 'Smith custom armor for your hero.',                               moderatorOnly: false },
+            { type: 'command', name: 'buymount',     description: 'Buy a mount for your hero.',                                      moderatorOnly: false },
+            { type: 'command', name: 'nameitem',     description: 'Name one of your custom items.',                                  moderatorOnly: false },
+            { type: 'command', name: 'clan',         description: 'Manage clan: join, create, rename, stats, leave.',                moderatorOnly: false },
+            { type: 'command', name: 'kingdom',      description: 'Manage kingdom actions: join, rebel.',                            moderatorOnly: false },
+            { type: 'command', name: 'duel',         description: 'Challenge another viewer to a PvP duel.',                         moderatorOnly: false },
+            { type: 'command', name: 'leaderboard',  description: 'Display the top duel winners from the current save.',             moderatorOnly: false },
+            { type: 'command', name: 'tournament',   description: 'Join the tournament queue.',                                      moderatorOnly: false },
+            { type: 'command', name: 'bltbet',       description: 'Bet gold on a tournament match.',                                 moderatorOnly: false },
+            { type: 'command', name: 'hero',         description: 'Adjust hero features: gender, looks, marriage.',                  moderatorOnly: false },
+            { type: 'command', name: 'rejuvenate',   description: 'Reduce your hero\'s age (costs gold per year).',                  moderatorOnly: false },
+            { type: 'command', name: 'retire',       description: 'Retire your adopted hero permanently.',                           moderatorOnly: false },
+            { type: 'command', name: 'info',         description: 'Show campaign info and general game status.',                     moderatorOnly: false },
+            // ── Channel Point Rewards ────────────────────────
+            { type: 'reward', name: 'Adopt a Hero by Culture',  description: 'Adopt a random hero filtered by culture.',        cost: 100 },
+            { type: 'reward', name: 'Adopt a Random Hero',      description: 'Adopt a completely random hero.',                 cost: 75 },
+            { type: 'reward', name: 'Summon',                   description: 'Summon your hero on the streamer\'s side!',       cost: 24 },
+            { type: 'reward', name: 'Attack',                   description: 'Spawn your hero on the enemy side!',              cost: 25 },
+            { type: 'reward', name: 'Heal Hero',                description: 'Restore your hero\'s health in battle.',          cost: 100 },
+            { type: 'reward', name: 'Heal Streamer',            description: 'Restore the streamer\'s health in battle.',       cost: 100 },
+            { type: 'reward', name: 'Daily Gold',               description: 'Receive 100,000 gold for your hero.',             cost: 50 },
+            { type: 'reward', name: 'Daily XP',                 description: 'Receive 50,000 XP to a random skill.',            cost: 50 },
+            { type: 'reward', name: 'Give Player Gold',         description: 'Gift 10,000 gold to the streamer.',               cost: 100 },
+            { type: 'reward', name: 'Send Message In Game',     description: 'Display a message in the game!',                  cost: 100, cooldownSeconds: 15 },
+            { type: 'reward', name: 'Tournament',               description: 'Enter the tournament queue.',                     cost: 26 },
+            { type: 'reward', name: 'Use Class Power',          description: 'Activate your hero class ability in battle!',     cost: 75 },
         ]);
     }
 }());

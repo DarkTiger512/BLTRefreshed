@@ -120,6 +120,7 @@ namespace BannerlordTwitch
         private readonly AuthSettings authSettings;
 
         private readonly Settings settings;
+        public Settings GetSettings() => settings;
         private CancellationToken token;
 
         private readonly ConcurrentDictionary<string, ChannelPointsCustomRewardRedemption> redemptionCache = new();

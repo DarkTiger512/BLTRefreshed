@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLT Hero Inventory</title>
+    <script src="https://extension-files.twitch.tv/helper/v1/twitch-ext.min.js"></script>
+    <style>
+        :root {
+            --gold:          #c9a84c;
+            --gold-bright:   #ffd700;
+            --glass-bg:      rgba(10, 8, 4, .72);
+            --glass-border:  rgba(201, 168, 76, .25);
+            --glass-hover:   rgba(201, 168, 76, .10);
+            --text-primary:  #e8d5b0;
+            --text-secondary:#a89060;
+            --text-dim:      rgba(168, 144, 96, .6);
+            --panel-width:   320px;
+            --tab-height:    42px;
+            --success:       #4caf50;
+            --danger:        #e57373;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: transparent;
+            color: var(--text-primary);
+            font-family: "Segoe UI", Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ── Inline SVG icon base ─────────────────────────── */
+        .ico {
+            width: 1em;
+            height: 1em;
+            vertical-align: -.125em;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            flex-shrink: 0;
+        }
+        .ico-lg { width: 1.25em; height: 1.25em; }
+        .ico-xl { width: 2.4em; height: 2.4em; stroke-width: 1.5; }
+        .equip-icon .ico { stroke-width: 2.2; }
+
+        /* ── Overlay wrapper ──────────────────────────────── */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0;
+            height: 100vh;
+            display: flex;
+            align-items: stretch;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .overlay > * { pointer-events: auto; }
+
+        /* ── Toggle tab ───────────────────────────────────── */
+        .toggle-tab {
+            align-self: center;
+            width: 32px;
+            order: 2;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-left: none;
+            border-radius: 0 .4em .4em 0;
+            color: var(--gold);
+            font-size: .8em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: .5em .2em;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            letter-spacing: .15em;
+            font-weight: bold;
+            transition: background .2s, border-color .2s;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            user-select: none;
+        }
+        .toggle-tab:hover {
+            background: rgba(10, 8, 4, .88);
+            border-color: var(--gold);
+        }
+        .toggle-tab .tab-icon {
+            writing-mode: horizontal-tb;
+            margin-bottom: .3em;
+        }
+        .toggle-tab .tab-icon .ico { width: 1.1em; height: 1.1em; }
+        .toggle-tab .tab-arrow {
+            writing-mode: horizontal-tb;
+            margin-top: .3em;
+            transition: transform .3s;
+            display: flex;
+        }
+        .toggle-tab .tab-arrow .ico { width: .6em; height: .6em; }
+        .overlay.open .toggle-tab .tab-arrow { transform: rotate(180deg); }
+
+        /* ── Panel ────────────────────────────────────────── */
+        .panel {
+            width: 0;
+            overflow: hidden;
+            background: var(--glass-bg);
+            border-right: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            transition: width .3s cubic-bezier(.4,0,.2,1);
+            display: flex;
+            flex-direction: column;
+            order: 1;
+        }
+        .overlay.open .panel { width: var(--panel-width); }
+
+        /* ── Header ───────────────────────────────────────── */
+        .panel-header {
+            padding: .7em .9em;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            min-width: var(--panel-width);
+        }
+        .panel-title {
+            color: var(--gold-bright);
+            font-size: .85em;
+            font-weight: bold;
+            letter-spacing: .06em;
+            text-shadow: 0 0 .5em rgba(255,215,0,.25);
+            display: inline-flex;
+            align-items: center;
+            gap: .4em;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: .3em;
+            font-size: .65em;
+            padding: .15em .5em;
+            border-radius: 1em;
+        }
+        .status-badge.connected    { color: #4caf50; background: rgba(0,128,0,.2); border: 1px solid rgba(42,138,42,.4); }
+        .status-badge.disconnected { color: #e57373; background: rgba(128,0,0,.2); border: 1px solid rgba(138,42,42,.4); }
+        .status-badge.connecting   { color: #ffca28; background: rgba(128,128,0,.2); border: 1px solid rgba(138,138,42,.4); }
+        .status-dot { width: .4em; height: .4em; border-radius: 50%; background: currentColor; }
+
+        /* ── Username bar ─────────────────────────────────── */
+        .username-bar {
+            padding: .5em .9em;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: .4em;
+            flex-shrink: 0;
+            min-width: var(--panel-width);
+        }
+        .username-input {
+            flex: 1;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(201,168,76,.2);
+            border-radius: .25em;
+            padding: .35em .5em;
+            color: var(--text-primary);
+            font-size: .72em;
+            font-family: inherit;
+            outline: none;
+            transition: border-color .15s;
+        }
+        .username-input::placeholder { color: var(--text-dim); }
+        .username-input:focus { border-color: var(--gold); }
+        .username-display {
+            color: var(--gold-bright);
+            font-size: .75em;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .username-label { color: var(--text-dim); font-size: .75em; display: flex; }
+        .lookup-btn {
+            background: rgba(201,168,76,.15);
+            border: 1px solid var(--glass-border);
+            color: var(--gold);
+            font-size: .7em;
+            padding: .3em .6em;
+            border-radius: .25em;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background .15s, border-color .15s;
+            white-space: nowrap;
+        }
+        .lookup-btn:hover { background: rgba(201,168,76,.25); border-color: var(--gold); }
+
+        /* ── Panel body ───────────────────────────────────── */
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-width: var(--panel-width);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(201,168,76,.3) transparent;
+        }
+        .panel-body::-webkit-scrollbar { width: 4px; }
+        .panel-body::-webkit-scrollbar-track { background: transparent; }
+        .panel-body::-webkit-scrollbar-thumb { background: rgba(201,168,76,.3); border-radius: 2px; }
+
+        /* ── Hero identity card ───────────────────────────── */
+        .hero-card {
+            padding: .7em .9em;
+            border-bottom: 1px solid var(--glass-border);
+            min-width: var(--panel-width);
+        }
+        .hero-name {
+            color: var(--gold-bright);
+            font-size: 1em;
+            font-weight: 700;
+            text-shadow: 0 0 .5em rgba(255,215,0,.2);
+        }
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .3em .8em;
+            margin-top: .3em;
+            font-size: .68em;
+            color: var(--text-secondary);
+        }
+        .hero-meta-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: .25em;
+        }
+        .hero-meta-tag .ico { width: .85em; height: .85em; opacity: .7; }
+
+        /* ── Gold & Tier bar ──────────────────────────────── */
+        .stat-bar {
+            display: flex;
+            gap: .5em;
+            padding: .5em .9em;
+            border-bottom: 1px solid var(--glass-border);
+            min-width: var(--panel-width);
+        }
+        .stat-chip {
+            flex: 1;
+            text-align: center;
+            padding: .35em .4em;
+            border-radius: .3em;
+            background: rgba(201,168,76,.08);
+            border: 1px solid rgba(201,168,76,.12);
+        }
+        .stat-chip-value {
+            font-size: .9em;
+            font-weight: 700;
+            color: var(--gold-bright);
+        }
+        .stat-chip-label {
+            font-size: .55em;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: .06em;
+        }
+
+        /* ── HP bar ───────────────────────────────────────── */
+        .hp-bar-wrap {
+            padding: .4em .9em .5em;
+            border-bottom: 1px solid var(--glass-border);
+            min-width: var(--panel-width);
+        }
+        .hp-label {
+            font-size: .6em;
+            color: var(--text-dim);
+            margin-bottom: .2em;
+            display: flex;
+            justify-content: space-between;
+        }
+        .hp-track {
+            height: .5em;
+            background: rgba(255,255,255,.06);
+            border-radius: .25em;
+            overflow: hidden;
+        }
+        .hp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c0392b, #e74c3c, #2ecc71);
+            border-radius: .25em;
+            transition: width .3s;
+        }
+
+        /* ── Section ──────────────────────────────────────── */
+        .section {
+            min-width: var(--panel-width);
+        }
+        .section-header {
+            padding: .45em .9em;
+            font-size: .62em;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(201,168,76,.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background .15s;
+        }
+        .section-header:hover { background: var(--glass-hover); }
+        .section-header .sec-label {
+            display: inline-flex;
+            align-items: center;
+            gap: .4em;
+        }
+        .section-header .ico { width: .9em; height: .9em; }
+        .section-arrow {
+            transition: transform .2s;
+            display: flex;
+        }
+        .section-arrow .ico { width: .7em; height: .7em; }
+        .section.collapsed .section-arrow { transform: rotate(-90deg); }
+        .section-body {
+            max-height: 50em;
+            overflow: hidden;
+            transition: max-height .25s ease-out;
+        }
+        .section.collapsed .section-body { max-height: 0; }
+
+        /* ── Equipment list ────────────────────────────────── */
+        .equip-row {
+            display: flex;
+            align-items: center;
+            gap: .5em;
+            padding: .35em .9em;
+            font-size: .75em;
+            border-bottom: 1px solid rgba(201,168,76,.04);
+        }
+        .equip-icon {
+            width: 1.6em; height: 1.6em;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: .25em;
+            background: rgba(201,168,76,.08);
+            border: 1px solid rgba(201,168,76,.1);
+            flex-shrink: 0;
+            color: var(--gold);
+        }
+        .equip-icon .ico { width: .9em; height: .9em; }
+        .equip-name {
+            flex: 1;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .equip-tier {
+            font-size: .7em;
+            color: var(--text-dim);
+        }
+
+        /* ── Retinue list ─────────────────────────────────── */
+        .retinue-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .35em .9em;
+            font-size: .75em;
+            border-bottom: 1px solid rgba(201,168,76,.04);
+        }
+        .retinue-name { color: var(--text-primary); }
+        .retinue-meta {
+            display: flex;
+            gap: .6em;
+            font-size: .85em;
+            color: var(--text-dim);
+        }
+
+        /* ── Skills grid ──────────────────────────────────── */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+        .skill-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .3em .9em;
+            font-size: .72em;
+            border-bottom: 1px solid rgba(201,168,76,.04);
+        }
+        .skill-name { color: var(--text-secondary); }
+        .skill-value { color: var(--gold-bright); font-weight: 600; }
+        .skill-focus { color: var(--text-dim); font-size: .85em; }
+
+        /* ── Stats list ───────────────────────────────────── */
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .3em .9em;
+            font-size: .72em;
+            border-bottom: 1px solid rgba(201,168,76,.04);
+        }
+        .stat-label { color: var(--text-secondary); }
+        .stat-value { color: var(--gold-bright); font-weight: 600; }
+        .stat-class { color: var(--text-dim); font-size: .85em; }
+
+        /* ── Attributes ───────────────────────────────────── */
+        .attr-row {
+            display: flex;
+            gap: .5em;
+            padding: .5em .9em;
+            flex-wrap: wrap;
+        }
+        .attr-chip {
+            padding: .25em .55em;
+            border-radius: .25em;
+            background: rgba(201,168,76,.08);
+            border: 1px solid rgba(201,168,76,.1);
+            font-size: .72em;
+        }
+        .attr-chip-name { color: var(--text-secondary); }
+        .attr-chip-val  { color: var(--gold-bright); font-weight: 700; margin-left: .3em; }
+
+        /* ── Powers / Achievements tags ───────────────────── */
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .3em;
+            padding: .5em .9em;
+        }
+        .tag {
+            font-size: .68em;
+            padding: .2em .5em;
+            border-radius: .2em;
+            background: rgba(201,168,76,.1);
+            border: 1px solid rgba(201,168,76,.15);
+            color: var(--gold);
+        }
+        .tag.passive { color: #6abf6a; background: rgba(42,122,42,.15); border-color: rgba(42,122,42,.3); }
+        .tag.achievement { color: #7ab8e8; background: rgba(42,82,122,.15); border-color: rgba(42,82,122,.3); }
+        .tag-empty {
+            padding: .5em .9em;
+            font-size: .7em;
+            color: var(--text-dim);
+        }
+
+        /* ── States ───────────────────────────────────────── */
+        .panel-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2em 1em;
+            color: var(--text-secondary);
+            font-size: .8em;
+            text-align: center;
+            min-width: var(--panel-width);
+        }
+        .panel-state .ico-xl { margin-bottom: .4em; }
+        .spinner {
+            width: 1.6em; height: 1.6em;
+            border: 2px solid rgba(201,168,76,.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            margin-bottom: .6em;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-msg {
+            padding: 1em .9em;
+            font-size: .78em;
+            color: var(--danger);
+            text-align: center;
+            min-width: var(--panel-width);
+        }
+
+        /* ── Footer ───────────────────────────────────────── */
+        .panel-footer {
+            padding: .4em .9em;
+            border-top: 1px solid var(--glass-border);
+            font-size: .55em;
+            color: var(--text-dim);
+            text-align: center;
+            flex-shrink: 0;
+            min-width: var(--panel-width);
+        }
+
+        /* ── Toast ────────────────────────────────────────── */
+        .toast {
+            position: fixed;
+            bottom: 1.5em;
+            left: 1.5em;
+            background: rgba(10, 8, 4, .92);
+            border: 1px solid var(--gold);
+            border-radius: .4em;
+            padding: .55em 1em;
+            color: var(--gold-bright);
+            font-size: .78em;
+            font-weight: 600;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 20px rgba(0,0,0,.5), 0 0 15px rgba(201,168,76,.15);
+            transform: translateY(120%);
+            opacity: 0;
+            transition: transform .3s cubic-bezier(.4,0,.2,1), opacity .3s;
+            pointer-events: none;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            gap: .5em;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.error { border-color: #e57373; }
+    </style>
+</head>
+<body>
+
+<!-- ── SVG Icon Sprite (hidden) ──────────────────────────── -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <!-- UI icons (24x24 viewBox, stroke-based) -->
+    <symbol id="ico-archive" viewBox="0 0 24 24">
+        <polyline points="21 8 21 21 3 21 3 8"/>
+        <rect x="1" y="3" width="22" height="5"/>
+        <line x1="10" y1="12" x2="14" y2="12"/>
+    </symbol>
+    <symbol id="ico-user" viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+    </symbol>
+    <symbol id="ico-chevron-right" viewBox="0 0 24 24">
+        <polyline points="9 18 15 12 9 6"/>
+    </symbol>
+    <symbol id="ico-chevron-down" viewBox="0 0 24 24">
+        <polyline points="6 9 12 15 18 9"/>
+    </symbol>
+    <symbol id="ico-swords" viewBox="0 0 24 24">
+        <path d="M5 19L19 5M19 5h-5M19 5v5M19 19L5 5M5 5h5M5 5v5"/>
+    </symbol>
+    <symbol id="ico-castle" viewBox="0 0 24 24">
+        <path d="M3 21V13h3V10h3v3h6V10h3v3h3v8"/>
+        <path d="M9 21v-4h6v4"/>
+    </symbol>
+    <symbol id="ico-globe" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="2" y1="12" x2="22" y2="12"/>
+        <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+    </symbol>
+    <symbol id="ico-calendar" viewBox="0 0 24 24">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+    </symbol>
+    <symbol id="ico-trending-up" viewBox="0 0 24 24">
+        <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+        <polyline points="17 6 23 6 23 12"/>
+    </symbol>
+    <symbol id="ico-map-pin" viewBox="0 0 24 24">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+    </symbol>
+    <symbol id="ico-columns" viewBox="0 0 24 24">
+        <path d="M4 4h16M4 20h16M6 4v16M12 4v16M18 4v16"/>
+    </symbol>
+    <symbol id="ico-bar-chart" viewBox="0 0 24 24">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+    </symbol>
+    <symbol id="ico-zap" viewBox="0 0 24 24">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+    </symbol>
+    <symbol id="ico-award" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="7"/>
+        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+    </symbol>
+
+    <!-- Equipment icons (24x24 viewBox, stroke-based) -->
+    <symbol id="ico-sword" viewBox="0 0 24 24">
+        <path d="M12 3v12M7.5 7h9M10 16h4v3h-4z"/>
+    </symbol>
+    <symbol id="ico-ranged" viewBox="0 0 24 24">
+        <path d="M18 3c-5 1-9 4-11 9 2 5 6 8 11 9"/>
+        <line x1="7" y1="12" x2="21" y2="12"/>
+        <path d="M19 10l2 2-2 2"/>
+    </symbol>
+    <symbol id="ico-shield" viewBox="0 0 24 24">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </symbol>
+    <symbol id="ico-ammo" viewBox="0 0 24 24">
+        <line x1="12" y1="3" x2="12" y2="21"/>
+        <polyline points="8 7 12 3 16 7"/>
+        <line x1="9" y1="18" x2="15" y2="15"/>
+        <line x1="9" y1="15" x2="15" y2="18"/>
+    </symbol>
+    <symbol id="ico-horse" viewBox="0 0 24 24">
+        <path d="M17 4l-3 2-4-1-3 3v4l2 3v6M13 22v-6l3-3 2 1v-5l2-2v-2"/>
+        <circle cx="15" cy="6" r="1" fill="currentColor" stroke="none"/>
+    </symbol>
+    <symbol id="ico-helmet" viewBox="0 0 24 24">
+        <path d="M5 14V10a7 7 0 0114 0v4"/>
+        <rect x="4" y="14" width="16" height="3" rx="1"/>
+        <line x1="12" y1="10" x2="12" y2="17"/>
+    </symbol>
+    <symbol id="ico-armor" viewBox="0 0 24 24">
+        <path d="M6 4L3 8v5l3 1v7h12v-7l3-1V8l-3-4h-3l-3 3-3-3z"/>
+    </symbol>
+    <symbol id="ico-boots" viewBox="0 0 24 24">
+        <path d="M8 3v12l-3 2v3h10v-3l-1-3V3"/>
+    </symbol>
+    <symbol id="ico-gloves" viewBox="0 0 24 24">
+        <path d="M7 14V9l2-2v3l2-3V5l2-2v7l2-4V4l2 2v8l-2 4v4H7v-4z"/>
+    </symbol>
+    <symbol id="ico-cape" viewBox="0 0 24 24">
+        <path d="M8 3h8v2c0 6-2 10-4 14-2-4-4-8-4-14z"/>
+    </symbol>
+    <symbol id="ico-banner" viewBox="0 0 24 24">
+        <line x1="6" y1="2" x2="6" y2="22"/>
+        <path d="M6 4h13l-3 4 3 4H6"/>
+    </symbol>
+    <symbol id="ico-gear" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1.08-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1.08 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9c.26.604.852.997 1.51 1H21a2 2 0 010 4h-.09c-.658.003-1.25.396-1.51 1z"/>
+    </symbol>
+    <symbol id="ico-gem" viewBox="0 0 24 24">
+        <path d="M6 3h12l4 6-10 13L2 9z"/>
+        <path d="M2 9h20M12 22L8 9l4-6 4 6z"/>
+    </symbol>
+    <symbol id="ico-users" viewBox="0 0 24 24">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+    </symbol>
+</svg>
+
+<div id="app">
+    <div class="overlay" :class="{ open: panelOpen }">
+
+        <!-- Toggle tab -->
+        <div class="toggle-tab" @click="panelOpen = !panelOpen" title="Toggle inventory">
+            <span class="tab-icon"><svg class="ico"><use href="#ico-archive"/></svg></span>
+            <span>INV</span>
+            <span class="tab-arrow"><svg class="ico"><use href="#ico-chevron-right"/></svg></span>
+        </div>
+
+        <!-- Panel -->
+        <div class="panel">
+            <!-- Header -->
+            <div class="panel-header">
+                <span class="panel-title">
+                    <svg class="ico"><use href="#ico-archive"/></svg>
+                    Hero Inventory
+                </span>
+                <span class="status-badge" :class="status">
+                    <span class="status-dot"></span>
+                    {{ statusText }}
+                </span>
+            </div>
+
+            <!-- Username bar -->
+            <div class="username-bar">
+                <span class="username-label"><svg class="ico"><use href="#ico-user"/></svg></span>
+                <template v-if="twitchResolved">
+                    <span class="username-display">{{ userName }}</span>
+                    <button class="lookup-btn" @click="fetchInventory">Refresh</button>
+                </template>
+                <template v-else>
+                    <input
+                        class="username-input"
+                        v-model="userName"
+                        @keyup.enter="fetchInventory"
+                        placeholder="Enter Twitch username…"
+                        maxlength="100"
+                        spellcheck="false" />
+                    <button class="lookup-btn" @click="fetchInventory">Look Up</button>
+                </template>
+            </div>
+
+            <!-- Body -->
+            <div class="panel-body">
+
+                <!-- Loading -->
+                <div v-if="loading" class="panel-state">
+                    <div class="spinner"></div>
+                    <div>Loading hero data…</div>
+                </div>
+
+                <!-- Error -->
+                <div v-else-if="error" class="error-msg">{{ error }}</div>
+
+                <!-- No lookup yet -->
+                <div v-else-if="!hero" class="panel-state">
+                    <svg class="ico ico-xl"><use href="#ico-swords"/></svg>
+                    <div>Enter your username and press Look Up<br>to see your hero inventory.</div>
+                </div>
+
+                <!-- Hero data -->
+                <template v-else>
+
+                    <!-- Identity card -->
+                    <div class="hero-card">
+                        <div class="hero-name">{{ hero.heroName }}</div>
+                        <div class="hero-meta">
+                            <span class="hero-meta-tag"><svg class="ico"><use href="#ico-swords"/></svg> {{ hero.className }}</span>
+                            <span class="hero-meta-tag" v-if="hero.clanName"><svg class="ico"><use href="#ico-castle"/></svg> {{ hero.clanName }}</span>
+                            <span class="hero-meta-tag" v-if="hero.cultureName"><svg class="ico"><use href="#ico-globe"/></svg> {{ hero.cultureName }}</span>
+                            <span class="hero-meta-tag"><svg class="ico"><use href="#ico-calendar"/></svg> {{ hero.age }} yrs</span>
+                            <span class="hero-meta-tag"><svg class="ico"><use href="#ico-trending-up"/></svg> Lvl {{ hero.level }}</span>
+                            <span class="hero-meta-tag" v-if="hero.location"><svg class="ico"><use href="#ico-map-pin"/></svg> {{ hero.location }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Gold / Tier / HP -->
+                    <div class="stat-bar">
+                        <div class="stat-chip">
+                            <div class="stat-chip-value">{{ formatGold(hero.gold) }}</div>
+                            <div class="stat-chip-label">Gold</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="stat-chip-value">T{{ hero.equipmentTier }}</div>
+                            <div class="stat-chip-label">Equip Tier</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="stat-chip-value">{{ hero.hp }}/{{ hero.maxHp }}</div>
+                            <div class="stat-chip-label">HP</div>
+                        </div>
+                    </div>
+
+                    <div class="hp-bar-wrap">
+                        <div class="hp-label">
+                            <span>Health</span>
+                            <span>{{ Math.round(hero.hp / hero.maxHp * 100) }}%</span>
+                        </div>
+                        <div class="hp-track">
+                            <div class="hp-fill" :style="{ width: Math.round(hero.hp / hero.maxHp * 100) + '%' }"></div>
+                        </div>
+                    </div>
+
+                    <!-- Attributes -->
+                    <div class="section" :class="{ collapsed: collapsed.attributes }">
+                        <div class="section-header" @click="toggle('attributes')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-columns"/></svg> Attributes</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="attr-row">
+                                <span class="attr-chip" v-for="(val, name) in hero.attributes" :key="name">
+                                    <span class="attr-chip-name">{{ name }}</span>
+                                    <span class="attr-chip-val">{{ val }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills -->
+                    <div class="section" :class="{ collapsed: collapsed.skills }">
+                        <div class="section-header" @click="toggle('skills')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-trending-up"/></svg> Skills ({{ hero.skills.length }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="skills-grid">
+                                <div class="skill-row" v-for="s in hero.skills" :key="s.name">
+                                    <span class="skill-name">{{ s.name }}</span>
+                                    <span>
+                                        <span class="skill-value">{{ s.value }}</span>
+                                        <span class="skill-focus"> [f{{ s.focus }}]</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Battle Equipment -->
+                    <div class="section" :class="{ collapsed: collapsed.battle }">
+                        <div class="section-header" @click="toggle('battle')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-sword"/></svg> Battle Equipment ({{ hero.battleEquipment.length }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="equip-row" v-for="(item, i) in hero.battleEquipment" :key="'b'+i">
+                                <div class="equip-icon" v-html="equipIcon(item.type)"></div>
+                                <span class="equip-name">{{ item.name }}</span>
+                                <span class="equip-tier">T{{ item.tier + 1 }}</span>
+                            </div>
+                            <div v-if="hero.battleEquipment.length === 0" class="tag-empty">(none)</div>
+                        </div>
+                    </div>
+
+                    <!-- Civilian Equipment -->
+                    <div class="section" :class="{ collapsed: collapsed.civilian }" v-if="hero.civilianEquipment.length > 0">
+                        <div class="section-header" @click="toggle('civilian')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-armor"/></svg> Civilian Equipment ({{ hero.civilianEquipment.length }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="equip-row" v-for="(item, i) in hero.civilianEquipment" :key="'c'+i">
+                                <div class="equip-icon" v-html="equipIcon(item.type)"></div>
+                                <span class="equip-name">{{ item.name }}</span>
+                                <span class="equip-tier">T{{ item.tier + 1 }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Items -->
+                    <div class="section" :class="{ collapsed: collapsed.customs }">
+                        <div class="section-header" @click="toggle('customs')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-gem"/></svg> Custom Items ({{ hero.customItems.length }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="equip-row" v-for="(item, i) in hero.customItems" :key="'x'+i">
+                                <div class="equip-icon" v-html="equipIcon(item.type)"></div>
+                                <span class="equip-name">{{ item.name }}</span>
+                                <span class="equip-tier">T{{ item.tier + 1 }}</span>
+                            </div>
+                            <div v-if="hero.customItems.length === 0" class="tag-empty">(none)</div>
+                        </div>
+                    </div>
+
+                    <!-- Retinue -->
+                    <div class="section" :class="{ collapsed: collapsed.retinue }">
+                        <div class="section-header" @click="toggle('retinue')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-users"/></svg> Retinue ({{ retinueTotal }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="retinue-row" v-for="(u, i) in hero.retinue" :key="'r'+i">
+                                <span class="retinue-name">{{ u.name }}</span>
+                                <div class="retinue-meta">
+                                    <span>&times;{{ u.count }}</span>
+                                    <span>T{{ u.tier + 1 }}</span>
+                                </div>
+                            </div>
+                            <div v-if="hero.retinue.length === 0" class="tag-empty">(none)</div>
+                        </div>
+                    </div>
+
+                    <!-- Tracked Stats -->
+                    <div class="section" :class="{ collapsed: collapsed.stats }">
+                        <div class="section-header" @click="toggle('stats')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-bar-chart"/></svg> Combat Stats</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="stat-row" v-for="s in hero.trackedStats" :key="s.label">
+                                <span class="stat-label">{{ s.label }}</span>
+                                <span>
+                                    <span class="stat-value">{{ s.total }}</span>
+                                    <span class="stat-class" v-if="s.classSpecific"> ({{ s.classSpecific }})</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Powers -->
+                    <div class="section" :class="{ collapsed: collapsed.powers }" v-if="hero.activePowers.length > 0 || hero.passivePowers.length > 0">
+                        <div class="section-header" @click="toggle('powers')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-zap"/></svg> Powers ({{ hero.activePowers.length + hero.passivePowers.length }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="tag-list">
+                                <span class="tag" v-for="p in hero.activePowers" :key="'ap-'+p">{{ p }}</span>
+                                <span class="tag passive" v-for="p in hero.passivePowers" :key="'pp-'+p">{{ p }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="section" :class="{ collapsed: collapsed.achievements }" v-if="hero.achievements.length > 0">
+                        <div class="section-header" @click="toggle('achievements')">
+                            <span class="sec-label"><svg class="ico"><use href="#ico-award"/></svg> Achievements ({{ hero.achievements.length }})</span>
+                            <span class="section-arrow"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                        </div>
+                        <div class="section-body">
+                            <div class="tag-list">
+                                <span class="tag achievement" v-for="a in hero.achievements" :key="a">{{ a }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </template>
+            </div>
+
+            <!-- Footer -->
+            <div class="panel-footer">Bannerlord Twitch Enhanced Edition</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" :class="{ show: toast.visible, error: toast.error }">
+        <span>{{ toast.message }}</span>
+    </div>
+</div>
+
+<script src="Scripts/jquery-3.4.1.min.js"></script>
+<script src="Scripts/jquery.signalR-2.4.2.min.js"></script>
+<script src="Scripts/vue.min.js"></script>
+<script src="signalr/hubs"></script>
+<script>
+(function () {
+    var inventoryHub = null;
+
+    // Equipment type → SVG symbol mapping
+    var typeIconMap = {
+        OneHandedWeapon: 'sword', TwoHandedWeapon: 'sword', Polearm: 'sword',
+        Bow: 'ranged', Crossbow: 'ranged', Thrown: 'ranged',
+        Shield: 'shield',
+        Arrows: 'ammo', Bolts: 'ammo',
+        Horse: 'horse', HorseHarness: 'horse',
+        HeadArmor: 'helmet',
+        BodyArmor: 'armor', ChestArmor: 'armor',
+        LegArmor: 'boots',
+        HandArmor: 'gloves',
+        Cape: 'cape',
+        Banner: 'banner',
+    };
+
+    function makeEquipSvg(type) {
+        var id = typeIconMap[type] || 'gear';
+        return '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><use href="#ico-' + id + '"/></svg>';
+    }
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            status: 'connecting',
+            panelOpen: false,
+            userName: localStorage.getItem('blt_username') || '',
+            twitchResolved: false,
+            loading: false,
+            error: null,
+            hero: null,
+            collapsed: {
+                attributes: false,
+                skills: true,
+                battle: false,
+                civilian: true,
+                customs: false,
+                retinue: false,
+                stats: true,
+                powers: false,
+                achievements: true,
+            },
+            toast: { visible: false, message: '', error: false, timer: null },
+        },
+        computed: {
+            statusText: function () {
+                return { connecting: 'Connecting\u2026', connected: 'Live', disconnected: 'Offline' }[this.status] || '';
+            },
+            retinueTotal: function () {
+                if (!this.hero || !this.hero.retinue) return 0;
+                return this.hero.retinue.reduce(function (sum, u) { return sum + u.count; }, 0);
+            },
+        },
+        methods: {
+            toggle: function (key) {
+                this.$set(this.collapsed, key, !this.collapsed[key]);
+            },
+            equipIcon: function (type) {
+                return makeEquipSvg(type);
+            },
+            formatGold: function (n) {
+                if (n >= 1000000) return (n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1) + 'M';
+                if (n >= 1000) return (n / 1000).toFixed(n % 1000 === 0 ? 0 : 1) + 'k';
+                return String(n);
+            },
+            fetchInventory: function () {
+                var self = this;
+                var name = this.userName.trim();
+                if (!name) { this.showToast('Enter a username first', true); return; }
+
+                if (!this.twitchResolved) {
+                    localStorage.setItem('blt_username', name);
+                }
+
+                this.loading = true;
+                this.error = null;
+                this.hero = null;
+
+                if (inventoryHub && inventoryHub.server && this.status === 'connected') {
+                    inventoryHub.server.getInventory(name)
+                        .done(function (data) {
+                            self.loading = false;
+                            if (!data || !data.found) {
+                                self.error = (data && data.errorMessage) || 'Hero not found.';
+                            } else {
+                                self.hero = data;
+                            }
+                        })
+                        .fail(function () {
+                            self.loading = false;
+                            self.error = 'Server error \u2014 is the game running?';
+                        });
+                } else {
+                    // Demo mode
+                    setTimeout(function () { self.loadDemo(name); }, 400);
+                }
+            },
+            loadDemo: function (name) {
+                this.loading = false;
+                this.hero = {
+                    found: true,
+                    heroName: name + '\'s Hero',
+                    className: 'Vanguard',
+                    clanName: 'Wolfbane',
+                    cultureName: 'Vlandian',
+                    age: 28,
+                    hp: 186,
+                    maxHp: 210,
+                    location: 'Pravend',
+                    level: 14,
+                    gold: 347250,
+                    equipmentTier: 3,
+                    battleEquipment: [
+                        { name: 'Fine Steel Longsword', type: 'TwoHandedWeapon', tier: 3 },
+                        { name: 'Reinforced Kite Shield', type: 'Shield', tier: 3 },
+                        { name: 'Lordly Brigandine', type: 'BodyArmor', tier: 4 },
+                        { name: 'Nasal Helmet', type: 'HeadArmor', tier: 2 },
+                        { name: 'Plated Leather Boots', type: 'LegArmor', tier: 3 },
+                        { name: 'Mail Gauntlets', type: 'HandArmor', tier: 2 },
+                        { name: 'War Horse', type: 'Horse', tier: 3 },
+                    ],
+                    civilianEquipment: [
+                        { name: 'Noble Tunic', type: 'BodyArmor', tier: 1 },
+                        { name: 'Leather Shoes', type: 'LegArmor', tier: 0 },
+                    ],
+                    customItems: [
+                        { name: 'Dragonslayer (Dmg +14, Speed +8)', type: 'TwoHandedWeapon', tier: 5 },
+                        { name: 'Blessed Plate (Armor +22, HP +30)', type: 'BodyArmor', tier: 5 },
+                    ],
+                    retinue: [
+                        { name: 'Vlandian Sergeant', count: 3, tier: 3 },
+                        { name: 'Vlandian Sharpshooter', count: 2, tier: 4 },
+                        { name: 'Vlandian Banner Knight', count: 1, tier: 5 },
+                    ],
+                    skills: [
+                        { name: 'One Handed',  value: 185, focus: 5 },
+                        { name: 'Two Handed',  value: 220, focus: 5 },
+                        { name: 'Polearm',     value: 140, focus: 3 },
+                        { name: 'Bow',         value: 45,  focus: 0 },
+                        { name: 'Crossbow',    value: 110, focus: 2 },
+                        { name: 'Throwing',    value: 60,  focus: 1 },
+                        { name: 'Riding',      value: 175, focus: 4 },
+                        { name: 'Athletics',   value: 130, focus: 3 },
+                        { name: 'Smithing',    value: 25,  focus: 0 },
+                        { name: 'Scouting',    value: 30,  focus: 0 },
+                        { name: 'Tactics',     value: 55,  focus: 1 },
+                        { name: 'Roguery',     value: 15,  focus: 0 },
+                        { name: 'Charm',       value: 40,  focus: 0 },
+                        { name: 'Leadership',  value: 65,  focus: 1 },
+                        { name: 'Trade',       value: 20,  focus: 0 },
+                        { name: 'Steward',     value: 50,  focus: 1 },
+                        { name: 'Medicine',    value: 10,  focus: 0 },
+                        { name: 'Engineering', value: 5,   focus: 0 },
+                    ],
+                    attributes: { VIG: 6, CTR: 5, END: 4, CNG: 3, SOC: 2, INT: 3 },
+                    trackedStats: [
+                        { label: 'Kills',              total: 47,  classSpecific: 32 },
+                        { label: 'Deaths',             total: 8,   classSpecific: 5 },
+                        { label: 'Viewer Kills',       total: 3,   classSpecific: 2 },
+                        { label: 'Streamer Kills',     total: 1,   classSpecific: 1 },
+                        { label: 'Battles',            total: 25,  classSpecific: 18 },
+                        { label: 'Summons',            total: 20,  classSpecific: 15 },
+                        { label: 'Attacks',            total: 5,   classSpecific: 3 },
+                        { label: 'Tournament Wins',    total: 3,   classSpecific: 2 },
+                        { label: 'Tournament Rnd Wins',total: 12,  classSpecific: 8 },
+                    ],
+                    activePowers: ['Charge', 'Warcry'],
+                    passivePowers: ['Iron Will', 'Shield Wall'],
+                    achievements: ['First Blood', 'Veteran', 'Tournament Champion'],
+                };
+            },
+            showToast: function (message, isError) {
+                var self = this;
+                if (this.toast.timer) clearTimeout(this.toast.timer);
+                this.toast.message = message;
+                this.toast.error = !!isError;
+                this.toast.visible = true;
+                this.toast.timer = setTimeout(function () {
+                    self.toast.visible = false;
+                    self.toast.timer = null;
+                }, 2500);
+            },
+        },
+    });
+
+    // ── Twitch Extension identity detection ──────────────
+    // Uses the documented Twitch.ext.viewer API and helixToken
+    // Reference: https://dev.twitch.tv/docs/extensions/reference/#helper-viewer
+    if (typeof Twitch !== 'undefined' && Twitch.ext) {
+        Twitch.ext.onAuthorized(function (auth) {
+            var viewer = Twitch.ext.viewer;
+            if (!viewer) return;
+
+            // viewer.id is the Twitch user ID (available when identity is linked)
+            if (viewer.isLinked && viewer.id) {
+                $.ajax({
+                    url: 'https://api.twitch.tv/helix/users?id=' + encodeURIComponent(viewer.id),
+                    headers: {
+                        'Client-ID': auth.clientId,
+                        'Authorization': 'Extension ' + auth.helixToken,
+                    },
+                    success: function (resp) {
+                        if (resp.data && resp.data.length > 0) {
+                            app.userName = resp.data[0].display_name;
+                            app.twitchResolved = true;
+                            if (app.status === 'connected') app.fetchInventory();
+                        }
+                    },
+                    error: function () {
+                        // Fallback: use the opaque ID (U-prefixed = stable logged-in user)
+                        app.userName = viewer.opaqueId;
+                        app.twitchResolved = true;
+                    },
+                });
+            } else if (viewer.opaqueId && viewer.opaqueId.charAt(0) === 'U') {
+                // Logged-in but hasn't shared identity — prompt them
+                Twitch.ext.actions.requestIdShare();
+            }
+        });
+    }
+
+    // ── SignalR ──────────────────────────────────────────
+    if (typeof $.connection !== 'undefined' && typeof $.connection.inventoryHub !== 'undefined') {
+        $.connection.hub.url = window.location.origin + '/signalr';
+
+        $.connection.hub.reconnecting(function () { app.status = 'disconnected'; });
+        $.connection.hub.reconnected(function ()  { app.status = 'connected'; });
+        $.connection.hub.disconnected(function () { app.status = 'disconnected'; });
+
+        inventoryHub = $.connection.inventoryHub;
+
+        $.connection.hub.start()
+            .done(function () { app.status = 'connected'; })
+            .fail(function () { app.status = 'disconnected'; });
+    } else {
+        // Offline demo mode
+        app.status = 'connected';
+    }
+}());
+</script>
+</body>
+</html>

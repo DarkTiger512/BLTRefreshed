@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLT — Streamer Config</title>
+        <link rel="stylesheet" href="config.css">
+</head>
+<body>
+
+<!-- Hidden SVG sprite sheet -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="ico-swords" viewBox="0 0 24 24"><path d="M2 2l6 6m-2-4l4 4-6 6-4-4 4-4M22 2l-6 6m2-4l-4 4 6 6 4-4-4-4"/><path d="M12 12l-2 2m4-4l-2 2"/></symbol>
+    <symbol id="ico-chat" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="ico-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+    <symbol id="ico-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+    <symbol id="ico-chevron-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
+    <symbol id="ico-diamond" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M2 9h20"/></symbol>
+    <symbol id="ico-refresh" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+    <symbol id="ico-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+    <symbol id="ico-x" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></symbol>
+    <symbol id="ico-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+    <symbol id="ico-square" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></symbol>
+    <symbol id="ico-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9.26 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.94 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 8.74a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.94a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    <symbol id="ico-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+    <symbol id="ico-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="ico-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></symbol>
+    <symbol id="ico-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="ico-trash" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+</svg>
+
+<div id="app" class="app">
+
+    <!-- Top bar -->
+    <div class="top-bar">
+        <div class="brand">
+            <span class="brand-icon"><svg class="ico"><use href="#ico-swords"/></svg></span>
+            <div>
+                <div class="brand-title">Bannerlord Twitch Enhanced</div>
+                <div class="brand-sub">Streamer Configuration Panel</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.8em">
+            <span class="save-indicator" :class="saveState">
+                <template v-if="saveState === 'saving'"><svg class="ico"><use href="#ico-refresh"/></svg> Saving…</template>
+                <template v-else-if="saveState === 'saved'"><svg class="ico"><use href="#ico-check"/></svg> Saved</template>
+                <template v-else-if="saveState === 'error'"><svg class="ico"><use href="#ico-x"/></svg> Save failed</template>
+            </span>
+            <span class="status-pill" :class="status">
+                <span class="status-dot"></span>
+                {{ statusText }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Profile switcher -->
+    <div class="profile-bar">
+        <span class="profile-label">Profile</span>
+        <div class="profile-btns">
+            <button v-for="p in [1,2,3]" :key="p"
+                    class="profile-btn" :class="{ active: activeProfile === p }"
+                    @click="switchProfile(p)">
+                {{ p }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading state -->
+    <div v-if="status === 'connecting'" class="state-msg">
+        <div class="spinner"></div>
+        <div>Connecting to game…</div>
+    </div>
+
+    <template v-if="loaded">
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab" :class="{ active: tab === 'commands' }" @click="tab = 'commands'">
+                <svg class="ico"><use href="#ico-chat"/></svg> Commands <span class="tab-count">({{ filteredCommands.length }})</span>
+            </button>
+            <button class="tab" :class="{ active: tab === 'rewards' }" @click="tab = 'rewards'">
+                <svg class="ico"><use href="#ico-star"/></svg> Rewards <span class="tab-count">({{ filteredRewards.length }})</span>
+            </button>
+            <button class="tab" :class="{ active: tab === 'globals' }" @click="tab = 'globals'">
+                <svg class="ico"><use href="#ico-settings"/></svg> Global Configs <span class="tab-count">({{ globalConfigs.length }})</span>
+            </button>
+            <button class="tab" :class="{ active: tab === 'sim' }" @click="tab = 'sim'">
+                <svg class="ico"><use href="#ico-zap"/></svg> Sim Testing
+            </button>
+        </div>
+
+        <!-- Search (commands/rewards only) -->
+        <div class="search-bar" v-if="tab === 'commands' || tab === 'rewards'">
+            <input class="search-input"
+                   v-model="search"
+                   :placeholder="tab === 'commands' ? 'Search commands…' : 'Search rewards…'" />
+        </div>
+
+        <!-- Commands tab -->
+        <div v-if="tab === 'commands'" class="card-grid">
+            <div v-if="filteredCommands.length === 0" class="state-msg">
+                <div class="state-icon"><svg class="ico"><use href="#ico-search"/></svg></div>
+                <div>No matching commands.</div>
+            </div>
+            <div v-for="cmd in filteredCommands" :key="cmd.id"
+                 class="action-card" :class="{ expanded: expanded === cmd.id, disabled: !cmd.enabled }">
+                <div class="card-header" @click="toggleExpand(cmd.id)">
+                    <label class="card-toggle" @click.stop>
+                        <input type="checkbox" :checked="cmd.enabled" @change="toggleEnabled(cmd)">
+                        <span class="toggle-track"></span>
+                    </label>
+                    <div class="card-icon">!</div>
+                    <div class="card-title-area">
+                        <div class="card-name">!{{ cmd.name }}</div>
+                        <div class="card-handler">{{ handlerDisplayName(cmd.handler, 'command') }}</div>
+                    </div>
+                    <span class="card-expand"><svg class="ico"><use href="#ico-chevron-right"/></svg></span>
+                </div>
+                <div class="card-body">
+                    <div class="card-fields">
+                        <div class="field">
+                            <span class="field-label">Command Name</span>
+                            <input class="field-input" :value="cmd.name"
+                                   @change="updateCmd(cmd, 'name', $event.target.value)" />
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Handler</span>
+                            <select class="field-select" :value="cmd.handler"
+                                    @change="updateCmd(cmd, 'handler', $event.target.value)">
+                                <option v-for="h in commandHandlers" :key="h.id" :value="h.id">
+                                    {{ h.displayName }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="field full">
+                            <span class="field-label">Help Text</span>
+                            <input class="field-input" :value="cmd.help"
+                                   @change="updateCmd(cmd, 'help', $event.target.value)" />
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="cmd.moderatorOnly"
+                                       @change="updateCmd(cmd, 'moderatorOnly', $event.target.checked)" />
+                                <span class="field-check-label">Moderator Only</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="cmd.respondInTwitch"
+                                       @change="updateCmd(cmd, 'respondInTwitch', $event.target.checked)" />
+                                <span class="field-check-label">Respond in Twitch</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="cmd.respondInOverlay"
+                                       @change="updateCmd(cmd, 'respondInOverlay', $event.target.checked)" />
+                                <span class="field-check-label">Respond in Overlay</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rewards tab -->
+        <div v-if="tab === 'rewards'" class="card-grid">
+            <div v-if="filteredRewards.length === 0" class="state-msg">
+                <div class="state-icon"><svg class="ico"><use href="#ico-search"/></svg></div>
+                <div>No matching rewards.</div>
+            </div>
+            <div v-for="rw in filteredRewards" :key="rw.id"
+                 class="action-card" :class="{ expanded: expanded === rw.id, disabled: !rw.enabled }">
+                <div class="card-header" @click="toggleExpand(rw.id)">
+                    <label class="card-toggle" @click.stop>
+                        <input type="checkbox" :checked="rw.enabled" @change="toggleEnabled(rw)">
+                        <span class="toggle-track"></span>
+                    </label>
+                    <div class="card-icon"><svg class="ico"><use href="#ico-star"/></svg></div>
+                    <div class="card-title-area">
+                        <div class="card-name">{{ rw.title }}</div>
+                        <div class="card-handler">{{ handlerDisplayName(rw.handler, 'reward') }} · <svg class="ico"><use href="#ico-diamond"/></svg> {{ rw.cost }} pts</div>
+                    </div>
+                    <span class="card-expand"><svg class="ico"><use href="#ico-chevron-right"/></svg></span>
+                </div>
+                <div class="card-body">
+                    <div class="card-fields">
+                        <div class="field">
+                            <span class="field-label">Title</span>
+                            <input class="field-input" :value="rw.title"
+                                   @change="updateReward(rw, 'title', $event.target.value)" />
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Handler</span>
+                            <select class="field-select" :value="rw.handler"
+                                    @change="updateReward(rw, 'handler', $event.target.value)">
+                                <option v-for="h in rewardHandlers" :key="h.id" :value="h.id">
+                                    {{ h.displayName }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="field full">
+                            <span class="field-label">Prompt</span>
+                            <input class="field-input" :value="rw.prompt"
+                                   @change="updateReward(rw, 'prompt', $event.target.value)" />
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Cost (points)</span>
+                            <input class="field-input" type="number" min="1" :value="rw.cost"
+                                   @change="updateReward(rw, 'cost', parseInt($event.target.value) || 100)" />
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Cooldown (seconds)</span>
+                            <input class="field-input" type="number" min="0"
+                                   :value="rw.globalCooldownSeconds || ''"
+                                   placeholder="None"
+                                   @change="updateReward(rw, 'globalCooldownSeconds', $event.target.value === '' ? null : parseInt($event.target.value))" />
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Max per Stream</span>
+                            <input class="field-input" type="number" min="0"
+                                   :value="rw.maxPerStream || ''"
+                                   placeholder="Unlimited"
+                                   @change="updateReward(rw, 'maxPerStream', $event.target.value === '' ? null : parseInt($event.target.value))" />
+                        </div>
+                        <div class="field">
+                            <span class="field-label">Max per User per Stream</span>
+                            <input class="field-input" type="number" min="0"
+                                   :value="rw.maxPerUserPerStream || ''"
+                                   placeholder="Unlimited"
+                                   @change="updateReward(rw, 'maxPerUserPerStream', $event.target.value === '' ? null : parseInt($event.target.value))" />
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="rw.isUserInputRequired"
+                                       @change="updateReward(rw, 'isUserInputRequired', $event.target.checked)" />
+                                <span class="field-check-label">Require User Input</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="rw.isEnabled"
+                                       @change="updateReward(rw, 'isEnabled', $event.target.checked)" />
+                                <span class="field-check-label">Twitch Reward Enabled</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="rw.respondInTwitch"
+                                       @change="updateReward(rw, 'respondInTwitch', $event.target.checked)" />
+                                <span class="field-check-label">Respond in Twitch</span>
+                            </label>
+                        </div>
+                        <div class="field">
+                            <label class="field-check">
+                                <input type="checkbox" :checked="rw.respondInOverlay"
+                                       @change="updateReward(rw, 'respondInOverlay', $event.target.checked)" />
+                                <span class="field-check-label">Respond in Overlay</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Configs tab -->
+        <div v-if="tab === 'globals'" class="card-grid">
+            <div v-if="globalConfigs.length === 0" class="state-msg">
+                <div class="state-icon"><svg class="ico"><use href="#ico-settings"/></svg></div>
+                <div>No global configurations available.</div>
+            </div>
+            <div v-for="gc in globalConfigs" :key="gc.id"
+                 class="config-group" :class="{ expanded: expandedConfig === gc.id }">
+                <div class="config-group-header" @click="toggleConfigExpand(gc.id)">
+                    <div class="config-group-icon"><svg class="ico"><use href="#ico-settings"/></svg></div>
+                    <span class="config-group-name">{{ gc.name }}</span>
+                    <span class="config-group-count">{{ gc.fields.length }} fields</span>
+                    <span class="config-group-chevron"><svg class="ico"><use href="#ico-chevron-down"/></svg></span>
+                </div>
+                <div class="config-group-body">
+                    <div class="config-group-fields">
+                        <template v-for="(cat, catIdx) in groupedFields(gc)">
+                            <div v-if="cat.category" :key="gc.id + '-cat-' + catIdx" class="config-category">
+                                {{ cat.category }}
+                            </div>
+                            <template v-for="f in cat.fields">
+                                <!-- Boolean field -->
+                                <div v-if="f.type === 'bool'" :key="gc.id + '-' + f.key" class="field">
+                                    <label class="field-check">
+                                        <input type="checkbox" :checked="f.value"
+                                               @change="updateGlobalField(gc.id, f, $event.target.checked)" />
+                                        <span class="field-check-label">{{ f.label }}</span>
+                                    </label>
+                                    <div v-if="f.description" class="config-field-desc">{{ f.description }}</div>
+                                </div>
+                                <!-- Number field (int/float) -->
+                                <div v-else-if="f.type === 'int' || f.type === 'float'" :key="gc.id + '-' + f.key" class="field">
+                                    <span class="field-label">{{ f.label }}</span>
+                                    <input class="field-input" type="number"
+                                           :step="f.type === 'float' ? '0.01' : '1'"
+                                           :min="f.min != null ? f.min : ''"
+                                           :max="f.max != null ? f.max : ''"
+                                           :value="f.value"
+                                           @change="updateGlobalField(gc.id, f, f.type === 'int' ? parseInt($event.target.value) : parseFloat($event.target.value))" />
+                                    <div v-if="f.description" class="config-field-desc">{{ f.description }}</div>
+                                </div>
+                                <!-- Enum field -->
+                                <div v-else-if="f.type === 'enum'" :key="gc.id + '-' + f.key" class="field">
+                                    <span class="field-label">{{ f.label }}</span>
+                                    <select class="field-select" :value="f.value"
+                                            @change="updateGlobalField(gc.id, f, $event.target.value)">
+                                        <option v-for="ev in f.enumValues" :key="ev" :value="ev">{{ ev }}</option>
+                                    </select>
+                                    <div v-if="f.description" class="config-field-desc">{{ f.description }}</div>
+                                </div>
+                                <!-- String field -->
+                                <div v-else :key="gc.id + '-' + f.key" class="field">
+                                    <span class="field-label">{{ f.label }}</span>
+                                    <input class="field-input" :value="f.value"
+                                           @change="updateGlobalField(gc.id, f, $event.target.value)" />
+                                    <div v-if="f.description" class="config-field-desc">{{ f.description }}</div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sim Testing tab -->
+        <div v-if="tab === 'sim'">
+            <div class="sim-panel">
+                <div class="sim-status-bar">
+                    <span class="sim-status-dot" :class="simTesting.isRunning ? 'running' : 'stopped'"></span>
+                    <span class="sim-status-label">
+                        {{ simTesting.isRunning ? 'Simulation Running' : 'Simulation Stopped' }}
+                    </span>
+                    <button v-if="!simTesting.isRunning" class="sim-btn start" @click="startSim">
+                        <svg class="ico"><use href="#ico-play"/></svg> Start
+                    </button>
+                    <button v-else class="sim-btn stop" @click="stopSim">
+                        <svg class="ico"><use href="#ico-square"/></svg> Stop
+                    </button>
+                </div>
+
+                <div class="sim-fields">
+                    <div class="field">
+                        <span class="field-label">User Count</span>
+                        <input class="field-input" type="number" min="1" max="200"
+                               :value="simTesting.userCount"
+                               @change="updateSimField('userCount', parseInt($event.target.value))" />
+                    </div>
+                    <div class="field">
+                        <span class="field-label">User Stay Time (sec)</span>
+                        <input class="field-input" type="number" min="1"
+                               :value="simTesting.userStayTime"
+                               @change="updateSimField('userStayTime', parseInt($event.target.value))" />
+                    </div>
+                    <div class="field">
+                        <span class="field-label">Interval Min (ms)</span>
+                        <input class="field-input" type="number" min="100"
+                               :value="simTesting.intervalMinMS"
+                               @change="updateSimField('intervalMinMS', parseInt($event.target.value))" />
+                    </div>
+                    <div class="field">
+                        <span class="field-label">Interval Max (ms)</span>
+                        <input class="field-input" type="number" min="100"
+                               :value="simTesting.intervalMaxMS"
+                               @change="updateSimField('intervalMaxMS', parseInt($event.target.value))" />
+                    </div>
+                </div>
+
+                <div class="sim-section-title">
+                    <svg class="ico"><use href="#ico-play"/></svg> Init Actions
+                </div>
+                <div class="sim-item-list">
+                    <div v-for="(item, idx) in simTesting.init" :key="item.id"
+                         class="sim-item" :class="{ disabled: !item.enabled }">
+                        <label class="card-toggle" style="transform:scale(.75)" @click.stop>
+                            <input type="checkbox" :checked="item.enabled"
+                                   @change="item.enabled = $event.target.checked; saveSimConfig()" />
+                            <span class="toggle-track"></span>
+                        </label>
+                        <span class="sim-item-name">{{ item.actionId }}</span>
+                        <span class="sim-item-type">{{ item.type }}</span>
+                        <span class="sim-item-weight">
+                            <input type="number" step="0.1" min="0" :value="item.weight"
+                                   @change="item.weight = parseFloat($event.target.value) || 0; saveSimConfig()" />
+                        </span>
+                        <button class="sim-item-remove" title="Remove" @click="removeSimItem('init', idx)">
+                            <svg class="ico"><use href="#ico-trash"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div v-if="!simTesting.init || simTesting.init.length === 0" class="state-msg" style="padding:.6em">
+                    <div style="font-size:.8em;color:var(--text-dim)">No init actions configured.</div>
+                </div>
+                <div class="sim-add-row">
+                    <select v-model="newInitAction.type">
+                        <option value="Command">Command</option>
+                        <option value="Reward">Reward</option>
+                    </select>
+                    <select v-model="newInitAction.actionId" style="flex:1">
+                        <option value="">— Select action —</option>
+                        <option v-for="a in availableSimActions(newInitAction.type)" :key="a" :value="a">{{ a }}</option>
+                    </select>
+                    <input type="number" step="0.1" min="0" v-model.number="newInitAction.weight"
+                           placeholder="Weight" style="width:4.5em" />
+                    <button class="sim-add-btn" @click="addSimItem('init')" :disabled="!newInitAction.actionId">
+                        <svg class="ico"><use href="#ico-plus"/></svg> Add
+                    </button>
+                </div>
+
+                <div class="sim-section-title" style="margin-top:1em">
+                    <svg class="ico"><use href="#ico-zap"/></svg> Use Actions
+                </div>
+                <div class="sim-item-list">
+                    <div v-for="(item, idx) in simTesting.use" :key="item.id"
+                         class="sim-item" :class="{ disabled: !item.enabled }">
+                        <label class="card-toggle" style="transform:scale(.75)" @click.stop>
+                            <input type="checkbox" :checked="item.enabled"
+                                   @change="item.enabled = $event.target.checked; saveSimConfig()" />
+                            <span class="toggle-track"></span>
+                        </label>
+                        <span class="sim-item-name">{{ item.actionId }}</span>
+                        <span class="sim-item-type">{{ item.type }}</span>
+                        <span class="sim-item-weight">
+                            <input type="number" step="0.1" min="0" :value="item.weight"
+                                   @change="item.weight = parseFloat($event.target.value) || 0; saveSimConfig()" />
+                        </span>
+                        <button class="sim-item-remove" title="Remove" @click="removeSimItem('use', idx)">
+                            <svg class="ico"><use href="#ico-trash"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div v-if="!simTesting.use || simTesting.use.length === 0" class="state-msg" style="padding:.6em">
+                    <div style="font-size:.8em;color:var(--text-dim)">No use actions configured.</div>
+                </div>
+                <div class="sim-add-row">
+                    <select v-model="newUseAction.type">
+                        <option value="Command">Command</option>
+                        <option value="Reward">Reward</option>
+                    </select>
+                    <select v-model="newUseAction.actionId" style="flex:1">
+                        <option value="">— Select action —</option>
+                        <option v-for="a in availableSimActions(newUseAction.type)" :key="a" :value="a">{{ a }}</option>
+                    </select>
+                    <input type="number" step="0.1" min="0" v-model.number="newUseAction.weight"
+                           placeholder="Weight" style="width:4.5em" />
+                    <button class="sim-add-btn" @click="addSimItem('use')" :disabled="!newUseAction.actionId">
+                        <svg class="ico"><use href="#ico-plus"/></svg> Add
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </template>
+
+    <!-- Footer -->
+    <div class="footer">Bannerlord Twitch Enhanced Edition — Configuration changes are saved to the active profile automatically.</div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast" :class="{ show: toast.visible, error: toast.error }">
+    <span class="toast-icon"><svg v-if="toast.error" class="ico"><use href="#ico-x"/></svg><svg v-else class="ico"><use href="#ico-check"/></svg></span>
+    <span>{{ toast.message }}</span>
+</div>
+
+<script src="Scripts/jquery-3.4.1.min.js"></script>
+<script src="Scripts/jquery.signalR-2.4.2.min.js"></script>
+<script src="Scripts/vue.min.js"></script>
+<script src="signalr/hubs"></script>
+<script src="Scripts/config.demo-data.js"></script>
+<script src="Scripts/config.app.js"></script>
+<script src="Scripts/config.page.js"></script>
+</body>
+</html>
+

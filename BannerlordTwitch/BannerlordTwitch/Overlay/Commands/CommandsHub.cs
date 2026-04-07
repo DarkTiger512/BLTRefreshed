@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BannerlordTwitch;
+using BannerlordTwitch.Util;
 using JetBrains.Annotations;
 using Microsoft.AspNet.SignalR;
 
@@ -40,6 +42,26 @@ namespace BLTOverlay
             {
                 Clients.Caller.updateCommands(commandList);
             }
+        }
+
+        /// <summary>
+        /// Called from the overlay when a viewer clicks a command to execute it.
+        /// </summary>
+        [UsedImplicitly]
+        public bool ExecuteCommand(string commandName, string userName)
+        {
+            if (string.IsNullOrWhiteSpace(commandName) || string.IsNullOrWhiteSpace(userName))
+                return false;
+
+            // Sanitize inputs
+            commandName = commandName.TrimStart('!').Trim();
+            userName = userName.Trim();
+
+            if (commandName.Length > 100 || userName.Length > 100)
+                return false;
+
+            return MainThreadSync.Run(() =>
+                BLTModule.TwitchService?.TestCommand(commandName, userName, null) ?? false);
         }
 
         /// <summary>

@@ -607,6 +607,7 @@
     <Compile Include="Actions\ActionHandlerBase.cs" />
     <Compile Include="Actions\ActionManager.cs" />
     <Compile Include="Overlay\Commands\CommandsHub.cs" />
+    <Compile Include="Overlay\Config\ConfigHub.cs" />
     <Compile Include="Overlay\ConsoleFeed\ConsoleFeed.cs" />
     <Compile Include="Overlay\Logger.cs" />
     <Compile Include="Overlay\PhysicalFileSystemEx.cs" />
@@ -815,7 +816,12 @@
     <Content Include="_Module\ModuleData\Languages\TR\strings-powers-TR.xml" />
     <Content Include="_Module\ModuleData\Languages\TR\strings-rewards-TR.xml" />
     <Content Include="_Module\web\commands.html" />
+    <Content Include="_Module\web\config.css" />
+    <Content Include="_Module\web\config.html" />
     <Content Include="_Module\web\index-template.html" />
+    <Content Include="_Module\web\Scripts\config.app.js" />
+    <Content Include="_Module\web\Scripts\config.demo-data.js" />
+    <Content Include="_Module\web\Scripts\config.page.js" />
     <Content Include="_Module\web\Scripts\jquery-1.6.4-vsdoc.js" />
     <Content Include="_Module\web\Scripts\jquery-1.6.4.js" />
     <Content Include="_Module\web\Scripts\jquery-1.6.4.min.js" />
