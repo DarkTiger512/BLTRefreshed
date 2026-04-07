@@ -115,7 +115,6 @@ namespace BannerlordTwitch
                             Log.Trace($"Update check background task failed: {ex.Message}");
                         }
                     });
-// ...existing code...
                 }
                 catch (Exception ex)
                 {
@@ -249,34 +248,6 @@ namespace BannerlordTwitch
                         true, false, "{=hpFXglKx}Okay".Translate(), null,
                         () => { }, () => { }), true);
             });
-        }
-
-        private static async void CheckForUpdatesAsync()
-        {
-            try
-            {
-                // Wait a bit for the game to fully initialize
-                await Task.Delay(5000);
-                
-                var updateInfo = await UpdateChecker.CheckForUpdatesAsync();
-                
-                if (updateInfo.IsUpdateAvailable)
-                {
-                    UpdateNotificationHelper.ShowUpdateNotification(
-                        updateInfo.LatestVersion, 
-                        updateInfo.CurrentVersion, 
-                        updateInfo.DownloadUrl);
-                }
-                else
-                {
-                    // Show a brief "up to date" message 
-                    UpdateNotificationHelper.ShowUpToDateNotification(updateInfo.CurrentVersion);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Trace($"Update check failed: {ex.Message}");
-            }
         }
     }
 }

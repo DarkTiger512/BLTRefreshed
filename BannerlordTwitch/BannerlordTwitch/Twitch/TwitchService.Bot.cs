@@ -17,7 +17,6 @@ using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Models;
 using TwitchLib.Client.Models.Internal;
 using TwitchLib.Client.Enums;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace BannerlordTwitch
 {
