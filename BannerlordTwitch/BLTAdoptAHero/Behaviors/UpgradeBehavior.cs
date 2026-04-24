@@ -5,6 +5,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
 using BLTAdoptAHero.Actions.Upgrades;
+using TaleWorlds.CampaignSystem.Actions;
 
 namespace BLTAdoptAHero
 {
@@ -406,7 +407,11 @@ namespace BLTAdoptAHero
                 {
                     var up = ConfigSafe.ClanUpgrades?.FirstOrDefault(u => u.ID == upgradeId);
                     if (up == null) continue;
-                    if (!IsClanUpgradeActive(up, clan)) continue;       // ← unified filter
+                    if (!IsClanUpgradeActive(up, clan)) continue;
+                    if (up.PassiveIncomeDaily != 0)
+                    {
+                        clan.Leader.Gold += up.PassiveIncomeDaily;
+                    }
 
                     if (up.DailyTroopSpawnAmount > 0)
                     {
