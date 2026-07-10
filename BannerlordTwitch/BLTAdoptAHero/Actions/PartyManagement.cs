@@ -1705,7 +1705,7 @@ namespace BLTAdoptAHero.Actions
                         && p.LeaderHero != Hero.MainHero && p.MemberRoster.TotalHealthyCount > 0)
                     .ToList();
             }
-            else
+            else // h.Clan.Kingdom == null
             {
                 eligible = h.Clan.WarPartyComponents
                     .Select(wpc => wpc?.MobileParty)
@@ -1714,6 +1714,16 @@ namespace BLTAdoptAHero.Actions
                         && p.LeaderHero != null && !p.LeaderHero.IsPrisoner
                         && p.MemberRoster.TotalHealthyCount > 0)
                     .ToList();
+
+                // NEW — own vassals
+                if (VassalBehavior.Current != null)
+                    foreach (var vassal in VassalBehavior.Current.GetVassalClans(h.Clan))
+                        eligible.AddRange(vassal.WarPartyComponents
+                            .Select(wpc => wpc?.MobileParty)
+                            .Where(p => p != null && p != armyLdrParty && p.Army == null && p.AttachedTo == null
+                                && p.MapEvent == null && !p.IsDisbanding && p.IsLordParty
+                                && p.LeaderHero != null && !p.LeaderHero.IsPrisoner
+                                && p.MemberRoster.TotalHealthyCount > 0));
 
                 if (BLTClanDiplomacyBehavior.Current != null)
                 {
@@ -1725,6 +1735,16 @@ namespace BLTAdoptAHero.Actions
                                 && p.AttachedTo == null && p.MapEvent == null && !p.IsDisbanding
                                 && p.IsLordParty && p.LeaderHero != null
                                 && !p.LeaderHero.IsPrisoner && p.MemberRoster.TotalHealthyCount > 0));
+
+                        // NEW — ally's vassals
+                        if (VassalBehavior.Current != null)
+                            foreach (var alliedVassal in VassalBehavior.Current.GetVassalClans(allied))
+                                eligible.AddRange(alliedVassal.WarPartyComponents
+                                    .Select(wpc => wpc?.MobileParty)
+                                    .Where(p => p != null && p != armyLdrParty && p.Army == null
+                                        && p.AttachedTo == null && p.MapEvent == null && !p.IsDisbanding
+                                        && p.IsLordParty && p.LeaderHero != null
+                                        && !p.LeaderHero.IsPrisoner && p.MemberRoster.TotalHealthyCount > 0));
                     }
                 }
             }
@@ -2176,7 +2196,7 @@ namespace BLTAdoptAHero.Actions
                 onSuccess($"Gathering {armyType} army ({mCount} joining)" + (target != null ? $" → {target.Name}" : ""));
             }
             // ── Independent clan army creation ────────────────────────────────────
-            else
+            else // Independent clan army creation
             {
                 MBList<MobileParty> merged;
                 if (settings.AutoCallPartiesOnCreate)
@@ -2187,16 +2207,42 @@ namespace BLTAdoptAHero.Actions
                             && mp.LeaderHero != null && mp.MapEvent == null && !mp.IsDisbanding
                             && mp.IsLordParty && mp.MemberRoster.TotalHealthyCount > 0)
                         .ToList<MobileParty>();
+
+                    // NEW — our own vassals' parties. Vassals are extensions of us; no separate cost/consent.
+                    var vassalCandidates = new List<MobileParty>();
+                    if (VassalBehavior.Current != null)
+                        foreach (var vassal in VassalBehavior.Current.GetVassalClans(h.Clan))
+                            vassalCandidates.AddRange(vassal.WarPartyComponents
+                                .Select(wpc => wpc?.MobileParty)
+                                .Where(mp => mp != null && mp.Army == null && mp.AttachedTo == null
+                                    && mp.LeaderHero != null && mp.MapEvent == null && !mp.IsDisbanding
+                                    && mp.IsLordParty && mp.MemberRoster.TotalHealthyCount > 0));
+
                     var allyCandidates = new List<MobileParty>();
                     if (BLTClanDiplomacyBehavior.Current != null)
+                    {
                         foreach (var allied in BLTClanDiplomacyBehavior.Current.GetAlliedClans(h.Clan))
+                        {
                             allyCandidates.AddRange(allied.WarPartyComponents
                                 .Select(wpc => wpc?.MobileParty)
                                 .Where(mp => mp != null && mp.Army == null && mp.AttachedTo == null
                                     && mp.LeaderHero != null && mp.MapEvent == null && !mp.IsDisbanding
                                     && mp.IsLordParty && mp.MemberRoster.TotalHealthyCount > 0));
+
+                            // NEW — ally's vassals count as part of the ally's strength too.
+                            if (VassalBehavior.Current != null)
+                                foreach (var alliedVassal in VassalBehavior.Current.GetVassalClans(allied))
+                                    allyCandidates.AddRange(alliedVassal.WarPartyComponents
+                                        .Select(wpc => wpc?.MobileParty)
+                                        .Where(mp => mp != null && mp.Army == null && mp.AttachedTo == null
+                                            && mp.LeaderHero != null && mp.MapEvent == null && !mp.IsDisbanding
+                                            && mp.IsLordParty && mp.MemberRoster.TotalHealthyCount > 0));
+                        }
+                    }
+
                     var ldrPos = party.GetPosition2D;
-                    var sorted = ownCandidates.Concat(allyCandidates).Distinct()
+                    // Priority: own parties → own vassals → allies (incl. their vassals)
+                    var sorted = ownCandidates.Concat(vassalCandidates).Concat(allyCandidates).Distinct()
                         .OrderBy(p => p.GetPosition2D.Distance(ldrPos));
                     merged = (createCount.HasValue ? sorted.Take(createCount.Value) : sorted).ToMBList();
                 }
@@ -2205,7 +2251,6 @@ namespace BLTAdoptAHero.Actions
                     merged = new MBList<MobileParty>();
                 }
 
-                // Release any BLT order locks on parties being absorbed into the new army.
                 foreach (var mp in merged)
                 {
                     if (mp?.StringId == null) continue;
