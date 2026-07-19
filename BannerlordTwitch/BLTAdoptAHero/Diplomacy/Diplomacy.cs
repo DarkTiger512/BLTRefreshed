@@ -1151,37 +1151,29 @@ namespace BLTAdoptAHero
                     .Trim();
                 Log.LogFeedResponse($"@{targetLeaderName} {kingdom.Name} proposes an alliance! Use !diplomacy accept alliance {kingdom.Name}");
             }
-            //else if (target == Hero.MainHero.Clan.Kingdom)
-            //{
-            //    BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, -goldCost, true);
-            //    hero.Clan.Influence -= influenceCost;
-            //
-            //    BLTTreatyManager.Current.CreateAllianceProposal(
-            //        kingdom,
-            //        target,
-            //        goldCost,
-            //        influenceCost,
-            //        15,
-            //        settings.BreakAlliancePrice,
-            //        settings.CTWPrice
-            //    );
-            //
-            //    BLTPlayerOffersBehavior.Current?.OfferAllianceToPlayer(kingdom, target, 15);
-            //
-            //    onSuccess($"Alliance proposal sent to {target.Name}");
-            //}
+            else if (target.Leader == Hero.MainHero)
+            {
+                // Player-target: no vanilla alliance concept exists, so this is
+                // entirely a BLT construct — proposal + native inquiry popup.
+                BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, -goldCost, true);
+                hero.Clan.Influence -= influenceCost;
+
+                BLTTreatyManager.Current.CreateAllianceProposal(
+                    kingdom,
+                    target,
+                    goldCost,
+                    influenceCost,
+                    15,
+                    settings.BreakAlliancePrice,
+                    settings.CTWPrice
+                );
+
+                BLTPlayerOffersBehavior.Current?.OfferAllianceToPlayer(kingdom, target, 15);
+
+                onSuccess($"Alliance proposal sent to {target.Name}");
+            }
             else
             {
-                // AI kingdom - create alliance directly
-                //BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, -goldCost, true);
-                //hero.Clan.Influence -= influenceCost;
-                //
-                //BLTTreatyManager.Current.CreateAlliance(kingdom, target);
-                //BLTTreatyManager.Current.RemoveNAP(kingdom, target);
-                //
-                //onSuccess($"Alliance formed with {target.Name}!");
-                //Log.ShowInformation($"{kingdom.Name} and {target.Name} have formed an alliance!", hero.CharacterObject, Log.Sound.Horns2);
-
                 // We're blocking alliances with AI for balance reasons
                 onFailure($"You cannot ally AI controlled kingdoms!");
                 return;

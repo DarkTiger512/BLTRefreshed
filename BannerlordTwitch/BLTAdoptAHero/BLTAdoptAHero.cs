@@ -221,6 +221,7 @@ namespace BLTAdoptAHero
                     campaignStarter.AddBehavior(new BLTAllianceBehavior());      // 3. Alliance auto-join
                     campaignStarter.AddBehavior(new BLTDiplomacyBehavior());     // 4. Cleanup
                     campaignStarter.AddBehavior(new BLTClanDiplomacyBehavior()); // Additional behavior for independent clans - disable as needed
+                    campaignStarter.AddBehavior(new BLTPlayerOffersBehavior());
 
                     gameStarterObject.AddModel(new BLTAgentApplyDamageModel(gameStarterObject.Models.OfType<AgentApplyDamageModel>().FirstOrDefault()));
                     gameStarterObject.AddModel(new BLTPartySizeLimitModel(gameStarterObject.Models.OfType<PartySizeLimitModel>().FirstOrDefault()));

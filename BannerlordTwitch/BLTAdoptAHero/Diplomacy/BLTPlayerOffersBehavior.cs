@@ -56,11 +56,45 @@ namespace BLTAdoptAHero
             var player = PlayerFaction();
             if (player == null) return;
 
+            PruneShownKeys(player);
+
             ScanPeace(player);
             ScanAlliance(player);
             ScanNAP(player);
             if (player is Kingdom playerKingdom) ScanTrade(playerKingdom);
         }
+
+        /// <summary>
+        /// Drops shown-keys whose proposal no longer exists in BLTTreatyManager. This is
+        /// what actually closes bug #3: a key that isn't pruned blocks that kingdom from
+        /// ever prompting the player again, for the rest of the campaign session.
+        /// Covers accept, decline, AND silent expiry uniformly — accept/decline handlers
+        /// below also drop their own key immediately so a same-hour re-propose doesn't
+        /// have to wait for the next tick.
+        /// </summary>
+        private void PruneShownKeys(IFaction player)
+        {
+            var peaceKeys = new HashSet<string>(BLTTreatyManager.Current.GetPeaceProposalsFor(player)
+                .Select(p => $"{p.ProposerKingdomId}_{p.TargetKingdomId}"));
+            _shownPeaceKeys.RemoveWhere(k => !peaceKeys.Contains(k));
+
+            var allianceKeys = new HashSet<string>(BLTTreatyManager.Current.GetAllianceProposalsFor(player)
+                .Select(p => $"{p.ProposerKingdomId}_{p.TargetKingdomId}"));
+            _shownAllianceKeys.RemoveWhere(k => !allianceKeys.Contains(k));
+
+            var napKeys = new HashSet<string>(BLTTreatyManager.Current.GetNAPProposalsFor(player)
+                .Select(p => $"{p.ProposerKingdomId}_{p.TargetKingdomId}"));
+            _shownNAPKeys.RemoveWhere(k => !napKeys.Contains(k));
+
+            if (player is Kingdom pk)
+            {
+                var tradeKeys = new HashSet<string>(BLTTreatyManager.Current.GetTradeProposalsFor(pk)
+                    .Select(p => $"{p.ProposerKingdomId}_{p.TargetKingdomId}"));
+                _shownTradeKeys.RemoveWhere(k => !tradeKeys.Contains(k));
+            }
+        }
+
+        private static string ProposalKey(IFaction proposer, IFaction target) => $"{proposer?.StringId}_{target?.StringId}";
 
         // ── Public entry points (called immediately by Diplomacy.cs so the
         //    player doesn't wait up to an hour for the popup) ─────────────────
@@ -70,6 +104,7 @@ namespace BLTAdoptAHero
             if (PlayerFaction() == null) return;
             var proposal = BLTTreatyManager.Current?.GetPeaceProposal(proposer, playerFaction);
             if (proposal == null) return;
+            _shownPeaceKeys.Add(ProposalKey(proposer, playerFaction));
             ShowPeaceInquiry(proposal);
         }
 
@@ -78,6 +113,7 @@ namespace BLTAdoptAHero
             if (PlayerFaction() == null) return;
             var proposal = BLTTreatyManager.Current?.GetAllianceProposal(proposer, playerFaction);
             if (proposal == null) return;
+            _shownAllianceKeys.Add(ProposalKey(proposer, playerFaction));
             ShowAllianceInquiry(proposal);
         }
 
@@ -86,6 +122,7 @@ namespace BLTAdoptAHero
             if (PlayerFaction() == null) return;
             var proposal = BLTTreatyManager.Current?.GetNAPProposal(proposer, playerFaction);
             if (proposal == null) return;
+            _shownNAPKeys.Add(ProposalKey(proposer, playerFaction));
             ShowNAPInquiry(proposal);
         }
 
@@ -94,6 +131,7 @@ namespace BLTAdoptAHero
             if (PlayerFaction() == null) return;
             var proposal = BLTTreatyManager.Current?.GetTradeProposal(proposer, playerKingdom);
             if (proposal == null) return;
+            _shownTradeKeys.Add(ProposalKey(proposer, playerKingdom));
             ShowTradeInquiry(proposal);
         }
 
@@ -266,14 +304,14 @@ namespace BLTAdoptAHero
             if (proposal == null || player.IsAtWarWith(proposer))
             {
                 InformationManager.DisplayMessage(new InformationMessage("Alliance proposal is no longer valid", Colors.Red));
+                _shownAllianceKeys.Remove(ProposalKey(proposer, player));
                 return;
             }
 
-            // Alliance creation is pure bookkeeping — no MakePeaceAction/DeclareWarAction
-            // involved, so no Harmony gate to worry about here.
             BLTTreatyManager.Current.CreateAlliance(proposer, player);
             BLTTreatyManager.Current.RemoveNAP(proposer, player);
             BLTTreatyManager.Current.RemoveAllianceProposal(proposer, player);
+            _shownAllianceKeys.Remove(ProposalKey(proposer, player));
 
             InformationManager.DisplayMessage(new InformationMessage($"Alliance formed with {proposer.Name}!", Colors.Green));
             Log.ShowInformation($"{player.Name} and {proposer.Name} have formed an alliance!",
@@ -283,6 +321,7 @@ namespace BLTAdoptAHero
         private void DeclinePlayerAlliance(IFaction proposer, IFaction player)
         {
             BLTTreatyManager.Current?.RemoveAllianceProposal(proposer, player);
+            _shownAllianceKeys.Remove(ProposalKey(proposer, player));
             InformationManager.DisplayMessage(new InformationMessage($"Declined alliance with {proposer.Name}", Colors.Black));
         }
 
