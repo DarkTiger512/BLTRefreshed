@@ -629,18 +629,22 @@ namespace BLTAdoptAHero
                 if (besiegerParty != null && besiegerParty.IsActive
                     && party.MapFaction.IsAtWarWith(besiegerParty.MapFaction))
                 {
+                    bool atSea = party.IsCurrentlyAtSea;
+                    bool needsWaterCrossing = !atSea && LandPartyNeedsWaterCrossing(party, besiegerParty.CurrentSettlement ?? fortification);
+                    var nav = (atSea || needsWaterCrossing) ? MobileParty.NavigationType.Naval : MobileParty.NavigationType.All;
+
                     // Force engagement — ignores strength difference entirely.
-                    party.Ai.SetMoveEngageParty(besiegerParty);
+                    party.SetMoveEngageParty(besiegerParty, nav);
                     return;
                 }
             }
 
             // No hostile siege on the target right now: patrol it instead.
-            bool atSea = party.IsCurrentlyAtSea;
-            bool w = !atSea && LandPartyNeedsWaterCrossing(party, fortification);
-            bool fp = atSea || w;
-            var nav = fp ? MobileParty.NavigationType.Naval : MobileParty.NavigationType.All;
-            SetPartyAiAction.GetActionForPatrollingAroundSettlement(party, fortification, nav, fp, false);
+            bool patrolAtSea = party.IsCurrentlyAtSea;
+            bool patrolNeedsWater = !patrolAtSea && LandPartyNeedsWaterCrossing(party, fortification);
+            bool patrolFromPort = patrolAtSea || patrolNeedsWater;
+            var patrolNav = patrolFromPort ? MobileParty.NavigationType.Naval : MobileParty.NavigationType.All;
+            SetPartyAiAction.GetActionForPatrollingAroundSettlement(party, fortification, patrolNav, patrolFromPort, false);
         }
 
         public static bool IsSettlementReachable(MobileParty party, Settlement target)

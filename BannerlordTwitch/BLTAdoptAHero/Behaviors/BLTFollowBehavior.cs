@@ -5,14 +5,30 @@ using TaleWorlds.MountAndBlade;
 
 namespace BLTAdoptAHero
 {
-    internal class BLTFollowBehavior : AutoMissionBehavior<BLTFollowBehavior>
+    internal class BLTFollowBehavior : MissionBehavior
     {
+        public static BLTFollowBehavior Current { get; private set; }
+
+        public override MissionBehaviorType BehaviorType => MissionBehaviorType.Other;
+
         private readonly Dictionary<Hero, float> _active = new();
         private readonly Dictionary<Hero, float> _lastUpdate = new();
         private readonly Dictionary<Hero, (Hero target, float dist)> _followTargets = new();
 
         private const float UpdateInterval = 0.5f;
         private const float DefaultFollowDist = 4f;
+
+        public override void OnBehaviorInitialize()
+        {
+            base.OnBehaviorInitialize();
+            Current = this;
+        }
+
+        public override void OnRemoveBehavior()
+        {
+            base.OnRemoveBehavior();
+            if (Current == this) Current = null;
+        }
 
         private static Agent GetHeroAgent(Hero hero)
             => BLTSummonBehavior.Current?.GetHeroSummonState(hero)?.CurrentAgent;
@@ -131,13 +147,6 @@ namespace BLTAdoptAHero
                 .Where(kv => GetHeroAgent(kv.Value.target) == affectedAgent)
                 .Select(kv => kv.Key).ToList();
             foreach (var h in orphaned) _followTargets.Remove(h);
-        }
-
-        protected override void OnEndMission()
-        {
-            _active.Clear();
-            _lastUpdate.Clear();
-            _followTargets.Clear();
         }
     }
 }

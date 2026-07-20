@@ -1,17 +1,32 @@
-﻿using BannerlordTwitch.Helpers;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.MountAndBlade;
 
 namespace BLTAdoptAHero
 {
-    internal class BLTGuardBehavior : AutoMissionBehavior<BLTGuardBehavior>
+    internal class BLTGuardBehavior : MissionBehavior
     {
+        public static BLTGuardBehavior Current { get; private set; }
+
+        public override MissionBehaviorType BehaviorType => MissionBehaviorType.Other;
+
         private readonly HashSet<Hero> _activeGuards = new();
         private float _lastTickTime;
 
         private const float TickInterval = 0.5f;
         private const float GuardRadius = 3f;
+
+        public override void OnBehaviorInitialize()
+        {
+            base.OnBehaviorInitialize();
+            Current = this;
+        }
+
+        public override void OnRemoveBehavior()
+        {
+            base.OnRemoveBehavior();
+            if (Current == this) Current = null;
+        }
 
         public void ActivateGuard(Hero hero)
         {
@@ -60,11 +75,6 @@ namespace BLTAdoptAHero
             }
 
             foreach (var h in toRemove) _activeGuards.Remove(h);
-        }
-
-        protected override void OnEndMission()
-        {
-            _activeGuards.Clear();
         }
     }
 }
