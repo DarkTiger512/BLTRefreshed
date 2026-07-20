@@ -232,18 +232,17 @@ namespace BLTAdoptAHero.Actions
                 generator.Value("!party release [all] — release BLT order on own party (or all free clan parties) and restore AI");
                 generator.Value("");
                 generator.Value("<strong>Clan party orders (append 'all' for every free clan party):</strong>");
-                generator.Value("  !party siege <settlement> [all]   — siege an enemy fortification");
-                generator.Value("  !party defend <settlement> [all]  — smart-guard a friendly fortification");
-                generator.Value("  !party patrol <settlement> [all]  — smart-guard patrol a settlement");
-                generator.Value("  !party raid <village|fort> [all]  — raid a village (fort = expand to bound villages)");
+                generator.Value("  !party defend <settlement> [all]  — force-engage besiegers of a fortification; patrols if no siege");
+                generator.Value("  !party raid <village|fort> [all]  — raid a village (fort = raid bound villages)");
                 generator.Value("  !party garrison <fort> [all]      — enter and stay in a friendly fortification");
-                generator.Value("  Smart-guard logic: (1) defend if under siege by enemy, (2) protect raided village, (3) patrol");
-                generator.Value("  Raid 'all' distributes parties to different villages; remainder patrol the fortification");
+                generator.Value("  !party guard/patrol <settlement> [all]   — smart-guard a friendly fortification");
+                generator.Value("  Smart-guard logic (guard/patrol): (1) defend if under siege by enemy, (2) protect raided village, (3) patrol");
+                generator.Value("  Raid 'all' distributes parties to different villages; any extra parties will patrol the fortification");
                 generator.Value("");
                 generator.Value("<strong>Army subcommands:</strong> !party army [subcommand]");
                 generator.Value("  siege [settlement] — besiege a named enemy settlement (or auto-pick)");
-                generator.Value("  defend [settlement] — defend a named friendly settlement (or auto-pick)");
-                generator.Value("  patrol [settlement] — patrol around any named settlement (or auto-pick)");
+                generator.Value("  guard/patrol [settlement] — smart-guard a named friendly settlement (or auto-pick)");
+                generator.Value("  defend [settlement] — force-engage besiegers of a friendly settlement; patrols if no siege");
                 generator.Value("  garrison [settlement] — garrison whole army at a friendly fortification");
                 generator.Value("  release — release the active army order and restore normal AI");
                 generator.Value("  status — army strength, behavior, cohesion, food, active order info");
@@ -356,6 +355,7 @@ namespace BLTAdoptAHero.Actions
                 // ── Clan party order commands ──────────────────────────────────
                 case "siege":
                 case "defend":
+                case "guard":
                 case "patrol":
                 case "raid":
                 case "garrison":
@@ -756,8 +756,9 @@ namespace BLTAdoptAHero.Actions
             var orderType = subCmd switch
             {
                 "siege" => PartyOrderType.Siege,
-                "defend" => PartyOrderType.SmartGuard,
+                "guard" => PartyOrderType.SmartGuard,
                 "patrol" => PartyOrderType.SmartGuard,
+                "defend" => PartyOrderType.Defend,
                 "garrison" => PartyOrderType.Garrison,
                 "raid" => PartyOrderType.Raid,
                 _ => PartyOrderType.SmartGuard
@@ -831,9 +832,13 @@ namespace BLTAdoptAHero.Actions
                         primaryTarget = FindBestSettlementToTarget(refParty, h.Clan.MapFaction, true);
                         if (primaryTarget == null) { onFailure("No valid siege target found"); return; }
                         break;
-                    case "defend":
+                    case "guard":
                     case "patrol":
                         primaryTarget = FindBestSettlementToDefend(refParty, h.Clan.MapFaction);
+                        break;
+                    case "defend":
+                        primaryTarget = FindBestSettlementToDefend(refParty, h.Clan.MapFaction);
+                        if (primaryTarget == null) { onFailure("No defend target found"); return; }
                         break;
                     case "garrison":
                         primaryTarget = FindBestSettlementToDefend(refParty, h.Clan.MapFaction);
@@ -878,6 +883,10 @@ namespace BLTAdoptAHero.Actions
                 // Non-fortification target: just use regular patrol
                 orderType = PartyOrderType.Patrol;
             }
+
+            // ── Defend: must be a fortification (no fallback — this is a deliberate command) ──
+            if (orderType == PartyOrderType.Defend && primaryTarget != null && !primaryTarget.IsFortification)
+            { onFailure($"{primaryTarget.Name} is not a fortification"); return; }
 
             // ── Raid on a fortification → expand to bound villages ────────────
             if (orderType == PartyOrderType.Raid && primaryTarget != null && primaryTarget.IsFortification)
@@ -1052,6 +1061,7 @@ namespace BLTAdoptAHero.Actions
                 case "threat": ArmyThreat(settings, h, party, onSuccess, onFailure); break;
                 case "siege":
                 case "defend":
+                case "guard":
                 case "patrol": ArmyOrder(settings, h, party, army, sub, tgtArg, onSuccess, onFailure); break;
                 default:
                     onFailure("Specify: siege / defend / patrol / garrison / release / status / disband / leave / reassign / kick / view / create / takeover / call / join / threat / allowai / allowblt");
@@ -2047,12 +2057,17 @@ namespace BLTAdoptAHero.Actions
             if (h.Clan.IsUnderMercenaryService) { onFailure("Mercenaries can't create armies"); return; }
 
             var armyType = subCmd == "siege" ? Army.ArmyTypes.Besieger
-                          : subCmd == "defend" ? Army.ArmyTypes.Defender
-                          : Army.ArmyTypes.Patrolling;
+              : (subCmd == "defend" || subCmd == "guard") ? Army.ArmyTypes.Defender
+              : Army.ArmyTypes.Patrolling;
 
-            PartyOrderType orderType = subCmd == "siege"
-                ? PartyOrderType.Siege
-                : PartyOrderType.SmartGuard;
+            PartyOrderType orderType = subCmd switch
+            {
+                "siege" => PartyOrderType.Siege,
+                "guard" => PartyOrderType.SmartGuard,
+                "patrol" => PartyOrderType.SmartGuard,
+                "defend" => PartyOrderType.Defend,
+                _ => PartyOrderType.SmartGuard
+            };
 
             var (settlementArg, createCount) = ParseTrailingCount(tgtArg);
 
@@ -2073,6 +2088,12 @@ namespace BLTAdoptAHero.Actions
                     ? FindBestSettlementToTarget(party, h.Clan.MapFaction, true)
                     : FindBestSettlementToDefend(party, h.Clan.MapFaction);
             }
+
+            if (target == null) { onFailure($"Settlement '{settlementArg}' not found or invalid for {subCmd}"); return; }
+            if (orderType == PartyOrderType.SmartGuard && !target.IsFortification)
+                orderType = PartyOrderType.Patrol;
+            if (orderType == PartyOrderType.Defend && !target.IsFortification)
+            { onFailure($"{target.Name} is not a fortification"); return; }
 
             // ── Siege-specific validation ──────────────────────────────────────────
             if (subCmd == "siege")
