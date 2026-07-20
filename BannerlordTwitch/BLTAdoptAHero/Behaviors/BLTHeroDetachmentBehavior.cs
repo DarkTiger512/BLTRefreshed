@@ -129,7 +129,7 @@ namespace BLTAdoptAHero
                 }
                 else
                 {
-                    var closestFormation = state.Detachment.ParentFormation?.CachedClosestEnemyFormation;
+                    var closestFormation = state.Detachment?.ParentFormation?.CachedClosestEnemyFormation;
                     if (closestFormation != null)
                         agent.SetTargetFormationIndex(closestFormation.Formation.Index);
                     state.Order = DetachmentOrder.None;
