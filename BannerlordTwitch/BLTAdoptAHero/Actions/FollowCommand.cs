@@ -45,7 +45,7 @@ namespace BLTAdoptAHero.Actions
                 return;
             }
 
-            var behavior = BLTFollowBehavior.Current;
+            var behavior = Mission.Current?.GetMissionBehavior<BLTFollowBehavior>();
             string arg = (context.Args ?? "").Trim();
 
             // "off"/"unfollow" always allowed, even if the hero isn't summoned anymore.

@@ -37,7 +37,7 @@ namespace BLTAdoptAHero.Actions
                 return;
             }
 
-            var behavior = BLTGuardBehavior.Current;
+            var behavior = Mission.Current?.GetMissionBehavior<BLTGuardBehavior>();
             string arg = (context.Args ?? "").Trim();
 
             if (arg.Equals("off", StringComparison.OrdinalIgnoreCase) ||
