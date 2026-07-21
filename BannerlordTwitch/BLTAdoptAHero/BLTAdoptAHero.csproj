@@ -333,6 +333,7 @@
     <Compile Include="Actions\CampaignInfo.cs" />
     <Compile Include="Actions\BattleInfo.cs" />
     <Compile Include="Actions\CampaignLogs.cs" />
+    <Compile Include="Actions\DuelCommand.cs" />
     <Compile Include="Actions\FollowCommand.cs" />
     <Compile Include="Actions\GuardCommand.cs" />
     <Compile Include="Actions\VassalCommand.cs" />
@@ -401,6 +402,7 @@
     <Compile Include="Behaviors\BLTLogsBehavior.cs" />
     <Compile Include="Behaviors\BLTHeroDetachmentBehavior.cs" />
     <Compile Include="Behaviors\BLTHeirBehavior.cs" />
+    <Compile Include="Behaviors\DuelMissionBehavior.cs" />
     <Compile Include="Behaviors\FollowCombat.cs" />
     <Compile Include="Behaviors\GoldIncomeBehavior.cs" />
     <Compile Include="Behaviors\HarmonyPatches.cs" />
