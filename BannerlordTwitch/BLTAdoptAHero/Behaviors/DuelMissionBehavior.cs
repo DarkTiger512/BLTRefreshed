@@ -15,9 +15,9 @@ namespace BLTAdoptAHero
     // Tracks active 1v1 duel challenges between summoned BLT heroes during a mission, plus a
     // stacking "duel mark" effect (buff or debuff, configurable) applied to heroes each time
     // they're challenged, and gold rewards for winning either side of a duel.
-    internal class DuelMissionBehavior : MissionBehavior
+    internal class BLTDuelBehavior : MissionBehavior
     {
-        public static DuelMissionBehavior Current { get; private set; }
+        public static BLTDuelBehavior Current { get; private set; }
 
         public override MissionBehaviorType BehaviorType => MissionBehaviorType.Other;
 
@@ -151,7 +151,7 @@ namespace BLTAdoptAHero
                     _activeDuels.Remove(victim);
                 }
             }
-            catch (Exception ex) { Log.Exception("DuelMissionBehavior.OnAgentRemoved", ex); }
+            catch (Exception ex) { Log.Exception("BLTDuelBehavior.OnAgentRemoved", ex); }
         }
 
         public override void OnAgentDeleted(Agent affectedAgent)

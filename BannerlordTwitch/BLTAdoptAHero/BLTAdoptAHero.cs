@@ -83,6 +83,7 @@ namespace BLTAdoptAHero
                 mission.AddMissionBehavior(new BLTHeroDetachmentBehavior());
                 mission.AddMissionBehavior(new BLTFollowBehavior());
                 mission.AddMissionBehavior(new BLTGuardBehavior());
+                mission.AddMissionBehavior(new BLTDuelBehavior());
                 //if (mission.CombatType == Mission.MissionCombatType.Combat && mission.PlayerTeam != null && mission.HasMissionBehavior<BLTAdoptAHeroCommonMissionBehavior>())
                 //{
                 //    mission.AddMissionBehavior(new HeroWidgetMissionView());

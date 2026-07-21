@@ -179,7 +179,7 @@ namespace BLTAdoptAHero.Actions
                 return;
             }
 
-            var behavior = Mission.Current.GetMissionBehavior<DuelMissionBehavior>();
+            var behavior = Mission.Current.GetMissionBehavior<BLTDuelBehavior>();
             if (behavior == null)
             {
                 onFailure("Duel system is not active.");
