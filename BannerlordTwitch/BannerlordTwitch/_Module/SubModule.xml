@@ -34,7 +34,7 @@
 		<DependedModuleMetadata id="SandBoxCore" order="LoadBeforeThis" />
 		<DependedModuleMetadata id="Sandbox" order="LoadBeforeThis" />
 		<DependedModuleMetadata id="StoryMode" order="LoadBeforeThis" />
-		<DependedModuleMetadata id="NavalDLC" order="LoadBeforeThis" />
+		<DependedModuleMetadata id="NavalDLC" order="LoadBeforeThis" optional="true" />
 		<DependedModuleMetadata id="CustomBattle" order="LoadBeforeThis" />
 	</DependedModuleMetadatas>
 	<Xmls>
