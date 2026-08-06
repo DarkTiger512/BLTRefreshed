@@ -23,8 +23,6 @@ using Helpers;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
 using TaleWorlds.MountAndBlade;
-using NavalDLC.CharacterDevelopment;
-using NavalDLC.CampaignBehaviors;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
