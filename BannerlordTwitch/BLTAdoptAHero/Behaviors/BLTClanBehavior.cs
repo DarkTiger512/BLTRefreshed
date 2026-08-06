@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BannerlordTwitch.Helpers;
+using BannerlordTwitch.Rewards;
+using BannerlordTwitch.Util;
+using BLTAdoptAHero;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TaleWorlds.CampaignSystem;
@@ -6,11 +10,8 @@ using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.Party;
 using TaleWorlds.Core;
+using TaleWorlds.LinQuick;
 using TaleWorlds.ObjectSystem;
-using BannerlordTwitch.Util;
-using BannerlordTwitch.Helpers;
-using BLTAdoptAHero;
-using BannerlordTwitch.Rewards;
 
 namespace BLTAdoptAHero
 {
@@ -276,19 +277,18 @@ namespace BLTAdoptAHero
                 // Find noble equipment roster for culture
 
                 var rosters = MBObjectManager.Instance.GetObjectTypeList<MBEquipmentRoster>();
+                MBEquipmentRoster roster = rosters.FirstOrDefault();
 
                 // 1) Try noble templates first
-                var roster = rosters.FirstOrDefault(r =>
+                roster = rosters.FirstOrDefault(r =>
                     r.EquipmentCulture == hero.Culture &&
-                    r.HasEquipmentFlags(EquipmentFlags.IsNobleTemplate) &&
-                    r.HasEquipmentFlags(EquipmentFlags.IsCombatantTemplate));
+                    r.EquipmentCategories.HasFlag(EquipmentCategories.IsLordTemplate));
 
-                // 2) Fallback to combatant if no noble found
+                // 2) Fallback to any if no noble found
                 if (roster == null)
                 {
                     roster = rosters.FirstOrDefault(r =>
-                        r.EquipmentCulture == hero.Culture &&
-                        r.HasEquipmentFlags(EquipmentFlags.IsCombatantTemplate));
+                        r.EquipmentCulture == hero.Culture);
                 }
 
                 if (roster?.AllEquipments?.Count > 0)

@@ -11,7 +11,7 @@ namespace BLTAdoptAHero.Actions
 {
     internal class NavalHarmonyPatches
     {
-        [HarmonyPatch(typeof(ShipAgentSpawnLogic), "IsAnyTeamsUnfilled")]
+        [HarmonyPatch(typeof(NavalDLC.Missions.MissionLogics.DefaultNavalMissionAgentSpawnLogic), "IsAnyTeamsUnfilled")]
         public static class Patch_IsAnyTeamsUnfilled
         {
             static bool Prefix(ref bool __result)

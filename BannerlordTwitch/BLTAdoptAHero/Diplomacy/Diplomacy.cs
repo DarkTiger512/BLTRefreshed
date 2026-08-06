@@ -2541,8 +2541,9 @@ namespace BLTAdoptAHero
             }
 
             // Check for existing trade agreement
+            TradeAgreementsCampaignBehavior.TradeAgreement temptrade;
             TradeAgreementsCampaignBehavior tradeBehavior = Campaign.Current.GetCampaignBehavior<TradeAgreementsCampaignBehavior>();
-            if (tradeBehavior.HasTradeAgreement(kingdom, target))
+            if (tradeBehavior.HasTradeAgreement(kingdom, target, out temptrade))
             {
                 onFailure($"Already have trade agreement with {target.Name}");
                 return;

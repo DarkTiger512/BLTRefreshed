@@ -538,7 +538,7 @@ namespace BLTAdoptAHero
 
                 case PartyOrderType.Raid:
                     if (target != null)
-                        SetPartyAiAction.GetActionForRaidingSettlement(party, target, nav, isFromPort);
+                        SetPartyAiAction.GetActionForRaidingSettlement(party, target, nav, isFromPort, isFromPort);
                     break;
 
                 case PartyOrderType.SmartGuard:
