@@ -1,41 +1,50 @@
 ﻿using HarmonyLib;
-using NavalDLC.CampaignBehaviors;
-using NavalDLC.Missions.MissionLogics;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
+using BannerlordTwitch.Util;
 
 namespace BLTAdoptAHero.Actions
 {
-    internal class NavalHarmonyPatches
+    internal static class NavalHarmonyPatches
     {
-        [HarmonyPatch(typeof(NavalDLC.Missions.MissionLogics.DefaultNavalMissionAgentSpawnLogic), "IsAnyTeamsUnfilled")]
-        public static class Patch_IsAnyTeamsUnfilled
+        public static void ApplyIfAvailable(Harmony navalharmony)
         {
-            static bool Prefix(ref bool __result)
+            try
             {
-                // Always return true, ignoring original logic
-                __result = true;
-                return false; // skip original method
-            }
-        }
+                var spawnLogicType = AccessTools.TypeByName(
+                    "NavalDLC.Missions.MissionLogics.DefaultNavalMissionAgentSpawnLogic");
+                var shipTradeType = AccessTools.TypeByName(
+                    "NavalDLC.CampaignBehaviors.ShipTradeCampaignBehavior");
 
-        [HarmonyPatch(typeof(ShipTradeCampaignBehavior), "OnShipOwnerChanged")]
-        static class BLT_Suppress_OnShipOwnerChanged_Exception
-        {
-            static Exception Finalizer(Exception __exception)
-            {
-                // If the method threw, swallow it completely
-                if (__exception != null)
+                if (spawnLogicType == null || shipTradeType == null)
+                    return; // Naval DLC not loaded - nothing to patch
+
+                var isAnyTeamsUnfilled = AccessTools.Method(spawnLogicType, "IsAnyTeamsUnfilled");
+                if (isAnyTeamsUnfilled != null)
                 {
-                    return null;
+                    navalharmony.Patch(isAnyTeamsUnfilled,
+                        prefix: new HarmonyMethod(typeof(NavalHarmonyPatches), nameof(IsAnyTeamsUnfilledPrefix)));
                 }
 
-                return null;
+                var onShipOwnerChanged = AccessTools.Method(shipTradeType, "OnShipOwnerChanged");
+                if (onShipOwnerChanged != null)
+                {
+                    navalharmony.Patch(onShipOwnerChanged,
+                        finalizer: new HarmonyMethod(typeof(NavalHarmonyPatches), nameof(SuppressOnShipOwnerChangedFinalizer)));
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[BLT] NavalHarmonyPatches.ApplyIfAvailable failed: {ex}");
             }
         }
 
+        static bool IsAnyTeamsUnfilledPrefix(ref bool __result)
+        {
+            __result = true;
+            return false;
+        }
+
+        static Exception SuppressOnShipOwnerChangedFinalizer(Exception __exception) => null;
     }
 }
