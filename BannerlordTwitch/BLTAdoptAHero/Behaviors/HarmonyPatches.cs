@@ -276,19 +276,94 @@ namespace BLTAdoptAHero
         }
     }
 
+        #region Eddy (The Angel)
 
-    //[HarmonyPatch(typeof(KingdomDiplomacyPatches))]
-    //private static class KingdomDiplomacyPatches
-    //{
-    //    [HarmonyPrefix]
-    //    [HarmonyPatch("")]
-    //    private static 
-    //}
+    [HarmonyPatch(typeof(ChangeKingdomAction), "ApplyInternal")]
+    public static class KingdomLeaveGuardPatch
+    {
+        private static bool _resolved;
+        private static bool _bltPresent;
+        private static FieldInfo? _allowKingdomMove;
+
+        [HarmonyPrefix]
+        static bool Prefix(Clan clan, ref ChangeKingdomAction.ChangeKingdomActionDetail detail)
+        {
+            try
+            {
+                RedirectLeaderlessKingdomExit(clan, ref detail);
+
+                if (!IsAiEviction(detail)) return true;
+                if (clan == null || clan == Clan.PlayerClan) return true;
+                if (!IsBltClan(clan)) return true;
+                if (ShouldAllow()) return true;
+
+                return false;
+            }
+            catch (Exception)
+            {
+                return true;
+            }
+        }
+
+        private static void RedirectLeaderlessKingdomExit(
+            Clan clan, ref ChangeKingdomAction.ChangeKingdomActionDetail detail)
+        {
+            if (detail != ChangeKingdomAction.ChangeKingdomActionDetail.LeaveKingdom) return;
+
+            Kingdom? kingdom = clan?.Kingdom;
+            if (kingdom == null || kingdom.Leader != null) return;
+            if (clan!.Settlements == null || clan.Settlements.Count == 0) return;
+
+            detail = ChangeKingdomAction.ChangeKingdomActionDetail.LeaveByKingdomDestruction;
+        }
+
+        private static bool IsAiEviction(ChangeKingdomAction.ChangeKingdomActionDetail detail)
+        {
+            return detail == ChangeKingdomAction.ChangeKingdomActionDetail.LeaveKingdom
+                || detail == ChangeKingdomAction.ChangeKingdomActionDetail.LeaveWithRebellion
+                || detail == ChangeKingdomAction.ChangeKingdomActionDetail.LeaveAsMercenary;
+        }
+
+        private static bool IsBltClan(Clan clan)
+        {
+            string leader = clan.Leader?.Name?.ToString() ?? string.Empty;
+            if (leader.Contains("[BLT]") || leader.Contains("[DEV]")) return true;
+
+            string name = clan.Name?.ToString() ?? string.Empty;
+            return name.IndexOf("vassal", StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        private static bool ShouldAllow()
+        {
+            if (!_resolved) Resolve();
+
+            if (!_bltPresent) return true;              // no BLT, nothing to guard
+            if (_allowKingdomMove == null) return false; // BLT changed, stay closed
+            return (bool)_allowKingdomMove.GetValue(null);
+        }
+
+        private static void Resolve()
+        {
+            _resolved = true;
+
+            Type? flags = AccessTools.TypeByName("BLTAdoptAHero.AdoptedHeroFlags");
+            if (flags == null)
+            {
+                return;
+            }
+
+            _bltPresent = true;
+            _allowKingdomMove = AccessTools.Field(flags, "_allowKingdomMove");
+        }
+    }
+
+        #endregion
+
     #endregion
 
     #region ClanKingdomDecisions
-    // Block DeclareWarDecision for BLT kingdoms
-    [HarmonyPatch(typeof(DeclareWarDecision), MethodType.Constructor, new Type[] { typeof(Clan), typeof(IFaction) })]
+        // Block DeclareWarDecision for BLT kingdoms
+        [HarmonyPatch(typeof(DeclareWarDecision), MethodType.Constructor, new Type[] { typeof(Clan), typeof(IFaction) })]
         internal static class DeclareWarDecisionConstructorPatch
         {
             [HarmonyPrefix]
@@ -1105,6 +1180,188 @@ namespace BLTAdoptAHero
             }
         }
     }
+
+    #endregion
+
+    #region Eddy
+
+        #region Broken Governer Patches
+
+    [HarmonyPatch(typeof(GovernorCampaignBehavior), "DailyTickSettlement")]
+    public static class GovernorDailyTickSettlementPatch
+    {
+        [HarmonyFinalizer]
+        static Exception? Finalizer(Exception? __exception, Settlement settlement)
+        {
+            if (__exception is NullReferenceException)
+            {
+                return null;
+            }
+            return __exception;
+        }
+    }
+
+    [HarmonyPatch(typeof(BuildingsCampaignBehavior), "DailyTickSettlement")]
+    public static class BuildingsDailyTickSettlementPatch
+    {
+        [HarmonyFinalizer]
+        static Exception? Finalizer(Exception? __exception, Settlement settlement)
+        {
+            if (__exception is NullReferenceException)
+            {
+                return null;
+            }
+            return __exception;
+        }
+    }
+
+    [HarmonyPatch(typeof(SettlementClaimantCampaignBehavior), "DailyTickSettlement")]
+    public static class SettlementClaimantDailyTickSettlementPatch
+    {
+        [HarmonyFinalizer]
+        static Exception? Finalizer(Exception? __exception, Settlement settlement)
+        {
+            if (__exception is NullReferenceException)
+            {
+                return null;
+            }
+            return __exception;
+        }
+    }
+
+    [HarmonyPatch(typeof(GovernorCampaignBehavior), "DailyTickSettlement")]
+    public static class GovernorRepairPatch
+    {
+        [HarmonyPrefix]
+        static void Prefix(Settlement settlement)
+        {
+            try
+            {
+                Town town = settlement?.Town;
+                Hero governor = town?.Governor;
+                if (governor == null) return;
+
+                if (governor.Clan == null)
+                {
+                    ChangeGovernorAction.RemoveGovernorOfIfExists(town);
+                }
+            }
+            catch (Exception ex) { }
+        }
+    }
+
+    #endregion
+
+        #region More Naval Fixes holy shit how broken is this DLC
+
+    [PatchAfterModulesLoaded]
+    [HarmonyPatch]
+    public static class NavalPatrolRadiusPatch
+    {
+        private const string ModelType = "NavalDLC.GameComponents.NavalDLCMobilePartyAIModel";
+
+        private static readonly DefaultMobilePartyAIModel StockModel = new DefaultMobilePartyAIModel();
+
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            Type? type = AccessTools.TypeByName(ModelType);
+            MethodInfo? method = type != null ? AccessTools.Method(type, "GetPatrolRadius") : null;
+            if (method != null) yield return method;
+        }
+
+        static bool Prefix(MobileParty mobileParty, CampaignVec2 patrolPoint, ref float __result)
+        {
+            try
+            {
+                if (patrolPoint.IsOnLand || !patrolPoint.IsValid()) return true;
+
+                if (mobileParty == null) return true;
+                if (mobileParty.IsBandit || !mobileParty.IsLordParty) return true;
+                if (!mobileParty.IsCurrentlyAtSea) return true;
+                if (mobileParty.TargetSettlement != null) return true;
+
+                __result = StockModel.GetPatrolRadius(mobileParty, patrolPoint);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                __result = 0f;
+                return false;
+            }
+        }
+    }
+
+        #endregion
+
+        #region NullSettlement Patch
+
+    [HarmonyPatch]
+    public static class NullSettlementAiActionPatch
+    {
+        // Every SetPartyAiAction entry point whose Settlement argument reaches the
+        // TargetSettlement.Party dereference in RecalculateShortTermBehavior.
+        private static readonly string[] Actions =
+        {
+            "GetActionForDefendingSettlement",
+            "GetActionForRaidingSettlement",
+            "GetActionForBesiegingSettlement",
+            "GetActionForVisitingSettlement",
+            "GetActionForPatrollingAroundSettlement",
+        };
+
+        static IEnumerable<MethodBase> TargetMethods()
+        {
+            foreach (string name in Actions)
+            {
+                MethodInfo? m = AccessTools.Method(typeof(SetPartyAiAction), name);
+                if (m != null) yield return m;
+            }
+        }
+
+        [HarmonyPrefix]
+        static bool Prefix(MobileParty owner, Settlement settlement, MethodBase __originalMethod)
+        {
+            if (settlement != null) return true;
+
+            string where = __originalMethod?.Name ?? "unknown";
+            return false;
+        }
+    }
+
+    #endregion
+
+        #region Child Equipment on Birth Patch
+
+    // The original patch requires the NavalDLC, so I'll have to convert this one to use
+    // equipmentflags instead of templates, as those are a NavalDLC specific feature.
+
+        #endregion
+
+        #region Raiding Null Patch
+
+    [HarmonyPatch(typeof(SetPartyAiAction), nameof(SetPartyAiAction.GetActionForRaidingSettlement),
+        new[] { typeof(MobileParty), typeof(Settlement), typeof(MobileParty.NavigationType), typeof(bool) })]
+    public static class RaidNullSettlementPatch
+    {
+        [HarmonyPrefix]
+        static bool Prefix(MobileParty owner, Settlement settlement)
+        {
+            if (settlement != null) return true;
+
+            return false; // skip the action; the party keeps its current behaviour
+        }
+    }
+
+        #endregion
+
+    // Marks a [HarmonyPatch] class whose target lives in ANOTHER mod's assembly
+    // rather than in stock TaleWorlds code. Those assemblies are not guaranteed
+    // to be loaded yet at OnSubModuleLoad (load order decides), so AccessTools
+    // would just fail to resolve the type. SubModule holds these back to
+    // OnBeforeInitialModuleScreenSetAsRoot, by which point every module's
+    // assembly is in the AppDomain.
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public sealed class PatchAfterModulesLoadedAttribute : Attribute { }
 
     #endregion
 }

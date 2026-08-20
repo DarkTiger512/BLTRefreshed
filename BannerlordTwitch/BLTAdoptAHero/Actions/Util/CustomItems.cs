@@ -177,6 +177,7 @@ namespace BLTAdoptAHero.Actions.Util
             Log.Info($"Created {bestItem.Tier} ({bestItem.Tierf:0.00}) {bestItem.WeaponComponent?.PrimaryWeapon.WeaponClass} {bestItem.Name} for {hero.Name} in {itr} iterations");
 
             bestItem.StringId = Guid.NewGuid().ToString();
+            GiveUniqueCraftedIdentity(bestItem);
             CompleteCraftedItem(bestItem);
 
             return MBObjectManager.Instance.RegisterObject(bestItem);
@@ -226,6 +227,7 @@ namespace BLTAdoptAHero.Actions.Util
             Log.Info($"Created {bestItem.Tier} ({bestItem.Tierf:0.00}) {bestItem.WeaponComponent?.PrimaryWeapon.WeaponClass} {bestItem.Name} for {hero.Name} with culture {culture?.Name} in {itr} iterations");
 
             bestItem.StringId = Guid.NewGuid().ToString();
+            GiveUniqueCraftedIdentity(bestItem);
             CompleteCraftedItem(bestItem);
 
             return MBObjectManager.Instance.RegisterObject(bestItem);
@@ -233,13 +235,42 @@ namespace BLTAdoptAHero.Actions.Util
 
         private static void SetItemName(ItemObject item, TextObject name) => AccessTools.Property(typeof(ItemObject), nameof(ItemObject.Name)).SetValue(item, name);
 
+        private static readonly System.Reflection.PropertyInfo WeaponDesignProp =
+            AccessTools.Property(typeof(ItemObject), "WeaponDesign");
+
+        private static void GiveUniqueCraftedIdentity(ItemObject item)
+        {
+            if (item == null || WeaponDesignProp == null) return;
+
+            try
+            {
+                var design = item.WeaponDesign;
+                if (design?.Template == null || design.UsedPieces == null) return;
+
+                // Already identified somehow - leave it alone.
+                if (!string.IsNullOrEmpty(design.HashedCode)) return;
+
+                string id = item.StringId ?? "";
+                if (id.Length == 0) return;
+
+                var identified = new WeaponDesign(design.Template, design.WeaponName, design.UsedPieces, id);
+                WeaponDesignProp.SetValue(item, identified);
+            }
+            catch (Exception ex)
+            {
+                // Never let this break item creation - an unidentified weapon (the
+                // pre-existing behaviour) is far better than a failed craft.
+                Log.Error($"Failed to assign unique crafted identity to {item.StringId ?? "?"}: {ex.Message}");
+            }
+        }
+
         private static void CompleteCraftedItem(ItemObject item)
         {
             //ItemObject.InitAsPlayerCraftedItem(ref item);
             MBObjectManager.Instance.RegisterObject(item);
             CampaignEventDispatcher.Instance.OnNewItemCrafted(item, null, false);
         }
-
+    }
         // The vanilla tier calculation for weapons:
 
         // private static float CalculateTierMeleeWeapon(WeaponComponent weaponComponent)
@@ -336,5 +367,5 @@ namespace BLTAdoptAHero.Actions.Util
         //     }
         //     return 1.15f;
         // }
-    }
+    //}
 }

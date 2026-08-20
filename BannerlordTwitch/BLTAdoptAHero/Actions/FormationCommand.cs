@@ -70,6 +70,12 @@ namespace BLTAdoptAHero.Actions
                 onFailure("Cannot change formation in tournament");
                 return;
             }
+            if (Mission.Current.IsMissionEnding || Mission.Current.MissionIsEnding || Mission.Current.MissionEnded) 
+            {
+                onFailure("Mission is ending");
+                return;
+            }
+
             var splitArgs = context.Args.Split(' ');
 
             string num = context.Args.Length > 0 ? splitArgs[0].ToString() : "";
