@@ -1,4 +1,17 @@
 Commands:
+- Documentation: Check how much live ammunition your adopted hero has remaining in the current mission. Shows each ammunition stack and the combined total.
+  Enabled: true
+  Handler: CheckAmmo
+  HandlerConfig:
+  Help: check remaining ammunition
+  HideHelp: false
+  ID: 7a8f9e2b-1c3d-4f5e-8a6b-9c0d1e2f3a4b
+  ModeratorOnly: false
+  Name: ammo
+  RespondInDM: false
+  RespondInExtension: false
+  RespondInOverlay: true
+  RespondInTwitch: false
 - Documentation: '{=ZVxCqyJL}Show the heroes achievements and tracked stats.'
   Enabled: true
   Handler: HeroInfoCommand

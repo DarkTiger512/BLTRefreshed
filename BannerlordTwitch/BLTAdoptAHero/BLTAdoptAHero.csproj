@@ -108,6 +108,7 @@
     <Compile Include="Actions\CampaignInfo.cs" />
     <Compile Include="Actions\BattleInfo.cs" />
     <Compile Include="Actions\CampaignLogs.cs" />
+    <Compile Include="Actions\CheckAmmo.cs" />
     <Compile Include="Actions\DuelCommand.cs" />
     <Compile Include="Actions\FollowCommand.cs" />
     <Compile Include="Actions\GuardCommand.cs" />
@@ -160,6 +161,7 @@
     <Compile Include="Actions\Util\ItemModifierAccess.cs" />
     <Compile Include="Actions\Util\KillStreakDef.cs" />
     <Compile Include="Actions\Util\SkillRangeDef.cs" />
+    <Compile Include="Util\AmmoReport.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCommonMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCustomMissionBehavior.cs" />

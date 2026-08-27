@@ -8,5 +8,6 @@
   <ItemGroup>
     <Compile Include="..\BLTAdoptAHero\Util\CycleSafeGraph.cs" Link="CycleSafeGraph.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\SmartTroopPolicy.cs" Link="SmartTroopPolicy.cs" />
+    <Compile Include="..\BLTAdoptAHero\Util\AmmoReport.cs" Link="AmmoReport.cs" />
   </ItemGroup>
 </Project>

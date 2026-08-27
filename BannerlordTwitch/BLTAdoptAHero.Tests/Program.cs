@@ -72,6 +72,28 @@ Assert(SmartTroopPolicy.InterpretRole("CustomRole", false) == SmartTroopPolicy.S
 Assert(!SmartTroopPolicy.CanAfford(100, 75, 50), "Insufficient gold should block mutation.");
 Assert(SmartTroopPolicy.CanAfford(125, 75, 50), "Exact gold should be affordable.");
 
-Console.WriteLine("Smart troop graph, role, scoring, fallback, replacement and affordability tests passed.");
+var ammo = AmmoReport.Create(new[]
+{
+    new AmmoStackSnapshot { Slot = 3, Name = "Javelins", Current = 0, Maximum = 5 },
+    new AmmoStackSnapshot { Slot = 1, Name = "Arrows", Current = 12, Maximum = 24 },
+    new AmmoStackSnapshot { Slot = 2, Name = "Bolts", Current = 7, Maximum = 10 }
+}, true);
+Assert(ammo.Kind == AmmoReportKind.Available && ammo.TotalCurrent == 19 && ammo.TotalMaximum == 39,
+    "Mixed ammunition totals failed.");
+Assert(ammo.Details == "Arrows: 12/24, Bolts: 7/10, Javelins: 0/5",
+    "Ammunition output must follow stable equipment-slot order.");
+
+ammo = AmmoReport.Create(new[]
+{
+    new AmmoStackSnapshot { Slot = 0, Name = "Throwing Axes", Current = 0, Maximum = 3 }
+}, false);
+Assert(ammo.Kind == AmmoReportKind.Depleted && ammo.TotalCurrent == 0 && ammo.TotalMaximum == 3,
+    "Depleted thrown ammunition failed.");
+Assert(AmmoReport.Create(Array.Empty<AmmoStackSnapshot>(), true).Kind == AmmoReportKind.MissingAmmo,
+    "Ranged weapon without ammunition failed.");
+Assert(AmmoReport.Create(Array.Empty<AmmoStackSnapshot>(), false).Kind == AmmoReportKind.NoRangedWeapon,
+    "No ranged equipment failed.");
+
+Console.WriteLine("Smart troop and ammunition policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);

@@ -1233,5 +1233,15 @@
 		<string id="lJXxLdFz" text="Please enter the name of the leader you wish to adopt"/>
 		<!-- Error could not find a clan with the name {clanName} -->
 		<string id="bzsT7oy0" text="Error could not find a clan with the name {clanName}"/>
+        <!-- CheckAmmo -->
+        <string id="BLTAmmoName" text="Check Ammo"/>
+        <string id="BLTAmmoDescription" text="Shows your hero's remaining ammunition in the current mission"/>
+        <string id="BLTAmmoNoMission" text="No active mission - you must be in battle to check ammunition!"/>
+        <string id="BLTAmmoHeroAbsent" text="Your hero is not currently in this mission! Use !summon or !attack first."/>
+        <string id="BLTAmmoHeroInactive" text="Your hero is no longer active in this mission!"/>
+        <string id="BLTAmmoAvailable" text="Ammunition: {DETAILS} | Total: {CURRENT}/{MAXIMUM}"/>
+        <string id="BLTAmmoDepleted" text="Out of ammunition! {DETAILS} | Total: 0/{MAXIMUM}"/>
+        <string id="BLTAmmoMissing" text="Your hero has a ranged weapon but no ammunition equipped."/>
+        <string id="BLTAmmoNoRanged" text="Your hero has no ranged or throwing ammunition equipped."/>
     </strings>
 </base>
