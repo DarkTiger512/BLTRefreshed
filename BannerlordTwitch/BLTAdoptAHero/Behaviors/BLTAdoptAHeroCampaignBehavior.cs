@@ -9,6 +9,7 @@ using BannerlordTwitch.Localization;
 using BannerlordTwitch.SaveSystem;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.Achievements;
+using BLTAdoptAHero.Behaviors;
 using BLTAdoptAHero.UI;
 using BLTAdoptAHero.Util;
 using Newtonsoft.Json;
@@ -528,6 +529,10 @@ namespace BLTAdoptAHero
             return foundHero;
         }
 
+        public string GetHeroOwner(Hero hero) => hero != null && heroData.TryGetValue(hero, out var data)
+            ? data.Owner
+            : null;
+
         public Hero GetRetiredHero(string name)
         {
             var foundHero = heroData.LastOrDefault(h
@@ -668,6 +673,7 @@ namespace BLTAdoptAHero
         #region Stats and achievements
         public void IncreaseKills(Hero hero, Agent killed, WeaponClass WeaponClass = 0)
         {
+            StreamObjectivesBehavior.Current?.RecordKill(hero, killed);
             if (killed?.IsAdopted() == true)
             {
                 IncreaseStatistic(hero, AchievementStatsData.Statistic.TotalViewerKills, 1);
@@ -796,7 +802,10 @@ namespace BLTAdoptAHero
             => IncreaseStatistic(hero, AchievementStatsData.Statistic.TotalTournamentRoundWins, 1);
 
         public void IncreaseTournamentChampionships(Hero hero)
-            => IncreaseStatistic(hero, AchievementStatsData.Statistic.TotalTournamentFinalWins, 1);
+        {
+            IncreaseStatistic(hero, AchievementStatsData.Statistic.TotalTournamentFinalWins, 1);
+            StreamObjectivesBehavior.Current?.RecordTournamentWin(hero);
+        }
 
         private void IncreaseStatistic(Hero hero, AchievementStatsData.Statistic statistic, int amount, bool forced = false)
         {

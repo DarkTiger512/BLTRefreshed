@@ -1,4 +1,30 @@
 Commands:
+- Documentation: Moderator controls for community stream objectives. Use list, start, status, or stop.
+  Enabled: true
+  Handler: StreamObjectiveAdminCommand
+  HandlerConfig:
+  Help: start or manage a stream objective
+  HideHelp: true
+  ID: 3f7fbc55-7646-4d75-8d41-2a63fe8d5141
+  ModeratorOnly: true
+  Name: objective
+  RespondInDM: false
+  RespondInExtension: false
+  RespondInOverlay: true
+  RespondInTwitch: true
+- Documentation: Show the active community objective and your contribution.
+  Enabled: true
+  Handler: StreamObjectivesStatusCommand
+  HandlerConfig:
+  Help: show the active stream objective
+  HideHelp: false
+  ID: 2b4169b5-1ea1-49ef-8838-66edeb9c38bb
+  ModeratorOnly: false
+  Name: objectives
+  RespondInDM: false
+  RespondInExtension: false
+  RespondInOverlay: true
+  RespondInTwitch: true
 - Documentation: Check how much live ammunition your adopted hero has remaining in the current mission. Shows each ammunition stack and the combined total.
   Enabled: true
   Handler: CheckAmmo
@@ -3034,6 +3060,13 @@ GlobalConfigs:
     RetinueUseHeroesFormation: false
     Shouts: []
     ShowCampaignMapOverlay: true
+    StreamObjectivesContributorCount: 3
+    StreamObjectivesEnabled: true
+    StreamObjectivesHistorySize: 10
+    StreamObjectivesMilestones: true
+    StreamObjectivesOverlayEnabled: true
+    StreamObjectivesOverlayOpacity: 0.92
+    StreamObjectivesOverlayWidthPercent: 38
     ShowKillStreakPopup: true
     StartHealthMultiplier: 2
     StartRetinueHealthMultiplier: 2

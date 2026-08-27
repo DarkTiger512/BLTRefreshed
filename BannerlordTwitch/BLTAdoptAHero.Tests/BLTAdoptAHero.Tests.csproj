@@ -10,5 +10,6 @@
     <Compile Include="..\BLTAdoptAHero\Util\SmartTroopPolicy.cs" Link="SmartTroopPolicy.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\AmmoReport.cs" Link="AmmoReport.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\CampaignMapGeometry.cs" Link="CampaignMapGeometry.cs" />
+    <Compile Include="..\BLTAdoptAHero\Util\StreamObjectivePolicy.cs" Link="StreamObjectivePolicy.cs" />
   </ItemGroup>
 </Project>

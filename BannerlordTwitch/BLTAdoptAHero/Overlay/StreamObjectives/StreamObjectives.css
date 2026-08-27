@@ -1,0 +1,21 @@
+#stream-objective {
+    --objective-width: 38vw; --objective-opacity: .92;
+    position: fixed; top: .65rem; right: .65rem; width: min(var(--objective-width), 330px);
+    box-sizing: border-box; z-index: 10020; pointer-events: none; overflow: hidden;
+    color: #f5f0df; background: rgba(9, 14, 20, var(--objective-opacity));
+    border: 1px solid rgba(213, 190, 112, .55); border-radius: 6px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, .68); font-size: clamp(11px, 1.8vw, 16px);
+}
+#stream-objective.hidden { display: none; }
+#stream-objective header { display: flex; justify-content: space-between; padding: .38em .65em;
+    color: #e0c878; background: rgba(0,0,0,.34); font-size: .78em; font-weight: 750;
+    letter-spacing: .09em; text-transform: uppercase; }
+#objective-description { padding: .65em .7em .42em; font-size: 1em; font-weight: 700; line-height: 1.18; }
+.objective-track { height: .48em; margin: 0 .7em; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.13); }
+#objective-progress { width: 0; height: 100%; background: linear-gradient(90deg, #b58a2b, #f1da78); transition: width .4s ease; }
+.objective-meta { display: flex; justify-content: space-between; gap: .5em; padding: .42em .7em .3em; color: #cbd2d4; font-size: .78em; }
+#objective-reward { color: #eed889; text-align: right; }
+#objective-contributors { display: flex; flex-wrap: wrap; gap: .25em .7em; margin: 0; padding: .15em .7em .65em; list-style: none; color: #d8e5ea; font-size: .72em; }
+#objective-contributors li::before { content: '\2605'; color: #d8bd62; margin-right: .3em; }
+@media (max-width: 850px) { #stream-objective { width: min(43vw, 290px); } }
+@media (max-width: 520px) { #stream-objective { width: calc(100vw - 1.3rem); } }

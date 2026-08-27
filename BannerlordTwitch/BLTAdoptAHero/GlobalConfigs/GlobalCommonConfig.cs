@@ -40,6 +40,7 @@ namespace BLTAdoptAHero
      CategoryOrder("Achievements", 11),
      CategoryOrder("Shouts", 12),
      CategoryOrder("Campaign Map", 13),
+     CategoryOrder("Stream Objectives", 14),
      LocDisplayName("{=vDjnDtoL}Common Config")]
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
@@ -136,6 +137,34 @@ namespace BLTAdoptAHero
         [LocDisplayName("Spectator Cycle Time"), LocDescription("Seconds before the map camera moves to the next adopted hero."),
          LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(12), Range(3, 60)]
         public int MapSpectatorIntervalSeconds { get; set; } = 10;
+
+        [LocDisplayName("Enable Stream Objectives"), LocDescription("Allow moderators to launch community objectives from chat."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(1)]
+        public bool StreamObjectivesEnabled { get; set; } = true;
+
+        [LocDisplayName("Show Objectives Overlay"), LocDescription("Show the active chat objective in the browser overlay."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(2)]
+        public bool StreamObjectivesOverlayEnabled { get; set; } = true;
+
+        [LocDisplayName("Contributor Count"), LocDescription("Maximum contributors shown in the objectives panel."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(3), Range(0, 10)]
+        public int StreamObjectivesContributorCount { get; set; } = 3;
+
+        [LocDisplayName("Milestone Announcements"), LocDescription("Announce progress at 25, 50, and 75 percent."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(4)]
+        public bool StreamObjectivesMilestones { get; set; } = true;
+
+        [LocDisplayName("Objective History Size"), LocDescription("Number of completed or cancelled events retained in the campaign save."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(5), Range(0, 50)]
+        public int StreamObjectivesHistorySize { get; set; } = 10;
+
+        [LocDisplayName("Overlay Width Percent"), LocDescription("Width of the objectives panel as a percentage of the browser source."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(6), Range(20, 60)]
+        public float StreamObjectivesOverlayWidthPercent { get; set; } = 38f;
+
+        [LocDisplayName("Overlay Background Opacity"), LocDescription("Opacity of the objectives panel background."),
+         LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(7), Range(0, 1)]
+        public float StreamObjectivesOverlayOpacity { get; set; } = .92f;
 
         [LocDisplayName("{=}Uncap Maximum Foodstocks in Settlements"),
          LocCategory("General", "{=C5T6nnix}General"),

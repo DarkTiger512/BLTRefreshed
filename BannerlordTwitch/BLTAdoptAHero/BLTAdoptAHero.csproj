@@ -109,6 +109,7 @@
     <Compile Include="Actions\BattleInfo.cs" />
     <Compile Include="Actions\CampaignLogs.cs" />
     <Compile Include="Actions\CheckAmmo.cs" />
+    <Compile Include="Actions\StreamObjectiveCommands.cs" />
     <Compile Include="Actions\DuelCommand.cs" />
     <Compile Include="Actions\FollowCommand.cs" />
     <Compile Include="Actions\GuardCommand.cs" />
@@ -163,7 +164,9 @@
     <Compile Include="Actions\Util\SkillRangeDef.cs" />
     <Compile Include="Util\AmmoReport.cs" />
     <Compile Include="Util\CampaignMapGeometry.cs" />
+    <Compile Include="Util\StreamObjectivePolicy.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.cs" />
+    <Compile Include="Behaviors\StreamObjectivesBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCommonMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCustomMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTFollowBehavior.cs" />
@@ -214,6 +217,7 @@
     <Compile Include="IndependentsOverhaul\BLTClanDiplomacyBehavior.cs" />
     <Compile Include="Models\BLTUpgradeModels.cs" />
     <Compile Include="Overlay\CampaignMap\MapHub.cs" />
+    <Compile Include="Overlay\StreamObjectives\StreamObjectivesHub.cs" />
     <Compile Include="Overlay\MissionInfo\MissionInfo.cs" />
     <Compile Include="Overlay\Tournament\Tournament.cs" />
     <Compile Include="Powers\AbsorbHealthPower.cs" />
@@ -261,6 +265,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Overlay\CampaignMap\CampaignMap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Overlay\StreamObjectives\StreamObjectives.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Overlay\StreamObjectives\StreamObjectives.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Overlay\StreamObjectives\StreamObjectives.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Overlay\MissionInfo\MissionInfo.css">

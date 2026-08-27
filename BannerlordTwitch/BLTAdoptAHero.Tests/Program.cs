@@ -134,7 +134,45 @@ var edgeView = CampaignMapGeometry.FocusView(150, 100, 0, 100, 2.5f);
 Assert(Math.Abs(edgeView.X) < .001f && Math.Abs(edgeView.Y - 60) < .001f,
     "Spectator camera must clamp to map borders.");
 
-Console.WriteLine("Smart troop, ammunition, and campaign map policy tests passed.");
+Assert(StreamObjectivePolicy.TryParseStart("start kills 10 gold=500 xp=250", _ => true, out var objectiveStart, out _)
+       && objectiveStart.Kind == StreamObjectiveKind.Kills && objectiveStart.Target == 10 && objectiveStart.Gold == 500 && objectiveStart.XP == 250,
+    "Objective start parsing failed.");
+Assert(StreamObjectivePolicy.TryParseStart("start captures 3 culture=empire gold=1000 xp=50", id => id == "empire", out objectiveStart, out _)
+       && objectiveStart.CultureId == "empire", "Culture-filtered capture parsing failed.");
+Assert(!StreamObjectivePolicy.TryParseStart("start kills 0 gold=1 xp=1", _ => true, out _, out _),
+    "Zero objective targets must be rejected.");
+Assert(!StreamObjectivePolicy.TryParseStart("start kills 2 gold=-1 xp=1", _ => true, out _, out _),
+    "Negative rewards must be rejected.");
+Assert(!StreamObjectivePolicy.TryParseStart("start captures 2 culture=missing gold=1 xp=1", _ => false, out _, out _),
+    "Unknown capture cultures must be rejected.");
+
+var objective = new StreamObjectiveState { Kind = StreamObjectiveKind.Kills, Target = 2 };
+Assert(StreamObjectivePolicy.AddProgress(objective, "kill-1", "Viewer", "hero-1", "Viewer Hero"),
+    "First objective contribution failed.");
+Assert(!StreamObjectivePolicy.AddProgress(objective, "kill-1", "Viewer", "hero-1", "Viewer Hero") && objective.Progress == 1,
+    "Duplicate objective events must not count twice.");
+Assert(StreamObjectivePolicy.AddProgress(objective, "kill-2", "Other", "hero-2", "Other Hero") &&
+       StreamObjectivePolicy.IsComplete(objective) && StreamObjectivePolicy.Milestone(objective) == 100,
+    "Shared objective completion failed.");
+
+var survive = new StreamObjectiveState { Kind = StreamObjectiveKind.Survive, Target = 2, RequiredHeroes = 2, RequiredBattles = 2 };
+Assert(StreamObjectivePolicy.RecordSurvival(survive, "battle-1", new[]
+{
+    ("A", "a", "Hero A", false), ("B", "b", "Hero B", false)
+}), "Initial survival progress failed.");
+StreamObjectivePolicy.RecordSurvival(survive, "battle-2", new[]
+{
+    ("A", "a", "Hero A", false), ("B", "b", "Hero B", true)
+});
+Assert(survive.Progress == 1 && survive.Contributors["A"].SurvivalStreak == 2 && survive.Contributors["B"].SurvivalStreak == 0,
+    "Individual survival/death reset failed.");
+StreamObjectivePolicy.RecordSurvival(survive, "battle-3", new[] { ("B", "b", "Hero B", false) });
+StreamObjectivePolicy.RecordSurvival(survive, "battle-4", new[] { ("B", "b", "Hero B", false) });
+Assert(StreamObjectivePolicy.IsComplete(survive), "Individual survivor target failed.");
+Assert(!StreamObjectivePolicy.RecordSurvival(survive, "battle-4", new[] { ("B", "b", "Hero B", false) }),
+    "Duplicate survival battles must not count twice.");
+
+Console.WriteLine("Smart troop, ammunition, campaign map, and stream objective policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);
 internal sealed record Label(string Id, bool Hero, bool Town);
