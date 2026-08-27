@@ -126,6 +126,14 @@ var labels = CampaignMapGeometry.PrioritizeLabels(new[]
 }, value => value.Hero, value => value.Town, value => value.Id);
 Assert(labels.SequenceEqual(new[] { "hero", "town", "castle" }), "Smart label priority failed.");
 
+var centerView = CampaignMapGeometry.FocusView(150, 100, 75, 50, 2.5f);
+Assert(Math.Abs(centerView.Width - 60) < .001f && Math.Abs(centerView.Height - 40) < .001f &&
+       Math.Abs(centerView.X - 45) < .001f && Math.Abs(centerView.Y - 30) < .001f,
+    "Spectator camera zoom/centering failed.");
+var edgeView = CampaignMapGeometry.FocusView(150, 100, 0, 100, 2.5f);
+Assert(Math.Abs(edgeView.X) < .001f && Math.Abs(edgeView.Y - 60) < .001f,
+    "Spectator camera must clamp to map borders.");
+
 Console.WriteLine("Smart troop, ammunition, and campaign map policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);

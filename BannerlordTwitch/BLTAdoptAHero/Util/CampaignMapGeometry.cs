@@ -45,6 +45,15 @@ namespace BLTAdoptAHero.Util
         public MapLine(MapPoint a, MapPoint b) { A = a; B = b; }
     }
 
+    public readonly struct MapView
+    {
+        public float X { get; }
+        public float Y { get; }
+        public float Width { get; }
+        public float Height { get; }
+        public MapView(float x, float y, float width, float height) { X = x; Y = y; Width = width; Height = height; }
+    }
+
     public sealed class MapMarkerInput
     {
         public string Id { get; set; }
@@ -54,6 +63,15 @@ namespace BLTAdoptAHero.Util
 
     public static class CampaignMapGeometry
     {
+        public static MapView FocusView(float mapWidth, float mapHeight, float focusX, float focusY, float zoom)
+        {
+            zoom = Math.Max(1f, zoom);
+            float width = mapWidth / zoom, height = mapHeight / zoom;
+            float x = Math.Max(0, Math.Min(mapWidth - width, focusX - width / 2));
+            float y = Math.Max(0, Math.Min(mapHeight - height, focusY - height / 2));
+            return new MapView(x, y, width, height);
+        }
+
         // Marching-squares at the midpoint of each cell edge. Ambiguous cells use
         // two stable segments so identical terrain always produces identical paths.
         public static List<MapLine> TraceContours(bool[,] land, MapProjection projection,

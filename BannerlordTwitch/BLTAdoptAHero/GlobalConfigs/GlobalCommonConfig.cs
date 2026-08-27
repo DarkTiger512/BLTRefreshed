@@ -129,6 +129,18 @@ namespace BLTAdoptAHero
          LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(9)]
         public CampaignMapLabelDensity MapLabelDensity { get; set; } = CampaignMapLabelDensity.Smart;
 
+        [LocDisplayName("Hero Spectator Camera"), LocDescription("Automatically zooms the campaign map onto adopted heroes and cycles between them."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(10)]
+        public bool MapSpectatorCamera { get; set; } = true;
+
+        [LocDisplayName("Spectator Zoom"), LocDescription("Map zoom while following an adopted hero. 1 is the complete campaign map."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(11), Range(1, 6)]
+        public float MapSpectatorZoom { get; set; } = 2.5f;
+
+        [LocDisplayName("Spectator Cycle Time"), LocDescription("Seconds before the map camera moves to the next adopted hero."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(12), Range(3, 60)]
+        public int MapSpectatorIntervalSeconds { get; set; } = 10;
+
         [LocDisplayName("{=}Uncap Maximum Foodstocks in Settlements"),
          LocCategory("General", "{=C5T6nnix}General"),
          LocDescription("{=}Enable or disable the vanilla maximum of 300 foodstocks in towns and castles for all settlements."),

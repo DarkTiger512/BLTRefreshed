@@ -71,6 +71,9 @@ namespace BLTAdoptAHero.UI
             public float CastleLength { get; set; }
             public float HeroRadius { get; set; }
             public string LabelDensity { get; set; }
+            public bool SpectatorCamera { get; set; }
+            public float SpectatorZoom { get; set; }
+            public int SpectatorIntervalSeconds { get; set; }
         }
 
         public sealed class KingdomData { public string Id { get; set; } public string Name { get; set; } public string Color1 { get; set; } public string Color2 { get; set; } }
@@ -147,7 +150,11 @@ namespace BLTAdoptAHero.UI
                 map.GetMapBorders(out Vec2 min, out Vec2 max, out _);
                 var ids = Campaign.Current.Settlements.Where(s => s.IsTown || s.IsCastle)
                     .Select(s => s.StringId).OrderBy(id => id, StringComparer.Ordinal);
-                string key = $"{Campaign.Current.GetHashCode()}:{min.x:F2}:{min.y:F2}:{max.x:F2}:{max.y:F2}:" + string.Join(",", ids);
+                MapSettingsData settings = BuildSettings();
+                string settingsKey = $"{settings.Corner}:{settings.WidthPercent:F2}:{settings.MaxHeightPercent:F2}:{settings.BackgroundOpacity:F2}:" +
+                                     $"{settings.TownRadius:F2}:{settings.CastleLength:F2}:{settings.HeroRadius:F2}:{settings.LabelDensity}:" +
+                                     $"{settings.SpectatorCamera}:{settings.SpectatorZoom:F2}:{settings.SpectatorIntervalSeconds}";
+                string key = $"{Campaign.Current.GetHashCode()}:{min.x:F2}:{min.y:F2}:{max.x:F2}:{max.y:F2}:{settingsKey}:" + string.Join(",", ids);
                 if (geography != null && key == geographyKey && reason == null)
                 {
                     geography.Settings = BuildSettings();
@@ -162,7 +169,7 @@ namespace BLTAdoptAHero.UI
                 {
                     Revision = ++geographyRevision,
                     Projection = new ProjectionData { MinX = min.x, MaxX = max.x, MinY = min.y, MaxY = max.y, Width = projection.DisplayWidth, Height = projection.DisplayHeight },
-                    Settings = BuildSettings(),
+                    Settings = settings,
                     Kingdoms = BuildKingdoms(),
                     Settlements = BuildSettlements(projection),
                     Land = terrain.Land,
@@ -183,7 +190,9 @@ namespace BLTAdoptAHero.UI
                 Corner = config.MapPanelCorner.ToString(), WidthPercent = Clamp(config.MapWidthPercent, 15, 100),
                 MaxHeightPercent = Clamp(config.MapMaxHeightPercent, 15, 100), BackgroundOpacity = Clamp(config.MapBackgroundOpacity, 0, 1),
                 TownRadius = Clamp(config.MapTownRadius, .25f, 8), CastleLength = Clamp(config.MapCastleLength, .25f, 8),
-                HeroRadius = Clamp(config.MapHeroRadius, .25f, 8), LabelDensity = config.MapLabelDensity.ToString()
+                HeroRadius = Clamp(config.MapHeroRadius, .25f, 8), LabelDensity = config.MapLabelDensity.ToString(),
+                SpectatorCamera = config.MapSpectatorCamera, SpectatorZoom = Clamp(config.MapSpectatorZoom, 1, 6),
+                SpectatorIntervalSeconds = (int)Clamp(config.MapSpectatorIntervalSeconds, 3, 60)
             };
         }
 

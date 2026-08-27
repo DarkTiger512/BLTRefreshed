@@ -9,6 +9,7 @@ $(document).ready(function () {
     const heroLayer = document.getElementById('hero-markers');
     const status = document.getElementById('map-status');
     let geography = null, revision = 0, connected = false, currentHeroes = [];
+    let cameraTargetId = null, lastCameraSwitch = 0, cameraFrame = null, currentView = null;
     let ownership = new Map(), kingdomColors = new Map();
 
     if (typeof $.connection.mapHub === 'undefined') { container.classList.add('hidden'); return; }
@@ -24,7 +25,7 @@ $(document).ready(function () {
         ownership = new Map((data.Ownership || []).map(item => [item.Id, item.KingdomId]));
         currentHeroes = data.Heroes || [];
         renderSettlements(currentHeroes); renderHeroes(currentHeroes);
-        status.textContent = `${(data.Heroes || []).length} heroes`;
+        updateSpectatorCamera(currentHeroes);
     };
     $.connection.hub.start().done(function () {
         connected = true; hub.server.refresh(revision);
@@ -35,7 +36,8 @@ $(document).ready(function () {
 
     function renderGeography() {
         const p = geography.Projection;
-        svg.setAttribute('viewBox', `0 0 ${p.Width} ${p.Height}`);
+        currentView = { x: 0, y: 0, width: p.Width, height: p.Height };
+        svg.setAttribute('viewBox', viewBoxText(currentView));
         applySettings(geography.Settings || {});
         kingdomColors = new Map((geography.Kingdoms || []).map(k => [k.Id, { fill: k.Color1, border: k.Color2 }]));
         landLayer.innerHTML = '';
@@ -99,9 +101,51 @@ $(document).ready(function () {
             const group = document.createElementNS(ns, 'g'); group.setAttribute('class', 'hero-marker');
             const circle = document.createElementNS(ns, 'circle'); circle.setAttribute('cx', x); circle.setAttribute('cy', y);
             circle.setAttribute('r', radius); circle.setAttribute('fill', hero.Color || '#d8ad45'); group.appendChild(circle);
-            const label = document.createElementNS(ns, 'text'); label.setAttribute('x', x + radius + .7); label.setAttribute('y', y + .55);
+            const labelY = cluster.length > 1 ? hero.Y + (index - (cluster.length - 1) / 2) * 2.4 + .55 : y + .55;
+            const label = document.createElementNS(ns, 'text'); label.setAttribute('x', x + radius + .7); label.setAttribute('y', labelY);
             label.setAttribute('class', 'hero-label'); label.textContent = hero.Name; group.appendChild(label); heroLayer.appendChild(group);
         }));
     }
+    function updateSpectatorCamera(heroes) {
+        if (!geography) return;
+        const settings = geography.Settings || {}, ordered = [...heroes].sort((a, b) => a.Id.localeCompare(b.Id));
+        if (!settings.SpectatorCamera || ordered.length === 0) {
+            cameraTargetId = null; lastCameraSwitch = 0;
+            animateCamera({ x: 0, y: 0, width: geography.Projection.Width, height: geography.Projection.Height });
+            status.textContent = `${ordered.length} heroes`;
+            return;
+        }
+
+        const now = Date.now(), interval = Math.max(3, settings.SpectatorIntervalSeconds || 10) * 1000;
+        let index = ordered.findIndex(hero => hero.Id === cameraTargetId);
+        if (index < 0) { index = 0; lastCameraSwitch = now; }
+        else if (now - lastCameraSwitch >= interval) { index = (index + 1) % ordered.length; lastCameraSwitch = now; }
+        const target = ordered[index]; cameraTargetId = target.Id;
+        const zoom = Math.max(1, settings.SpectatorZoom || 2.5), map = geography.Projection;
+        const width = map.Width / zoom, height = map.Height / zoom;
+        animateCamera({
+            x: clamp(target.X - width / 2, 0, map.Width - width),
+            y: clamp(target.Y - height / 2, 0, map.Height - height), width, height
+        });
+        status.textContent = `Following ${target.Name}  •  ${index + 1}/${ordered.length}`;
+    }
+    function animateCamera(destination) {
+        if (cameraFrame !== null) cancelAnimationFrame(cameraFrame);
+        const start = currentView || destination, started = performance.now(), duration = 900;
+        function step(now) {
+            const progress = Math.min(1, (now - started) / duration), eased = 1 - Math.pow(1 - progress, 3);
+            currentView = {
+                x: start.x + (destination.x - start.x) * eased,
+                y: start.y + (destination.y - start.y) * eased,
+                width: start.width + (destination.width - start.width) * eased,
+                height: start.height + (destination.height - start.height) * eased
+            };
+            svg.setAttribute('viewBox', viewBoxText(currentView));
+            cameraFrame = progress < 1 ? requestAnimationFrame(step) : null;
+        }
+        cameraFrame = requestAnimationFrame(step);
+    }
+    function viewBoxText(view) { return `${view.x.toFixed(3)} ${view.y.toFixed(3)} ${view.width.toFixed(3)} ${view.height.toFixed(3)}`; }
+    function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
     function overlaps(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
 });
