@@ -24,6 +24,9 @@ using static BLTAdoptAHero.Actions.UpgradeAction;
 
 namespace BLTAdoptAHero
 {
+    public enum CampaignMapPanelCorner { TopLeft, TopRight, BottomLeft, BottomRight }
+    public enum CampaignMapLabelDensity { Smart, HeroesOnly, All }
+
     [CategoryOrder("General", 1),
      CategoryOrder("Training", 2),
      CategoryOrder("Battle", 3),
@@ -36,6 +39,7 @@ namespace BLTAdoptAHero
      CategoryOrder("Kill Streak Rewards", 10),
      CategoryOrder("Achievements", 11),
      CategoryOrder("Shouts", 12),
+     CategoryOrder("Campaign Map", 13),
      LocDisplayName("{=vDjnDtoL}Common Config")]
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
@@ -90,21 +94,40 @@ namespace BLTAdoptAHero
 
         [LocDisplayName("{=BLTAdoptAHero_ShowCampaignMap}Show Campaign Map Overlay"),
          LocDescription("{=BLTAdoptAHero_ShowCampaignMap_Desc}Enable or disable the campaign map overlay that shows in the top portion of the overlay. The map automatically hides during missions."),
-        LocCategory("General", "{=C5T6nnix}General"),
-         PropertyOrder(7)]
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(1)]
         public bool ShowCampaignMapOverlay { get; set; } = true;
 
-        [LocDisplayName("{=BLTAdoptAHero_ShowCampaignMap}Overlay Map Settlement town radius"),
-         LocDescription("{=BLTAdoptAHero_ShowCampaignMap_Desc}Overlay Map Settlement town radius"),
-        LocCategory("General", "{=C5T6nnix}General"),
-         PropertyOrder(8)]
+        [LocDisplayName("Map Panel Corner"), LocDescription("Corner used by the OBS campaign-map panel."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(2)]
+        public CampaignMapPanelCorner MapPanelCorner { get; set; } = CampaignMapPanelCorner.TopRight;
+
+        [LocDisplayName("Map Width Percent"), LocDescription("Map panel width as a percentage of the overlay."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(3), Range(15, 100)]
+        public float MapWidthPercent { get; set; } = 42f;
+
+        [LocDisplayName("Map Maximum Height Percent"), LocDescription("Maximum map panel height as a percentage of the overlay."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(4), Range(15, 100)]
+        public float MapMaxHeightPercent { get; set; } = 38f;
+
+        [LocDisplayName("Map Background Opacity"), LocDescription("Opacity of the map panel background."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(5), Range(0, 1)]
+        public float MapBackgroundOpacity { get; set; } = .9f;
+
+        [LocDisplayName("Town Marker Radius"), LocDescription("Radius of town markers in map units."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(6), Range(.25, 8)]
         public float MapTownRadius { get; set; } = 2.15f;
 
-        [LocDisplayName("{=BLTAdoptAHero_ShowCampaignMap}Overlay Map Settlement castle length"),
-         LocDescription("{=BLTAdoptAHero_ShowCampaignMap_Desc}Overlay Map Settlement castle length"),
-        LocCategory("General", "{=C5T6nnix}General"),
-         PropertyOrder(9)]
+        [LocDisplayName("Castle Marker Length"), LocDescription("Side length of castle markers in map units."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(7), Range(.25, 8)]
         public float MapCastleLength { get; set; } = 2.5f;
+
+        [LocDisplayName("Hero Marker Radius"), LocDescription("Radius of adopted-hero markers in map units."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(8), Range(.25, 8)]
+        public float MapHeroRadius { get; set; } = 1.8f;
+
+        [LocDisplayName("Settlement Label Density"), LocDescription("Controls which settlement names appear on the stream map."),
+         LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(9)]
+        public CampaignMapLabelDensity MapLabelDensity { get; set; } = CampaignMapLabelDensity.Smart;
 
         [LocDisplayName("{=}Uncap Maximum Foodstocks in Settlements"),
          LocCategory("General", "{=C5T6nnix}General"),
@@ -850,7 +873,7 @@ namespace BLTAdoptAHero
             new UpgradeSystemDocumentation().GenerateDocumentation(generator);
 
             
-            var kingdoms = MapHub.CurrentMapData?.Kingdoms;
+            var kingdoms = MapHub.CurrentMapData?.Geography?.Kingdoms;
             if (kingdoms == null || kingdoms.Count == 0)
                 return;
             generator.H1("Campaign Map");
@@ -888,11 +911,11 @@ namespace BLTAdoptAHero
             });
 
             // Map
-            var settlements = MapHub.CurrentMapData?.Settlements;
+            var settlements = MapHub.CurrentMapData?.Geography?.Settlements;
             if (settlements == null || settlements.Count == 0)
                 return;
 
-            var segments = MapHub.CurrentMapData.Coastline;
+            var segments = MapHub.CurrentMapData.Geography.Coastline;
             generator.H2("Map");
 
             generator.Div(() =>
@@ -910,10 +933,12 @@ namespace BLTAdoptAHero
                 float minY = settlements.Min(s => s.Y);
                 float maxY = settlements.Max(s => s.Y);
 
-                var kingdomDict = MapHub.CurrentMapData.Kingdoms.ToDictionary(k => k.Id, k => k.Color1);
-                var kingdomBorderDict = MapHub.CurrentMapData.Kingdoms.ToDictionary(k => k.Id, k => k.Color2);
+                var kingdomDict = MapHub.CurrentMapData.Geography.Kingdoms.ToDictionary(k => k.Id, k => k.Color1);
+                var kingdomBorderDict = MapHub.CurrentMapData.Geography.Kingdoms.ToDictionary(k => k.Id, k => k.Color2);
+                var ownership = MapHub.CurrentMapData.Dynamic?.Ownership?.ToDictionary(o => o.Id, o => o.KingdomId)
+                    ?? new Dictionary<string, string>();
 
-                if (segments != null || segments.Count > 0)
+                if (segments != null && segments.Count > 0)
                 {
                     float worldWidth = maxX - minX;
                     float worldHeight = maxY - minY;
@@ -948,7 +973,7 @@ namespace BLTAdoptAHero
                         scaledY,
                         s.Name,
                         s.Type,
-                        s.KingdomId,
+                        ownership.TryGetValue(s.Id, out var ownerId) ? ownerId : null,
                         kingdomId => kingdomDict.TryGetValue(kingdomId, out var c) ? c : "#000080",
                         kingdomId => kingdomBorderDict.TryGetValue(kingdomId, out var c) ? c : "#000000"
                     );

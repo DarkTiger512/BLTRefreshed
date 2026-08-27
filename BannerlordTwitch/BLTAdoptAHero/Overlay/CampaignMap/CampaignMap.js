@@ -1,103 +1,107 @@
-﻿$(document).ready(function () {
+$(document).ready(function () {
+    const ns = 'http://www.w3.org/2000/svg';
     const container = document.getElementById('campaign-map-container');
-    const settlementMarkersGroup = document.getElementById('settlement-markers');
-    const coastlineGroup = document.getElementById('coastline-layer');
-    let kingdomColors = new Map();
-    let isConnected = false;
+    const svg = document.getElementById('campaign-map-svg');
+    const landLayer = document.getElementById('land-layer');
+    const coastlineLayer = document.getElementById('coastline-layer');
+    const settlementLayer = document.getElementById('settlement-markers');
+    const settlementLabels = document.getElementById('settlement-labels');
+    const heroLayer = document.getElementById('hero-markers');
+    const status = document.getElementById('map-status');
+    let geography = null, revision = 0, connected = false, currentHeroes = [];
+    let ownership = new Map(), kingdomColors = new Map();
 
-    if (typeof $.connection.mapHub !== 'undefined') {
-        const mapHub = $.connection.mapHub;
+    if (typeof $.connection.mapHub === 'undefined') { container.classList.add('hidden'); return; }
+    const hub = $.connection.mapHub;
+    hub.client.updateGeography = function (data) {
+        if (!data || data.Version !== 2) return;
+        geography = data; revision = data.Revision; renderGeography();
+    };
+    hub.client.updateMapState = function (data) {
+        if (!data || !data.Visible) { container.classList.add('hidden'); return; }
+        if (!geography || data.GeographyRevision !== revision) { hub.server.refresh(0); return; }
+        container.classList.remove('hidden');
+        ownership = new Map((data.Ownership || []).map(item => [item.Id, item.KingdomId]));
+        currentHeroes = data.Heroes || [];
+        renderSettlements(currentHeroes); renderHeroes(currentHeroes);
+        status.textContent = `${(data.Heroes || []).length} heroes`;
+    };
+    $.connection.hub.start().done(function () {
+        connected = true; hub.server.refresh(revision);
+        setInterval(function () { if (connected) hub.server.refresh(revision); }, 2000);
+    });
+    $.connection.hub.disconnected(function () { connected = false; });
+    $.connection.hub.reconnected(function () { connected = true; hub.server.refresh(revision); });
 
-        mapHub.client.updateMap = function (mapData) {
-            if (!mapData) {
-                container.classList.add('hidden');
-                return;
-            }
-            container.classList.remove('hidden');
-            renderMap(mapData);
-        };
-
-        $.connection.hub.start().done(() => {
-            console.log('Campaign Map Hub connected');
-            isConnected = true;
-            mapHub.server.refresh();
-            setInterval(() => {
-                if (isConnected) mapHub.server.refresh();
-            }, 2000);
+    function renderGeography() {
+        const p = geography.Projection;
+        svg.setAttribute('viewBox', `0 0 ${p.Width} ${p.Height}`);
+        applySettings(geography.Settings || {});
+        kingdomColors = new Map((geography.Kingdoms || []).map(k => [k.Id, { fill: k.Color1, border: k.Color2 }]));
+        landLayer.innerHTML = '';
+        (geography.Land || []).forEach(area => {
+            const rect = document.createElementNS(ns, 'rect');
+            rect.setAttribute('x', area.X); rect.setAttribute('y', area.Y);
+            rect.setAttribute('width', area.Width); rect.setAttribute('height', area.Height);
+            landLayer.appendChild(rect);
         });
-
-        $.connection.hub.disconnected(() => { isConnected = false; });
-        $.connection.hub.reconnected(() => {
-            isConnected = true;
-            mapHub.server.refresh();
-        });
-    } else {
-        container.classList.add('hidden');
-    }
-
-    function renderMap(data) {
-        kingdomColors.clear();
-
-        townRadius = data.MapTownRadius ?? 2.15;
-        castleLength = data.MapCastleLength ?? 2.5;
-
-        if (data.Kingdoms) {
-            data.Kingdoms.forEach(k => kingdomColors.set(k.Id, { fill: k.Color1, border: k.Color2 }));
-        }
-        renderCoastline(data.Coastline || []);
-        renderSettlements(data.Settlements || []);
-    }
-
-    function renderCoastline(segments) {
-        coastlineGroup.innerHTML = '';
-        if (segments.length === 0) return;
-
-        // Build an SVG path from all segments for efficiency (one element vs thousands)
-        // Group into connected chains first for smoother rendering
+        coastlineLayer.innerHTML = '';
         let d = '';
-        segments.forEach(seg => {
-            d += `M ${seg.X1.toFixed(2)} ${seg.Y1.toFixed(2)} L ${seg.X2.toFixed(2)} ${seg.Y2.toFixed(2)} `;
-        });
-
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', d);
-        path.setAttribute('stroke', '#1a6fa8');
-        path.setAttribute('stroke-width', '0.5');
-        path.setAttribute('stroke-linecap', 'round');
-        path.setAttribute('fill', 'none');
-        path.setAttribute('opacity', '1');
-        coastlineGroup.appendChild(path);
+        (geography.Coastline || []).forEach(seg => { d += `M${seg.X1.toFixed(2)},${seg.Y1.toFixed(2)}L${seg.X2.toFixed(2)},${seg.Y2.toFixed(2)}`; });
+        const path = document.createElementNS(ns, 'path'); path.setAttribute('d', d); coastlineLayer.appendChild(path);
+        renderSettlements(currentHeroes);
     }
-
-    function renderSettlements(settlements) {
-        settlementMarkersGroup.innerHTML = '';
-        settlements.forEach(settlement => {
-            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            group.setAttribute('class', `settlement-marker ${settlement.Type}`);
-            group.setAttribute('transform', `translate(${settlement.X},${settlement.Y})`);
-
-            const kingdom = kingdomColors.get(settlement.KingdomId);
-            const fillColor = kingdom ? kingdom.fill : '#888888';
-            const borderColor = kingdom ? kingdom.border : '#ffffff';
-
+    function applySettings(settings) {
+        container.style.setProperty('--map-width', `${settings.WidthPercent || 42}vw`);
+        container.style.setProperty('--map-max-height', `${settings.MaxHeightPercent || 38}vh`);
+        container.style.setProperty('--map-opacity', Math.max(0, Math.min(1, settings.BackgroundOpacity ?? .9)));
+        ['TopLeft', 'TopRight', 'BottomLeft', 'BottomRight'].forEach(c => container.classList.remove(`corner-${c}`));
+        container.classList.add(`corner-${settings.Corner || 'TopRight'}`);
+    }
+    function renderSettlements(heroes) {
+        if (!geography) return;
+        settlementLayer.innerHTML = ''; settlementLabels.innerHTML = '';
+        const settings = geography.Settings || {}, density = settings.LabelDensity || 'Smart';
+        const occupied = (heroes || []).map(h => ({ x: h.X - 1.5, y: h.Y - 2, w: Math.max(6, h.Name.length * .9 + 4), h: 4 }));
+        const ordered = [...(geography.Settlements || [])].sort((a, b) =>
+            (a.Type === 'Town' ? 0 : 1) - (b.Type === 'Town' ? 0 : 1) || a.Id.localeCompare(b.Id));
+        ordered.forEach(s => {
+            const colors = kingdomColors.get(ownership.get(s.Id)) || { fill: '#788087', border: '#e7e1d5' };
+            const group = document.createElementNS(ns, 'g'); group.setAttribute('transform', `translate(${s.X},${s.Y})`);
             let shape;
-            if (settlement.Type === 'Town') {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                shape.setAttribute('cx', 0);
-                shape.setAttribute('cy', 0);
-                shape.setAttribute('r', townRadius);
+            if (s.Type === 'Town') {
+                shape = document.createElementNS(ns, 'circle'); shape.setAttribute('r', settings.TownRadius || 2.15);
             } else {
-                shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                shape.setAttribute('x', -castleLength / 2);
-                shape.setAttribute('y', -castleLength / 2);
-                shape.setAttribute('width', castleLength);
-                shape.setAttribute('height', castleLength);
+                const size = settings.CastleLength || 2.5; shape = document.createElementNS(ns, 'rect');
+                shape.setAttribute('x', -size / 2); shape.setAttribute('y', -size / 2); shape.setAttribute('width', size); shape.setAttribute('height', size);
             }
-            shape.setAttribute('fill', fillColor);
-            shape.setAttribute('stroke', borderColor);
-            shape.setAttribute('stroke-width', '0.6');
-            group.appendChild(shape);
-            settlementMarkersGroup.appendChild(group);
+            shape.setAttribute('class', 'settlement-shape'); shape.setAttribute('fill', colors.fill);
+            shape.setAttribute('stroke', colors.border); shape.setAttribute('stroke-width', '.55');
+            group.appendChild(shape); settlementLayer.appendChild(group);
+            if (density === 'All' || (density === 'Smart' && s.Type === 'Town')) addSettlementLabel(s, occupied);
         });
     }
+    function addSettlementLabel(s, occupied) {
+        const box = { x: s.X + 1.8, y: s.Y - 2.2, w: Math.max(5, s.Name.length * .8), h: 2.2 };
+        if (occupied.some(o => overlaps(o, box))) return;
+        occupied.push(box);
+        const text = document.createElementNS(ns, 'text'); text.setAttribute('x', box.x); text.setAttribute('y', s.Y - .6);
+        text.setAttribute('class', `map-label ${s.Type.toLowerCase()}`); text.textContent = s.Name; settlementLabels.appendChild(text);
+    }
+    function renderHeroes(heroes) {
+        heroLayer.innerHTML = ''; if (!geography) return;
+        const radius = geography.Settings.HeroRadius || 1.8, groups = new Map();
+        heroes.forEach(h => { if (!groups.has(h.ClusterId)) groups.set(h.ClusterId, []); groups.get(h.ClusterId).push(h); });
+        [...groups.values()].forEach(cluster => cluster.sort((a, b) => a.Id.localeCompare(b.Id)).forEach((hero, index) => {
+            const angle = cluster.length > 1 ? Math.PI * 2 * index / cluster.length : 0;
+            const spread = cluster.length > 1 ? radius * 1.5 : 0;
+            const x = hero.X + Math.cos(angle) * spread, y = hero.Y + Math.sin(angle) * spread;
+            const group = document.createElementNS(ns, 'g'); group.setAttribute('class', 'hero-marker');
+            const circle = document.createElementNS(ns, 'circle'); circle.setAttribute('cx', x); circle.setAttribute('cy', y);
+            circle.setAttribute('r', radius); circle.setAttribute('fill', hero.Color || '#d8ad45'); group.appendChild(circle);
+            const label = document.createElementNS(ns, 'text'); label.setAttribute('x', x + radius + .7); label.setAttribute('y', y + .55);
+            label.setAttribute('class', 'hero-label'); label.textContent = hero.Name; group.appendChild(label); heroLayer.appendChild(group);
+        }));
+    }
+    function overlaps(a, b) { return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y; }
 });

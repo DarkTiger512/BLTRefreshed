@@ -94,6 +94,39 @@ Assert(AmmoReport.Create(Array.Empty<AmmoStackSnapshot>(), true).Kind == AmmoRep
 Assert(AmmoReport.Create(Array.Empty<AmmoStackSnapshot>(), false).Kind == AmmoReportKind.NoRangedWeapon,
     "No ranged equipment failed.");
 
-Console.WriteLine("Smart troop and ammunition policy tests passed.");
+var projection = new MapProjection(0, 200, 0, 100);
+Assert(Math.Abs(projection.DisplayWidth - 200) < .001f && Math.Abs(projection.DisplayHeight - 100) < .001f,
+    "Projection must preserve the world aspect ratio.");
+var projected = projection.Project(100, 25);
+Assert(Math.Abs(projected.X - 100) < .001f && Math.Abs(projected.Y - 75) < .001f,
+    "Projection coordinate conversion failed.");
+var portraitProjection = new MapProjection(0, 50, 0, 100);
+Assert(Math.Abs(portraitProjection.DisplayWidth - 50) < .001f,
+    "Portrait projections must not be stretched to landscape.");
+
+var land = new bool[2, 2];
+land[0, 0] = true;
+var contours = CampaignMapGeometry.TraceContours(land, projection, 0, 200, 0, 100);
+Assert(contours.Count == 1, "Marching-squares single-corner contour failed.");
+Assert(CampaignMapGeometry.TraceContours(new bool[1, 1], projection, 0, 1, 0, 1).Count == 0,
+    "Undersized terrain grids must be safe.");
+
+var clusters = CampaignMapGeometry.ClusterMarkers(new[]
+{
+    new MapMarkerInput { Id = "b", X = 2, Y = 2 },
+    new MapMarkerInput { Id = "a", X = 1, Y = 1 },
+    new MapMarkerInput { Id = "c", X = 50, Y = 50 }
+}, 3);
+Assert(clusters["a"] == "a+b" && clusters["b"] == "a+b" && clusters["c"] == "c",
+    "Stable marker clustering failed.");
+
+var labels = CampaignMapGeometry.PrioritizeLabels(new[]
+{
+    new Label("castle", false, false), new Label("town", false, true), new Label("hero", true, false)
+}, value => value.Hero, value => value.Town, value => value.Id);
+Assert(labels.SequenceEqual(new[] { "hero", "town", "castle" }), "Smart label priority failed.");
+
+Console.WriteLine("Smart troop, ammunition, and campaign map policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);
+internal sealed record Label(string Id, bool Hero, bool Town);
