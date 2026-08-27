@@ -80,6 +80,20 @@ The project uses a number of NuGet packages, these should be installed automatic
 4. Try running the default "Bannerlord" debugging configuration. This configuration is specified at lines 29 to 34 of the `BannerlordTwitch.csproj` project file. You can see there that it uses the `BANNERLORD_GAME_DIR` property, and specifies an explicit module list that includes only the main game and BLT modules. Any mods you have installed will not be loaded when you are debugging BLT in this manner, if you want them then add them to the commandline here, or via your IDEs debugging configuration editor. 
 5. The mod should now be compiled (including restoring required NuGet packages), deployed to your game directory (replacing any BLT files that already exist), then run with the debugger attached.
 
+### Command-line build (Bannerlord 1.4.7)
+
+The repository defaults to safe, non-deploying builds. From the repository root:
+
+```powershell
+C:\tmp\nuget.exe restore BannerlordTwitch\BannerlordTwitch.sln -PackagesDirectory BannerlordTwitch\packages -NonInteractive
+& 'C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Current\Bin\MSBuild.exe' BannerlordTwitch\BannerlordTwitch.sln /restore /p:UseBannerlordReferenceAssemblies=true /p:Configuration=Debug /m
+```
+
+- Add `/p:Configuration=Release` for a release build.
+- Add `/p:DeployToGame=true` only when the installed game is Bannerlord 1.4.7 and you deliberately want to overwrite the installed BLT modules.
+- Add `/p:CreatePackage=true` to create a package with 7-Zip or WinRAR.
+- Run the engine-independent smart troop tests with `dotnet run --project BannerlordTwitch\BLTAdoptAHero.Tests\BLTAdoptAHero.Tests.csproj -c Release`.
+
 ## Updating for a New Game Version
 This is potentially an advanced operation, if any of the hooked functions have changed or been removed then it requires an understanding of function hooking with Harmony, what the previously used function did, and how it can be replaced or its functionality replicated (requiring deep understanding of the mod, and how to view the implementation of the method that was removed).
 

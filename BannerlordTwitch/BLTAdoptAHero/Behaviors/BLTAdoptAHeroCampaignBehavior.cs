@@ -10,6 +10,7 @@ using BannerlordTwitch.SaveSystem;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.Achievements;
 using BLTAdoptAHero.UI;
+using BLTAdoptAHero.Util;
 using Newtonsoft.Json;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.MapEvents;
@@ -114,6 +115,8 @@ namespace BLTAdoptAHero
             // We put all initialization that relies on loading being complete into this listener
             CampaignEvents.OnGameLoadFinishedEvent.AddNonSerializedListener(this, () =>
             {
+                TroopTreeIndex.BuildIndex();
+
                 // Ensure all existing heroes are registered
                 foreach (var hero in CampaignHelpers.AllHeroes.Where(h => h.IsAdopted()))
                 {
@@ -1142,6 +1145,47 @@ namespace BLTAdoptAHero
 
         public void SetClass(Hero hero, HeroClassDef classDef)
             => GetHeroData(hero).ClassID = classDef?.ID ?? Guid.Empty;
+
+        private CharacterObject SelectClassGuidedTroop(
+            Hero hero,
+            IEnumerable<CharacterObject> configuredTroops,
+            out int fallbackTier)
+        {
+            var heroClass = GetClass(hero);
+            var candidates = configuredTroops
+                .Where(t => t != null)
+                .Distinct()
+                .ToList();
+
+            var safeFallback = new[] { hero.Culture?.BasicTroop }.Concat(CampaignHelpers.AllCultures
+                .Where(c => c.IsMainCulture)
+                .Select(c => c.BasicTroop)
+                .Where(t => t != null && !t.IsMounted));
+            var selection = SmartTroopPolicy.Select(
+                candidates,
+                t => t.Culture == hero.Culture,
+                t => TroopTreeIndex.CanReachHeroClass(t, heroClass),
+                safeFallback,
+                t => t.StringId);
+            var selected = selection.Value;
+            fallbackTier = selection.FallbackTier;
+
+            if (selected != null)
+            {
+                Log.Info($"[SmartRetinue] Hero={hero.Name}; class={heroClass?.Formation ?? "none"}; " +
+                         $"fallback={fallbackTier}; troop={selected.StringId}; " +
+                         TroopTreeIndex.Describe(selected, heroClass));
+            }
+            else
+            {
+                Log.Error($"[SmartRetinue] No troop candidate for {hero.Name} ({heroClass?.Formation ?? "no class"})");
+            }
+
+            return selected;
+        }
+
+        public string DescribeTroopCompatibility(Hero hero, CharacterObject troop)
+            => TroopTreeIndex.Describe(troop, GetClass(hero));
         #endregion
 
         #region Achievement Passive Powers        
@@ -1289,6 +1333,12 @@ namespace BLTAdoptAHero
              PropertyOrder(3), UsedImplicitly]
             public bool UseEliteMilitiaTroops { get; set; } = true;
 
+            [LocDisplayName("{=BLTHireByClass}Hire By Hero Class"),
+             LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
+             LocDescription("{=BLTHireByClassDesc}Hire and upgrade troops along paths compatible with the adopted hero's class."),
+             PropertyOrder(5), UsedImplicitly]
+            public bool HireByHeroClass { get; set; }
+
             public void GenerateDocumentation(IDocumentationGenerator generator)
             {
                 generator.PropertyValuePair("{=UhUpH8C8}Max retinue".Translate(), $"{MaxRetinueSize}");
@@ -1300,6 +1350,7 @@ namespace BLTAdoptAHero
                 if (UseEliteTroops) allowed.Add("{=3gumlthG}Elite troops".Translate());
                 if (UseMilitiaTroops) allowed.Add("{=MilitiaTag}Militia troops".Translate());
                 if (UseEliteMilitiaTroops) allowed.Add("{=EliteMilitiaTag}Elite militia troops".Translate());
+                if (HireByHeroClass) allowed.Add("{=BLTHireByClass}Hire By Hero Class".Translate());
                 generator.PropertyValuePair("{=uL7MfYPc}Allowed".Translate(), string.Join(", ", allowed));
             }
         }
@@ -1313,12 +1364,15 @@ namespace BLTAdoptAHero
                     var troopTypes = new List<CharacterObject>();
                     if (settings.UseBasicTroops && c.BasicTroop != null) troopTypes.Add(c.BasicTroop);
                     if (settings.UseEliteTroops && c.EliteBasicTroop != null) troopTypes.Add(c.EliteBasicTroop);
-                    if (settings.UseMilitiaTroops && (c.MeleeMilitiaTroop != null && c.RangedMilitiaTroop != null)) troopTypes.Add(c.MeleeMilitiaTroop); troopTypes.Add(c.RangedMilitiaTroop);
-                    if (settings.UseEliteMilitiaTroops && (c.MeleeEliteMilitiaTroop != null && c.RangedEliteMilitiaTroop != null)) troopTypes.Add(c.MeleeEliteMilitiaTroop); troopTypes.Add(c.RangedEliteMilitiaTroop);
+                    if (settings.UseMilitiaTroops && c.MeleeMilitiaTroop != null) troopTypes.Add(c.MeleeMilitiaTroop);
+                    if (settings.UseMilitiaTroops && c.RangedMilitiaTroop != null) troopTypes.Add(c.RangedMilitiaTroop);
+                    if (settings.UseEliteMilitiaTroops && c.MeleeEliteMilitiaTroop != null) troopTypes.Add(c.MeleeEliteMilitiaTroop);
+                    if (settings.UseEliteMilitiaTroops && c.RangedEliteMilitiaTroop != null) troopTypes.Add(c.RangedEliteMilitiaTroop);
                     return troopTypes;
                 })
-                // At least 2 upgrade tiers available
-                .Where(c => (c.UpgradeTargets?.FirstOrDefault()?.UpgradeTargets?.Any() == true) || ((settings.UseMilitiaTroops || settings.UseEliteMilitiaTroops) && (c == c.Culture.MeleeMilitiaTroop || c == c.Culture.RangedMilitiaTroop || c == c.Culture.MeleeEliteMilitiaTroop || c == c.Culture.RangedEliteMilitiaTroop)))
+                // Accept every root with a valid path. Looking only at the first branch
+                // excluded otherwise valid custom and overhaul troop trees.
+                .Where(c => c?.UpgradeTargets?.Any() == true || ((settings.UseMilitiaTroops || settings.UseEliteMilitiaTroops) && (c == c?.Culture?.MeleeMilitiaTroop || c == c?.Culture?.RangedMilitiaTroop || c == c?.Culture?.MeleeEliteMilitiaTroop || c == c?.Culture?.RangedEliteMilitiaTroop)))
                 .ToList();
 
             if (!availableTroops.Any())
@@ -1341,12 +1395,17 @@ namespace BLTAdoptAHero
                 // first fill in any missing ones
                 if (heroRetinue.Count < effectiveMaxRetinue)
                 {
-                    var troopType = availableTroops
-                        .Shuffle()
-                        // Sort same culture units to the front if required, but still include other units in-case the hero
-                        // culture doesn't contain the requires units
-                        .OrderBy(c => settings.UseHeroesCultureUnits && c.Culture != hero.Culture)
-                        .FirstOrDefault();
+                    var troopType = settings.HireByHeroClass
+                        ? SelectClassGuidedTroop(hero, availableTroops, out _)
+                        : availableTroops.Shuffle()
+                            .OrderBy(c => settings.UseHeroesCultureUnits && c.Culture != hero.Culture)
+                            .FirstOrDefault();
+
+                    if (troopType == null)
+                    {
+                        results.Add("{=BLTNoCompatibleTroop}No compatible troop path could be found for this hero class.".Translate());
+                        break;
+                    }
 
                     int cost = settings.GetTierCost(0);
                     if (totalCost + cost > heroGold)
@@ -1371,10 +1430,21 @@ namespace BLTAdoptAHero
                     // upgrade the lowest tier unit
                     var retinueToUpgrade = heroRetinue
                         .OrderBy(h => h.TroopType.Tier)
-                        .FirstOrDefault(t => t.TroopType.UpgradeTargets?.Any() == true);
+                        .FirstOrDefault(t => t.TroopType.UpgradeTargets?.Any() == true &&
+                            (!settings.HireByHeroClass || TroopTreeIndex.SelectCompatibleUpgrade(t.TroopType, GetClass(hero)) != null));
 
                     if (retinueToUpgrade != null)
                     {
+                        var oldTroopType = retinueToUpgrade.TroopType;
+                        var upgradedTroopType = settings.HireByHeroClass
+                            ? TroopTreeIndex.SelectCompatibleUpgrade(oldTroopType, GetClass(hero))
+                            : oldTroopType.UpgradeTargets.SelectRandom();
+                        if (upgradedTroopType == null)
+                        {
+                            results.Add("{=BLTNoCompatibleUpgrade}No class-compatible upgrade path remains.".Translate());
+                            break;
+                        }
+
                         int cost = settings.GetTierCost(retinueToUpgrade.Level);
                         if (totalCost + cost > heroGold)
                         {
@@ -1390,9 +1460,9 @@ namespace BLTAdoptAHero
 
                         totalCost += cost;
 
-                        var oldTroopType = retinueToUpgrade.TroopType;
-                        retinueToUpgrade.TroopType = oldTroopType.UpgradeTargets.SelectRandom();
+                        retinueToUpgrade.TroopType = upgradedTroopType;
                         retinueToUpgrade.Level++;
+                        Log.Info($"[SmartRetinue] {hero.Name}: {oldTroopType.StringId} -> {upgradedTroopType.StringId}");
                         if (retinueChanges.TryGetValue(retinueToUpgrade, out var upgradeRecord))
                         {
                             retinueChanges[retinueToUpgrade] =
@@ -1580,6 +1650,12 @@ namespace BLTAdoptAHero
              PropertyOrder(3), UsedImplicitly]
             public bool UseEliteMilitiaTroops { get; set; } = true;
 
+            [LocDisplayName("{=BLTHireByClass}Hire By Hero Class"),
+             LocCategory("Troop Types", "{=qYhM3gcn}Troop Types"),
+             LocDescription("{=BLTHireByClassDesc}Hire and upgrade troops along paths compatible with the adopted hero's class."),
+             PropertyOrder(5), UsedImplicitly]
+            public bool HireByHeroClass { get; set; }
+
             public void GenerateDocumentation(IDocumentationGenerator generator)
             {
                 generator.PropertyValuePair("{=UhUpH8C8}Max secondary retinue".Translate(), $"{MaxRetinue2Size}");
@@ -1591,6 +1667,7 @@ namespace BLTAdoptAHero
                 if (UseEliteTroops) allowed.Add("{=3gumlthG}Elite troops".Translate());
                 if (UseMilitiaTroops) allowed.Add("{=MilitiaTag}Militia troops".Translate());
                 if (UseEliteMilitiaTroops) allowed.Add("{=EliteMilitiaTag}Elite militia troops".Translate());
+                if (HireByHeroClass) allowed.Add("{=BLTHireByClass}Hire By Hero Class".Translate());
                 generator.PropertyValuePair("{=uL7MfYPc}Allowed".Translate(), string.Join(", ", allowed));
             }
         }
@@ -1604,12 +1681,15 @@ namespace BLTAdoptAHero
                     var troopTypes = new List<CharacterObject>();
                     if (settings.UseBasicTroops && c.BasicTroop != null) troopTypes.Add(c.BasicTroop);
                     if (settings.UseEliteTroops && c.EliteBasicTroop != null) troopTypes.Add(c.EliteBasicTroop);
-                    if (settings.UseMilitiaTroops && (c.MeleeMilitiaTroop != null && c.RangedMilitiaTroop != null)) troopTypes.Add(c.MeleeMilitiaTroop); troopTypes.Add(c.RangedMilitiaTroop);
-                    if (settings.UseEliteMilitiaTroops && (c.MeleeEliteMilitiaTroop != null && c.RangedEliteMilitiaTroop != null)) troopTypes.Add(c.MeleeEliteMilitiaTroop); troopTypes.Add(c.RangedEliteMilitiaTroop);
+                    if (settings.UseMilitiaTroops && c.MeleeMilitiaTroop != null) troopTypes.Add(c.MeleeMilitiaTroop);
+                    if (settings.UseMilitiaTroops && c.RangedMilitiaTroop != null) troopTypes.Add(c.RangedMilitiaTroop);
+                    if (settings.UseEliteMilitiaTroops && c.MeleeEliteMilitiaTroop != null) troopTypes.Add(c.MeleeEliteMilitiaTroop);
+                    if (settings.UseEliteMilitiaTroops && c.RangedEliteMilitiaTroop != null) troopTypes.Add(c.RangedEliteMilitiaTroop);
                     return troopTypes;
                 })
-                // At least 2 upgrade tiers available
-                .Where(c => (c.UpgradeTargets?.FirstOrDefault()?.UpgradeTargets?.Any() == true) || ((settings.UseMilitiaTroops || settings.UseEliteMilitiaTroops) && (c == c.Culture.MeleeMilitiaTroop || c == c.Culture.RangedMilitiaTroop || c == c.Culture.MeleeEliteMilitiaTroop || c == c.Culture.RangedEliteMilitiaTroop)))
+                // Accept every root with a valid path. Looking only at the first branch
+                // excluded otherwise valid custom and overhaul troop trees.
+                .Where(c => c?.UpgradeTargets?.Any() == true || ((settings.UseMilitiaTroops || settings.UseEliteMilitiaTroops) && (c == c?.Culture?.MeleeMilitiaTroop || c == c?.Culture?.RangedMilitiaTroop || c == c?.Culture?.MeleeEliteMilitiaTroop || c == c?.Culture?.RangedEliteMilitiaTroop)))
                 .ToList();
 
             if (!availableTroops.Any())
@@ -1633,12 +1713,17 @@ namespace BLTAdoptAHero
                 // first fill in any missing ones
                 if (heroretinue2.Count < effectiveMaxRetinue2)
                 {
-                    var troopType = availableTroops
-                        .Shuffle()
-                        // Sort same culture units to the front if required, but still include other units in-case the hero
-                        // culture doesn't contain the requires units
-                        .OrderBy(c => settings.UseHeroesCultureUnits && c.Culture != hero.Culture)
-                        .FirstOrDefault();
+                    var troopType = settings.HireByHeroClass
+                        ? SelectClassGuidedTroop(hero, availableTroops, out _)
+                        : availableTroops.Shuffle()
+                            .OrderBy(c => settings.UseHeroesCultureUnits && c.Culture != hero.Culture)
+                            .FirstOrDefault();
+
+                    if (troopType == null)
+                    {
+                        results.Add("{=BLTNoCompatibleTroop}No compatible troop path could be found for this hero class.".Translate());
+                        break;
+                    }
 
                     int cost = settings.GetTierCost(0);
                     if (totalCost + cost > heroGold)
@@ -1663,10 +1748,21 @@ namespace BLTAdoptAHero
                     // upgrade the lowest tier unit
                     var Retinue2ToUpgrade = heroretinue2
                         .OrderBy(h => h.TroopType.Tier)
-                        .FirstOrDefault(t => t.TroopType.UpgradeTargets?.Any() == true);
+                        .FirstOrDefault(t => t.TroopType.UpgradeTargets?.Any() == true &&
+                            (!settings.HireByHeroClass || TroopTreeIndex.SelectCompatibleUpgrade(t.TroopType, GetClass(hero)) != null));
 
                     if (Retinue2ToUpgrade != null)
                     {
+                        var oldTroopType = Retinue2ToUpgrade.TroopType;
+                        var upgradedTroopType = settings.HireByHeroClass
+                            ? TroopTreeIndex.SelectCompatibleUpgrade(oldTroopType, GetClass(hero))
+                            : oldTroopType.UpgradeTargets.SelectRandom();
+                        if (upgradedTroopType == null)
+                        {
+                            results.Add("{=BLTNoCompatibleUpgrade}No class-compatible upgrade path remains.".Translate());
+                            break;
+                        }
+
                         int cost = settings.GetTierCost(Retinue2ToUpgrade.Level);
                         if (totalCost + cost > heroGold)
                         {
@@ -1682,9 +1778,9 @@ namespace BLTAdoptAHero
 
                         totalCost += cost;
 
-                        var oldTroopType = Retinue2ToUpgrade.TroopType;
-                        Retinue2ToUpgrade.TroopType = oldTroopType.UpgradeTargets.SelectRandom();
+                        Retinue2ToUpgrade.TroopType = upgradedTroopType;
                         Retinue2ToUpgrade.Level++;
+                        Log.Info($"[SmartRetinue2] {hero.Name}: {oldTroopType.StringId} -> {upgradedTroopType.StringId}");
                         if (retinue2Changes.TryGetValue(Retinue2ToUpgrade, out var upgradeRecord))
                         {
                             retinue2Changes[Retinue2ToUpgrade] =

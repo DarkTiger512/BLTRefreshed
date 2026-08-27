@@ -235,10 +235,13 @@
     <None Include="Templates\ActionTemplate.cs" />
     <None Include="Templates\BehaviorTemplate.cs" />
     <Compile Include="Util\AgentExtensions.cs" />
+    <Compile Include="Util\CycleSafeGraph.cs" />
     <Compile Include="Util\ConsoleCommands.cs" />
     <Compile Include="Util\HeroExtensions.cs" />
     <Compile Include="Util\Patches.cs" />
+    <Compile Include="Util\SmartTroopPolicy.cs" />
     <Compile Include="Util\TournamentHelpers.cs" />
+    <Compile Include="Util\TroopTreeIndex.cs" />
     <Compile Include="Util\UIExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

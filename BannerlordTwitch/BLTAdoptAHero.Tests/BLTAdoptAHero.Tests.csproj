@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\BLTAdoptAHero\Util\CycleSafeGraph.cs" Link="CycleSafeGraph.cs" />
+    <Compile Include="..\BLTAdoptAHero\Util\SmartTroopPolicy.cs" Link="SmartTroopPolicy.cs" />
+  </ItemGroup>
+</Project>

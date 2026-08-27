@@ -500,6 +500,20 @@ namespace BLTAdoptAHero
                 }
             }
 
+            // Class-guided retinues need a class destination. Prefer the configured infantry class
+            // when adoption did not explicitly choose one, without relying on a version-specific GUID.
+            if (classDef == null)
+            {
+                classDef = BLTAdoptAHeroModule.HeroClassConfig.ValidClasses.FirstOrDefault(c =>
+                    string.Equals(c.Formation, "Infantry", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(c.Formation, "HeavyInfantry", StringComparison.OrdinalIgnoreCase));
+                if (classDef != null)
+                {
+                    BLTAdoptAHeroCampaignBehavior.Current.SetClass(newHero, classDef);
+                    Log.Info($"AdoptAHero: Auto-assigned {classDef.Name} class to {userName}");
+                }
+            }
+
             // Setup skills first, THEN name, as skill changes can generate feed messages for adopted characters
             string oldName = newHero.Name.ToString();
             BLTAdoptAHeroCampaignBehavior.Current.InitAdoptedHero(newHero, userName);

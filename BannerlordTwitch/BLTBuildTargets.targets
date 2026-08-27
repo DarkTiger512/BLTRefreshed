@@ -14,7 +14,7 @@
         </SubModuleOverrides>
     </ItemGroup>
 
-    <Target Name="WriteAssemblyInfo" BeforeTargets="BeforeCompile">
+    <Target Name="WriteAssemblyInfo" BeforeTargets="PrepareForBuild;BeforeCompile">
         <ItemGroup>
             <AssemblyAttributes Include="AssemblyTitle">
                 <_Parameter1>$(AssemblyName)</_Parameter1>
@@ -85,7 +85,7 @@
         <ReplaceFileText File="$(OutputModuleRoot)\SubModule.xml" Regex="%(SubModuleOverrides.Regex)" ReplacementText="%(SubModuleOverrides.Replacement)" />
     </Target>
     
-    <Target Name="DeployToGameDirectory" DependsOnTargets="SetModuleVersion" AfterTargets="AfterBuild" Condition="Exists('$(DeployDir)..')">
+    <Target Name="DeployToGameDirectory" DependsOnTargets="SetModuleVersion" AfterTargets="AfterBuild" Condition="'$(DeployToGame)' == 'true' AND Exists('$(DeployDir)..')">
         <Message Importance="High" Text="[BLT DEPLOY] Copying $(AssemblyName) staged files to game directory..." />
         <ItemGroup>
             <FilesToDeploy Include="$(OutputModuleRoot)**\*" />
@@ -101,8 +101,25 @@
     </Target>
     
     <Target Name="Package" DependsOnTargets="SetModuleVersion">
-        <Message Importance="High" Text="[BLT PACKAGE] Creating deployment package $(PackageFullPath)..." />
-        <Delete Files="$(PackageFullPath)" ContinueOnError="true"/>
-        <Exec Command="C:\bin\7zr.exe a &quot;$(PackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure" WorkingDirectory="$(OutputConfigRoot)"/>
+        <PropertyGroup>
+            <ArchiverExe Condition="Exists('C:\bin\7zr.exe')">C:\bin\7zr.exe</ArchiverExe>
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files\7-Zip\7z.exe')">C:\Program Files\7-Zip\7z.exe</ArchiverExe>
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files (x86)\7-Zip\7z.exe')">C:\Program Files (x86)\7-Zip\7z.exe</ArchiverExe>
+            <ArchiverExe Condition="'$(ArchiverExe)' == '' AND Exists('C:\Program Files\WinRAR\WinRAR.exe')">C:\Program Files\WinRAR\WinRAR.exe</ArchiverExe>
+            <ArchiverType Condition="$(ArchiverExe.Contains('7z'))">7zip</ArchiverType>
+            <ArchiverType Condition="$(ArchiverExe.Contains('WinRAR'))">winrar</ArchiverType>
+            <PackageExtension Condition="'$(ArchiverType)' == '7zip'">.7z</PackageExtension>
+            <PackageExtension Condition="'$(ArchiverType)' == 'winrar'">.rar</PackageExtension>
+            <DynamicPackageName Condition="$(Configuration.StartsWith('Debug'))">BLT-v$(ModuleVersion)-For-Game-Version-v$(GameVersion)-Debug$(PackageExtension)</DynamicPackageName>
+            <DynamicPackageName Condition="$(Configuration.StartsWith('Release'))">BLT-v$(ModuleVersion)-For-Game-Version-v$(GameVersion)$(PackageExtension)</DynamicPackageName>
+            <DynamicPackageFullPath>$(OutputPackageRoot)$(DynamicPackageName)</DynamicPackageFullPath>
+            <ArchiverArgs Condition="'$(ArchiverType)' == '7zip'">a &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure</ArchiverArgs>
+            <ArchiverArgs Condition="'$(ArchiverType)' == 'winrar'">a -r &quot;$(DynamicPackageFullPath)&quot; BannerlordTwitch BLTAdoptAHero BLTBuffet BLTConfigure</ArchiverArgs>
+        </PropertyGroup>
+        <Error Condition="'$(ArchiverExe)' == ''" Text="No supported archiver found. Install 7-Zip or WinRAR, or build with CreatePackage=false." />
+        <Message Importance="High" Text="[BLT PACKAGE] Creating $(DynamicPackageName) with $(ArchiverType)..." />
+        <MakeDir Directories="$(OutputPackageRoot)" />
+        <Delete Files="$(DynamicPackageFullPath)" ContinueOnError="true"/>
+        <Exec Command="&quot;$(ArchiverExe)&quot; $(ArchiverArgs)" WorkingDirectory="$(OutputConfigRoot)"/>
     </Target>
 </Project>

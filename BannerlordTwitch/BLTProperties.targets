@@ -31,10 +31,6 @@
         <BANNERLORD_GAME_DIR Condition=" '$(BANNERLORD_GAME_DIR)' == '' ">C:\Program Files (x86)\Steam\steamapps\common\Mount &amp; Blade II Bannerlord</BANNERLORD_GAME_DIR>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(UseBannerlordReferenceAssemblies)' == 'true'">
-        <PackageReference Include="Bannerlord.ReferenceAssemblies" Version="$(BannerlordRefVersion)" />
-    </ItemGroup>
-
     <ItemGroup Condition="'$(UseBannerlordReferenceAssemblies)' != 'true'">
         <Reference Include="$(BANNERLORD_GAME_DIR)\bin\Win64_Shipping_Client\TaleWorlds.AchievementSystem.dll">
             <HintPath>$(BANNERLORD_GAME_DIR)\bin\Win64_Shipping_Client\TaleWorlds.AchievementSystem.dll</HintPath>
@@ -275,6 +271,8 @@
 
     <PropertyGroup>
         <DeployDir>$(BANNERLORD_GAME_DIR)\Modules\$(AssemblyName)\</DeployDir>
+        <DeployToGame Condition="'$(DeployToGame)' == ''">false</DeployToGame>
+        <CreatePackage Condition="'$(CreatePackage)' == ''">false</CreatePackage>
     </PropertyGroup>
 
     <PropertyGroup Condition="$(Configuration.StartsWith('Debug'))">
