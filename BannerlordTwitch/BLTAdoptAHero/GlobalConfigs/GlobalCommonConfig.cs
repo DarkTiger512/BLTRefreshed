@@ -99,7 +99,7 @@ namespace BLTAdoptAHero
 
         [LocDisplayName("Map Panel Corner"), LocDescription("Corner used by the OBS campaign-map panel."),
          LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(2)]
-        public CampaignMapPanelCorner MapPanelCorner { get; set; } = CampaignMapPanelCorner.TopRight;
+        public CampaignMapPanelCorner MapPanelCorner { get; set; } = CampaignMapPanelCorner.TopLeft;
 
         [LocDisplayName("Map Width Percent"), LocDescription("Map panel width as a percentage of the overlay."),
          LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(3), Range(15, 100)]
