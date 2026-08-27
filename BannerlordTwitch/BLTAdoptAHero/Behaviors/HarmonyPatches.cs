@@ -1340,7 +1340,10 @@ namespace BLTAdoptAHero
         #region Raiding Null Patch
 
     [HarmonyPatch(typeof(SetPartyAiAction), nameof(SetPartyAiAction.GetActionForRaidingSettlement),
-        new[] { typeof(MobileParty), typeof(Settlement), typeof(MobileParty.NavigationType), typeof(bool) })]
+        new[]
+        {
+            typeof(MobileParty), typeof(Settlement), typeof(MobileParty.NavigationType), typeof(bool), typeof(bool)
+        })]
     public static class RaidNullSettlementPatch
     {
         [HarmonyPrefix]

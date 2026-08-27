@@ -183,9 +183,17 @@ namespace BLTAdoptAHero
         {
             if (harmony == null)
             {
-                harmony = new Harmony("mod.bannerlord.bltadoptahero");
-                harmony.PatchAll(); 
-                NavalHarmonyPatches.ApplyIfAvailable(harmony);
+                try
+                {
+                    harmony = new Harmony("mod.bannerlord.bltadoptahero");
+                    harmony.PatchAll();
+                    NavalHarmonyPatches.ApplyIfAvailable(harmony);
+                }
+                catch (Exception e)
+                {
+                    Log.Exception("BLTAdoptAHero Harmony startup", e);
+                    harmony = null;
+                }
             }
         }
 
