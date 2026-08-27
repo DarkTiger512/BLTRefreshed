@@ -36,7 +36,9 @@ namespace BLTAdoptAHero.Util
                 terminals.AddRange(Find(child, getChildren, new HashSet<T>(path, comparer), comparer));
             }
 
-            return terminals.Count == 0 ? new[] { node } : terminals;
+            // A closed cycle is not a terminal destination. Returning the current node here
+            // made cyclic mod trees appear to have a valid endpoint.
+            return terminals;
         }
     }
 }

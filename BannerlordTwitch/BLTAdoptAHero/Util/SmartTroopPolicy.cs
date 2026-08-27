@@ -4,41 +4,101 @@ using System.Linq;
 
 namespace BLTAdoptAHero.Util
 {
+    /// <summary>Engine-independent ordering shared by hiring, upgrading and class conversion.</summary>
     public static class SmartTroopPolicy
     {
+        public enum SmartTroopRole { Unknown, InfantryFamily, FootRanged, Cavalry, HorseArcher }
+
+        public static SmartTroopRole InterpretRole(string formation, bool mounted)
+        {
+            string normalized = formation?.Replace(" ", string.Empty).ToLowerInvariant() ?? string.Empty;
+            if (normalized == "horsearcher") return SmartTroopRole.HorseArcher;
+            if (mounted) return SmartTroopRole.Cavalry;
+            return normalized switch
+            {
+                "ranged" or "archer" or "crossbow" => SmartTroopRole.FootRanged,
+                "infantry" or "heavyinfantry" or "skirmisher" => SmartTroopRole.InfantryFamily,
+                "cavalry" or "lightcavalry" or "heavycavalry" => SmartTroopRole.Cavalry,
+                _ => SmartTroopRole.Unknown
+            };
+        }
+
+        public static bool CanAfford(int availableGold, int committedCost, int nextCost) =>
+            nextCost >= 0 && committedCost >= 0 && committedCost <= availableGold - nextCost;
+
         public readonly struct Selection<T>
         {
-            public Selection(T value, int fallbackTier)
+            public Selection(T value, int fallbackTier, int score, IReadOnlyList<string> rejections)
             {
                 Value = value;
                 FallbackTier = fallbackTier;
+                Score = score;
+                Rejections = rejections ?? Array.Empty<string>();
             }
 
             public T Value { get; }
             public int FallbackTier { get; }
+            public int Score { get; }
+            public IReadOnlyList<string> Rejections { get; }
         }
 
-        public static Selection<T> Select<T>(
-            IEnumerable<T> candidates,
-            Func<T, bool> sameCulture,
-            Func<T, bool> classCompatible,
-            IEnumerable<T> safeFallback,
-            Func<T, string> stableKey)
+        public static Selection<T> Select<T>(IEnumerable<T> candidates, Func<T, bool> sameCulture,
+            Func<T, bool> classCompatible, IEnumerable<T> safeFallback, Func<T, string> stableKey,
+            Func<T, int> compatibilityScore = null)
         {
-            var available = candidates.Where(value => value != null).Distinct().ToList();
-            T First(IEnumerable<T> source) => source.OrderBy(stableKey, StringComparer.Ordinal).FirstOrDefault();
+            compatibilityScore ??= _ => 0;
+            var available = Clean(candidates).ToList();
+            var rejections = new List<string>();
 
-            var selected = First(available.Where(value => sameCulture(value) && classCompatible(value)));
-            if (selected != null) return new Selection<T>(selected, 1);
+            var selected = Best(available.Where(v => sameCulture(v) && classCompatible(v)), compatibilityScore, stableKey);
+            if (selected != null) return Result(selected, 1, compatibilityScore, rejections);
+            rejections.Add("tier 1 rejected: no same-culture class-compatible path");
 
-            selected = First(available.Where(classCompatible));
-            if (selected != null) return new Selection<T>(selected, 2);
+            selected = Best(available.Where(classCompatible), compatibilityScore, stableKey);
+            if (selected != null) return Result(selected, 2, compatibilityScore, rejections);
+            rejections.Add("tier 2 rejected: no cross-culture class-compatible path");
 
-            selected = First(available.Where(sameCulture));
-            if (selected != null) return new Selection<T>(selected, 3);
+            selected = Best(available.Where(sameCulture), compatibilityScore, stableKey);
+            if (selected != null) return Result(selected, 3, compatibilityScore, rejections);
+            rejections.Add("tier 3 rejected: no same-culture path");
 
-            selected = First(safeFallback.Where(value => value != null));
-            return new Selection<T>(selected, 4);
+            selected = Best(Clean(safeFallback), compatibilityScore, stableKey);
+            if (selected == null) rejections.Add("tier 4 rejected: no safe fallback");
+            return Result(selected, 4, compatibilityScore, rejections);
         }
+
+        public static Selection<T> SelectCompatible<T>(IEnumerable<T> candidates,
+            Func<T, bool> classCompatible, Func<T, int> compatibilityScore, Func<T, string> stableKey)
+        {
+            var available = Clean(candidates).ToList();
+            var compatible = available.Where(classCompatible).ToList();
+            var selected = Best(compatible, compatibilityScore, stableKey);
+            var rejected = available.Except(compatible)
+                .Select(v => $"{stableKey(v)} rejected: incompatible destination").ToList();
+            return Result(selected, 0, compatibilityScore, rejected);
+        }
+
+        public static Selection<T> SelectClosestTier<T>(IEnumerable<T> candidates, int targetTier,
+            Func<T, bool> sameCulture, Func<T, bool> classCompatible, Func<T, int> tier,
+            Func<T, int> compatibilityScore, Func<T, string> stableKey)
+        {
+            var selected = Clean(candidates).Where(classCompatible)
+                .OrderBy(v => Math.Abs(tier(v) - targetTier))
+                .ThenByDescending(sameCulture)
+                .ThenByDescending(compatibilityScore)
+                .ThenBy(stableKey, StringComparer.Ordinal)
+                .FirstOrDefault();
+            var rejected = selected == null ? new[] { "no compatible class-change replacement" } : Array.Empty<string>();
+            return Result(selected, 0, compatibilityScore, rejected);
+        }
+
+        private static IEnumerable<T> Clean<T>(IEnumerable<T> values) =>
+            (values ?? Array.Empty<T>()).Where(v => v != null).Distinct();
+
+        private static T Best<T>(IEnumerable<T> values, Func<T, int> score, Func<T, string> key) =>
+            values.OrderByDescending(score).ThenBy(key, StringComparer.Ordinal).FirstOrDefault();
+
+        private static Selection<T> Result<T>(T value, int fallbackTier, Func<T, int> score,
+            IReadOnlyList<string> rejections) => new(value, fallbackTier, value == null ? 0 : score(value), rejections);
     }
 }

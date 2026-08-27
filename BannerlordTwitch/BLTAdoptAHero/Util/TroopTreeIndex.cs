@@ -7,21 +7,27 @@ using TaleWorlds.Core;
 
 namespace BLTAdoptAHero.Util
 {
-    /// <summary>
-    /// Cycle-safe index of every loaded troop and the terminal formations reachable from it.
-    /// The index intentionally uses loaded CharacterObjects rather than hard-coded culture trees so
-    /// total conversions and troop-tree mods participate automatically.
-    /// </summary>
+    /// <summary>Cycle-safe index and the single source of truth for smart-retinue selection.</summary>
     public static class TroopTreeIndex
     {
         public sealed class TroopInfo
         {
             public CharacterObject Troop { get; internal set; }
-            public IReadOnlyList<CharacterObject> TerminalDestinations { get; internal set; }
-                = Array.Empty<CharacterObject>();
+            public IReadOnlyList<CharacterObject> TerminalDestinations { get; internal set; } = Array.Empty<CharacterObject>();
+            public IReadOnlyCollection<FormationClass> ReachableFormations { get; internal set; } = Array.Empty<FormationClass>();
+            public int MaximumReachableTier { get; internal set; }
+            public bool CanReach(HeroClassDef heroClass) => CompatibleTerminals(heroClass).Any();
+            public IEnumerable<CharacterObject> CompatibleTerminals(HeroClassDef heroClass) =>
+                TerminalDestinations.Where(t => IsCompatible(t, InterpretRole(heroClass)));
+        }
 
-            public bool CanReach(HeroClassDef heroClass) =>
-                TerminalDestinations.Any(t => IsFormationCompatible(t, heroClass));
+        public sealed class SelectionResult
+        {
+            public SmartTroopPolicy.SmartTroopRole InterpretedRole { get; internal set; }
+            public CharacterObject SelectedTroop { get; internal set; }
+            public int FallbackTier { get; internal set; }
+            public int Score { get; internal set; }
+            public IReadOnlyList<string> RejectionReasons { get; internal set; } = Array.Empty<string>();
         }
 
         private static readonly Dictionary<CharacterObject, TroopInfo> Index = new();
@@ -30,18 +36,18 @@ namespace BLTAdoptAHero.Util
         public static void BuildIndex()
         {
             Index.Clear();
-
             foreach (var troop in CharacterObject.All.Where(t => t != null && !t.IsHero))
             {
+                var terminals = CycleSafeGraph.FindTerminals(troop,
+                    t => t.UpgradeTargets ?? Array.Empty<CharacterObject>());
                 Index[troop] = new TroopInfo
                 {
                     Troop = troop,
-                    TerminalDestinations = CycleSafeGraph.FindTerminals(
-                        troop,
-                        t => t.UpgradeTargets ?? Array.Empty<CharacterObject>())
+                    TerminalDestinations = terminals,
+                    ReachableFormations = terminals.Select(t => t.DefaultFormationClass).Distinct().ToList(),
+                    MaximumReachableTier = terminals.Any() ? terminals.Max(t => t.Tier) : troop.Tier
                 };
             }
-
             isBuilt = true;
             Log.Info($"[TroopTreeIndex] Indexed {Index.Count} loaded troops");
         }
@@ -52,59 +58,108 @@ namespace BLTAdoptAHero.Util
             return troop != null && Index.TryGetValue(troop, out var info) ? info : null;
         }
 
-        public static bool CanReachHeroClass(CharacterObject troop, HeroClassDef heroClass)
+        public static bool CanReachHeroClass(CharacterObject troop, HeroClassDef heroClass) =>
+            GetTroopInfo(troop)?.CanReach(heroClass) == true;
+
+        public static SelectionResult SelectHire(Hero hero, HeroClassDef heroClass,
+            IEnumerable<CharacterObject> candidates, IEnumerable<CharacterObject> safeFallback)
         {
-            if (heroClass == null) return true;
-            return GetTroopInfo(troop)?.CanReach(heroClass) == true;
+            var role = InterpretRole(heroClass);
+            WarnUnknown(heroClass, role);
+            var selection = SmartTroopPolicy.Select(candidates,
+                t => t.Culture == hero?.Culture,
+                t => IsCompatiblePath(t, role),
+                safeFallback.Where(t => IsCompatiblePath(t, SmartTroopPolicy.SmartTroopRole.InfantryFamily)),
+                t => t.StringId,
+                t => CompatibleScore(t, role));
+            return ToResult(role, selection);
         }
 
-        public static CharacterObject SelectCompatibleUpgrade(CharacterObject troop, HeroClassDef heroClass)
+        public static SelectionResult SelectCompatibleUpgrade(CharacterObject troop, HeroClassDef heroClass)
         {
-            if (troop?.UpgradeTargets == null) return null;
+            var role = InterpretRole(heroClass);
+            WarnUnknown(heroClass, role);
+            var selection = SmartTroopPolicy.SelectCompatible(troop?.UpgradeTargets,
+                t => IsCompatiblePath(t, role),
+                t => CompatibleScore(t, role),
+                t => t.StringId);
+            return ToResult(role, selection);
+        }
 
-            return troop.UpgradeTargets
-                .Where(t => CanReachHeroClass(t, heroClass))
-                .OrderBy(t => t.StringId, StringComparer.Ordinal)
-                .FirstOrDefault();
+        public static SelectionResult SelectClosestReplacement(CharacterObject troop, HeroClassDef heroClass,
+            CultureObject preferredCulture)
+        {
+            EnsureBuilt();
+            var role = InterpretRole(heroClass);
+            WarnUnknown(heroClass, role);
+            var selection = SmartTroopPolicy.SelectClosestTier(Index.Keys, troop?.Tier ?? 0,
+                t => t.Culture == preferredCulture,
+                t => IsCompatiblePath(t, role),
+                t => t.Tier,
+                t => CompatibleScore(t, role),
+                t => t.StringId);
+            return ToResult(role, selection);
         }
 
         public static string Describe(CharacterObject troop, HeroClassDef heroClass)
         {
             var info = GetTroopInfo(troop);
             if (info == null) return $"{troop?.StringId ?? "<null>"}: not indexed";
-
+            var role = InterpretRole(heroClass);
             string destinations = string.Join(", ", info.TerminalDestinations.Select(t =>
-                $"{t.StringId}[{t.DefaultFormationClass}{(t.IsMounted ? ",mounted" : "")}]"));
-            return $"{troop.StringId} -> {destinations}; class={heroClass?.Formation ?? "none"}; compatible={info.CanReach(heroClass)}";
+                $"{t.StringId}[T{t.Tier},{t.DefaultFormationClass}{(t.IsMounted ? ",mounted" : "")}]"));
+            return $"{troop.StringId} -> {destinations}; class={heroClass?.Formation ?? "none"}; " +
+                   $"role={role}; maxTier={info.MaximumReachableTier}; compatible={IsCompatiblePath(troop, role)}";
+        }
+
+        public static SmartTroopPolicy.SmartTroopRole InterpretRole(HeroClassDef heroClass) =>
+            SmartTroopPolicy.InterpretRole(heroClass?.Formation, heroClass?.Mounted == true);
+
+        private static bool IsCompatiblePath(CharacterObject troop, SmartTroopPolicy.SmartTroopRole role) =>
+            GetTroopInfo(troop)?.TerminalDestinations.Any(t => IsCompatible(t, role)) == true;
+
+        private static int CompatibleScore(CharacterObject troop, SmartTroopPolicy.SmartTroopRole role)
+        {
+            var info = GetTroopInfo(troop);
+            var compatible = info?.TerminalDestinations.Where(t => IsCompatible(t, role)).ToList();
+            return compatible?.Any() == true ? compatible.Max(t => t.Tier) : -1;
+        }
+
+        private static bool IsCompatible(CharacterObject troop, SmartTroopPolicy.SmartTroopRole role)
+        {
+            if (troop == null) return false;
+            var actual = troop.DefaultFormationClass;
+            return role switch
+            {
+                SmartTroopPolicy.SmartTroopRole.HorseArcher => troop.IsMounted && actual == FormationClass.HorseArcher,
+                SmartTroopPolicy.SmartTroopRole.Cavalry => troop.IsMounted &&
+                    actual is FormationClass.Cavalry or FormationClass.LightCavalry or FormationClass.HeavyCavalry,
+                SmartTroopPolicy.SmartTroopRole.FootRanged => !troop.IsMounted && actual == FormationClass.Ranged,
+                SmartTroopPolicy.SmartTroopRole.InfantryFamily or SmartTroopPolicy.SmartTroopRole.Unknown => !troop.IsMounted &&
+                    actual is FormationClass.Infantry or FormationClass.HeavyInfantry or FormationClass.Skirmisher,
+                _ => false
+            };
+        }
+
+        private static SelectionResult ToResult(SmartTroopPolicy.SmartTroopRole role,
+            SmartTroopPolicy.Selection<CharacterObject> selection) => new()
+        {
+            InterpretedRole = role,
+            SelectedTroop = selection.Value,
+            FallbackTier = selection.FallbackTier,
+            Score = selection.Score,
+            RejectionReasons = selection.Rejections
+        };
+
+        private static void WarnUnknown(HeroClassDef heroClass, SmartTroopPolicy.SmartTroopRole role)
+        {
+            if (role == SmartTroopPolicy.SmartTroopRole.Unknown)
+                Log.Info($"[TroopTreeIndex] WARNING: unknown hero formation '{heroClass?.Formation ?? "<none>"}'; using safe foot-infantry family");
         }
 
         private static void EnsureBuilt()
         {
             if (!isBuilt) BuildIndex();
-        }
-
-        private static bool IsFormationCompatible(CharacterObject troop, HeroClassDef heroClass)
-        {
-            if (troop == null || heroClass == null || string.IsNullOrWhiteSpace(heroClass.Formation))
-                return true;
-
-            string formation = heroClass.Formation.Replace(" ", string.Empty).ToLowerInvariant();
-            FormationClass actual = troop.DefaultFormationClass;
-
-            return formation switch
-            {
-                "infantry" or "heavyinfantry" =>
-                    !troop.IsMounted && actual is FormationClass.Infantry or FormationClass.HeavyInfantry,
-                "ranged" or "archer" or "crossbow" =>
-                    !troop.IsMounted && actual == FormationClass.Ranged,
-                "skirmisher" => !troop.IsMounted && actual == FormationClass.Skirmisher,
-                "cavalry" or "lightcavalry" or "heavycavalry" =>
-                    troop.IsMounted && actual is FormationClass.Cavalry or FormationClass.LightCavalry or FormationClass.HeavyCavalry,
-                "horsearcher" => troop.IsMounted && actual == FormationClass.HorseArcher,
-                _ => Enum.TryParse(heroClass.Formation, true, out FormationClass desired)
-                    ? actual == desired
-                    : true
-            };
         }
     }
 }

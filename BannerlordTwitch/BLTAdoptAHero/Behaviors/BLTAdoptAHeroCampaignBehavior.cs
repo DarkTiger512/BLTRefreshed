@@ -56,6 +56,8 @@ namespace BLTAdoptAHero
             public int EquipmentTier { get; set; } = -2;
             public Guid EquipmentClassID { get; set; }
             public Guid ClassID { get; set; }
+            public bool RetinueClassGuided { get; set; }
+            public bool Retinue2ClassGuided { get; set; }
             public string Owner { get; set; }
             public int Iteration { get; set; }
             public bool IsRetiredOrDead { get; set; }
@@ -128,6 +130,7 @@ namespace BLTAdoptAHero
                 {
                     // Remove invalid troop types (delayed to ensure all troop types are loaded)
                     data.Retinue.RemoveAll(r => r.TroopType == null);
+                    data.Retinue2.RemoveAll(r => r.TroopType == null);
 
                     // Remove invalid custom items
                     int removedCustomItems = data.CustomItems.RemoveAll(
@@ -357,7 +360,15 @@ namespace BLTAdoptAHero
                         => usedHeroList[kv.Key], kv => kv.Value);
                     foreach (var r in heroData.Values.SelectMany(h => h.Retinue))
                     {
-                        r.TroopType = usedCharList[r.SavedTroopIndex];
+                        r.TroopType = usedCharList != null && r.SavedTroopIndex >= 0 && r.SavedTroopIndex < usedCharList.Count
+                            ? usedCharList[r.SavedTroopIndex]
+                            : null;
+                    }
+                    foreach (var r in heroData.Values.SelectMany(h => h.Retinue2))
+                    {
+                        r.TroopType = usedCharList != null && r.SavedTroopIndex >= 0 && r.SavedTroopIndex < usedCharList.Count
+                            ? usedCharList[r.SavedTroopIndex]
+                            : null;
                     }
                 }
 
@@ -387,9 +398,10 @@ namespace BLTAdoptAHero
 
                     // Remove any we couldn't replace
                     int removedRetinue = data.Retinue.RemoveAll(r => r.TroopType == null);
+                    int removedRetinue2 = data.Retinue2.RemoveAll(r => r.TroopType == null);
 
                     // Compensate with gold for each one lost
-                    data.Gold += removedRetinue * 50000;
+                    data.Gold += (removedRetinue + removedRetinue2) * 50000;
 
                     // Update EquipmentTier if it isn't set
                     if (data.EquipmentTier == -2)
@@ -433,7 +445,9 @@ namespace BLTAdoptAHero
 
                 // Need to explicitly write out the Heroes and CharacterObjects so we can look them up by index in the HeroData
                 var usedCharList = heroData.Values
-                    .SelectMany(h => h.Retinue.Select(r => r.TroopType)).Distinct().ToList();
+                    .SelectMany(h => h.Retinue.Select(r => r.TroopType)
+                        .Concat(h.Retinue2.Select(r => r.TroopType)))
+                    .Where(t => t != null).Distinct().ToList();
                 dataStore.SyncData("UsedCharacterObjectList", ref usedCharList);
 
                 var usedHeroList = heroData.Keys.ToList();
@@ -442,6 +456,10 @@ namespace BLTAdoptAHero
                 // var heroImtes = heroData.Values.SelectMany(h => h.)
 
                 foreach (var r in heroData.Values.SelectMany(h => h.Retinue))
+                {
+                    r.SavedTroopIndex = usedCharList.IndexOf(r.TroopType);
+                }
+                foreach (var r in heroData.Values.SelectMany(h => h.Retinue2))
                 {
                     r.SavedTroopIndex = usedCharList.IndexOf(r.TroopType);
                 }
@@ -1144,7 +1162,11 @@ namespace BLTAdoptAHero
             => BLTAdoptAHeroModule.HeroClassConfig.GetClass(GetHeroData(hero).ClassID);
 
         public void SetClass(Hero hero, HeroClassDef classDef)
-            => GetHeroData(hero).ClassID = classDef?.ID ?? Guid.Empty;
+        {
+            var data = GetHeroData(hero);
+            data.ClassID = classDef?.ID ?? Guid.Empty;
+            ConvertClassGuidedRetinues(hero, classDef, data);
+        }
 
         private CharacterObject SelectClassGuidedTroop(
             Hero hero,
@@ -1161,19 +1183,14 @@ namespace BLTAdoptAHero
                 .Where(c => c.IsMainCulture)
                 .Select(c => c.BasicTroop)
                 .Where(t => t != null && !t.IsMounted));
-            var selection = SmartTroopPolicy.Select(
-                candidates,
-                t => t.Culture == hero.Culture,
-                t => TroopTreeIndex.CanReachHeroClass(t, heroClass),
-                safeFallback,
-                t => t.StringId);
-            var selected = selection.Value;
+            var selection = TroopTreeIndex.SelectHire(hero, heroClass, candidates, safeFallback);
+            var selected = selection.SelectedTroop;
             fallbackTier = selection.FallbackTier;
 
             if (selected != null)
             {
                 Log.Info($"[SmartRetinue] Hero={hero.Name}; class={heroClass?.Formation ?? "none"}; " +
-                         $"fallback={fallbackTier}; troop={selected.StringId}; " +
+                         $"role={selection.InterpretedRole}; fallback={fallbackTier}; score={selection.Score}; troop={selected.StringId}; " +
                          TroopTreeIndex.Describe(selected, heroClass));
             }
             else
@@ -1182,6 +1199,37 @@ namespace BLTAdoptAHero
             }
 
             return selected;
+        }
+
+        private void ConvertClassGuidedRetinues(Hero hero, HeroClassDef heroClass, HeroData data)
+        {
+            if (heroClass == null) return;
+            if (data.RetinueClassGuided)
+                ConvertIncompatible(data.Retinue, hero, heroClass, r => r.TroopType, (r, t) => r.TroopType = t, "Retinue");
+            if (data.Retinue2ClassGuided)
+                ConvertIncompatible(data.Retinue2, hero, heroClass, r => r.TroopType, (r, t) => r.TroopType = t, "Retinue2");
+        }
+
+        private static void ConvertIncompatible<T>(IEnumerable<T> retinue, Hero hero, HeroClassDef heroClass,
+            Func<T, CharacterObject> getTroop, Action<T, CharacterObject> setTroop, string label)
+        {
+            foreach (var entry in retinue.Where(r => getTroop(r) != null &&
+                         !TroopTreeIndex.CanReachHeroClass(getTroop(r), heroClass)).ToList())
+            {
+                var oldTroop = getTroop(entry);
+                var replacement = TroopTreeIndex.SelectClosestReplacement(oldTroop, heroClass, hero.Culture);
+                if (replacement.SelectedTroop == null)
+                {
+                    Log.Info($"[Smart{label}] WARNING: class change left {oldTroop.StringId} unchanged: " +
+                                string.Join("; ", replacement.RejectionReasons));
+                    continue;
+                }
+
+                setTroop(entry, replacement.SelectedTroop);
+                Log.Info($"[Smart{label}] Class change converted {oldTroop.StringId} -> " +
+                         $"{replacement.SelectedTroop.StringId}; role={replacement.InterpretedRole}; " +
+                         $"oldTier={oldTroop.Tier}; newTier={replacement.SelectedTroop.Tier}; gold=0");
+            }
         }
 
         public string DescribeTroopCompatibility(Hero hero, CharacterObject troop)
@@ -1357,6 +1405,11 @@ namespace BLTAdoptAHero
 
         public (bool success, string status) UpgradeRetinue(Hero hero, RetinueSettings settings, int maxToUpgrade)
         {
+            var heroDataForGuidance = GetHeroData(hero);
+            heroDataForGuidance.RetinueClassGuided = settings.HireByHeroClass;
+            if (settings.HireByHeroClass)
+                ConvertClassGuidedRetinues(hero, GetClass(hero), heroDataForGuidance);
+
             var availableTroops = CampaignHelpers.AllCultures
                 .Where(c => settings.IncludeBanditUnits || c.IsMainCulture)
                 .SelectMany(c =>
@@ -1408,7 +1461,7 @@ namespace BLTAdoptAHero
                     }
 
                     int cost = settings.GetTierCost(0);
-                    if (totalCost + cost > heroGold)
+                    if (!SmartTroopPolicy.CanAfford(heroGold, totalCost, cost))
                     {
                         results.Add(retinueChanges.IsEmpty()
                             ? Naming.NotEnoughGold(cost, heroGold)
@@ -1431,13 +1484,13 @@ namespace BLTAdoptAHero
                     var retinueToUpgrade = heroRetinue
                         .OrderBy(h => h.TroopType.Tier)
                         .FirstOrDefault(t => t.TroopType.UpgradeTargets?.Any() == true &&
-                            (!settings.HireByHeroClass || TroopTreeIndex.SelectCompatibleUpgrade(t.TroopType, GetClass(hero)) != null));
+                            (!settings.HireByHeroClass || TroopTreeIndex.SelectCompatibleUpgrade(t.TroopType, GetClass(hero)).SelectedTroop != null));
 
                     if (retinueToUpgrade != null)
                     {
                         var oldTroopType = retinueToUpgrade.TroopType;
                         var upgradedTroopType = settings.HireByHeroClass
-                            ? TroopTreeIndex.SelectCompatibleUpgrade(oldTroopType, GetClass(hero))
+                            ? TroopTreeIndex.SelectCompatibleUpgrade(oldTroopType, GetClass(hero)).SelectedTroop
                             : oldTroopType.UpgradeTargets.SelectRandom();
                         if (upgradedTroopType == null)
                         {
@@ -1446,7 +1499,7 @@ namespace BLTAdoptAHero
                         }
 
                         int cost = settings.GetTierCost(retinueToUpgrade.Level);
-                        if (totalCost + cost > heroGold)
+                        if (!SmartTroopPolicy.CanAfford(heroGold, totalCost, cost))
                         {
                             results.Add(retinueChanges.IsEmpty()
                                 ? Naming.NotEnoughGold(cost, heroGold)
@@ -1674,6 +1727,11 @@ namespace BLTAdoptAHero
 
         public (bool success, string status) UpgradeRetinue2(Hero hero, Retinue2Settings settings, int maxToUpgrade)
         {
+            var heroDataForGuidance = GetHeroData(hero);
+            heroDataForGuidance.Retinue2ClassGuided = settings.HireByHeroClass;
+            if (settings.HireByHeroClass)
+                ConvertClassGuidedRetinues(hero, GetClass(hero), heroDataForGuidance);
+
             var availableTroops = CampaignHelpers.AllCultures
                 .Where(c => settings.IncludeBanditUnits || c.IsMainCulture)
                 .SelectMany(c =>
@@ -1726,7 +1784,7 @@ namespace BLTAdoptAHero
                     }
 
                     int cost = settings.GetTierCost(0);
-                    if (totalCost + cost > heroGold)
+                    if (!SmartTroopPolicy.CanAfford(heroGold, totalCost, cost))
                     {
                         results.Add(retinue2Changes.IsEmpty()
                             ? Naming.NotEnoughGold(cost, heroGold)
@@ -1749,13 +1807,13 @@ namespace BLTAdoptAHero
                     var Retinue2ToUpgrade = heroretinue2
                         .OrderBy(h => h.TroopType.Tier)
                         .FirstOrDefault(t => t.TroopType.UpgradeTargets?.Any() == true &&
-                            (!settings.HireByHeroClass || TroopTreeIndex.SelectCompatibleUpgrade(t.TroopType, GetClass(hero)) != null));
+                            (!settings.HireByHeroClass || TroopTreeIndex.SelectCompatibleUpgrade(t.TroopType, GetClass(hero)).SelectedTroop != null));
 
                     if (Retinue2ToUpgrade != null)
                     {
                         var oldTroopType = Retinue2ToUpgrade.TroopType;
                         var upgradedTroopType = settings.HireByHeroClass
-                            ? TroopTreeIndex.SelectCompatibleUpgrade(oldTroopType, GetClass(hero))
+                            ? TroopTreeIndex.SelectCompatibleUpgrade(oldTroopType, GetClass(hero)).SelectedTroop
                             : oldTroopType.UpgradeTargets.SelectRandom();
                         if (upgradedTroopType == null)
                         {
@@ -1764,7 +1822,7 @@ namespace BLTAdoptAHero
                         }
 
                         int cost = settings.GetTierCost(Retinue2ToUpgrade.Level);
-                        if (totalCost + cost > heroGold)
+                        if (!SmartTroopPolicy.CanAfford(heroGold, totalCost, cost))
                         {
                             results.Add(retinue2Changes.IsEmpty()
                                 ? Naming.NotEnoughGold(cost, heroGold)
