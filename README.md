@@ -116,5 +116,15 @@ The Release config build process generates a sharable package which will be foun
 As per the LGPL (under which this code is licensed), deployment of changes in binary form also requires sharing of the source code of those changes. This is most easily done by using GitHub forks to make changes, and pushing changes back to them. 
 
 # Credits
-This is a continuation of the project, originally started by somebody else.
-Original: [Author](https://github.com/billw2012) | [Github](https://github.com/billw2012/Bannerlord-Twitch) | [Discord](https://discord.gg/q2p4eHsxFn) | [Youtube](https://www.youtube.com/@billw2461)
+
+BLTRefreshed stands on years of work by the Bannerlord Twitch community. Special thanks to the principal contributors who built and carried the project through its earlier chapters:
+
+- [billw2012](https://github.com/billw2012), the original creator of [Bannerlord Twitch](https://github.com/billw2012/Bannerlord-Twitch) and its core framework.
+- [Randomchair22](https://github.com/Randomchair22), who continued modernizing and maintaining BLT and provided the upstream foundation for this version.
+- [kanboru](https://github.com/kanboru), for extensive development across the project's systems and features.
+- [jazz-ttv](https://github.com/jazz-ttv), for maintaining and expanding the project and its community-facing releases.
+- [DarkTiger512](https://github.com/DarkTiger512), for BLTRefreshed, its smart troop progression work, and the current continuation.
+
+Thank you as well to every developer, tester, streamer, translator, and community member who contributed code, reports, feedback, or time. The complete record of individual code contributions remains available in the repository history.
+
+Original community links: [Discord](https://discord.gg/q2p4eHsxFn) | [YouTube](https://www.youtube.com/@billw2461)
