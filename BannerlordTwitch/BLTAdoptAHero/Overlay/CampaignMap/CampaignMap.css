@@ -24,3 +24,21 @@
 .map-label.castle { fill: #b8bec0; font-size: 1.18px; }
 .hero-marker circle { stroke: #fff5d0; stroke-width: .48; filter: drop-shadow(0 0 1px rgba(255,220,120,.85)); }
 .hero-label { fill: #fff3c4; font-weight: 700; font-size: 1.65px; paint-order: stroke; stroke: #05090c; stroke-width: .58px; }
+
+/* Small OBS browser sources are normally dedicated to the map. Let the panel
+   use their canvas instead of applying the desktop-overlay percentage twice. */
+@media (max-width: 1000px), (max-height: 650px) {
+    #campaign-map-container {
+        width: 97vw;
+        max-height: 76vh;
+        top: 1.5vh;
+        right: 1.5vw;
+        bottom: auto;
+        left: auto;
+    }
+    #campaign-map-container.corner-TopLeft { left: 1.5vw; right: auto; }
+    #campaign-map-container.corner-BottomLeft { bottom: 1.5vh; left: 1.5vw; right: auto; top: auto; }
+    #campaign-map-container.corner-BottomRight { bottom: 1.5vh; right: 1.5vw; left: auto; top: auto; }
+    #campaign-map-svg { max-height: calc(76vh - 28px); }
+    #map-header { font-size: 1em; padding: 5px 10px; }
+}
