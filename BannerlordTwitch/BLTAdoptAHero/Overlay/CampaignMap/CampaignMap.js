@@ -121,7 +121,7 @@ $(document).ready(function () {
         if (index < 0) { index = 0; lastCameraSwitch = now; }
         else if (now - lastCameraSwitch >= interval) { index = (index + 1) % ordered.length; lastCameraSwitch = now; }
         const target = ordered[index]; cameraTargetId = target.Id;
-        const zoom = Math.max(1, settings.SpectatorZoom || 2.5), map = geography.Projection;
+        const zoom = Math.max(1, settings.SpectatorZoom || 3.5), map = geography.Projection;
         const width = map.Width / zoom, height = map.Height / zoom;
         animateCamera({
             x: clamp(target.X - width / 2, 0, map.Width - width),

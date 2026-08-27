@@ -135,7 +135,7 @@ namespace BLTAdoptAHero
 
         [LocDisplayName("Spectator Zoom"), LocDescription("Map zoom while following an adopted hero. 1 is the complete campaign map."),
          LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(11), Range(1, 6)]
-        public float MapSpectatorZoom { get; set; } = 2.5f;
+        public float MapSpectatorZoom { get; set; } = 3.5f;
 
         [LocDisplayName("Spectator Cycle Time"), LocDescription("Seconds before the map camera moves to the next adopted hero."),
          LocCategory("Campaign Map", "Campaign Map"), PropertyOrder(12), Range(3, 60)]

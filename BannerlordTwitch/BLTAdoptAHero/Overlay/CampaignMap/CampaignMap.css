@@ -1,19 +1,23 @@
 #campaign-map-container {
     --map-width: 42vw; --map-max-height: 38vh; --map-opacity: .9;
-    position: fixed; top: 1.5vh; right: 1.5vw; width: var(--map-width); max-height: var(--map-max-height);
+    position: relative; align-self: flex-end; width: var(--map-width); max-height: var(--map-max-height); margin-bottom: .55em;
     z-index: 9999; display: flex; flex-direction: column; overflow: hidden; pointer-events: none;
     color: #eee7d6; background: rgba(8, 13, 18, var(--map-opacity));
     border: 1px solid rgba(180, 194, 202, .42); border-radius: 5px; box-shadow: 0 4px 18px rgba(0, 0, 0, .62);
 }
 #campaign-map-container.hidden { display: none; }
-#campaign-map-container.corner-TopLeft { top: 1.5vh; left: 1.5vw; right: auto; bottom: auto; }
-#campaign-map-container.corner-TopRight { top: 1.5vh; right: 1.5vw; left: auto; bottom: auto; }
-#campaign-map-container.corner-BottomLeft { bottom: 1.5vh; left: 1.5vw; right: auto; top: auto; }
-#campaign-map-container.corner-BottomRight { bottom: 1.5vh; right: 1.5vw; left: auto; top: auto; }
+#campaign-map-container.corner-TopLeft,
+#campaign-map-container.corner-BottomLeft { align-self: flex-start; }
+#campaign-map-container.corner-TopRight,
+#campaign-map-container.corner-BottomRight { align-self: flex-end; }
 #map-header { display: flex; justify-content: space-between; padding: 4px 9px; flex: 0 0 auto; font-size: .85em;
     font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #d9c589;
     background: rgba(0, 0, 0, .34); border-bottom: 1px solid rgba(180, 194, 202, .22); }
 #map-status { color: #aab8bf; font-size: .8em; }
+@media (max-width: 1000px) {
+    #map-header > span:first-child { display: none; }
+    #map-status { margin-left: auto; }
+}
 #campaign-map-stage { min-height: 0; flex: 1 1 auto; display: flex; background: #101b22; }
 #campaign-map-svg { display: block; width: 100%; height: auto; max-height: calc(var(--map-max-height) - 28px); }
 #map-sea { fill: #0d2633; }
@@ -24,21 +28,3 @@
 .map-label.castle { fill: #b8bec0; font-size: 1.18px; }
 .hero-marker circle { stroke: #fff5d0; stroke-width: .48; filter: drop-shadow(0 0 1px rgba(255,220,120,.85)); }
 .hero-label { fill: #fff3c4; font-weight: 700; font-size: 1.65px; paint-order: stroke; stroke: #05090c; stroke-width: .58px; }
-
-/* Small OBS browser sources are normally dedicated to the map. Let the panel
-   use their canvas instead of applying the desktop-overlay percentage twice. */
-@media (max-width: 1000px), (max-height: 650px) {
-    #campaign-map-container {
-        width: 97vw;
-        max-height: 76vh;
-        top: 1.5vh;
-        right: 1.5vw;
-        bottom: auto;
-        left: auto;
-    }
-    #campaign-map-container.corner-TopLeft { left: 1.5vw; right: auto; }
-    #campaign-map-container.corner-BottomLeft { bottom: 1.5vh; left: 1.5vw; right: auto; top: auto; }
-    #campaign-map-container.corner-BottomRight { bottom: 1.5vh; right: 1.5vw; left: auto; top: auto; }
-    #campaign-map-svg { max-height: calc(76vh - 28px); }
-    #map-header { font-size: 1em; padding: 5px 10px; }
-}
