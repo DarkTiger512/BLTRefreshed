@@ -41,6 +41,7 @@ namespace BLTAdoptAHero
      CategoryOrder("Shouts", 12),
      CategoryOrder("Campaign Map", 13),
      CategoryOrder("Stream Objectives", 14),
+     CategoryOrder("Cursed Artifact", 15),
      LocDisplayName("{=vDjnDtoL}Common Config")]
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
@@ -165,6 +166,38 @@ namespace BLTAdoptAHero
         [LocDisplayName("Overlay Background Opacity"), LocDescription("Opacity of the objectives panel background."),
          LocCategory("Stream Objectives", "Stream Objectives"), PropertyOrder(7), Range(0, 1)]
         public float StreamObjectivesOverlayOpacity { get; set; } = .92f;
+
+        [LocDisplayName("Enable Cursed Artifact"), LocDescription("Allow the automatic cursed-artifact campaign event."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(1)]
+        public bool CursedArtifactEnabled { get; set; } = true;
+
+        [LocDisplayName("Daily Trigger Chance %"), LocDescription("Chance rolled once per campaign day when no curse is active and cooldown has elapsed."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(2), Range(0, 100)]
+        public float CursedArtifactDailyChancePercent { get; set; } = 1f;
+
+        [LocDisplayName("Cooldown Days"), LocDescription("Minimum campaign days between successful curse triggers."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(3), Range(0, 3650)]
+        public int CursedArtifactCooldownDays { get; set; } = 30;
+
+        [LocDisplayName("Required Battle Wins"), LocDescription("Qualifying campaign victories the cursed hero must personally participate in."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(4), Range(1, 1000)]
+        public int CursedArtifactRequiredWins { get; set; } = 5;
+
+        [LocDisplayName("Outgoing Damage Penalty %"), LocDescription("Percentage less damage dealt by the cursed hero."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(5), Range(0, 95)]
+        public float CursedArtifactOutgoingPenaltyPercent { get; set; } = 20f;
+
+        [LocDisplayName("Incoming Damage Increase %"), LocDescription("Percentage additional damage received by the cursed hero."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(6), Range(0, 400)]
+        public float CursedArtifactIncomingIncreasePercent { get; set; } = 25f;
+
+        [LocDisplayName("Artifact Weapon Bonus"), LocDescription("Fixed bounded damage, speed, and missile-speed modifier for Cursed Legacy weapons."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(7), Range(0, 100)]
+        public int CursedArtifactWeaponBonus { get; set; } = 35;
+
+        [LocDisplayName("Diagnostic Logging"), LocDescription("Log trigger rolls and rejected or duplicate battle callbacks."),
+         LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(8)]
+        public bool CursedArtifactDiagnostics { get; set; } = false;
 
         [LocDisplayName("{=}Uncap Maximum Foodstocks in Settlements"),
          LocCategory("General", "{=C5T6nnix}General"),

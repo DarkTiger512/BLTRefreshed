@@ -172,7 +172,22 @@ Assert(StreamObjectivePolicy.IsComplete(survive), "Individual survivor target fa
 Assert(!StreamObjectivePolicy.RecordSurvival(survive, "battle-4", new[] { ("B", "b", "Hero B", false) }),
     "Duplicate survival battles must not count twice.");
 
-Console.WriteLine("Smart troop, ammunition, campaign map, and stream objective policy tests passed.");
+var curse = new CurseRecord { HeroId = "hero-1", Owner = "Viewer" };
+Assert(CursedArtifactPolicy.RecordVictory(curse, "battle-1", 2) && curse.QualifyingWins == 1 && curse.Status == CurseLifecycle.Active,
+    "First cursed victory failed.");
+Assert(!CursedArtifactPolicy.RecordVictory(curse, "battle-1", 2) && curse.QualifyingWins == 1,
+    "Duplicate cursed battle callbacks must not advance progress.");
+Assert(CursedArtifactPolicy.RecordVictory(curse, "battle-2", 2) && curse.Status == CurseLifecycle.CompletedPendingReward,
+    "Curse must enter pending-reward state at the configured target.");
+Assert(Math.Abs(CursedArtifactPolicy.OutgoingMultiplier(20) - .8f) < .001f &&
+       Math.Abs(CursedArtifactPolicy.IncomingMultiplier(25) - 1.25f) < .001f,
+    "Curse combat multipliers failed.");
+Assert(Math.Abs(CursedArtifactPolicy.OutgoingMultiplier(500) - .05f) < .001f &&
+       Math.Abs(CursedArtifactPolicy.IncomingMultiplier(500) - 5f) < .001f &&
+       CursedArtifactPolicy.ClampRequiredWins(0) == 1,
+    "Unsafe curse settings must be clamped.");
+
+Console.WriteLine("Smart troop, ammunition, campaign map, stream objective, and cursed artifact policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);
 internal sealed record Label(string Id, bool Hero, bool Town);

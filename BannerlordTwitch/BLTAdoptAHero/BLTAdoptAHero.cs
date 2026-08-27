@@ -213,6 +213,7 @@ namespace BLTAdoptAHero
                     var campaignStarter = (CampaignGameStarter)gameStarterObject;
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
                     campaignStarter.AddBehavior(new StreamObjectivesBehavior());
+                    campaignStarter.AddBehavior(new CursedArtifactBehavior());
                     campaignStarter.AddBehavior(new BLTTournamentQueueBehavior());
                     campaignStarter.AddBehavior(new BLTCustomItemsCampaignBehavior());
                     campaignStarter.AddBehavior(new BLTClanBehavior());

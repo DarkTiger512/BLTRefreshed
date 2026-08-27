@@ -89,6 +89,7 @@ namespace BLTAdoptAHero
 
                 BLTAdoptAHeroCampaignBehavior.SetAgentStartingHealth(hero, agent);
                 activeHeroes.Add(hero);
+                Behaviors.CursedArtifactBehavior.Current?.MarkMissionParticipant(hero);
             });
         }
 

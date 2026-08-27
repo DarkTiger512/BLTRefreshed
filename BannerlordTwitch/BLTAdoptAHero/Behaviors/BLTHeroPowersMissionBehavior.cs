@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BannerlordTwitch.Helpers;
 using BLTAdoptAHero.Annotations;
@@ -229,6 +230,21 @@ namespace BLTAdoptAHero
                 handlers => handlers.DoDamage(attackerAgent, victimAgent, param),
                 handlers => handlers.TakeDamage(victimAgent, attackerAgent, param)))
                 return;
+
+            // Apply the saved curse once, after ordinary passive powers have produced their final damage.
+            var curse = Behaviors.CursedArtifactBehavior.Current;
+            float curseMultiplier = 1f;
+            var attackerHero = (attackerAgent?.IsMount == true ? attackerAgent.RiderAgent : attackerAgent)?.GetAdoptedHero();
+            var victimHero = (victimAgent?.IsMount == true ? victimAgent.RiderAgent : victimAgent)?.GetAdoptedHero();
+            if (attackerHero != null) curseMultiplier *= curse?.OutgoingDamageMultiplier(attackerHero) ?? 1f;
+            if (victimHero != null) curseMultiplier *= curse?.IncomingDamageMultiplier(victimHero) ?? 1f;
+            if (Math.Abs(curseMultiplier - 1f) > .0001f)
+            {
+                param.blow.BaseMagnitude *= curseMultiplier;
+                param.blow.InflictedDamage = Math.Max(0, (int)(param.blow.InflictedDamage * curseMultiplier));
+                param.collisionData.BaseMagnitude = param.blow.BaseMagnitude;
+                param.collisionData.InflictedDamage = param.blow.InflictedDamage;
+            }
 
             blow = param.blow;
             collisionData = param.collisionData;
