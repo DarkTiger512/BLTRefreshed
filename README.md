@@ -123,7 +123,6 @@ BLTRefreshed stands on years of work by the Bannerlord Twitch community. Special
 - [Randomchair22](https://github.com/Randomchair22), who continued modernizing and maintaining BLT and provided the upstream foundation for this version.
 - [kanboru](https://github.com/kanboru), for extensive development across the project's systems and features.
 - [jazz-ttv](https://github.com/jazz-ttv), for maintaining and expanding the project and its community-facing releases.
-- [DarkTiger512](https://github.com/DarkTiger512), for BLTRefreshed, its smart troop progression work, and the current continuation.
 
 Thank you as well to every developer, tester, streamer, translator, and community member who contributed code, reports, feedback, or time. The complete record of individual code contributions remains available in the repository history.
 
