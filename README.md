@@ -1,9 +1,13 @@
-# [Download](https://github.com/jazz-ttv/Bannerlord-Twitch/releases/tag/4.5.2) | [Discord](https://discord.gg/AnStVFb2jG) | [Github](https://github.com/jazz-ttv/Bannerlord-Twitch) | [Installation Guide](https://youtu.be/ATf5zilwNWk)
+# [Download](https://github.com/DarkTiger512/BLTRefreshed/releases/latest) | [Discord](https://discord.gg/AnStVFb2jG) | [Github](https://github.com/DarkTiger512/BLTRefreshed) | [Installation Guide](https://youtu.be/ATf5zilwNWk)
 
 # Bannerlord Twitch (BLT)
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
 
 # Features
+- **Moderator-Launched Stream Objectives** with shared progress, contributor rewards, and a compact OBS overlay
+- **Class-Guided Retinues** that hire and upgrade troops toward the adopted hero's formation class
+- **Campaign Spectator Map** that follows adopted heroes while preserving the campaign world's geography
+- **Live `!ammo` Command** reporting each ammunition stack from the hero's active mission equipment
 - **Define Channel Point Rewards**, along with their in game effects (using the provided custom built configuration UI), they will be automatically added to your channel for you, and removed again when the game exits
 - **Define Bot Commands** for non Channel Points interactions, with optional limits such as subscriber only commands 
 - Provides an **extensibility framework** allowing for other mods to register action effects and command handlers
