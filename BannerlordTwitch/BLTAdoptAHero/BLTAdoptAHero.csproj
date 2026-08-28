@@ -166,9 +166,12 @@
     <Compile Include="Util\CampaignMapGeometry.cs" />
     <Compile Include="Util\StreamObjectivePolicy.cs" />
     <Compile Include="Util\CursedArtifactPolicy.cs" />
+    <Compile Include="Util\RandomEventPolicy.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.cs" />
     <Compile Include="Behaviors\StreamObjectivesBehavior.cs" />
     <Compile Include="Behaviors\CursedArtifactBehavior.cs" />
+    <Compile Include="Behaviors\ImmortalEncounterBehavior.cs" />
+    <Compile Include="Behaviors\PriestCrusadeBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCommonMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCustomMissionBehavior.cs" />
     <Compile Include="Behaviors\BLTFollowBehavior.cs" />

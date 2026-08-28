@@ -12,5 +12,6 @@
     <Compile Include="..\BLTAdoptAHero\Util\CampaignMapGeometry.cs" Link="CampaignMapGeometry.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\StreamObjectivePolicy.cs" Link="StreamObjectivePolicy.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\CursedArtifactPolicy.cs" Link="CursedArtifactPolicy.cs" />
+    <Compile Include="..\BLTAdoptAHero\Util\RandomEventPolicy.cs" Link="RandomEventPolicy.cs" />
   </ItemGroup>
 </Project>

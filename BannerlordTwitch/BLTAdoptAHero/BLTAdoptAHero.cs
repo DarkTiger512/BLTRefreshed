@@ -214,6 +214,8 @@ namespace BLTAdoptAHero
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
                     campaignStarter.AddBehavior(new StreamObjectivesBehavior());
                     campaignStarter.AddBehavior(new CursedArtifactBehavior());
+                    campaignStarter.AddBehavior(new ImmortalEncounterBehavior());
+                    campaignStarter.AddBehavior(new PriestCrusadeBehavior());
                     campaignStarter.AddBehavior(new BLTTournamentQueueBehavior());
                     campaignStarter.AddBehavior(new BLTCustomItemsCampaignBehavior());
                     campaignStarter.AddBehavior(new BLTClanBehavior());

@@ -405,6 +405,11 @@ namespace BLTAdoptAHero
         public static void SummonInLocation(Hero adoptedHero, Settings settings, ReplyContext context,
             Action<string> onSuccess, Action<string> onFailure)
         {
+            if (Behaviors.ImmortalEncounterBehavior.Current?.CanSummon(settings.OnPlayerSide, out string immortalRestriction) == false)
+            {
+                onFailure(immortalRestriction);
+                return;
+            }
             if (CampaignMission.Current.Location.ContainsCharacter(adoptedHero))
             {
                 onFailure("{=YMiZAluP}You cannot be summoned, you are already here!");
@@ -450,6 +455,7 @@ namespace BLTAdoptAHero
             agent.SetTeam(settings.OnPlayerSide
                 ? missionAgentHandler.Mission.PlayerTeam
                 : missionAgentHandler.Mission.PlayerEnemyTeam, false);
+            Behaviors.ImmortalEncounterBehavior.Current?.MarkMissionParticipant(adoptedHero, settings.OnPlayerSide);
 
             // For player hostile situations we setup a 1v1 fight
             if (!settings.OnPlayerSide)

@@ -42,6 +42,8 @@ namespace BLTAdoptAHero
      CategoryOrder("Campaign Map", 13),
      CategoryOrder("Stream Objectives", 14),
      CategoryOrder("Cursed Artifact", 15),
+     CategoryOrder("Immortal Encounter", 16),
+     CategoryOrder("Priest's Crusade", 17),
      LocDisplayName("{=vDjnDtoL}Common Config")]
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
@@ -198,6 +200,74 @@ namespace BLTAdoptAHero
         [LocDisplayName("Diagnostic Logging"), LocDescription("Log trigger rolls and rejected or duplicate battle callbacks."),
          LocCategory("Cursed Artifact", "Cursed Artifact"), PropertyOrder(8)]
         public bool CursedArtifactDiagnostics { get; set; } = false;
+
+        [LocDisplayName("Enabled"), LocDescription("Allow the automatic Immortal Encounter campaign event."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(1)]
+        public bool ImmortalEncounterEnabled { get; set; } = true;
+
+        [LocDisplayName("Daily Trigger Chance %"), LocDescription("Chance rolled once per eligible campaign day."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(2), Range(0, 100)]
+        public float ImmortalEncounterDailyChancePercent { get; set; } = .2f;
+
+        [LocDisplayName("Cooldown Days"), LocDescription("Minimum campaign days between successfully constructed encounters."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(3), Range(0, 3650)]
+        public int ImmortalEncounterCooldownDays { get; set; } = 90;
+
+        [LocDisplayName("Minimum Player Level"), LocDescription("Minimum main-hero level required."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(4), Range(1, 100)]
+        public int ImmortalEncounterMinimumPlayerLevel { get; set; } = 10;
+
+        [LocDisplayName("Army Strength %"), LocDescription("Enemy troop count relative to the player's current party strength."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(5), Range(1, 500)]
+        public int ImmortalEncounterArmyStrengthPercent { get; set; } = 120;
+
+        [LocDisplayName("Participant Gold Reward"), LocDescription("BLT gold awarded once to each adopted hero who fought on the player's side in a victory."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(6), Range(0, 100000000)]
+        public int ImmortalEncounterGoldReward { get; set; } = 100000;
+
+        [LocDisplayName("Immortal Name"), LocDescription("Display name of the temporary challenger."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(7)]
+        public string ImmortalEncounterName { get; set; } = "The Immortal";
+
+        [LocDisplayName("Cult Name"), LocDescription("Display name of the temporary challenger clan."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(8)]
+        public string ImmortalEncounterCultName { get; set; } = "Cult of the Eternal";
+
+        [LocDisplayName("Diagnostic Logging"), LocDescription("Log trigger rolls, eligibility failures, and lifecycle transitions."),
+         LocCategory("Immortal Encounter", "Immortal Encounter"), PropertyOrder(9)]
+        public bool ImmortalEncounterDiagnostics { get; set; } = false;
+
+        [LocDisplayName("Enabled"), LocDescription("Allow the automatic Priest's Crusade campaign event."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(1)]
+        public bool PriestCrusadeEnabled { get; set; } = true;
+
+        [LocDisplayName("Daily Trigger Chance %"), LocDescription("Chance rolled once per eligible campaign day."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(2), Range(0, 100)]
+        public float PriestCrusadeDailyChancePercent { get; set; } = .5f;
+
+        [LocDisplayName("Cooldown Days"), LocDescription("Minimum campaign days after a successful crusade creation before another may occur."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(3), Range(0, 3650)]
+        public int PriestCrusadeCooldownDays { get; set; } = 60;
+
+        [LocDisplayName("Minimum Kingdom Tier"), LocDescription("Minimum tier of the player's clan while it belongs to a kingdom."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(4), Range(0, 6)]
+        public int PriestCrusadeMinimumKingdomTier { get; set; } = 2;
+
+        [LocDisplayName("Army Strength %"), LocDescription("Crusader troop count relative to target kingdom strength, clamped to 100-1000."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(5), Range(1, 500)]
+        public int PriestCrusadeArmyStrengthPercent { get; set; } = 80;
+
+        [LocDisplayName("Priest Name"), LocDescription("Display name of the crusader leader."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(6)]
+        public string PriestCrusadePriestName { get; set; } = "Father Zealot";
+
+        [LocDisplayName("Crusader Clan Name"), LocDescription("Display name of the persistent independent crusader clan."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(7)]
+        public string PriestCrusadeClanName { get; set; } = "Holy Crusaders";
+
+        [LocDisplayName("Diagnostic Logging"), LocDescription("Log trigger rolls, eligibility failures, and resolution checks."),
+         LocCategory("Priest's Crusade", "Priest's Crusade"), PropertyOrder(8)]
+        public bool PriestCrusadeDiagnostics { get; set; } = false;
 
         [LocDisplayName("{=}Uncap Maximum Foodstocks in Settlements"),
          LocCategory("General", "{=C5T6nnix}General"),
