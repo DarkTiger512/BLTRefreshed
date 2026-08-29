@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Windows.Media;
 using BannerlordTwitch.Localization;
 using JetBrains.Annotations;
 using TwitchLib.Api.Helix.Models.ChannelPoints.CreateCustomReward;
@@ -46,10 +45,10 @@ namespace BannerlordTwitch
          LocDescription("{=Bg62Iggr}Custom background color for the reward"),
          PropertyOrder(5), UsedImplicitly]
         [YamlIgnore]
-        public Color BackgroundColor
+        public string BackgroundColor
         {
-            get => (Color)(ColorConverter.ConvertFromString(BackgroundColorText ?? $"#FF000000") ?? Colors.Black);
-            set => BackgroundColorText = $"#{value.A:X2}{value.R:X2}{value.G:X2}{value.B:X2}";
+            get => string.IsNullOrWhiteSpace(BackgroundColorText) ? "#000000" : BackgroundColorText;
+            set => BackgroundColorText = value;
         }
 
         [LocDisplayName("{=9aESWqlM}Is User Input Required"),
@@ -75,14 +74,13 @@ namespace BannerlordTwitch
          DefaultValue(null), PropertyOrder(9), UsedImplicitly]
         public int? GlobalCooldownSeconds { get; set; }
 
-        private static string WebColor(Color color) => $"#{color.R:X2}{color.G:X2}{color.B:X2}";
         public CreateCustomRewardsRequest GetTwitchSpec() =>
             new()
             {
                 Title = Title?.ToString() ?? string.Empty,
                 Cost = Cost,
                 IsEnabled = IsEnabled,
-                BackgroundColor = WebColor(BackgroundColor),
+                BackgroundColor = BackgroundColor,
                 IsUserInputRequired = IsUserInputRequired,
                 Prompt = Prompt?.ToString() ?? string.Empty,
                 // as we are performing the redemption we don't want to skip the queue

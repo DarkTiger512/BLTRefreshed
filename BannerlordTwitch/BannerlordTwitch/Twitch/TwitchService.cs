@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO.Packaging;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -142,7 +141,7 @@ namespace BannerlordTwitch
             authSettings = AuthSettings.Load();
             if (authSettings == null)
             {
-                throw new Exception($"You need to authorize via the BLT Configure Window, then restart. If the window isn't open then you need to enable the BLTConfigure module.");
+                throw new Exception($"Open the loopback BLT browser configuration URL shown in the log, authorize Twitch, and restart the Twitch service.");
             }
 
             if (authSettings.DebugSpoofAffiliate)

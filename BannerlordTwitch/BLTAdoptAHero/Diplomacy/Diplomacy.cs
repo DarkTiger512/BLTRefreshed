@@ -17,8 +17,6 @@ using TaleWorlds.MountAndBlade;
 using TaleWorlds.Localization;
 using Xceed.Wpf.Toolkit.PropertyGrid.Attributes;
 using BLTAdoptAHero.Actions;
-using System.Windows.Media.Animation;
-using System.Windows;
 
 namespace BLTAdoptAHero
 {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Rewards;
 using BannerlordTwitch.Util;
@@ -25,7 +24,7 @@ using TaleWorlds.MountAndBlade.View;
 using TaleWorlds.CampaignSystem.GameComponents;
 using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Localization;
-using static TaleWorlds.MountAndBlade.Launcher.Library.NativeMessageBox;
+using TaleWorlds.Library;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using BLTAdoptAHero.Models;
 using BLTAdoptAHero.Actions;
@@ -249,7 +248,7 @@ namespace BLTAdoptAHero
             catch (Exception e)
             {
                 Log.Exception(nameof(OnGameStart), e);
-                MessageBox.Show($"Error in {nameof(OnGameStart)}, please report this on the discord: {e}", "Bannerlord Twitch Mod STARTUP ERROR");
+                InformationManager.DisplayMessage(new InformationMessage($"Error in {nameof(OnGameStart)}, please report this on the discord: {e.Message}"));
             }
         }
 

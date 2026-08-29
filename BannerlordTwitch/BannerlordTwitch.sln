@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLTAdoptAHero", "BLTAdoptAH
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLTBuffet", "BLTBuffet\BLTBuffet.csproj", "{9C6729F7-A099-4878-BBBB-EC7911EA50B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLTConfigure", "BLTConfigure\BLTConfigure.csproj", "{BAD5698D-09BD-4C2F-8C93-1DF19BBE29CC}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{6416209A-DA92-4E8E-BE64-A677E16FA042}"
 	ProjectSection(SolutionItems) = preProject
 		BLTBuildTargets.targets = BLTBuildTargets.targets
@@ -36,10 +34,6 @@ Global
 		{9C6729F7-A099-4878-BBBB-EC7911EA50B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C6729F7-A099-4878-BBBB-EC7911EA50B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C6729F7-A099-4878-BBBB-EC7911EA50B0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BAD5698D-09BD-4C2F-8C93-1DF19BBE29CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BAD5698D-09BD-4C2F-8C93-1DF19BBE29CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BAD5698D-09BD-4C2F-8C93-1DF19BBE29CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BAD5698D-09BD-4C2F-8C93-1DF19BBE29CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

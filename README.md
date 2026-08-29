@@ -43,7 +43,7 @@ Viewers can "adopt" an in-game hero of types that can be specified in the config
 2. Unzip the BLT Package to the Bannerlord Modules directory (by default at `C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord\Modules`).
    It should create the `BannerlordTwitch` directory, and the `BannerlordTwitch.dll` should be at `Modules\BannerlordTwitch\bin\Win64_Shipping_Client\BannerlordTwitch.dll`
    ![image](https://user-images.githubusercontent.com/1453936/115397098-9daae880-a1dd-11eb-87c7-0bda9af4c79d.png)
-   It should also create the `BLTAdoptAHero`, `BLTBuffet`, and `BLTConfigure` directories.
+   It should also create the `BLTAdoptAHero` and `BLTBuffet` directories. On the Proton branch, configuration is provided through the loopback browser service instead of `BLTConfigure`.
    
 3. Run the launcher, make sure Harmony loads first and Bannerlord Twitch loads after the game modules and before any BLT extensions:  
    ![image](https://user-images.githubusercontent.com/1453936/116240320-95155d80-a75b-11eb-8920-6e0629ab81b9.png)
@@ -98,6 +98,16 @@ C:\tmp\nuget.exe restore BannerlordTwitch\BannerlordTwitch.sln -PackagesDirector
 - Add `/p:CreatePackage=true` to create a package with 7-Zip or WinRAR.
 - Run the engine-independent smart troop tests with `dotnet run --project BannerlordTwitch\BLTAdoptAHero.Tests\BLTAdoptAHero.Tests.csproj -c Release`.
 - See [BANNERLORD_MODDING_1.4.8.md](BANNERLORD_MODDING_1.4.8.md) for the supported modding surface, lifecycle constraints, Harmony risks, and runtime checklist.
+
+### Steam Proton / Linux branch
+
+`BLT/linux-proton` supports the Windows Bannerlord runtime under Steam Proton; it is not a native Linux port of the game. Its package contains `BannerlordTwitch`, `BLTAdoptAHero`, and `BLTBuffet`. Do not enable the legacy `BLTConfigure` module.
+
+At startup BLT writes the loopback-only OBS overlay and browser-configuration URLs to the BLT log and displays them in game. They normally use `http://127.0.0.1:8087` and `http://127.0.0.1:8088/?token=...`. Open the complete configuration URL, including its temporary token. The editor validates existing YAML before saving, creates timestamped backups, redacts stored Twitch secrets, and can queue a Twitch-service restart. Both services try the next ten ports when their preferred port is occupied. Preferred ports are stored in `Bannerlord-Twitch-Proton.yaml` and exposed through `/api/v1/host`.
+
+The services never bind outside `127.0.0.1`; no firewall rule, administrator access, Winetricks, or Wine registry edit is required. For OBS on the same machine, use the displayed overlay URL as a browser source. Stable Proton and Proton Experimental are supported targets; standalone Wine and Proton-GE are best effort until separately validated.
+
+For local builds, pass `/p:BANNERLORD_GAME_DIR=/path/to/Bannerlord` or use `/p:UseBannerlordReferenceAssemblies=true`. Packaging accepts `/p:ArchiverExe=...` and auto-detects `/usr/bin/7z` or `/usr/bin/zip` on Linux.
 
 ## Updating for a New Game Version
 This is potentially an advanced operation, if any of the hooked functions have changed or been removed then it requires an understanding of function hooking with Harmony, what the previously used function did, and how it can be replaced or its functionality replicated (requiring deep understanding of the mod, and how to view the implementation of the method that was removed).

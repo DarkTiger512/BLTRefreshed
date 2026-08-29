@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Windows;
 using BannerlordTwitch.Models;
 using BannerlordTwitch.Rewards;
 using BannerlordTwitch.Util;
@@ -28,25 +25,16 @@ namespace BannerlordTwitch
 
         private ExtensionReceiverService extensionReceiver;
 
-        [DllImport("user32.dll")]
-        private static extern int SetWindowText(IntPtr hWnd, string text);
-
         private const string ExpectedVersion = "v1.4.8";
 
         static BLTModule()
         {
             if (!GameVersion.IsVersion(ExpectedVersion))
             {
-                MessageBox.Show("{=IO9rnFpk}This build of the mod is for game version {ExpectedVersion}. You are running game version {GameVersion}. Exiting now."
-                    .Translate(
-                        ("ExpectedVersion", ExpectedVersion),
-                        ("GameVersion", GameVersion.GameVersionString)),
-                    "{=Oru6b9Cy}Bannerlord Twitch ERROR".Translate());
+                Log.LogFeedSystem("{=IO9rnFpk}This build of the mod is for game version {ExpectedVersion}. You are running game version {GameVersion}."
+                    .Translate(("ExpectedVersion", ExpectedVersion), ("GameVersion", GameVersion.GameVersionString)));
                 //Application.Current.Shutdown(1);
             }
-
-            // Set a consistent Window title so streaming software can find it
-            SetWindowText(Process.GetCurrentProcess().MainWindowHandle, "Bannerlord Game Window");
 
             MainThreadSync.InitMainThread();
 
@@ -91,7 +79,22 @@ namespace BannerlordTwitch
 
                 ConsoleFeedHub.Register();
 
-                BLTOverlay.BLTOverlay.Start();
+                try
+                {
+                    ProtonConfigurationServer.Start();
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception("BLT browser configuration could not start", ex, noRethrow: true);
+                }
+                try
+                {
+                    BLTOverlay.BLTOverlay.Start();
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception("BLT overlay could not start", ex, noRethrow: true);
+                }
             }
         }
 
@@ -196,13 +199,9 @@ namespace BannerlordTwitch
             catch (Exception e)
             {
                 Log.Exception(nameof(OnGameStart), e);
-                MessageBox.Show(
+                InformationManager.DisplayMessage(new InformationMessage(
                     "{=C0G8s2Lv}Error in {Location}, please report this on the discord: {Error}"
-                        .Translate(
-                            ("Location", $"BannerlordTwitch.{nameof(OnGameStart)}"),
-                            ("Error", e.ToString())
-                            ),
-                    "{=cuXwwHRe}Bannerlord Twitch Mod STARTUP ERROR".Translate());
+                        .Translate(("Location", $"BannerlordTwitch.{nameof(OnGameStart)}"), ("Error", e.Message))));
             }
         }
 
@@ -216,6 +215,13 @@ namespace BannerlordTwitch
         {
             TwitchService?.Dispose();
             TwitchService = null;
+        }
+
+        protected override void OnSubModuleUnloaded()
+        {
+            ProtonConfigurationServer.Stop();
+            BLTOverlay.BLTOverlay.Stop();
+            base.OnSubModuleUnloaded();
         }
 
         public override void OnMissionBehaviorInitialize(Mission mission)

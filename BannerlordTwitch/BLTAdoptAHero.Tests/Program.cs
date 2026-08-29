@@ -210,7 +210,43 @@ Assert(RandomEventPolicy.CrusadeResolved(true, true, true) && RandomEventPolicy.
        RandomEventPolicy.CrusadeResolved(false, true, false) && !RandomEventPolicy.CrusadeResolved(false, true, true),
     "Crusade resolution policy failed.");
 
-Console.WriteLine("Smart troop, ammunition, campaign map, stream objective, cursed artifact, and random-event policy tests passed.");
+Assert(BannerlordTwitch.ProtonCompatibilityPolicy.IsValidPort(8087) &&
+       !BannerlordTwitch.ProtonCompatibilityPolicy.IsValidPort(80), "Proton port validation failed.");
+Assert(BannerlordTwitch.ProtonCompatibilityPolicy.PortsAreSeparated(8087, 8100) &&
+       !BannerlordTwitch.ProtonCompatibilityPolicy.PortsAreSeparated(8087, 8090), "Proton port separation failed.");
+Assert(BannerlordTwitch.ProtonCompatibilityPolicy.PreserveSecret("stored", "") == "stored" &&
+       BannerlordTwitch.ProtonCompatibilityPolicy.PreserveSecret("stored", "new") == "new", "Secret preservation failed.");
+Assert(BannerlordTwitch.ProtonCompatibilityPolicy.IsAllowedOrigin("http://127.0.0.1:8088", 8088) &&
+       !BannerlordTwitch.ProtonCompatibilityPolicy.IsAllowedOrigin("http://evil.example", 8088), "Origin validation failed.");
+
+var repoRoot = new DirectoryInfo(Directory.GetCurrentDirectory());
+while (repoRoot != null && !File.Exists(Path.Combine(repoRoot.FullName, "README.md"))) repoRoot = repoRoot.Parent;
+Assert(repoRoot != null, "Could not locate repository root for Proton source scan.");
+var shippedRoots = new[]
+{
+    Path.Combine(repoRoot!.FullName, "BannerlordTwitch", "BannerlordTwitch", "Overlay"),
+    Path.Combine(repoRoot.FullName, "BannerlordTwitch", "BLTAdoptAHero"),
+    Path.Combine(repoRoot.FullName, "BannerlordTwitch", "BLTBuffet")
+};
+var forbidden = new[] { "DllImport", "System.Windows", "cmd.exe", "netsh", "http://*" };
+var shippedFiles = shippedRoots.SelectMany(path => Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories))
+    .Concat(new[]
+    {
+        Path.Combine(repoRoot.FullName, "BannerlordTwitch", "BannerlordTwitch", "BLTModule.cs"),
+        Path.Combine(repoRoot.FullName, "BannerlordTwitch", "BannerlordTwitch", "BannerlordTwitch.csproj"),
+        Path.Combine(repoRoot.FullName, "BannerlordTwitch", "BLTProperties.targets")
+    });
+foreach (string file in shippedFiles)
+{
+    string relative = Path.GetRelativePath(repoRoot.FullName, file);
+    if (relative.Contains($"BannerlordTwitch{Path.DirectorySeparatorChar}BannerlordTwitch{Path.DirectorySeparatorChar}UI{Path.DirectorySeparatorChar}") &&
+        !relative.EndsWith("BrowserMetadata.cs") && !relative.EndsWith("ExpandAttribute.cs") &&
+        !relative.EndsWith("ParticleEffectItemSource.cs") && !relative.EndsWith("SoundEffectItemSource.cs")) continue;
+    string source = File.ReadAllText(file);
+    Assert(!forbidden.Any(source.Contains), $"Forbidden Proton dependency found in {relative}.");
+}
+
+Console.WriteLine("Smart troop, ammunition, campaign map, stream objective, cursed artifact, random-event, and Proton compatibility policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);
 internal sealed record Label(string Id, bool Hero, bool Town);
