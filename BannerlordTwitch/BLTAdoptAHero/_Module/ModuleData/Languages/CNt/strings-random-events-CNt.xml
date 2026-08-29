@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base type="string">
+  <tags>
+    <tag language="繁體中文" />
+  </tags>
+  <strings>
+    <string id="BLTHireByClass" text="按英雄級別租用" original="Hire By Hero Class" />
+    <string id="BLTHireByClassDesc" text="沿著與被收養的英雄職業相容的路徑僱用和升級部隊。" original="Hire and upgrade troops along paths compatible with the adopted hero's class." />
+    <string id="BLTNoCompatibleTroop" text="找不到此英雄類別的相容部隊路徑。" original="No compatible troop path could be found for this hero class." />
+    <string id="BLTNoCompatibleUpgrade" text="不再有類別相容的升級路徑。" original="No class-compatible upgrade path remains." />
+    <string id="BLTRandomEventsEnabled" text="啟用隨機事件" original="Enable Random Events" />
+    <string id="BLTRandomEventsEnabledDesc" text="所有隨機戰役活動的主開關。禁用此功能可防止任何新的隨機事件開始。" original="Master switch for all random campaign events. Disable this to prevent any new random events from starting." />
+    <string id="BLTCursedArtifactEnabled" text="啟用詛咒神器" original="Enable Cursed Artifact" />
+    <string id="BLTCursedArtifactEnabledDesc" text="允許自動詛咒文物戰役事件。" original="Allow the automatic cursed-artifact campaign event." />
+    <string id="BLTDailyTriggerChance" text="每日觸發機率%" original="Daily Trigger Chance %" />
+    <string id="BLTCursedArtifactChanceDesc" text="每個戰役日都有機會在沒有詛咒啟動和冷卻時間過去的情況下滾動一次。" original="Chance rolled once per campaign day when no curse is active and cooldown has elapsed." />
+    <string id="BLTCooldownDays" text="冷卻天數" original="Cooldown Days" />
+    <string id="BLTCursedArtifactCooldownDesc" text="成功詛咒觸發之間的最短戰役天數。" original="Minimum campaign days between successful curse triggers." />
+    <string id="BLTRequiredBattleWins" text="所需戰鬥勝利數" original="Required Battle Wins" />
+    <string id="BLTRequiredBattleWinsDesc" text="被詛咒的英雄必須親自參加的合格戰役勝利。" original="Qualifying campaign victories the cursed hero must personally participate in." />
+    <string id="BLTOutgoingDamagePenalty" text="外發傷害懲罰%" original="Outgoing Damage Penalty %" />
+    <string id="BLTOutgoingDamagePenaltyDesc" text="被詛咒的英雄造成的傷害減少百分比。" original="Percentage less damage dealt by the cursed hero." />
+    <string id="BLTIncomingDamageIncrease" text="外來傷害增加%" original="Incoming Damage Increase %" />
+    <string id="BLTIncomingDamageIncreaseDesc" text="被詛咒的英雄受到的額外傷害百分比。" original="Percentage additional damage received by the cursed hero." />
+    <string id="BLTArtifactWeaponBonus" text="神器武器加乘" original="Artifact Weapon Bonus" />
+    <string id="BLTArtifactWeaponBonusDesc" text="修復了詛咒傳統武器的有界傷害、速度和導彈速度調整。" original="Fixed bounded damage, speed, and missile-speed modifier for Cursed Legacy weapons." />
+    <string id="BLTDiagnosticLogging" text="診斷記錄" original="Diagnostic Logging" />
+    <string id="BLTCursedArtifactDiagnosticsDesc" text="記錄觸發滾動和被拒絕或重複的戰鬥回撥。" original="Log trigger rolls and rejected or duplicate battle callbacks." />
+    <string id="BLTEnabled" text="啟用" original="Enabled" />
+    <string id="BLTImmortalEnabledDesc" text="允許自動進行不死之身遭遇戰戰役活動。" original="Allow the automatic Immortal Encounter campaign event." />
+    <string id="BLTDailyTriggerChanceDesc" text="每個符合資格的活動日都有機會滾動一次。" original="Chance rolled once per eligible campaign day." />
+    <string id="BLTImmortalCooldownDesc" text="成功建構遭遇戰之間的最短戰役天數。" original="Minimum campaign days between successfully constructed encounters." />
+    <string id="BLTMinimumPlayerLevel" text="最低玩家等級" original="Minimum Player Level" />
+    <string id="BLTMinimumPlayerLevelDesc" text="所需的最低主英雄等級。" original="Minimum main-hero level required." />
+    <string id="BLTArmyStrength" text="軍隊強度%" original="Army Strength %" />
+    <string id="BLTImmortalArmyStrengthDesc" text="敵方部隊數量相對於玩家當前的隊伍實力。" original="Enemy troop count relative to the player's current party strength." />
+    <string id="BLTParticipantGoldReward" text="參與者黃金獎勵" original="Participant Gold Reward" />
+    <string id="BLTParticipantGoldRewardDesc" text="BLT金幣頒發給每位在勝利中站在玩家一邊的領養英雄。" original="BLT gold awarded once to each adopted hero who fought on the player's side in a victory." />
+    <string id="BLTImmortalName" text="仙名" original="Immortal Name" />
+    <string id="BLTImmortalNameDesc" text="臨時挑戰者的顯示名稱。" original="Display name of the temporary challenger." />
+    <string id="BLTCultName" text="邪教名稱" original="Cult Name" />
+    <string id="BLTCultNameDesc" text="臨時挑戰者家族的顯示名稱。" original="Display name of the temporary challenger clan." />
+    <string id="BLTImmortalDiagnosticsDesc" text="記錄觸發滾輪、資格失敗和生命週期轉換。" original="Log trigger rolls, eligibility failures, and lifecycle transitions." />
+    <string id="BLTPriestCrusadeEnabledDesc" text="允許自動的牧師十字軍戰役活動。" original="Allow the automatic Priest's Crusade campaign event." />
+    <string id="BLTPriestCrusadeCooldownDesc" text="在成功創建十字軍東徵之後，可能發生另一次十字軍東徵之前的最短戰役天數。" original="Minimum campaign days after a successful crusade creation before another may occur." />
+    <string id="BLTMinimumKingdomTier" text="最低王國層級" original="Minimum Kingdom Tier" />
+    <string id="BLTMinimumKingdomTierDesc" text="玩家部落屬於王國時的最低層級。" original="Minimum tier of the player's clan while it belongs to a kingdom." />
+    <string id="BLTPriestArmyStrengthDesc" text="十字軍部隊數量相對於目標王國實力，夾持到100-1000。" original="Crusader troop count relative to target kingdom strength, clamped to 100-1000." />
+    <string id="BLTPriestName" text="祭司姓名" original="Priest Name" />
+    <string id="BLTPriestNameDesc" text="十字軍領袖的顯示名稱。" original="Display name of the crusader leader." />
+    <string id="BLTCrusaderClanName" text="十字軍家族名稱" original="Crusader Clan Name" />
+    <string id="BLTCrusaderClanNameDesc" text="持久獨立十字軍家族的顯示名稱。" original="Display name of the persistent independent crusader clan." />
+    <string id="BLTPriestDiagnosticsDesc" text="記錄觸發滾輪、資格失敗和解決方案檢查。" original="Log trigger rolls, eligibility failures, and resolution checks." />
+    <string id="BLTRandomEventsDisabled" text="隨機活動已停用。" original="Random events are disabled." />
+    <string id="BLTNoActiveCampaign" text="沒有活躍的活動。" original="No active campaign." />
+    <string id="BLTCurseStarted" text="一件被詛咒的文物已經綁定到@ {Owner} ！贏得{RequiredWins}戰役戰鬥，將其轉化為傳奇武器。" original="A cursed artifact has bound itself to @{Owner}! Win {RequiredWins} campaign battles to transform it into a legendary weapon." />
+    <string id="BLTCurseProgress" text="@ {Owner}贏得了一場詛咒戰鬥（ {Wins}/{RequiredWins} ）。" original="@{Owner} won a cursed battle ({Wins}/{RequiredWins})." />
+    <string id="BLTCurseCompleted" text="@ {Owner}打破了詛咒，獲得了傳奇的詛咒傳承！" original="@{Owner} broke the curse and received the legendary Cursed Legacy!" />
+    <string id="BLTCurseFailed" text="被詛咒的神器事件失敗。未授予任何獎勵。" original="The cursed artifact event failed. No reward was granted." />
+    <string id="BLTImmortalStarted" text="不朽遭遇戰以{TroopCount}名部隊開始。" original="Immortal Encounter started with {TroopCount} troops." />
+    <string id="BLTImmortalStartFailed" text="仙人遭遇戰無法開始： {Error}" original="Immortal Encounter could not start: {Error}" />
+    <string id="BLTImmortalDialogChallenge" text="你帶來了來自這個世界之外的奇怪戰士。讓我們看看他們是否會流血。" original="You bring strange warriors from beyond this world. Let us discover whether they can bleed." />
+    <string id="BLTImmortalDialogReward" text="面對我和我的信徒。勝利，那些支持你的人將獲得豐厚的回報。" original="Face me and my faithful. Triumph, and those who stand with you will be richly rewarded." />
+    <string id="BLTImmortalDialogAccept" text="我接受你的挑戰。" original="I accept your challenge." />
+    <string id="BLTImmortalDialogRefuse" text="不，離開我們" original="No. Leave us." />
+    <string id="BLTImmortalDialogDraw" text="然後拔出你的武器。" original="Then draw your weapon." />
+    <string id="BLTImmortalDialogAnotherDay" text="改天吧，凡人。" original="Another day, mortal." />
+    <string id="BLTImmortalDefeated" text="仙人被打敗了。玩家側BLT參與者獲得了獎勵。" original="The Immortal was defeated. Player-side BLT participants received their reward." />
+    <string id="BLTPriestCrusadeStarted" text="{ClanName}與{TroopCount}部隊開始對抗{KingdomName}。" original="{ClanName} began a crusade against {KingdomName} with {TroopCount} troops." />
+    <string id="BLTPriestCrusadeStartFailed" text="牧師十字軍無法開始： {Error}" original="Priest's Crusade could not start: {Error}" />
+    <string id="BLTPriestCrusadeResolved" text="牧師的十字軍東徵已經結束。" original="Priest's Crusade has ended." />
+  </strings>
+</base>

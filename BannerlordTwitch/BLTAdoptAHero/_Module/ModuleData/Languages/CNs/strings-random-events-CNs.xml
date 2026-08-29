@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base type="string">
+  <tags>
+    <tag language="简体中文" />
+  </tags>
+  <strings>
+    <string id="BLTHireByClass" text="按英雄等级雇用" original="Hire By Hero Class" />
+    <string id="BLTHireByClassDesc" text="沿着与所采用的英雄职业兼容的路径雇佣和升级部队。" original="Hire and upgrade troops along paths compatible with the adopted hero's class." />
+    <string id="BLTNoCompatibleTroop" text="找不到此英雄职业的兼容部队路径。" original="No compatible troop path could be found for this hero class." />
+    <string id="BLTNoCompatibleUpgrade" text="不再有与类兼容的升级路径。" original="No class-compatible upgrade path remains." />
+    <string id="BLTRandomEventsEnabled" text="启用随机事件" original="Enable Random Events" />
+    <string id="BLTRandomEventsEnabledDesc" text="所有随机战役事件的主开关。禁用此选项可防止启动任何新的随机事件。" original="Master switch for all random campaign events. Disable this to prevent any new random events from starting." />
+    <string id="BLTCursedArtifactEnabled" text="启用诅咒神器" original="Enable Cursed Artifact" />
+    <string id="BLTCursedArtifactEnabledDesc" text="允许自动诅咒神器战役事件。" original="Allow the automatic cursed-artifact campaign event." />
+    <string id="BLTDailyTriggerChance" text="每日触发概率%" original="Daily Trigger Chance %" />
+    <string id="BLTCursedArtifactChanceDesc" text="当没有诅咒激活且冷却时间已过时，每个战役日都有机会滚动一次。" original="Chance rolled once per campaign day when no curse is active and cooldown has elapsed." />
+    <string id="BLTCooldownDays" text="冷却天数" original="Cooldown Days" />
+    <string id="BLTCursedArtifactCooldownDesc" text="成功诅咒触发之间的最小战役天数。" original="Minimum campaign days between successful curse triggers." />
+    <string id="BLTRequiredBattleWins" text="所需战斗胜利次数" original="Required Battle Wins" />
+    <string id="BLTRequiredBattleWinsDesc" text="被诅咒的英雄必须亲自参与的合格战役胜利。" original="Qualifying campaign victories the cursed hero must personally participate in." />
+    <string id="BLTOutgoingDamagePenalty" text="传出伤害惩罚%" original="Outgoing Damage Penalty %" />
+    <string id="BLTOutgoingDamagePenaltyDesc" text="被诅咒的英雄造成的伤害减少百分比。" original="Percentage less damage dealt by the cursed hero." />
+    <string id="BLTIncomingDamageIncrease" text="外来伤害增加%" original="Incoming Damage Increase %" />
+    <string id="BLTIncomingDamageIncreaseDesc" text="被诅咒的英雄受到额外伤害的百分比。" original="Percentage additional damage received by the cursed hero." />
+    <string id="BLTArtifactWeaponBonus" text="圣器武器加成" original="Artifact Weapon Bonus" />
+    <string id="BLTArtifactWeaponBonusDesc" text="修复了诅咒遗产武器的有界伤害、速度和导弹速度修正值。" original="Fixed bounded damage, speed, and missile-speed modifier for Cursed Legacy weapons." />
+    <string id="BLTDiagnosticLogging" text="诊断日志记录" original="Diagnostic Logging" />
+    <string id="BLTCursedArtifactDiagnosticsDesc" text="日志触发滚动和拒绝或重复的战斗回调。" original="Log trigger rolls and rejected or duplicate battle callbacks." />
+    <string id="BLTEnabled" text="已启用" original="Enabled" />
+    <string id="BLTImmortalEnabledDesc" text="允许自动仙人遭遇战战役事件。" original="Allow the automatic Immortal Encounter campaign event." />
+    <string id="BLTDailyTriggerChanceDesc" text="机会在每个符合条件的活动日滚动一次。" original="Chance rolled once per eligible campaign day." />
+    <string id="BLTImmortalCooldownDesc" text="成功构建遭遇战之间的最短战役天数。" original="Minimum campaign days between successfully constructed encounters." />
+    <string id="BLTMinimumPlayerLevel" text="最低玩家等级" original="Minimum Player Level" />
+    <string id="BLTMinimumPlayerLevelDesc" text="所需的最低主英雄级别。" original="Minimum main-hero level required." />
+    <string id="BLTArmyStrength" text="军队实力%" original="Army Strength %" />
+    <string id="BLTImmortalArmyStrengthDesc" text="敌方部队人数相对于玩家当前的队伍实力。" original="Enemy troop count relative to the player's current party strength." />
+    <string id="BLTParticipantGoldReward" text="参与者金币奖励" original="Participant Gold Reward" />
+    <string id="BLTParticipantGoldRewardDesc" text="BLT金币奖励一次，每位领养的英雄在胜利中与玩家并肩作战。" original="BLT gold awarded once to each adopted hero who fought on the player's side in a victory." />
+    <string id="BLTImmortalName" text="仙号" original="Immortal Name" />
+    <string id="BLTImmortalNameDesc" text="临时挑战者的显示名称。" original="Display name of the temporary challenger." />
+    <string id="BLTCultName" text="邪教名称" original="Cult Name" />
+    <string id="BLTCultNameDesc" text="临时挑战者部落的显示名称。" original="Display name of the temporary challenger clan." />
+    <string id="BLTImmortalDiagnosticsDesc" text="记录触发滚动、资格失败和生命周期转换。" original="Log trigger rolls, eligibility failures, and lifecycle transitions." />
+    <string id="BLTPriestCrusadeEnabledDesc" text="允许自动进行牧师十字军东征战役活动。" original="Allow the automatic Priest's Crusade campaign event." />
+    <string id="BLTPriestCrusadeCooldownDesc" text="在成功创建十字军东征后的最短战役天数，然后可能发生另一次十字军东征" original="Minimum campaign days after a successful crusade creation before another may occur." />
+    <string id="BLTMinimumKingdomTier" text="王国最低档次" original="Minimum Kingdom Tier" />
+    <string id="BLTMinimumKingdomTierDesc" text="玩家部落属于王国期间的最低层级。" original="Minimum tier of the player's clan while it belongs to a kingdom." />
+    <string id="BLTPriestArmyStrengthDesc" text="相对于目标王国实力的十字军人数，夹持到100-1000。" original="Crusader troop count relative to target kingdom strength, clamped to 100-1000." />
+    <string id="BLTPriestName" text="祭司姓名" original="Priest Name" />
+    <string id="BLTPriestNameDesc" text="十字军领袖的显示名称。" original="Display name of the crusader leader." />
+    <string id="BLTCrusaderClanName" text="十字军家族名称" original="Crusader Clan Name" />
+    <string id="BLTCrusaderClanNameDesc" text="持久独立十字军家族的显示名称。" original="Display name of the persistent independent crusader clan." />
+    <string id="BLTPriestDiagnosticsDesc" text="记录触发滚动、资格失败和解决方案检查。" original="Log trigger rolls, eligibility failures, and resolution checks." />
+    <string id="BLTRandomEventsDisabled" text="随机事件被禁用。" original="Random events are disabled." />
+    <string id="BLTNoActiveCampaign" text="积极的活动" original="No active campaign." />
+    <string id="BLTCurseStarted" text="被诅咒的神器已绑定到@ {Owner} ！赢得{RequiredWins}战役战斗，将其转化为传奇武器。" original="A cursed artifact has bound itself to @{Owner}! Win {RequiredWins} campaign battles to transform it into a legendary weapon." />
+    <string id="BLTCurseProgress" text="@ {Owner}赢得了一场诅咒战（ {Wins}/{RequiredWins} ）。" original="@{Owner} won a cursed battle ({Wins}/{RequiredWins})." />
+    <string id="BLTCurseCompleted" text="@ {Owner}破诅咒，获得传奇诅咒传奇！" original="@{Owner} broke the curse and received the legendary Cursed Legacy!" />
+    <string id="BLTCurseFailed" text="被诅咒的神器事件失败。未授予任何奖励。" original="The cursed artifact event failed. No reward was granted." />
+    <string id="BLTImmortalStarted" text="{TroopCount}名部队开启不朽邂逅。" original="Immortal Encounter started with {TroopCount} troops." />
+    <string id="BLTImmortalStartFailed" text="不朽遭遇战无法开始： {Error}" original="Immortal Encounter could not start: {Error}" />
+    <string id="BLTImmortalDialogChallenge" text="你带来了来自这个世界之外的奇怪战士。让我们看看他们是否会流血。" original="You bring strange warriors from beyond this world. Let us discover whether they can bleed." />
+    <string id="BLTImmortalDialogReward" text="面对我和我的信徒。胜利，与你站在一起的人将获得丰厚的回报。" original="Face me and my faithful. Triumph, and those who stand with you will be richly rewarded." />
+    <string id="BLTImmortalDialogAccept" text="接受你的挑战！" original="I accept your challenge." />
+    <string id="BLTImmortalDialogRefuse" text="不，离开我们。" original="No. Leave us." />
+    <string id="BLTImmortalDialogDraw" text="然后拔出你的武器。" original="Then draw your weapon." />
+    <string id="BLTImmortalDialogAnotherDay" text="另一天，凡人。" original="Another day, mortal." />
+    <string id="BLTImmortalDefeated" text="仙人被击败。玩家侧BLT参与者获得了奖励。" original="The Immortal was defeated. Player-side BLT participants received their reward." />
+    <string id="BLTPriestCrusadeStarted" text="{ClanName}与{TroopCount}部队展开了对{KingdomName}的讨伐。" original="{ClanName} began a crusade against {KingdomName} with {TroopCount} troops." />
+    <string id="BLTPriestCrusadeStartFailed" text="牧师十字军无法开启： {Error}" original="Priest's Crusade could not start: {Error}" />
+    <string id="BLTPriestCrusadeResolved" text="牧师十字军东征已经结束。" original="Priest's Crusade has ended." />
+  </strings>
+</base>

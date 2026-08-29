@@ -48,7 +48,7 @@ namespace BLTAdoptAHero.Behaviors
         {
             if (state?.Phase == RandomEventLifecycle.Active) { CheckResolution(); return; }
             var cfg = BLTAdoptAHeroModule.CommonConfig;
-            if (cfg?.PriestCrusadeEnabled != true || !Eligible(out _)) return;
+            if (cfg?.RandomEventsEnabled != true || cfg.PriestCrusadeEnabled != true || !Eligible(out _)) return;
             double day = CampaignTime.Now.ToDays;
             if (!RandomEventPolicy.CanRoll(day, lastSuccessfulTriggerDay, cfg.PriestCrusadeCooldownDays, state != null && RandomEventPolicy.IsActive(state.Phase))) return;
             float chance = RandomEventPolicy.ClampChance(cfg.PriestCrusadeDailyChancePercent);
@@ -72,6 +72,11 @@ namespace BLTAdoptAHero.Behaviors
 
         private bool TryStart(bool manual, out string result)
         {
+            if (BLTAdoptAHeroModule.CommonConfig?.RandomEventsEnabled != true)
+            {
+                result = "{=BLTRandomEventsDisabled}Random events are disabled.".Translate();
+                return false;
+            }
             if (!Eligible(out result)) return false;
             Clan clan = null;
             Hero priest = null;
@@ -118,7 +123,8 @@ namespace BLTAdoptAHero.Behaviors
                 IssueObjective(party, objective);
                 state.Phase = RandomEventLifecycle.Active;
                 lastSuccessfulTriggerDay = CampaignTime.Now.ToDays;
-                result = $"{clan.Name} began a crusade against {target.Name} with {party.MemberRoster.TotalManCount} troops.";
+                result = "{=BLTPriestCrusadeStarted}{ClanName} began a crusade against {KingdomName} with {TroopCount} troops."
+                    .Translate(("ClanName", clan.Name), ("KingdomName", target.Name), ("TroopCount", party.MemberRoster.TotalManCount));
                 Log.LogFeedEvent(result);
                 Diagnostic(result + (manual ? " (manual)" : string.Empty));
                 return true;
@@ -128,7 +134,8 @@ namespace BLTAdoptAHero.Behaviors
                 Log.Error($"[Priest's Crusade] construction failed: {ex}");
                 Rollback(party, priest);
                 state = null;
-                result = $"Priest's Crusade could not start: {ex.Message}";
+                result = "{=BLTPriestCrusadeStartFailed}Priest's Crusade could not start: {Error}"
+                    .Translate(("Error", ex.Message));
                 return false;
             }
         }
@@ -190,7 +197,7 @@ namespace BLTAdoptAHero.Behaviors
             if (state == null) return;
             state.Phase = RandomEventLifecycle.Resolved;
             Diagnostic($"resolved: {reason}");
-            Log.LogFeedEvent($"Priest's Crusade resolved: {reason}.");
+            Log.LogFeedEvent("{=BLTPriestCrusadeResolved}Priest's Crusade has ended.".Translate());
             state = null;
         }
 
@@ -214,7 +221,7 @@ namespace BLTAdoptAHero.Behaviors
         [UsedImplicitly]
         public static string TriggerPriestCrusade(List<string> _)
         {
-            if (Current == null) return "No active campaign.";
+            if (Current == null) return "{=BLTNoActiveCampaign}No active campaign.".Translate();
             Current.TryStart(true, out string result);
             return result;
         }

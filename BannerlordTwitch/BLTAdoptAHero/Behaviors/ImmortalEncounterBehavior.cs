@@ -72,7 +72,7 @@ namespace BLTAdoptAHero.Behaviors
         private void OnDailyTick()
         {
             var cfg = BLTAdoptAHeroModule.CommonConfig;
-            if (cfg?.ImmortalEncounterEnabled != true || !Eligible(out _)) return;
+            if (cfg?.RandomEventsEnabled != true || cfg.ImmortalEncounterEnabled != true || !Eligible(out _)) return;
             double day = CampaignTime.Now.ToDays;
             if (!RandomEventPolicy.CanRoll(day, lastSuccessfulTriggerDay, cfg.ImmortalEncounterCooldownDays, state != null && RandomEventPolicy.IsActive(state.Phase))) return;
             float chance = RandomEventPolicy.ClampChance(cfg.ImmortalEncounterDailyChancePercent);
@@ -98,6 +98,11 @@ namespace BLTAdoptAHero.Behaviors
 
         private bool TryStart(bool manual, out string result)
         {
+            if (BLTAdoptAHeroModule.CommonConfig?.RandomEventsEnabled != true)
+            {
+                result = "{=BLTRandomEventsDisabled}Random events are disabled.".Translate();
+                return false;
+            }
             if (!Eligible(out result)) return false;
             Clan clan = null;
             Hero hero = null;
@@ -142,7 +147,8 @@ namespace BLTAdoptAHero.Behaviors
                 state.Phase = RandomEventLifecycle.AwaitingResponse;
                 EncounterManager.StartPartyEncounter(MobileParty.MainParty.Party, party.Party);
                 lastSuccessfulTriggerDay = CampaignTime.Now.ToDays;
-                result = $"Immortal Encounter started with {party.MemberRoster.TotalManCount} troops.";
+                result = "{=BLTImmortalStarted}Immortal Encounter started with {TroopCount} troops."
+                    .Translate(("TroopCount", party.MemberRoster.TotalManCount));
                 Diagnostic(result + (manual ? " (manual)" : string.Empty));
                 return true;
             }
@@ -151,7 +157,8 @@ namespace BLTAdoptAHero.Behaviors
                 Log.Error($"[Immortal Encounter] construction failed: {ex}");
                 Rollback(party, hero);
                 state = null;
-                result = $"Immortal Encounter could not start: {ex.Message}";
+                result = "{=BLTImmortalStartFailed}Immortal Encounter could not start: {Error}"
+                    .Translate(("Error", ex.Message));
                 return false;
             }
         }
@@ -159,13 +166,13 @@ namespace BLTAdoptAHero.Behaviors
         private void RegisterDialogs(CampaignGameStarter starter)
         {
             starter.AddDialogLine("blt_immortal_start", "start", "blt_immortal_challenge",
-                "You bring strange warriors from beyond this world. Let us discover whether they can bleed.", IsImmortalConversation, null, 1000);
+                "{=BLTImmortalDialogChallenge}You bring strange warriors from beyond this world. Let us discover whether they can bleed.", IsImmortalConversation, null, 1000);
             starter.AddDialogLine("blt_immortal_taunt", "blt_immortal_challenge", "blt_immortal_response",
-                "Face me and my faithful. Triumph, and those who stand with you will be richly rewarded.", null, null, 100);
-            starter.AddPlayerLine("blt_immortal_accept", "blt_immortal_response", "blt_immortal_accepted", "I accept your challenge.", null, null, 100);
-            starter.AddPlayerLine("blt_immortal_refuse", "blt_immortal_response", "blt_immortal_refused", "No. Leave us.", null, null, 100);
-            starter.AddDialogLine("blt_immortal_accept_response", "blt_immortal_accepted", "close_window", "Then draw your weapon.", null, AcceptBattle, 100);
-            starter.AddDialogLine("blt_immortal_refuse_response", "blt_immortal_refused", "close_window", "Another day, mortal.", null, RefuseBattle, 100);
+                "{=BLTImmortalDialogReward}Face me and my faithful. Triumph, and those who stand with you will be richly rewarded.", null, null, 100);
+            starter.AddPlayerLine("blt_immortal_accept", "blt_immortal_response", "blt_immortal_accepted", "{=BLTImmortalDialogAccept}I accept your challenge.", null, null, 100);
+            starter.AddPlayerLine("blt_immortal_refuse", "blt_immortal_response", "blt_immortal_refused", "{=BLTImmortalDialogRefuse}No. Leave us.", null, null, 100);
+            starter.AddDialogLine("blt_immortal_accept_response", "blt_immortal_accepted", "close_window", "{=BLTImmortalDialogDraw}Then draw your weapon.", null, AcceptBattle, 100);
+            starter.AddDialogLine("blt_immortal_refuse_response", "blt_immortal_refused", "close_window", "{=BLTImmortalDialogAnotherDay}Another day, mortal.", null, RefuseBattle, 100);
         }
 
         private bool IsImmortalConversation() => state?.Phase == RandomEventLifecycle.AwaitingResponse && Hero.OneToOneConversationHero?.StringId == state.HeroId;
@@ -217,7 +224,7 @@ namespace BLTAdoptAHero.Behaviors
             if (state != null) state.Phase = RandomEventLifecycle.Resolved;
             CleanupObjects();
             state = null;
-            if (victory) Log.LogFeedEvent("The Immortal was defeated. Player-side BLT participants received their reward.");
+            if (victory) Log.LogFeedEvent("{=BLTImmortalDefeated}The Immortal was defeated. Player-side BLT participants received their reward.".Translate());
         }
 
         private void Abort(string reason)
@@ -271,7 +278,7 @@ namespace BLTAdoptAHero.Behaviors
         [UsedImplicitly]
         public static string TriggerImmortalEvent(List<string> _)
         {
-            if (Current == null) return "No active campaign.";
+            if (Current == null) return "{=BLTNoActiveCampaign}No active campaign.".Translate();
             Current.TryStart(true, out string result);
             return result;
         }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" type="string">
+  <tags><tag language="English" /></tags>
+  <strings>
+    <!-- Smart troop selection -->
+    <string id="BLTHireByClass" text="Hire By Hero Class" />
+    <string id="BLTHireByClassDesc" text="Hire and upgrade troops along paths compatible with the adopted hero's class." />
+    <string id="BLTNoCompatibleTroop" text="No compatible troop path could be found for this hero class." />
+    <string id="BLTNoCompatibleUpgrade" text="No class-compatible upgrade path remains." />
+
+    <!-- Random-event configuration -->
+    <string id="BLTRandomEventsEnabled" text="Enable Random Events" />
+    <string id="BLTRandomEventsEnabledDesc" text="Master switch for all random campaign events. Disable this to prevent any new random events from starting." />
+    <string id="BLTCursedArtifactEnabled" text="Enable Cursed Artifact" />
+    <string id="BLTCursedArtifactEnabledDesc" text="Allow the automatic cursed-artifact campaign event." />
+    <string id="BLTDailyTriggerChance" text="Daily Trigger Chance %" />
+    <string id="BLTCursedArtifactChanceDesc" text="Chance rolled once per campaign day when no curse is active and cooldown has elapsed." />
+    <string id="BLTCooldownDays" text="Cooldown Days" />
+    <string id="BLTCursedArtifactCooldownDesc" text="Minimum campaign days between successful curse triggers." />
+    <string id="BLTRequiredBattleWins" text="Required Battle Wins" />
+    <string id="BLTRequiredBattleWinsDesc" text="Qualifying campaign victories the cursed hero must personally participate in." />
+    <string id="BLTOutgoingDamagePenalty" text="Outgoing Damage Penalty %" />
+    <string id="BLTOutgoingDamagePenaltyDesc" text="Percentage less damage dealt by the cursed hero." />
+    <string id="BLTIncomingDamageIncrease" text="Incoming Damage Increase %" />
+    <string id="BLTIncomingDamageIncreaseDesc" text="Percentage additional damage received by the cursed hero." />
+    <string id="BLTArtifactWeaponBonus" text="Artifact Weapon Bonus" />
+    <string id="BLTArtifactWeaponBonusDesc" text="Fixed bounded damage, speed, and missile-speed modifier for Cursed Legacy weapons." />
+    <string id="BLTDiagnosticLogging" text="Diagnostic Logging" />
+    <string id="BLTCursedArtifactDiagnosticsDesc" text="Log trigger rolls and rejected or duplicate battle callbacks." />
+    <string id="BLTEnabled" text="Enabled" />
+    <string id="BLTImmortalEnabledDesc" text="Allow the automatic Immortal Encounter campaign event." />
+    <string id="BLTDailyTriggerChanceDesc" text="Chance rolled once per eligible campaign day." />
+    <string id="BLTImmortalCooldownDesc" text="Minimum campaign days between successfully constructed encounters." />
+    <string id="BLTMinimumPlayerLevel" text="Minimum Player Level" />
+    <string id="BLTMinimumPlayerLevelDesc" text="Minimum main-hero level required." />
+    <string id="BLTArmyStrength" text="Army Strength %" />
+    <string id="BLTImmortalArmyStrengthDesc" text="Enemy troop count relative to the player's current party strength." />
+    <string id="BLTParticipantGoldReward" text="Participant Gold Reward" />
+    <string id="BLTParticipantGoldRewardDesc" text="BLT gold awarded once to each adopted hero who fought on the player's side in a victory." />
+    <string id="BLTImmortalName" text="Immortal Name" />
+    <string id="BLTImmortalNameDesc" text="Display name of the temporary challenger." />
+    <string id="BLTCultName" text="Cult Name" />
+    <string id="BLTCultNameDesc" text="Display name of the temporary challenger clan." />
+    <string id="BLTImmortalDiagnosticsDesc" text="Log trigger rolls, eligibility failures, and lifecycle transitions." />
+    <string id="BLTPriestCrusadeEnabledDesc" text="Allow the automatic Priest's Crusade campaign event." />
+    <string id="BLTPriestCrusadeCooldownDesc" text="Minimum campaign days after a successful crusade creation before another may occur." />
+    <string id="BLTMinimumKingdomTier" text="Minimum Kingdom Tier" />
+    <string id="BLTMinimumKingdomTierDesc" text="Minimum tier of the player's clan while it belongs to a kingdom." />
+    <string id="BLTPriestArmyStrengthDesc" text="Crusader troop count relative to target kingdom strength, clamped to 100-1000." />
+    <string id="BLTPriestName" text="Priest Name" />
+    <string id="BLTPriestNameDesc" text="Display name of the crusader leader." />
+    <string id="BLTCrusaderClanName" text="Crusader Clan Name" />
+    <string id="BLTCrusaderClanNameDesc" text="Display name of the persistent independent crusader clan." />
+    <string id="BLTPriestDiagnosticsDesc" text="Log trigger rolls, eligibility failures, and resolution checks." />
+
+    <!-- Player-facing event text -->
+    <string id="BLTRandomEventsDisabled" text="Random events are disabled." />
+    <string id="BLTNoActiveCampaign" text="No active campaign." />
+    <string id="BLTCurseStarted" text="A cursed artifact has bound itself to @{Owner}! Win {RequiredWins} campaign battles to transform it into a legendary weapon." />
+    <string id="BLTCurseProgress" text="@{Owner} won a cursed battle ({Wins}/{RequiredWins})." />
+    <string id="BLTCurseCompleted" text="@{Owner} broke the curse and received the legendary Cursed Legacy!" />
+    <string id="BLTCurseFailed" text="The cursed artifact event failed. No reward was granted." />
+    <string id="BLTImmortalStarted" text="Immortal Encounter started with {TroopCount} troops." />
+    <string id="BLTImmortalStartFailed" text="Immortal Encounter could not start: {Error}" />
+    <string id="BLTImmortalDialogChallenge" text="You bring strange warriors from beyond this world. Let us discover whether they can bleed." />
+    <string id="BLTImmortalDialogReward" text="Face me and my faithful. Triumph, and those who stand with you will be richly rewarded." />
+    <string id="BLTImmortalDialogAccept" text="I accept your challenge." />
+    <string id="BLTImmortalDialogRefuse" text="No. Leave us." />
+    <string id="BLTImmortalDialogDraw" text="Then draw your weapon." />
+    <string id="BLTImmortalDialogAnotherDay" text="Another day, mortal." />
+    <string id="BLTImmortalDefeated" text="The Immortal was defeated. Player-side BLT participants received their reward." />
+    <string id="BLTPriestCrusadeStarted" text="{ClanName} began a crusade against {KingdomName} with {TroopCount} troops." />
+    <string id="BLTPriestCrusadeStartFailed" text="Priest's Crusade could not start: {Error}" />
+    <string id="BLTPriestCrusadeResolved" text="Priest's Crusade has ended." />
+  </strings>
+</base>
