@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base type="string">
+  <tags>
+    <tag language="Português (BR)" />
+  </tags>
+  <strings>
+    <string id="BLTHireByClass" text="Aluguer por classe de herói" original="Hire By Hero Class" />
+    <string id="BLTHireByClassDesc" text="Contrate e melhore tropas ao longo de caminhos compatíveis com a classe do herói adotado." original="Hire and upgrade troops along paths compatible with the adopted hero's class." />
+    <string id="BLTNoCompatibleTroop" text="Nenhum caminho de tropas compatível foi encontrado para esta classe de heróis." original="No compatible troop path could be found for this hero class." />
+    <string id="BLTNoCompatibleUpgrade" text="Nenhum caminho de upgrade compatível com a classe permanece." original="No class-compatible upgrade path remains." />
+    <string id="BLTRandomEventsEnabled" text="Ativar eventos aleatórios" original="Enable Random Events" />
+    <string id="BLTRandomEventsEnabledDesc" text="Interruptor principal para todos os eventos aleatórios da campanha. Desative isto para evitar que quaisquer novos eventos aleatórios sejam iniciados." original="Master switch for all random campaign events. Disable this to prevent any new random events from starting." />
+    <string id="BLTCursedArtifactEnabled" text="Ativar Artefato Amaldiçoado" original="Enable Cursed Artifact" />
+    <string id="BLTCursedArtifactEnabledDesc" text="Permitir o evento automático de campanha de artefato amaldiçoado." original="Allow the automatic cursed-artifact campaign event." />
+    <string id="BLTDailyTriggerChance" text="% de Chance de Gatilho Diário" original="Daily Trigger Chance %" />
+    <string id="BLTCursedArtifactChanceDesc" text="Chance rolada uma vez por dia de campanha quando nenhuma maldição estiver ativa e a recarga tiver decorrido." original="Chance rolled once per campaign day when no curse is active and cooldown has elapsed." />
+    <string id="BLTCooldownDays" text="Dias de Recarga" original="Cooldown Days" />
+    <string id="BLTCursedArtifactCooldownDesc" text="Mínimo de dias de campanha entre gatilhos de maldição bem-sucedidos." original="Minimum campaign days between successful curse triggers." />
+    <string id="BLTRequiredBattleWins" text="Vitórias de Batalha Necessárias" original="Required Battle Wins" />
+    <string id="BLTRequiredBattleWinsDesc" text="Vitórias de campanha de qualificação nas quais o herói amaldiçoado deve participar pessoalmente." original="Qualifying campaign victories the cursed hero must personally participate in." />
+    <string id="BLTOutgoingDamagePenalty" text="Penalidade de Dano de Saída %" original="Outgoing Damage Penalty %" />
+    <string id="BLTOutgoingDamagePenaltyDesc" text="Porcentagem menos dano causado pelo herói amaldiçoado." original="Percentage less damage dealt by the cursed hero." />
+    <string id="BLTIncomingDamageIncrease" text="% de aumento de dano recebido" original="Incoming Damage Increase %" />
+    <string id="BLTIncomingDamageIncreaseDesc" text="Porcentagem de dano adicional recebido pelo herói amaldiçoado." original="Percentage additional damage received by the cursed hero." />
+    <string id="BLTArtifactWeaponBonus" text="Bônus de Arma de Artefato" original="Artifact Weapon Bonus" />
+    <string id="BLTArtifactWeaponBonusDesc" text="Dano limitado fixo, velocidade e modificador de velocidade de míssil para armas Legado Amaldiçoado." original="Fixed bounded damage, speed, and missile-speed modifier for Cursed Legacy weapons." />
+    <string id="BLTDiagnosticLogging" text="Registo de diagnóstico" original="Diagnostic Logging" />
+    <string id="BLTCursedArtifactDiagnosticsDesc" text="Registre as rolagens de gatilho e as chamadas de batalha rejeitadas ou duplicadas." original="Log trigger rolls and rejected or duplicate battle callbacks." />
+    <string id="BLTEnabled" text="Ativado" original="Enabled" />
+    <string id="BLTImmortalEnabledDesc" text="Permita o evento automático da campanha Encontro Imortal." original="Allow the automatic Immortal Encounter campaign event." />
+    <string id="BLTDailyTriggerChanceDesc" text="Chance rolada uma vez por dia de campanha elegível." original="Chance rolled once per eligible campaign day." />
+    <string id="BLTImmortalCooldownDesc" text="Mínimo de dias de campanha entre encontros construídos com sucesso." original="Minimum campaign days between successfully constructed encounters." />
+    <string id="BLTMinimumPlayerLevel" text="Nível mínimo de jogador" original="Minimum Player Level" />
+    <string id="BLTMinimumPlayerLevelDesc" text="Nível mínimo de herói principal exigido." original="Minimum main-hero level required." />
+    <string id="BLTArmyStrength" text="Força do exército" original="Army Strength %" />
+    <string id="BLTImmortalArmyStrengthDesc" text="Contagem de tropas inimigas em relação à força atual do grupo do jogador." original="Enemy troop count relative to the player's current party strength." />
+    <string id="BLTParticipantGoldReward" text="Recompensa de Ouro do Participante" original="Participant Gold Reward" />
+    <string id="BLTParticipantGoldRewardDesc" text="Ouro BLT concedido uma vez a cada herói adotado que lutou ao lado do jogador numa vitória." original="BLT gold awarded once to each adopted hero who fought on the player's side in a victory." />
+    <string id="BLTImmortalName" text="Nome Imortal" original="Immortal Name" />
+    <string id="BLTImmortalNameDesc" text="Exibir o nome do desafiante temporário." original="Display name of the temporary challenger." />
+    <string id="BLTCultName" text="Nome do Culto" original="Cult Name" />
+    <string id="BLTCultNameDesc" text="Exibir o nome do clã desafiante temporário." original="Display name of the temporary challenger clan." />
+    <string id="BLTImmortalDiagnosticsDesc" text="Registre testes de gatilho, falhas de elegibilidade e transições do ciclo de vida." original="Log trigger rolls, eligibility failures, and lifecycle transitions." />
+    <string id="BLTPriestCrusadeEnabledDesc" text="Permita o evento automático da campanha da Cruzada dos Sacerdotes." original="Allow the automatic Priest's Crusade campaign event." />
+    <string id="BLTPriestCrusadeCooldownDesc" text="Mínimo de dias de campanha após uma criação de cruzada bem-sucedida antes que outra possa ocorrer." original="Minimum campaign days after a successful crusade creation before another may occur." />
+    <string id="BLTMinimumKingdomTier" text="Nível Mínimo do Reino" original="Minimum Kingdom Tier" />
+    <string id="BLTMinimumKingdomTierDesc" text="Nível mínimo do clã do jogador enquanto ele pertencer a um reino." original="Minimum tier of the player's clan while it belongs to a kingdom." />
+    <string id="BLTPriestArmyStrengthDesc" text="Contagem de tropas cruzadas em relação à força do reino alvo, fixada em 100-1000." original="Crusader troop count relative to target kingdom strength, clamped to 100-1000." />
+    <string id="BLTPriestName" text="Nome do Sacerdote" original="Priest Name" />
+    <string id="BLTPriestNameDesc" text="Nome de exibição do líder dos cruzados." original="Display name of the crusader leader." />
+    <string id="BLTCrusaderClanName" text="Nome do Clã Cruzado" original="Crusader Clan Name" />
+    <string id="BLTCrusaderClanNameDesc" text="Nome de exibição do persistente clã cruzado independente." original="Display name of the persistent independent crusader clan." />
+    <string id="BLTPriestDiagnosticsDesc" text="Registre testes de gatilho, falhas de elegibilidade e verificações de resolução." original="Log trigger rolls, eligibility failures, and resolution checks." />
+    <string id="BLTRandomEventsDisabled" text="Os eventos aleatórios estão desativados." original="Random events are disabled." />
+    <string id="BLTNoActiveCampaign" text="Nenhuma campanha ativa." original="No active campaign." />
+    <string id="BLTCurseStarted" text="Um artefato amaldiçoado ligou-se a @{Owner}! Vença as batalhas da campanha {RequiredWins} para transformá-la em uma arma lendária." original="A cursed artifact has bound itself to @{Owner}! Win {RequiredWins} campaign battles to transform it into a legendary weapon." />
+    <string id="BLTCurseProgress" text="@{Owner} venceu uma batalha amaldiçoada ({Wins}/{RequiredWins})." original="@{Owner} won a cursed battle ({Wins}/{RequiredWins})." />
+    <string id="BLTCurseCompleted" text="@{Owner} quebrou a maldição e recebeu o lendário Legado Amaldiçoado!" original="@{Owner} broke the curse and received the legendary Cursed Legacy!" />
+    <string id="BLTCurseFailed" text="O evento artefato amaldiçoado falhou. Nenhuma recompensa foi concedida." original="The cursed artifact event failed. No reward was granted." />
+    <string id="BLTImmortalStarted" text="O Encontro Imortal começou com tropas {TroopCount}." original="Immortal Encounter started with {TroopCount} troops." />
+    <string id="BLTImmortalStartFailed" text="O Encontro Imortal não pôde começar: {Error}" original="Immortal Encounter could not start: {Error}" />
+    <string id="BLTImmortalDialogChallenge" text="Você traz guerreiros estranhos de além deste mundo. Vamos descobrir se eles podem sangrar." original="You bring strange warriors from beyond this world. Let us discover whether they can bleed." />
+    <string id="BLTImmortalDialogReward" text="Encare a mim e aos meus fiéis. Triunfe, e aqueles que estiverem com você serão ricamente recompensados." original="Face me and my faithful. Triumph, and those who stand with you will be richly rewarded." />
+    <string id="BLTImmortalDialogAccept" text="Eu aceito o seu desafio." original="I accept your challenge." />
+    <string id="BLTImmortalDialogRefuse" text="Não. Deixe-nos." original="No. Leave us." />
+    <string id="BLTImmortalDialogDraw" text="Em seguida, saca a tua arma." original="Then draw your weapon." />
+    <string id="BLTImmortalDialogAnotherDay" text="Outro dia, mortal." original="Another day, mortal." />
+    <string id="BLTImmortalDefeated" text="O Imortal foi derrotado. Os participantes do BLT do lado do jogador receberam sua recompensa." original="The Immortal was defeated. Player-side BLT participants received their reward." />
+    <string id="BLTPriestCrusadeStarted" text="{ClanName} iniciou uma cruzada contra {KingdomName} com tropas {TroopCount}." original="{ClanName} began a crusade against {KingdomName} with {TroopCount} troops." />
+    <string id="BLTPriestCrusadeStartFailed" text="A Cruzada do Padre não pôde começar: {Error}" original="Priest's Crusade could not start: {Error}" />
+    <string id="BLTPriestCrusadeResolved" text="A Cruzada dos Sacerdotes terminou." original="Priest's Crusade has ended." />
+  </strings>
+</base>

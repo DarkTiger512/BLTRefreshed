@@ -90,6 +90,8 @@ namespace BLTAdoptAHero
                 BLTAdoptAHeroCampaignBehavior.SetAgentStartingHealth(hero, agent);
                 activeHeroes.Add(hero);
                 Behaviors.CursedArtifactBehavior.Current?.MarkMissionParticipant(hero);
+                bool onPlayerSide = agent.Team?.IsValid == true && Mission.PlayerTeam?.IsValid == true && agent.Team.IsFriendOf(Mission.PlayerTeam);
+                Behaviors.ImmortalEncounterBehavior.Current?.MarkMissionParticipant(hero, onPlayerSide);
             });
         }
 

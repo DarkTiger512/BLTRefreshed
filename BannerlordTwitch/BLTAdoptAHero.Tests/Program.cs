@@ -187,7 +187,30 @@ Assert(Math.Abs(CursedArtifactPolicy.OutgoingMultiplier(500) - .05f) < .001f &&
        CursedArtifactPolicy.ClampRequiredWins(0) == 1,
     "Unsafe curse settings must be clamped.");
 
-Console.WriteLine("Smart troop, ammunition, campaign map, stream objective, and cursed artifact policy tests passed.");
+Assert(RandomEventPolicy.ClampChance(-1) == 0 && RandomEventPolicy.ClampChance(101) == 100 &&
+       RandomEventPolicy.ClampCooldown(-3) == 0 && RandomEventPolicy.ClampCooldown(5000) == 3650,
+    "Random-event chance/cooldown clamps failed.");
+Assert(!RandomEventPolicy.CanRoll(99, 10, 90, false) && RandomEventPolicy.CanRoll(100, 10, 90, false) &&
+       !RandomEventPolicy.CanRoll(1000, 0, 0, true), "Random-event cooldown/active gating failed.");
+Assert(RandomEventPolicy.RollSucceeds(.19f, .2f) && !RandomEventPolicy.RollSucceeds(.2f, .2f),
+    "Random-event chance boundary failed.");
+Assert(RandomEventPolicy.TryTransition(RandomEventLifecycle.Inactive, RandomEventLifecycle.Preparing) &&
+       RandomEventPolicy.TryTransition(RandomEventLifecycle.Preparing, RandomEventLifecycle.AwaitingResponse) &&
+       !RandomEventPolicy.TryTransition(RandomEventLifecycle.Resolved, RandomEventLifecycle.Active),
+    "Random-event lifecycle transitions failed.");
+var immortal = new ImmortalEncounterState { Phase = RandomEventLifecycle.Active };
+Assert(RandomEventPolicy.RecordParticipant(immortal, "hero") && !RandomEventPolicy.RecordParticipant(immortal, "hero") &&
+       RandomEventPolicy.RecordReward(immortal, "hero") && !RandomEventPolicy.RecordReward(immortal, "hero"),
+    "Immortal participant/reward idempotence failed.");
+Assert(RandomEventPolicy.CalculateArmySize(500, 80, 100, 1000) == 400 &&
+       RandomEventPolicy.CalculateArmySize(10, 80, 100, 1000) == 100 &&
+       RandomEventPolicy.CalculateArmySize(5000, 80, 100, 1000) == 1000,
+    "Random-event army sizing failed.");
+Assert(RandomEventPolicy.CrusadeResolved(true, true, true) && RandomEventPolicy.CrusadeResolved(false, false, true) &&
+       RandomEventPolicy.CrusadeResolved(false, true, false) && !RandomEventPolicy.CrusadeResolved(false, true, true),
+    "Crusade resolution policy failed.");
+
+Console.WriteLine("Smart troop, ammunition, campaign map, stream objective, cursed artifact, and random-event policy tests passed.");
 
 internal sealed record Troop(string Id, string Culture, bool Compatible, int MaxTier);
 internal sealed record Label(string Id, bool Hero, bool Town);

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <LanguageData id="Deutsch">
   <LanguageFile xml_path="DE/strings-actions-DE.xml" />
   <LanguageFile xml_path="DE/strings-behaviors-DE.xml" />
@@ -6,4 +6,5 @@
   <LanguageFile xml_path="DE/strings-globalconfigs-DE.xml" />
   <LanguageFile xml_path="DE/strings-misc-DE.xml" />
   <LanguageFile xml_path="DE/strings-powers-DE.xml" />
+  <LanguageFile xml_path="DE/strings-random-events-DE.xml" />
 </LanguageData>

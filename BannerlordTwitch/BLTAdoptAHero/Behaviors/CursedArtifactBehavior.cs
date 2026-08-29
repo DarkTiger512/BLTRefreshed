@@ -19,7 +19,6 @@ namespace BLTAdoptAHero.Behaviors
 
         private CurseRecord active;
         private List<CurseHistoryEntry> history = new();
-        private HashSet<string> completedHeroIds = new(StringComparer.Ordinal);
         private HashSet<string> missionParticipants = new(StringComparer.Ordinal);
         private int? playedMapEventHash;
         private double lastTriggerDay = -100000;
@@ -48,10 +47,8 @@ namespace BLTAdoptAHero.Behaviors
             using var sync = new ScopedJsonSync(dataStore, nameof(CursedArtifactBehavior));
             sync.SyncDataAsJson("ActiveV1", ref active);
             sync.SyncDataAsJson("HistoryV1", ref history);
-            sync.SyncDataAsJson("CompletedHeroesV1", ref completedHeroIds);
             dataStore.SyncData("LastTriggerDay", ref lastTriggerDay);
             history ??= new List<CurseHistoryEntry>();
-            completedHeroIds ??= new HashSet<string>(StringComparer.Ordinal);
             if (active != null) active.ProcessedBattleIds ??= new HashSet<string>(StringComparer.Ordinal);
         }
 
@@ -62,7 +59,6 @@ namespace BLTAdoptAHero.Behaviors
         public float IncomingDamageMultiplier(Hero hero) => IsCursed(hero)
             ? CursedArtifactPolicy.IncomingMultiplier(BLTAdoptAHeroModule.CommonConfig?.CursedArtifactIncomingIncreasePercent ?? 25f) : 1f;
         public bool IsEligible(Hero hero) => hero != null && !hero.IsDead && hero.IsActive && hero.IsAdopted()
-            && !completedHeroIds.Contains(hero.StringId)
             && !string.IsNullOrWhiteSpace(BLTAdoptAHeroCampaignBehavior.Current?.GetHeroOwner(hero));
 
         public void MarkMissionParticipant(Hero hero)
@@ -76,7 +72,7 @@ namespace BLTAdoptAHero.Behaviors
         private void OnDailyTick()
         {
             var cfg = BLTAdoptAHeroModule.CommonConfig;
-            if (cfg?.CursedArtifactEnabled != true) return;
+            if (cfg?.RandomEventsEnabled != true || cfg.CursedArtifactEnabled != true) return;
             if (Active?.Status == CurseLifecycle.CompletedPendingReward) { TryGrantPendingReward(); return; }
             if (Active != null) return;
 
@@ -92,7 +88,8 @@ namespace BLTAdoptAHero.Behaviors
             var hero = eligible[MBRandom.RandomInt(eligible.Count)];
             active = new CurseRecord { HeroId = hero.StringId, Owner = BLTAdoptAHeroCampaignBehavior.Current.GetHeroOwner(hero), StartedAt = CampaignTime.Now.ToString() };
             lastTriggerDay = day;
-            Log.LogFeedEvent($"A cursed artifact has bound itself to @{active.Owner}! Win {CursedArtifactPolicy.ClampRequiredWins(cfg.CursedArtifactRequiredWins)} campaign battles to transform it into a legendary weapon.");
+            Log.LogFeedEvent("{=BLTCurseStarted}A cursed artifact has bound itself to @{Owner}! Win {RequiredWins} campaign battles to transform it into a legendary weapon."
+                .Translate(("Owner", active.Owner), ("RequiredWins", CursedArtifactPolicy.ClampRequiredWins(cfg.CursedArtifactRequiredWins))));
         }
 
         private void OnMapEventEnded(MapEvent mapEvent)
@@ -106,7 +103,9 @@ namespace BLTAdoptAHero.Behaviors
                 if (hero?.PartyBelongedTo?.MapEventSide != mapEvent.Winner) { Diagnostic("rejected loss or unavailable winning side"); return; }
                 string battleId = $"{mapEvent.EventType}:{CampaignTime.Now.ToHours:F4}:{string.Join(",", mapEvent.InvolvedParties.Select(p => p.MobileParty?.StringId).Where(x => x != null).OrderBy(x => x))}";
                 if (!CursedArtifactPolicy.RecordVictory(active, battleId, BLTAdoptAHeroModule.CommonConfig.CursedArtifactRequiredWins)) { Diagnostic("duplicate battle callback"); return; }
-                Log.LogFeedEvent($"@{active.Owner} won a cursed battle ({active.QualifyingWins}/{CursedArtifactPolicy.ClampRequiredWins(BLTAdoptAHeroModule.CommonConfig.CursedArtifactRequiredWins)}).");
+                Log.LogFeedEvent("{=BLTCurseProgress}@{Owner} won a cursed battle ({Wins}/{RequiredWins})."
+                    .Translate(("Owner", active.Owner), ("Wins", active.QualifyingWins),
+                        ("RequiredWins", CursedArtifactPolicy.ClampRequiredWins(BLTAdoptAHeroModule.CommonConfig.CursedArtifactRequiredWins))));
                 if (active.Status == CurseLifecycle.CompletedPendingReward) TryGrantPendingReward();
             }
             finally { missionParticipants.Clear(); playedMapEventHash = null; }
@@ -142,9 +141,9 @@ namespace BLTAdoptAHero.Behaviors
                 active.RewardItemId = generated.item.StringId;
                 active.Status = CurseLifecycle.Completed;
                 active.FinishedAt = CampaignTime.Now.ToString();
-                completedHeroIds.Add(active.HeroId);
                 AddHistory(active, null);
-                Log.LogFeedEvent($"@{active.Owner} broke the curse and received the legendary Cursed Legacy!");
+                Log.LogFeedEvent("{=BLTCurseCompleted}@{Owner} broke the curse and received the legendary Cursed Legacy!"
+                    .Translate(("Owner", active.Owner)));
                 active = null;
             }
             catch (Exception ex) { Log.Error($"[Cursed Artifact] reward pending after failure: {ex}"); }
@@ -160,7 +159,7 @@ namespace BLTAdoptAHero.Behaviors
             active.FinishedAt = CampaignTime.Now.ToString();
             active.FailureReason = reason;
             AddHistory(active, reason);
-            Log.LogFeedEvent($"The cursed artifact event failed: {reason}. No reward was granted.");
+            Log.LogFeedEvent("{=BLTCurseFailed}The cursed artifact event failed. No reward was granted.".Translate());
             active = null;
             missionParticipants.Clear();
             playedMapEventHash = null;
