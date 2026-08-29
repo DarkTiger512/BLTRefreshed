@@ -1970,7 +1970,7 @@ namespace BLTAdoptAHero
                     // Only of age characters can be used
                     && h.Age >= Campaign.Current.Models.AgeModel.HeroComesOfAge)
                 .Where(filter ?? (_ => true))
-                .Where(n => !n.Name.Contains(BLTAdoptAHeroModule.Tag) || !n.Name.Contains(BLTAdoptAHeroModule.DevTag));
+                .Where(n => !n.Name.Contains(BLTAdoptAHeroModule.Tag) && !n.Name.Contains(BLTAdoptAHeroModule.DevTag));
 
         public static IEnumerable<Hero> GetAllAdoptedHeroes() => CampaignHelpers.AliveHeroes.Where(n => n.Name?.Contains(BLTAdoptAHeroModule.Tag) == true || n.Name?.Contains(BLTAdoptAHeroModule.DevTag) == true);
 
