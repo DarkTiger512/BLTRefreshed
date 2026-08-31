@@ -253,6 +253,25 @@ namespace BLTAdoptAHero
                             }).ToArray()
                         };
                     };
+                    IntegrationRetinueProvider.Get = userName =>
+                    {
+                        var behavior = BLTAdoptAHeroCampaignBehavior.Current;
+                        var hero = behavior?.GetAdoptedHero(userName);
+                        if (hero == null) return new IntegrationRetinueSnapshot { Error = "Adopt a hero to unlock your retinue." };
+                        IntegrationRetinueTroop[] Map(IEnumerable<CharacterObject> troops) => troops.Select((troop, index) => new IntegrationRetinueTroop
+                        {
+                            Slot = index + 1,
+                            Name = troop.Name.ToString(),
+                            Tier = troop.Tier,
+                            Culture = troop.Culture?.Name?.ToString()
+                        }).ToArray();
+                        return new IntegrationRetinueSnapshot
+                        {
+                            HeroName = hero.Name.ToString(),
+                            Retinue = Map(behavior.GetRetinue(hero)),
+                            EliteRetinue = Map(behavior.GetRetinue2(hero))
+                        };
+                    };
                     campaignStarter.AddBehavior(new StreamObjectivesBehavior());
                     campaignStarter.AddBehavior(new CursedArtifactBehavior());
                     campaignStarter.AddBehavior(new ImmortalEncounterBehavior());

@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T16:48:32.533Z",
+  "generatedAt": "2026-08-31T17:10:07.875Z",
   "actions": [
     {
       "id": "command.objective",
@@ -1232,7 +1232,7 @@
       "id": "command.retinue",
       "legacyName": "retinue",
       "handler": "Retinue",
-      "category": "Battle",
+      "category": "Retinue",
       "description": "Recruit or upgrade troops in your hero's battle retinue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
@@ -1256,9 +1256,33 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "troop",
-          "label": "Troop",
-          "type": "text",
+          "id": "operation",
+          "label": "Retinue action",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "upgrade-one",
+              "label": "Recruit or upgrade one"
+            },
+            {
+              "value": "upgrade-all",
+              "label": "Recruit or upgrade as many as possible"
+            },
+            {
+              "value": "clear-slot",
+              "label": "Dismiss a troop from a numbered slot"
+            },
+            {
+              "value": "clear-all",
+              "label": "Dismiss every retinue troop"
+            }
+          ]
+        },
+        {
+          "id": "slot",
+          "label": "Slot to dismiss (only for numbered dismissal)",
+          "type": "integer",
           "required": false
         }
       ],
@@ -1271,7 +1295,7 @@
       "id": "command.retinuelist",
       "legacyName": "retinuelist",
       "handler": "HeroInfoCommand",
-      "category": "Equipment",
+      "category": "Retinue",
       "description": "View the troops currently serving in your hero's retinue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
@@ -2485,7 +2509,7 @@
       "id": "command.eliteretinue",
       "legacyName": "eliteretinue",
       "handler": "Retinue2",
-      "category": "Equipment",
+      "category": "Retinue",
       "description": "Recruit or upgrade troops in your hero's elite retinue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,

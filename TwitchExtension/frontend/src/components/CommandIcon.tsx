@@ -6,10 +6,11 @@ import progressionIcon from "../assets/command-icons/progression.png";
 import tournamentIcon from "../assets/command-icons/tournament.png";
 import communityIcon from "../assets/command-icons/community.png";
 import generalIcon from "../assets/command-icons/general.png";
+import retinueIcon from "../assets/command-icons/retinue.png";
 
 const icons: Record<string, string> = {
   Hero: heroIcon, Battle: battleIcon, Kingdom: kingdomIcon, Equipment: equipmentIcon,
-  Progression: progressionIcon, Tournament: tournamentIcon, Community: communityIcon, General: generalIcon,
+  Progression: progressionIcon, Tournament: tournamentIcon, Community: communityIcon, Retinue: retinueIcon, General: generalIcon,
 };
 
 export function CommandIcon({ category, className = "" }: { category: string; className?: string }) {

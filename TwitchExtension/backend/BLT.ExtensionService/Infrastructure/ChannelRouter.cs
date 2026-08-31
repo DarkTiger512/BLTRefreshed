@@ -52,7 +52,7 @@ public sealed class ChannelRouter
             using var document = JsonDocument.Parse(message);
             var root = document.RootElement;
             var kind = root.GetProperty("kind").GetString();
-            if (kind is "action.accepted" or "action.result" or "action.error" or "inventory.snapshot" or "inventory.error")
+            if (kind is "action.accepted" or "action.result" or "action.error" or "inventory.snapshot" or "inventory.error" or "retinue.snapshot" or "retinue.error")
             {
                 var requestId = root.GetProperty("id").GetGuid();
                 if (privateRequests.TryGetValue(requestId, out var target) && target.Channel == channel)

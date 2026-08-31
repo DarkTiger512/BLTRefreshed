@@ -794,6 +794,9 @@
       "IntegrationEquipmentSlot",
       "IntegrationInventorySnapshot",
       "IntegrationInventoryProvider",
+      "IntegrationRetinueTroop",
+      "IntegrationRetinueSnapshot",
+      "IntegrationRetinueProvider",
       "ManagedIntegrationClient"
     ]
   },

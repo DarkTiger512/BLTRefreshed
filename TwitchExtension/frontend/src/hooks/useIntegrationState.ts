@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { GameState, InventorySnapshot, ViewerIdentity } from "../types";
+import type { GameState, InventorySnapshot, RetinueSnapshot, ViewerIdentity } from "../types";
 
 const initialState: GameState = { connected: true, gameStarted: true, unavailable: {}, cooldowns: {} };
 
@@ -7,6 +7,8 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
   const [state, setState] = useState<GameState>(initialState);
   const [inventory, setInventory] = useState<InventorySnapshot>();
   const [inventoryError, setInventoryError] = useState<string>();
+  const [retinue, setRetinue] = useState<RetinueSnapshot>();
+  const [retinueError, setRetinueError] = useState<string>();
   useEffect(() => {
     if (!identity || identity.token === "development-token") return;
     const apiBase = import.meta.env.VITE_BLT_API_URL ?? window.location.origin;
@@ -25,9 +27,14 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
         setInventoryError(undefined);
       } else if (envelope.kind === "inventory.error") {
         setInventoryError(envelope.data.error);
+      } else if (envelope.kind === "retinue.snapshot") {
+        setRetinue({ ...envelope.data, updatedAt: envelope.timestamp });
+        setRetinueError(undefined);
+      } else if (envelope.kind === "retinue.error") {
+        setRetinueError(envelope.data.error);
       }
     });
     return () => socket.close();
   }, [identity]);
-  return { ...state, inventory, inventoryError, setInventory, setInventoryError };
+  return { ...state, inventory, inventoryError, retinue, retinueError, setInventory, setInventoryError, setRetinue, setRetinueError };
 }

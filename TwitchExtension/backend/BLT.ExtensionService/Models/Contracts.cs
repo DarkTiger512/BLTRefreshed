@@ -9,7 +9,8 @@ public static class ProtocolKinds
     public static readonly HashSet<string> Allowed = new(StringComparer.Ordinal)
     {
         "hello", "manifest", "state.snapshot", "state.patch", "action.request", "action.accepted",
-        "action.result", "action.error", "inventory.request", "inventory.snapshot", "inventory.error", "connection.status"
+        "action.result", "action.error", "inventory.request", "inventory.snapshot", "inventory.error",
+        "retinue.request", "retinue.snapshot", "retinue.error", "connection.status"
     };
 }
 
@@ -26,6 +27,7 @@ public sealed record IntegrationEnvelope(
 
 public sealed record ActionSubmission(string RequestId, string ActionId, Dictionary<string, JsonElement> Args, DateTimeOffset Timestamp);
 public sealed record InventorySubmission(string RequestId, DateTimeOffset Timestamp);
+public sealed record RetinueSubmission(string RequestId, DateTimeOffset Timestamp);
 public sealed record PairingExchangeRequest(string Code);
 public sealed record PairingExchangeResponse(string ChannelId, string InstallationId, string InstallationCredential, DateTimeOffset IssuedAt);
 public sealed record PairingCodeResponse(string Code, DateTimeOffset ExpiresAt);

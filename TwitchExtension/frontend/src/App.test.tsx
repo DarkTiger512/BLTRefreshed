@@ -5,6 +5,8 @@ import { App } from "./App";
 const manifest = { protocolVersion: 1, actions: [
   { id: "command.adopt", legacyName: "adopt", handler: "AdoptAHero", category: "Hero", description: "Adopt a hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [] },
   { id: "command.equipcustom", legacyName: "equipcustom", handler: "EquipCustomItemAction", category: "Equipment", description: "Equip custom item", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "item", type: "text", required: true }] },
+  { id: "command.retinue", legacyName: "retinue", handler: "Retinue", category: "Retinue", description: "Manage battle retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
+  { id: "command.eliteretinue", legacyName: "eliteretinue", handler: "Retinue2", category: "Retinue", description: "Manage elite retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
 ] };
 
 vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ json: () => Promise.resolve(manifest) })));
@@ -28,4 +30,10 @@ test("renders the command browser and selected action", async () => {
   fireEvent.dragStart(horse);
   fireEvent.drop(screen.getByRole("button", { name: /^mount/i }));
   await waitFor(() => expect(screen.getByRole("button", { name: /^mount/i })).toHaveTextContent("Stormhoof"));
+  fireEvent.click(screen.getByRole("button", { name: /^retinue$/i }));
+  await waitFor(() => expect(screen.getByText("Battle Retinue")).toBeInTheDocument());
+  expect(screen.getByText("Elite Retinue")).toBeInTheDocument();
+  expect(screen.getByText("Vlandian Banner Knight")).toBeInTheDocument();
+  fireEvent.click(screen.getAllByRole("button", { name: /recruit \/ upgrade one/i })[0]);
+  await waitFor(() => expect(screen.getByText("Retinue order sent")).toBeInTheDocument());
 });

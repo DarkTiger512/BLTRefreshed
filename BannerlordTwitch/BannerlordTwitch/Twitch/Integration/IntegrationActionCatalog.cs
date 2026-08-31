@@ -32,8 +32,9 @@ namespace BannerlordTwitch.Integration
 
         public string BuildLegacyArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
         {
-            if (string.Equals(action.Id, "command.eliteretinue", StringComparison.OrdinalIgnoreCase))
-                return BuildEliteRetinueArguments(action, values);
+            if (string.Equals(action.Id, "command.retinue", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(action.Id, "command.eliteretinue", StringComparison.OrdinalIgnoreCase))
+                return BuildRetinueArguments(action, values);
             var result = new List<string>();
             if (values.Keys.Any(key => action.Inputs.All(input => !string.Equals(input.Id, key, StringComparison.OrdinalIgnoreCase))))
                 throw new ArgumentException("The request contains an unknown argument");
@@ -70,7 +71,7 @@ namespace BannerlordTwitch.Integration
             return string.Join(" ", result);
         }
 
-        private static string BuildEliteRetinueArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
+        private static string BuildRetinueArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
         {
             if (values.Keys.Any(key => action.Inputs.All(input => !string.Equals(input.Id, key, StringComparison.OrdinalIgnoreCase))))
                 throw new ArgumentException("The request contains an unknown argument");
@@ -84,7 +85,7 @@ namespace BannerlordTwitch.Integration
                 "clear-all" => "clear all",
                 "clear-slot" when values.TryGetValue("slot", out var slot) && slot.TryGetInt32(out var index) && index > 0 => $"clear {index}",
                 "clear-slot" => throw new ArgumentException("A positive slot number is required when dismissing one troop"),
-                _ => throw new ArgumentException("operation is not a valid elite retinue action")
+                _ => throw new ArgumentException("operation is not a valid retinue action")
             };
         }
     }

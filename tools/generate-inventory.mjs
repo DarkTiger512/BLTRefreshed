@@ -63,7 +63,9 @@ function parseTopLevelSequence(lines, start, end) {
 }
 
 function categoryFor(command) {
-  if (cleanLoc(command.Name).toLowerCase() === "power") return "Battle";
+  const name = cleanLoc(command.Name).toLowerCase();
+  if (["retinue", "retinuelist", "eliteretinue"].includes(name)) return "Retinue";
+  if (name === "power") return "Battle";
   const haystack = `${command.Name ?? ""} ${command.Handler ?? ""} ${command.Documentation ?? ""}`.toLowerCase();
   const categories = [
     ["Tournament", /tournament|arena|bet/],
@@ -160,7 +162,15 @@ function actionInput(command) {
     class: [textInput("class", "Hero class")], customitems: [textInput("filter", "Item filter", false)], discarditem: [textInput("item", "Item")],
     equip: [choice("slot", "Equipment slot", ["weapon", "shield", "bow", "armor", "mount"]), textInput("item", "Item", false)],
     giveitem: [textInput("target", "Viewer or hero"), textInput("item", "Item")], kingdom: [choice("operation", "Kingdom operation", ["info", "join", "leave", "policy", "war", "peace"]), textInput("target", "Target", false)],
-    nameitem: [textInput("item", "Item"), textInput("name", "New name")], power: [textInput("power", "Power")], retinue: [textInput("troop", "Troop", false)], retire: [confirm()],
+    nameitem: [textInput("item", "Item"), textInput("name", "New name")], power: [textInput("power", "Power")], retinue: [
+      labeledChoice("operation", "Retinue action", [
+        { value: "upgrade-one", label: "Recruit or upgrade one" },
+        { value: "upgrade-all", label: "Recruit or upgrade as many as possible" },
+        { value: "clear-slot", label: "Dismiss a troop from a numbered slot" },
+        { value: "clear-all", label: "Dismiss every retinue troop" },
+      ]),
+      numberInput("slot", "Slot to dismiss (only for numbered dismissal)", false),
+    ], retire: [confirm()],
     smitharmor: [textInput("name", "Armor name"), textInput("culture", "Culture", false)], smithweapon: [textInput("name", "Weapon name"), textInput("culture", "Culture", false)],
     summon: [choice("side", "Battle side", ["player", "enemy"], false)], itemstats: [textInput("item", "Item")], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm()],
     heir: [textInput("target", "Heir")], diplomacy: [choice("operation", "Diplomacy action", ["war", "peace", "ally", "trade", "policy"]), textInput("kingdom", "Kingdom")],

@@ -55,3 +55,25 @@ export async function requestInventory(identity: ViewerIdentity) {
   if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "Your inventory could not be loaded.");
   return null;
 }
+
+export async function requestRetinue(identity: ViewerIdentity) {
+  if (identity.token === "development-token") {
+    await new Promise(resolve => setTimeout(resolve, 220));
+    return { heroName: "Aldric the Bold", updatedAt: new Date().toISOString(), retinue: [
+      { slot: 1, name: "Vlandian Sergeant", tier: 5, culture: "Vlandia" },
+      { slot: 2, name: "Vlandian Sharpshooter", tier: 5, culture: "Vlandia" },
+      { slot: 3, name: "Imperial Elite Menavliaton", tier: 5, culture: "Empire" },
+    ], eliteRetinue: [
+      { slot: 1, name: "Vlandian Banner Knight", tier: 6, culture: "Vlandia" },
+      { slot: 2, name: "Battanian Fian Champion", tier: 6, culture: "Battania" },
+    ] };
+  }
+  const requestId = crypto.randomUUID();
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/retinue`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${identity.token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId, timestamp: new Date().toISOString() }),
+  });
+  if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "Your retinue could not be loaded.");
+  return null;
+}

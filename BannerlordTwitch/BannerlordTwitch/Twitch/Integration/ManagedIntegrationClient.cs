@@ -44,6 +44,28 @@ namespace BannerlordTwitch.Integration
         public static IntegrationInventorySnapshot For(string userName) => Get?.Invoke(userName) ?? new IntegrationInventorySnapshot { Error = "Inventory is unavailable in this game." };
     }
 
+    public sealed class IntegrationRetinueTroop
+    {
+        public int Slot { get; set; }
+        public string Name { get; set; }
+        public int Tier { get; set; }
+        public string Culture { get; set; }
+    }
+
+    public sealed class IntegrationRetinueSnapshot
+    {
+        public string HeroName { get; set; }
+        public string Error { get; set; }
+        public IntegrationRetinueTroop[] Retinue { get; set; } = Array.Empty<IntegrationRetinueTroop>();
+        public IntegrationRetinueTroop[] EliteRetinue { get; set; } = Array.Empty<IntegrationRetinueTroop>();
+    }
+
+    public static class IntegrationRetinueProvider
+    {
+        public static Func<string, IntegrationRetinueSnapshot> Get { private get; set; }
+        public static IntegrationRetinueSnapshot For(string userName) => Get?.Invoke(userName) ?? new IntegrationRetinueSnapshot { Error = "Retinue data is unavailable in this game." };
+    }
+
     public sealed class ManagedIntegrationClient : IDisposable
     {
         private readonly AuthSettings auth;
@@ -149,6 +171,19 @@ namespace BannerlordTwitch.Integration
                         _ = string.IsNullOrEmpty(inventory.Error)
                             ? SendAsync("inventory.snapshot", inventory, lifetime.Token, requestId)
                             : SendAsync("inventory.error", new { error = inventory.Error }, lifetime.Token, requestId);
+                    });
+                    return;
+                }
+                if (kind == "retinue.request")
+                {
+                    var requestId = root.GetProperty("id").GetGuid();
+                    var userName = user.GetProperty("name").GetString();
+                    MainThreadSync.Run(() =>
+                    {
+                        var retinue = IntegrationRetinueProvider.For(userName);
+                        _ = string.IsNullOrEmpty(retinue.Error)
+                            ? SendAsync("retinue.snapshot", retinue, lifetime.Token, requestId)
+                            : SendAsync("retinue.error", new { error = retinue.Error }, lifetime.Token, requestId);
                     });
                     return;
                 }

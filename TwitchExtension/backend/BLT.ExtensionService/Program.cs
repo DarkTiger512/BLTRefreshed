@@ -96,6 +96,18 @@ app.MapPost("/api/channels/{channel}/inventory", async (string channel, Inventor
     return Results.Accepted(value: new { requestId, status = "accepted" });
 });
 
+app.MapPost("/api/channels/{channel}/retinue", async (string channel, RetinueSubmission submission, HttpContext context, TwitchExtensionTokenValidator validator, ChannelRouter router, RequestGuard guard, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (!principal!.IsLinked) return Results.Problem("Share Twitch identity before viewing your retinue.", statusCode: 403);
+    if (!Guid.TryParse(submission.RequestId, out var requestId)) return Results.Problem("requestId must be a UUID.", statusCode: 400);
+    if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:retinue", submission.Timestamp, out var guardError)) return Results.Problem(guardError, statusCode: 429);
+    var envelope = new { v = ProtocolKinds.Version, id = requestId, kind = "retinue.request", channelId = channel, timestamp = submission.Timestamp, user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles), data = new { } };
+    router.RegisterPrivateRequest(requestId, channel, principal.UserId);
+    if (!await router.SendGameAsync(channel, envelope, token)) { router.ForgetPrivateRequest(requestId); return Results.Problem("The streamer's game is offline.", statusCode: 409); }
+    return Results.Accepted(value: new { requestId, status = "accepted" });
+});
+
 app.Map("/ws/game/{channel}", async (string channel, HttpContext context, Database database, ChannelRouter router, CancellationToken token) =>
 {
     if (!context.WebSockets.IsWebSocketRequest) { context.Response.StatusCode = 400; return; }

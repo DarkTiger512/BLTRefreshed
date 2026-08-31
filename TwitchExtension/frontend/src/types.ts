@@ -45,6 +45,8 @@ export interface GameState {
 export interface InventoryItem { index: number; name: string; type: string; equipped: boolean }
 export interface EquipmentSlot { id: string; label: string; accepts: string; itemName?: string; customItemIndex?: number }
 export interface InventorySnapshot { heroName: string; limit: number; items: InventoryItem[]; slots: EquipmentSlot[]; updatedAt?: string }
+export interface RetinueTroop { slot: number; name: string; tier: number; culture?: string }
+export interface RetinueSnapshot { heroName: string; retinue: RetinueTroop[]; eliteRetinue: RetinueTroop[]; updatedAt?: string }
 
 declare global {
   interface Window {

@@ -8,7 +8,7 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 |---|---:|
 | Commands | 61 |
 | Rewards | 15 |
-| Settings | 1335 |
+| Settings | 1343 |
 | Source components | 343 |
 
 ## Action categories
@@ -16,12 +16,13 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 | Category | Commands |
 |---|---:|
 | Community | 3 |
-| Battle | 9 |
+| Battle | 8 |
 | Hero | 10 |
 | Kingdom | 9 |
-| Equipment | 17 |
+| Equipment | 15 |
 | Tournament | 3 |
 | Progression | 6 |
+| Retinue | 3 |
 | General | 4 |
 
 ## Component map
