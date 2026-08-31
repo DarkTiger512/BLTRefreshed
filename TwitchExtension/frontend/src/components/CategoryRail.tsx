@@ -1,4 +1,4 @@
-import { PackageOpen } from "lucide-react";
+import { PackageOpen, ScrollText } from "lucide-react";
 import { CommandIcon } from "./CommandIcon";
 import bltLogo from "../assets/blt-logo-v2.png";
 
@@ -10,7 +10,7 @@ export function CategoryRail({ categories, selected, inventorySelected, onSelect
     <div className="category-links">
       {categories.map(category => {
         return <button key={category} className={selected === category ? "category active" : "category"} onClick={() => onSelect(category)} aria-current={selected === category ? "page" : undefined}>
-          <CommandIcon category={category} /><span>{category}</span>
+          {category === "My Feed" ? <ScrollText className="command-icon feed-tab-icon" /> : <CommandIcon category={category} />}<span>{category}</span>
         </button>;
       })}
     </div>

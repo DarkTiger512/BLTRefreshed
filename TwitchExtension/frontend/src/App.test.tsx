@@ -37,4 +37,8 @@ test("renders the command browser and selected action", async () => {
   fireEvent.change(screen.getByRole("spinbutton", { name: /battle retinue recruit or upgrade quantity/i }), { target: { value: "3" } });
   fireEvent.click(screen.getAllByRole("button", { name: /send order/i })[0]);
   await waitFor(() => expect(screen.getByText("Retinue order sent")).toBeInTheDocument());
+  fireEvent.click(screen.getByRole("button", { name: /my feed/i }));
+  await waitFor(() => expect(screen.getByRole("heading", { name: "Command Feed" })).toBeInTheDocument());
+  expect(screen.getAllByText("Succeeded").length).toBeGreaterThan(0);
+  expect(screen.getByText("retinue completed successfully.")).toBeInTheDocument();
 });

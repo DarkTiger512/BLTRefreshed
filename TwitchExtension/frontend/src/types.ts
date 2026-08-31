@@ -47,6 +47,8 @@ export interface EquipmentSlot { id: string; label: string; accepts: string; ite
 export interface InventorySnapshot { heroName: string; limit: number; items: InventoryItem[]; slots: EquipmentSlot[]; updatedAt?: string }
 export interface RetinueTroop { slot: number; name: string; tier: number; culture?: string }
 export interface RetinueSnapshot { heroName: string; retinue: RetinueTroop[]; eliteRetinue: RetinueTroop[]; updatedAt?: string }
+export type CommandActivityStatus = "pending" | "succeeded" | "failed";
+export interface CommandActivity { requestId: string; actionId: string; actionName: string; status: CommandActivityStatus; submittedAt: string; completedAt?: string; messages: string[] }
 
 declare global {
   interface Window {
