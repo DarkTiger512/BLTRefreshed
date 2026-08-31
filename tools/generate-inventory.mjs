@@ -78,6 +78,7 @@ function categoryFor(command) {
 }
 
 const choice = (id, label, values, required = true) => ({ id, label, type: "choice", required, options: values.map(value => ({ value, label: value.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, c => c.toUpperCase()) })) });
+const labeledChoice = (id, label, options, required = true) => ({ id, label, type: "choice", required, options });
 const textInput = (id, label, required = true) => ({ id, label, type: "text", required });
 const numberInput = (id, label, required = true) => ({ id, label, type: "integer", required });
 const confirm = () => ({ id: "confirm", label: "I understand this changes the campaign", type: "confirmation", required: true });
@@ -168,7 +169,16 @@ function actionInput(command) {
     upgrade: [choice("scope", "Upgrade scope", ["hero", "clan", "fief"]), textInput("upgrade", "Upgrade")], family: [choice("operation", "Family action", ["info", "marry", "adopt", "divorce"]), textInput("target", "Target", false)],
     equipcustom: [textInput("item", "Custom item")], formation: [choice("formation", "Formation", ["infantry", "ranged", "cavalry", "horseArcher"])],
     fief: [choice("operation", "Fief action", ["info", "manage", "give", "upgrade"]), textInput("target", "Settlement", false)], vassal: [textInput("target", "Vassal")],
-    capital: [textInput("settlement", "Capital settlement")], eliteretinue: [textInput("troop", "Elite troop")]
+    capital: [textInput("settlement", "Capital settlement")],
+    eliteretinue: [
+      labeledChoice("operation", "Elite retinue action", [
+        { value: "upgrade-one", label: "Recruit or upgrade one" },
+        { value: "upgrade-all", label: "Recruit or upgrade as many as possible" },
+        { value: "clear-slot", label: "Dismiss a troop from a numbered slot" },
+        { value: "clear-all", label: "Dismiss every elite-retinue troop" },
+      ]),
+      numberInput("slot", "Slot to dismiss (only for numbered dismissal)", false),
+    ]
   };
   return definitions[name] ?? [textInput("query", "Action selection")];
 }

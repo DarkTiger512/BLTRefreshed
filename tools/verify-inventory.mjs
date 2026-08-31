@@ -27,6 +27,11 @@ assert(manifest.actions.every(action => action.inputs.every(input => input.id &&
 assert(manifest.actions.every(action => !action.inputs.some(input => input.id === "arguments" || input.id === "command")), "Raw command text inputs are forbidden");
 assert(manifest.actions.every(action => action.response?.extension === true), "Every ordinary command must provide an Extension response");
 assert(manifest.actions.every(action => action.permissions?.length > 0), "Every action must declare permissions");
+const eliteRetinue = manifest.actions.find(action => action.id === "command.eliteretinue");
+assert.equal(eliteRetinue?.handler, "Retinue2", "Elite retinue must use the existing Retinue2 handler");
+assert.equal(eliteRetinue?.inputs?.[0]?.type, "choice", "Elite retinue must expose structured choices instead of raw command text");
+assert.deepEqual(eliteRetinue.inputs[0].options.map(option => option.value), ["upgrade-one", "upgrade-all", "clear-slot", "clear-all"], "Elite retinue must expose every legacy operation");
+assert.equal(eliteRetinue.inputs[1].type, "integer", "Elite retinue must accept a typed dismissal slot");
 assert(settings.length > 0, "No settings were inventoried");
 assert(components.some(component => component.kinds.includes("action-handler")), "Action handlers missing from component map");
 assert(components.some(component => component.kinds.includes("harmony-patch")), "Harmony patches missing from component map");

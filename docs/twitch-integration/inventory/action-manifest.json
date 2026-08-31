@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T16:41:30.632Z",
+  "generatedAt": "2026-08-31T16:48:32.533Z",
   "actions": [
     {
       "id": "command.objective",
@@ -2509,10 +2509,34 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "troop",
-          "label": "Elite troop",
-          "type": "text",
-          "required": true
+          "id": "operation",
+          "label": "Elite retinue action",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "upgrade-one",
+              "label": "Recruit or upgrade one"
+            },
+            {
+              "value": "upgrade-all",
+              "label": "Recruit or upgrade as many as possible"
+            },
+            {
+              "value": "clear-slot",
+              "label": "Dismiss a troop from a numbered slot"
+            },
+            {
+              "value": "clear-all",
+              "label": "Dismiss every elite-retinue troop"
+            }
+          ]
+        },
+        {
+          "id": "slot",
+          "label": "Slot to dismiss (only for numbered dismissal)",
+          "type": "integer",
+          "required": false
         }
       ],
       "source": {

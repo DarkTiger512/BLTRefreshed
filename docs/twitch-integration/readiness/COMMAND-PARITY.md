@@ -63,5 +63,5 @@ Generated from the default v4 profile and structured manifest. “Mapped” prov
 | `command.fief` | `!fief` | `ManageFief` | 2 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.vassal` | `!vassal` | `VassalManagement` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.capital` | `!capital` | `CapitalAction` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
-| `command.eliteretinue` | `!eliteretinue` | `Retinue2` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
+| `command.eliteretinue` | `!eliteretinue` | `Retinue2` | 2 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.skills` | `!skills` | `HeroInfoCommand` | 0 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
