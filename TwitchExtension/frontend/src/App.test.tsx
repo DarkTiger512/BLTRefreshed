@@ -75,4 +75,8 @@ test("forces the live battle workspace and renders mission forms", async () => {
   expect(screen.queryByText("Battle info")).not.toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: /join streamer side/i }));
   await waitFor(() => expect(screen.getByText("summon completed successfully.")).toBeInTheDocument());
+  const missionSearch = screen.getByPlaceholderText("Search mission commands");
+  fireEvent.change(missionSearch, { target: { value: "heal" } });
+  await waitFor(() => expect(screen.getByRole("heading", { name: "heal" })).toBeInTheDocument());
+  expect(screen.queryByRole("heading", { name: "attack" })).not.toBeInTheDocument();
 });

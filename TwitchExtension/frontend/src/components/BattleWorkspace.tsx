@@ -1,4 +1,5 @@
-import { Activity, Crosshair, Shield, Skull, Swords, Users } from "lucide-react";
+import { Activity, Crosshair, Search, Shield, Skull, Swords, Users } from "lucide-react";
+import { useDeferredValue, useState } from "react";
 import type { GameState, ManifestAction, MissionCombatant, ViewerIdentity } from "../types";
 import { ActionDetail } from "./ActionDetail";
 
@@ -28,6 +29,8 @@ function CombatantCard({ hero, featured = false, tournament = false }: { hero: M
 }
 
 export function BattleWorkspace({ mission, actions, identity, cooldowns, selectors, busy, error, onRequestIdentity, onSubmit }: Props) {
+  const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query.trim().toLocaleLowerCase());
   const ownIndex = mission.combatants.findIndex(hero => hero.name.localeCompare(identity.displayName, undefined, { sensitivity: "accent" }) === 0);
   const ownHero = ownIndex >= 0 ? mission.combatants[ownIndex] : undefined;
   const roster = mission.combatants.filter((_, index) => index !== ownIndex);
@@ -36,12 +39,17 @@ export function BattleWorkspace({ mission, actions, identity, cooldowns, selecto
     result.set(key, [...(result.get(key) ?? []), hero]);
     return result;
   }, new Map<string, MissionCombatant[]>());
+  const filteredActions = deferredQuery ? actions
+    .filter(action => `${action.legacyName} ${action.description}`.toLocaleLowerCase().includes(deferredQuery))
+    .sort((left, right) => Number(!left.legacyName.toLocaleLowerCase().includes(deferredQuery)) - Number(!right.legacyName.toLocaleLowerCase().includes(deferredQuery))) : actions;
   return <section className="battle-workspace" aria-label="Live battle">
     <header className="battle-heading"><div className="battle-emblem"><Swords /></div><div><p>Live {mission.kind === "tournament" ? "tournament" : "battle"}</p><h2>BLT Combatants</h2></div><span><Activity />Live · {mission.combatants.length} active BLTs</span></header>
-    <div className="battle-scroll">
-      <section className="viewer-combatant"><h3>Your hero</h3>{ownHero ? <CombatantCard hero={ownHero} featured tournament={mission.kind === "tournament"} /> : <div className="viewer-absent"><Shield /><div><strong>Your hero is not currently deployed</strong><span>Use an available summon action below to enter the battle.</span></div></div>}</section>
-      <section className="battle-roster"><h3>Battle roster</h3><div className="team-groups">{Array.from(groups, ([name, heroes]) => <div className="team-group" key={name}><h4>{name}<span>{heroes.length}</span></h4><div className="combatant-grid">{heroes.map(hero => <CombatantCard key={hero.id} hero={hero} tournament={mission.kind === "tournament"} />)}</div></div>)}</div></section>
-      <section className="battle-actions"><div className="battle-actions-heading"><div><p>Available now</p><h3>Mission commands</h3></div><span>{mission.deploymentFinished ? "Battle underway" : "Deployment phase"}</span></div><div className="battle-action-grid">{actions.map(action => <ActionDetail key={action.id} action={action} linked={identity.linked} unavailableReason={mission.actionAvailability[action.id] ?? (cooldowns[action.id] ? `Cooldown: ${Math.ceil(cooldowns[action.id])}s` : undefined)} busy={busy} error={error} selectors={selectors} onRequestIdentity={onRequestIdentity} onSubmit={args => onSubmit(action, args)} />)}</div></section>
+    <div className="battle-columns">
+      <div className="battle-overview-scroll">
+        <section className="viewer-combatant"><h3>Your hero</h3>{ownHero ? <CombatantCard hero={ownHero} featured tournament={mission.kind === "tournament"} /> : <div className="viewer-absent"><Shield /><div><strong>Your hero is not currently deployed</strong><span>Use an available summon action to enter the battle.</span></div></div>}</section>
+        <section className="battle-roster"><h3>Battle roster</h3><div className="team-groups">{Array.from(groups, ([name, heroes]) => <div className="team-group" key={name}><h4>{name}<span>{heroes.length}</span></h4><div className="combatant-grid">{heroes.map(hero => <CombatantCard key={hero.id} hero={hero} tournament={mission.kind === "tournament"} />)}</div></div>)}</div></section>
+      </div>
+      <section className="battle-actions"><div className="battle-command-toolbar"><div className="battle-actions-heading"><div><p>Available now</p><h3>Mission commands</h3></div><span>{mission.deploymentFinished ? "Battle underway" : "Deployment phase"}</span></div><label className="battle-command-search"><Search /><span className="sr-only">Search mission commands</span><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search mission commands" /></label></div><div className="battle-action-grid">{filteredActions.map(action => <ActionDetail key={action.id} action={action} linked={identity.linked} unavailableReason={mission.actionAvailability[action.id] ?? (cooldowns[action.id] ? `Cooldown: ${Math.ceil(cooldowns[action.id])}s` : undefined)} busy={busy} error={error} selectors={selectors} onRequestIdentity={onRequestIdentity} onSubmit={args => onSubmit(action, args)} />)}{!filteredActions.length ? <div className="battle-command-empty">No mission commands match “{query}”.</div> : null}</div></section>
     </div>
   </section>;
 }
