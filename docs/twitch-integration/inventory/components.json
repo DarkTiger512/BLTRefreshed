@@ -799,6 +799,9 @@
       "IntegrationRetinueProvider",
       "IntegrationSelectorSnapshot",
       "IntegrationSelectorProvider",
+      "IntegrationBattleCombatant",
+      "IntegrationBattleSnapshot",
+      "IntegrationBattleProvider",
       "ManagedIntegrationClient"
     ]
   },

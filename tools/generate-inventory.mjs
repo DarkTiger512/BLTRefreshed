@@ -217,7 +217,7 @@ function buildActions(commands) {
       extension: true,
       privateByDefault: command.ModeratorOnly !== true,
     },
-    availability: ["game.started"],
+    availability: new Set(["ammo", "attack", "heal", "power", "summon", "battle", "formation"]).has(legacyName) ? ["mission.active"] : ["game.started"],
     cooldown: { strategy: "legacy" },
     mutatesCampaign: !/info|status|check|list|leaderboard|help|logs|ammo/i.test(`${command.Handler} ${command.Name}`),
     inputs: actionInput(command),

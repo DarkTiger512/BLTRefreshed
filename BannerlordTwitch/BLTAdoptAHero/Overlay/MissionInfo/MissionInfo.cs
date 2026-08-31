@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using BannerlordTwitch.Util;
+using BannerlordTwitch.Integration;
+using BannerlordTwitch.Helpers;
 using BLTAdoptAHero.Annotations;
 using Microsoft.AspNet.SignalR;
+using TaleWorlds.MountAndBlade;
 
 namespace BLTAdoptAHero.UI
 {
@@ -14,6 +17,7 @@ namespace BLTAdoptAHero.UI
         [UsedImplicitly]
         public class HeroState
         {
+            [UsedImplicitly] public string Id;
             public string Name;
 
             [UsedImplicitly] public float HP;
@@ -44,6 +48,8 @@ namespace BLTAdoptAHero.UI
 
             [UsedImplicitly] public int GoldEarned;
             [UsedImplicitly] public int XPEarned;
+            [UsedImplicitly] public int AmmoCurrent;
+            [UsedImplicitly] public int AmmoMaximum;
         }
 
         private static readonly List<HeroState> heroState = new();
@@ -67,6 +73,22 @@ namespace BLTAdoptAHero.UI
             {
                 GlobalHost.ConnectionManager.GetHubContext<MissionInfoHub>()
                     .Clients.All.update(heroState);
+                var supported = MissionHelpers.InTournament() || MissionHelpers.InFieldBattleMission() || MissionHelpers.InSiegeMission();
+                if (supported)
+                {
+                    IntegrationBattleProvider.Update(MissionHelpers.InTournament() ? "tournament" : "battle", Mission.Current?.IsDeploymentFinished == true,
+                        heroState.ConvertAll(state => new IntegrationBattleCombatant
+                        {
+                            Id = state.Id ?? state.Name, Name = state.Name, HP = state.HP, MaxHP = state.MaxHP, State = state.State,
+                            IsPlayerSide = state.IsPlayerSide, TournamentTeam = state.TournamentTeam,
+                            CooldownFractionRemaining = state.CooldownFractionRemaining, CooldownSecondsRemaining = state.CooldownSecondsRemaining,
+                            ActivePowerFractionRemaining = state.ActivePowerFractionRemaining, Kills = state.Kills,
+                            Retinue = state.Retinue, DeadRetinue = state.DeadRetinue, EliteRetinue = state.Retinue2,
+                            DeadEliteRetinue = state.DeadRetinue2, RetinueKills = state.RetinueKills,
+                            GoldEarned = state.GoldEarned, XPEarned = state.XPEarned,
+                            AmmoCurrent = state.AmmoCurrent, AmmoMaximum = state.AmmoMaximum,
+                        }));
+                }
             }
         }
 
@@ -86,8 +108,9 @@ namespace BLTAdoptAHero.UI
                 heroState.Clear();
             }
 
-            // Update immediately as Clear probably means the mission is over
-            Update();
+            IntegrationBattleProvider.Clear();
+            // Update the legacy overlay immediately without reactivating managed mission state.
+            GlobalHost.ConnectionManager.GetHubContext<MissionInfoHub>().Clients.All.update(Array.Empty<HeroState>());
         }
 
         public static void UpdateHero(HeroState state)

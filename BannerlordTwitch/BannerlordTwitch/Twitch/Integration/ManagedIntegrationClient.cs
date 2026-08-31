@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 using BannerlordTwitch.Util;
 
 namespace BannerlordTwitch.Integration
@@ -78,6 +79,77 @@ namespace BannerlordTwitch.Integration
         public static IntegrationSelectorSnapshot Current() => new IntegrationSelectorSnapshot { Cultures = cultures };
     }
 
+    public sealed class IntegrationBattleCombatant
+    {
+        [JsonPropertyName("id")] public string Id { get; set; }
+        [JsonPropertyName("name")] public string Name { get; set; }
+        [JsonPropertyName("hp")] public float HP { get; set; }
+        [JsonPropertyName("maxHp")] public float MaxHP { get; set; }
+        [JsonPropertyName("state")] public string State { get; set; }
+        [JsonPropertyName("isPlayerSide")] public bool IsPlayerSide { get; set; }
+        [JsonPropertyName("tournamentTeam")] public int TournamentTeam { get; set; }
+        [JsonPropertyName("cooldownFractionRemaining")] public float CooldownFractionRemaining { get; set; }
+        [JsonPropertyName("cooldownSecondsRemaining")] public float CooldownSecondsRemaining { get; set; }
+        [JsonPropertyName("activePowerFractionRemaining")] public float ActivePowerFractionRemaining { get; set; }
+        [JsonPropertyName("kills")] public int Kills { get; set; }
+        [JsonPropertyName("retinue")] public int Retinue { get; set; }
+        [JsonPropertyName("deadRetinue")] public int DeadRetinue { get; set; }
+        [JsonPropertyName("eliteRetinue")] public int EliteRetinue { get; set; }
+        [JsonPropertyName("deadEliteRetinue")] public int DeadEliteRetinue { get; set; }
+        [JsonPropertyName("retinueKills")] public int RetinueKills { get; set; }
+        [JsonPropertyName("goldEarned")] public int GoldEarned { get; set; }
+        [JsonPropertyName("xpEarned")] public int XPEarned { get; set; }
+        [JsonPropertyName("ammoCurrent")] public int AmmoCurrent { get; set; }
+        [JsonPropertyName("ammoMaximum")] public int AmmoMaximum { get; set; }
+    }
+
+    public sealed class IntegrationBattleSnapshot
+    {
+        [JsonPropertyName("active")] public bool Active { get; set; }
+        [JsonPropertyName("kind")] public string Kind { get; set; } = "inactive";
+        [JsonPropertyName("revision")] public long Revision { get; set; }
+        [JsonPropertyName("deploymentFinished")] public bool DeploymentFinished { get; set; }
+        [JsonPropertyName("combatants")] public IntegrationBattleCombatant[] Combatants { get; set; } = Array.Empty<IntegrationBattleCombatant>();
+        [JsonPropertyName("actionAvailability")] public Dictionary<string, string> ActionAvailability { get; set; } = new();
+    }
+
+    public static class IntegrationBattleProvider
+    {
+        private static readonly object sync = new();
+        private static IntegrationBattleSnapshot current = new();
+        private static string signature = "inactive";
+        public static void Update(string kind, bool deploymentFinished, IEnumerable<IntegrationBattleCombatant> combatants)
+        {
+            var nextCombatants = new List<IntegrationBattleCombatant>(combatants ?? Array.Empty<IntegrationBattleCombatant>()).ToArray();
+            var nextSignature = kind + "|" + deploymentFinished + "|" + JsonSerializer.Serialize(nextCombatants);
+            lock (sync)
+            {
+                if (signature == nextSignature) return;
+                signature = nextSignature;
+                current = new IntegrationBattleSnapshot
+                {
+                    Active = kind == "battle" || kind == "tournament", Kind = kind, Revision = current.Revision + 1,
+                    DeploymentFinished = deploymentFinished, Combatants = nextCombatants,
+                    ActionAvailability = MissionActions(kind, deploymentFinished)
+                };
+            }
+        }
+        public static void Clear() => Update("inactive", false, Array.Empty<IntegrationBattleCombatant>());
+        public static IntegrationBattleSnapshot Current() { lock (sync) return current; }
+        private static Dictionary<string, string> MissionActions(string kind, bool deploymentFinished)
+        {
+            if (kind == "inactive") return new Dictionary<string, string>();
+            return new Dictionary<string, string>
+            {
+                ["command.summon"] = deploymentFinished ? null : "Available when deployment finishes.",
+                ["command.attack"] = deploymentFinished ? null : "Available when deployment finishes.",
+                ["command.heal"] = null,
+                ["command.power"] = null,
+                ["command.formation"] = null,
+            };
+        }
+    }
+
     public sealed class ManagedIntegrationClient : IDisposable
     {
         private readonly AuthSettings auth;
@@ -88,6 +160,7 @@ namespace BannerlordTwitch.Integration
         private ClientWebSocket socket;
         private bool disposed;
         private readonly ConcurrentDictionary<Guid, byte> receivedRequests = new();
+        private readonly SemaphoreSlim sendLock = new(1, 1);
 
         public event Action<IntegrationActionRequest> ActionRequested;
         public bool IsConnected => socket?.State == WebSocketState.Open;
@@ -119,14 +192,27 @@ namespace BannerlordTwitch.Integration
                     Log.LogFeedSystem("[Integration] Connected to managed Twitch Extension service");
                     await SendAsync("hello", new { modVersion = typeof(ManagedIntegrationClient).Assembly.GetName().Version?.ToString(), protocolVersion = IntegrationProtocol.Version }, lifetime.Token);
                     await SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = Guid.NewGuid(), kind = "manifest", channelId, timestamp = DateTimeOffset.UtcNow, data = JsonSerializer.Deserialize<JsonElement>(catalog.ManifestJson) }), lifetime.Token);
-                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = new { cultures = IntegrationSelectorProvider.Current().Cultures } }, lifetime.Token);
-                    await ReceiveAsync(lifetime.Token);
+                    var battle = IntegrationBattleProvider.Current();
+                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = new { cultures = IntegrationSelectorProvider.Current().Cultures }, mission = battle }, lifetime.Token);
+                    await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, lifetime.Token));
                 }
                 catch (OperationCanceledException) { return; }
                 catch (Exception ex) { Log.Error($"[Integration] Connection failed: {ex.Message}"); }
                 if (disposed) return;
                 try { await Task.Delay(delay, lifetime.Token); } catch (OperationCanceledException) { return; }
                 delay = TimeSpan.FromSeconds(Math.Min(delay.TotalSeconds * 2, 60));
+            }
+        }
+
+        private async Task PublishBattleStateAsync(long lastRevision, CancellationToken token)
+        {
+            while (socket?.State == WebSocketState.Open && !token.IsCancellationRequested)
+            {
+                await Task.Delay(250, token);
+                var battle = IntegrationBattleProvider.Current();
+                if (battle.Revision == lastRevision) continue;
+                lastRevision = battle.Revision;
+                await SendAsync("state.patch", new { mission = battle }, token);
             }
         }
 
@@ -237,7 +323,9 @@ namespace BannerlordTwitch.Integration
         {
             if (socket?.State != WebSocketState.Open) return;
             var bytes = Encoding.UTF8.GetBytes(json);
-            await socket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, token);
+            await sendLock.WaitAsync(token);
+            try { if (socket?.State == WebSocketState.Open) await socket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, token); }
+            finally { sendLock.Release(); }
         }
 
         private Uri GameSocketUri()

@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T18:32:09.430Z",
+  "generatedAt": "2026-08-31T21:04:59.590Z",
   "actions": [
     {
       "id": "command.objective",
@@ -116,7 +116,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"
@@ -402,7 +402,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"
@@ -935,7 +935,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"
@@ -1147,7 +1147,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"
@@ -1516,7 +1516,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"
@@ -1884,7 +1884,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"
@@ -2339,7 +2339,7 @@
         "privateByDefault": true
       },
       "availability": [
-        "game.started"
+        "mission.active"
       ],
       "cooldown": {
         "strategy": "legacy"

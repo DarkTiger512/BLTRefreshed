@@ -5,6 +5,7 @@ using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Localization;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.UI;
+using BLTAdoptAHero.Util;
 using HarmonyLib;
 using JetBrains.Annotations;
 using TaleWorlds.CampaignSystem;
@@ -368,6 +369,7 @@ namespace BLTAdoptAHero
 
                 MissionInfoHub.UpdateHero(new()
                 {
+                    Id = hero.StringId,
                     Name = hero.FirstName?.Raw()??"",
                     IsPlayerSide = summonState?.WasPlayerSide ?? IsHeroOnPlayerSide(hero),
                     TournamentTeam = MissionHelpers.InTournament() ? heroState.LastTeamIndex : -1,
@@ -386,6 +388,8 @@ namespace BLTAdoptAHero
                     XPEarned = heroState.WonXP,
                     Kills = heroState.Kills,
                     RetinueKills = heroState.RetinueKills,
+                    AmmoCurrent = agent?.Equipment.YieldFilledSlots().Where(slot => slot.element.IsAnyAmmo()).Sum(slot => slot.element.Ammo) ?? 0,
+                    AmmoMaximum = agent?.Equipment.YieldFilledSlots().Where(slot => slot.element.IsAnyAmmo()).Sum(slot => slot.element.MaxAmmo) ?? 0,
                 });
             }
         }

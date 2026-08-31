@@ -1,10 +1,23 @@
 import { useEffect, useState } from "react";
 import type { CommandActivity, GameState, InventorySnapshot, RetinueSnapshot, ViewerIdentity } from "../types";
 
-const initialState: GameState = { connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"] } };
+const initialState: GameState = {
+  connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"] },
+  mission: {
+    active: true, kind: "battle", revision: 12, deploymentFinished: true,
+    actionAvailability: { "command.summon": null, "command.attack": null, "command.heal": null, "command.power": null, "command.formation": null },
+    combatants: [
+      { id: "rowan", name: "Rowan", hp: 86, maxHp: 112, state: "active", isPlayerSide: true, tournamentTeam: -1, cooldownFractionRemaining: .18, cooldownSecondsRemaining: 9, activePowerFractionRemaining: .42, kills: 6, retinue: 4, deadRetinue: 1, eliteRetinue: 2, deadEliteRetinue: 0, retinueKills: 11, goldEarned: 1840, xpEarned: 920, ammoCurrent: 18, ammoMaximum: 32 },
+      { id: "shieldmaiden", name: "Shieldmaiden", hp: 54, maxHp: 100, state: "active", isPlayerSide: true, tournamentTeam: -1, cooldownFractionRemaining: 0, cooldownSecondsRemaining: 0, activePowerFractionRemaining: 0, kills: 3, retinue: 2, deadRetinue: 2, eliteRetinue: 0, deadEliteRetinue: 0, retinueKills: 4, goldEarned: 760, xpEarned: 380, ammoCurrent: 0, ammoMaximum: 0 },
+      { id: "blackwolf", name: "BlackWolf", hp: 31, maxHp: 105, state: "active", isPlayerSide: false, tournamentTeam: -1, cooldownFractionRemaining: .6, cooldownSecondsRemaining: 28, activePowerFractionRemaining: 0, kills: 4, retinue: 1, deadRetinue: 4, eliteRetinue: 1, deadEliteRetinue: 1, retinueKills: 7, goldEarned: 1030, xpEarned: 515, ammoCurrent: 6, ammoMaximum: 24 },
+    ],
+  },
+};
 
 export function useIntegrationState(identity: ViewerIdentity | null) {
-  const [state, setState] = useState<GameState>(initialState);
+  const [state, setState] = useState<GameState>(() => new URLSearchParams(window.location.search).get("mission") === "inactive"
+    ? { ...initialState, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
+    : initialState);
   const [inventory, setInventory] = useState<InventorySnapshot>();
   const [inventoryError, setInventoryError] = useState<string>();
   const [retinue, setRetinue] = useState<RetinueSnapshot>();
@@ -21,8 +34,14 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
     socket.addEventListener("close", () => setState(value => ({ ...value, connected: false })));
     socket.addEventListener("message", event => {
       const envelope = JSON.parse(String(event.data));
-      if (envelope.kind === "state.snapshot" || envelope.kind === "state.patch") {
-        setState(value => ({ ...value, ...envelope.data }));
+      if (envelope.kind === "connection.status") {
+        setState(value => ({ ...value, ...envelope.data, mission: envelope.data.connected ? value.mission : { active: false, kind: "inactive", revision: value.mission.revision + 1, deploymentFinished: false, combatants: [], actionAvailability: {} } }));
+      } else if (envelope.kind === "state.snapshot" || envelope.kind === "state.patch") {
+        setState(value => {
+          const nextMission = envelope.data.mission;
+          if (nextMission && nextMission.revision < value.mission.revision) return value;
+          return { ...value, ...envelope.data, mission: nextMission ? { ...value.mission, ...nextMission } : value.mission };
+        });
       } else if (envelope.kind === "inventory.snapshot") {
         setInventory({ ...envelope.data, updatedAt: envelope.timestamp });
         setInventoryError(undefined);

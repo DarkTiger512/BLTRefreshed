@@ -42,6 +42,39 @@ export interface GameState {
   unavailable: Record<string, string>;
   cooldowns: Record<string, number>;
   selectors: { cultures: string[] };
+  mission: MissionState;
+}
+
+export type MissionKind = "inactive" | "battle" | "tournament";
+export interface MissionCombatant {
+  id: string;
+  name: string;
+  hp: number;
+  maxHp: number;
+  state: string;
+  isPlayerSide: boolean;
+  tournamentTeam: number;
+  cooldownFractionRemaining: number;
+  cooldownSecondsRemaining: number;
+  activePowerFractionRemaining: number;
+  kills: number;
+  retinue: number;
+  deadRetinue: number;
+  eliteRetinue: number;
+  deadEliteRetinue: number;
+  retinueKills: number;
+  goldEarned: number;
+  xpEarned: number;
+  ammoCurrent: number;
+  ammoMaximum: number;
+}
+export interface MissionState {
+  active: boolean;
+  kind: MissionKind;
+  revision: number;
+  deploymentFinished: boolean;
+  combatants: MissionCombatant[];
+  actionAvailability: Record<string, string | null>;
 }
 
 export interface InventoryItem { index: number; name: string; type: string; equipped: boolean }

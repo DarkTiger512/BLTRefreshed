@@ -12,6 +12,7 @@ public sealed class ChannelRouter
     private sealed record ViewerConnection(string UserId, WebSocket Socket);
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<Guid, ViewerConnection>> viewers = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<Guid, (string Channel, string UserId)> privateRequests = new();
+    private readonly ConcurrentDictionary<string, string> latestState = new(StringComparer.Ordinal);
 
     public bool IsGameConnected(string channel) => games.TryGetValue(channel, out var socket) && socket.State == WebSocketState.Open;
 
@@ -23,6 +24,7 @@ public sealed class ChannelRouter
         await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = true, gameStarted = true }), token);
         await PumpAsync(socket, async message => await RouteGameMessageAsync(channel, message, token), token);
         games.TryRemove(new KeyValuePair<string, WebSocket>(channel, socket));
+        latestState.TryRemove(channel, out _);
         await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = false, gameStarted = false }), CancellationToken.None);
     }
 
@@ -31,6 +33,7 @@ public sealed class ChannelRouter
         var id = Guid.NewGuid();
         viewers.GetOrAdd(channel, _ => new ConcurrentDictionary<Guid, ViewerConnection>())[id] = new(userId, socket);
         await SendAsync(socket, Envelope("connection.status", channel, new { connected = IsGameConnected(channel), gameStarted = IsGameConnected(channel) }), token);
+        if (latestState.TryGetValue(channel, out var state)) await SendAsync(socket, state, token);
         await PumpAsync(socket, _ => Task.CompletedTask, token);
         if (viewers.TryGetValue(channel, out var channelViewers)) channelViewers.TryRemove(id, out _);
     }
@@ -52,6 +55,7 @@ public sealed class ChannelRouter
             using var document = JsonDocument.Parse(message);
             var root = document.RootElement;
             var kind = root.GetProperty("kind").GetString();
+            if (kind is "state.snapshot" or "state.patch") latestState[channel] = message;
             if (kind is "action.accepted" or "action.result" or "action.error" or "inventory.snapshot" or "inventory.error" or "retinue.snapshot" or "retinue.error")
             {
                 var requestId = root.GetProperty("id").GetGuid();

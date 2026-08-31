@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { requestInventory, requestRetinue, submitAction } from "./api";
 import { ActionBrowser } from "./components/ActionBrowser";
 import { ActionDetail } from "./components/ActionDetail";
+import { BattleWorkspace } from "./components/BattleWorkspace";
 import { CategoryRail } from "./components/CategoryRail";
 import { ConfigurationView } from "./components/ConfigurationView";
 import { CommandFeedView } from "./components/CommandFeedView";
@@ -45,16 +46,16 @@ export function App() {
   if (!identity || !manifest) return <div className="loading-screen"><CircleDot />Connecting to Bannerlord Twitch…</div>;
   if (isConfiguration) return <ConfigurationView identity={identity} />;
 
-  async function handleSubmit(args: Record<string, unknown>) {
-    if (!selected) return;
+  async function handleActionSubmit(action: ManifestAction, args: Record<string, unknown>) {
     setBusy(true); setError(undefined);
     try {
-      const response = await submitAction(identity!, selected, args);
-      state.recordCommand({ requestId: response.requestId, actionId: selected.id, actionName: selected.legacyName, status: "pending" });
-      if (identity!.token === "development-token") state.completeDevelopmentCommand(response.requestId, `${selected.legacyName} completed successfully.`);
+      const response = await submitAction(identity!, action, args);
+      state.recordCommand({ requestId: response.requestId, actionId: action.id, actionName: action.legacyName, status: "pending" });
+      if (identity!.token === "development-token") state.completeDevelopmentCommand(response.requestId, `${action.legacyName} completed successfully.`);
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Action failed"); }
     finally { setBusy(false); }
   }
+  async function handleSubmit(args: Record<string, unknown>) { if (selected) await handleActionSubmit(selected, args); }
 
   async function loadInventory() {
     setInventoryLoading(true); state.setInventoryError(undefined);
@@ -113,16 +114,19 @@ export function App() {
   const integratedActions = new Set(["command.equipcustom", "command.retinue", "command.eliteretinue", "command.retinuelist"]);
   const browserActions = manifest.actions.filter(action => !integratedActions.has(action.id));
   const showRetinue = !showInventory && category === "Retinue";
+  const redundantBattleActions = new Set(["command.battle", "command.stats", "command.ammo"]);
+  const battleActions = manifest.actions.filter(action => Object.hasOwn(state.mission.actionAvailability, action.id) && !redundantBattleActions.has(action.id));
+  const battleActive = state.mission.active && (state.mission.kind === "battle" || state.mission.kind === "tournament");
 
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
     {!open ? <button className="open-launcher" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
     {open ? <div className="overlay-window">
       <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
-      <div className="overlay-content">
-        <CategoryRail categories={categories} selected={category} inventorySelected={showInventory} onSelect={selectCategory} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} />
+      <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
+        {!battleActive ? <CategoryRail categories={categories} selected={category} inventorySelected={showInventory} onSelect={selectCategory} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} /> : null}
         <div className="workspace-stack">
           <div className="workspace-main">
-            {showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : showRetinue ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} selectors={state.selectors} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
+            {battleActive ? <BattleWorkspace mission={state.mission} actions={battleActions} identity={identity} cooldowns={state.cooldowns} selectors={state.selectors} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleActionSubmit} /> : showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : showRetinue ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} selectors={state.selectors} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
           </div>
           <CommandFeedView entries={state.commandActivity} expanded={feedExpanded} onToggle={() => setFeedExpanded(value => !value)} onClear={state.clearCommandActivity} />
         </div>
