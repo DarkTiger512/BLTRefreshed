@@ -11,6 +11,8 @@ const manifest = { protocolVersion: 1, actions: [
   { id: "command.summon", legacyName: "summon", handler: "SummonHero", category: "Battle", description: "Summon your hero on the streamer's side", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [{ id: "shout", label: "Optional battle shout", type: "text", required: false }] },
   { id: "command.attack", legacyName: "attack", handler: "SummonHero", category: "Battle", description: "Summon your hero on the enemy side", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [{ id: "shout", label: "Optional battle shout", type: "text", required: false }] },
   { id: "command.heal", legacyName: "heal", handler: "HealHero", category: "Battle", description: "Heal your hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [] },
+  { id: "command.power", legacyName: "power", handler: "UsePower", category: "Battle", description: "Activate your hero's power", enabledByDefault: true, hiddenFromHelp: true, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [] },
+  { id: "command.formation", legacyName: "formation", handler: "FormationCommand", category: "Battle", description: "Choose your hero's formation", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [{ id: "formation", label: "Formation", type: "choice", required: true, options: [{ value: "infantry", label: "Infantry" }, { value: "ranged", label: "Ranged" }] }] },
   { id: "command.battle", legacyName: "battle", handler: "BattleInfo", category: "Battle", description: "Battle info", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: false, inputs: [] },
 ] };
 
@@ -56,36 +58,35 @@ test("renders the command browser and selected action", async () => {
   expect(screen.getByRole("button", { name: /clear feed/i })).toBeInTheDocument();
 });
 
-test("forces the live battle workspace and renders mission forms", async () => {
+test("renders the minimal battle HUD with one-click commands and formation popover", async () => {
   window.history.pushState({}, "", "/");
   render(<App />);
-  await waitFor(() => expect(screen.getByRole("heading", { name: "BLT Combatants" })).toBeInTheDocument());
-  expect(screen.getByText("Your hero")).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByRole("region", { name: "Live battle" })).toBeInTheDocument());
+  expect(screen.getByRole("region", { name: "Your hero" })).toBeInTheDocument();
   expect(screen.getByText("86 / 112 HP")).toBeInTheDocument();
   expect(screen.getByText("Shieldmaiden")).toBeInTheDocument();
   expect(screen.getByText("BlackWolf")).toBeInTheDocument();
   expect(screen.getByText("War Cry")).toBeInTheDocument();
   expect(screen.getByText("42%")).toBeInTheDocument();
-  expect(screen.queryByRole("dialog", { name: "Mission commands" })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: /mission commands/i }));
-  expect(screen.getByRole("dialog", { name: "Mission commands" })).toBeInTheDocument();
-  expect(screen.getByRole("heading", { name: "Mission commands" })).toBeInTheDocument();
-  expect(screen.getAllByRole("textbox", { name: /optional battle shout/i })).toHaveLength(2);
-  expect(screen.queryByRole("combobox", { name: /battle side/i })).not.toBeInTheDocument();
-  expect(screen.getByRole("button", { name: /join enemy side/i })).toBeInTheDocument();
-  expect(screen.getByRole("button", { name: /join streamer side/i })).toBeInTheDocument();
-  expect(screen.getByText("enemy side")).toHaveClass("enemy");
-  expect(screen.getByText("streamer's side")).toHaveClass("streamer");
-  expect(document.querySelector(".summon-side")).toBeNull();
-  expect(screen.getAllByRole("button", { name: /confirm action/i }).length).toBeGreaterThan(0);
+  expect(screen.getByLabelText("Shieldmaiden health 54 of 100")).toHaveTextContent("54 / 100");
+  expect(screen.queryByPlaceholderText("Search mission commands")).not.toBeInTheDocument();
   expect(screen.queryByRole("button", { name: /my inventory/i })).not.toBeInTheDocument();
   expect(screen.queryByText("Battle info")).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: /join streamer side/i }));
-  await waitFor(() => expect(screen.getByText("summon completed successfully.")).toBeInTheDocument());
-  const missionSearch = screen.getByPlaceholderText("Search mission commands");
-  fireEvent.change(missionSearch, { target: { value: "heal" } });
-  await waitFor(() => expect(screen.getByRole("heading", { name: "heal" })).toBeInTheDocument());
-  expect(screen.queryByRole("heading", { name: "attack" })).not.toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: /close mission commands/i }));
-  expect(screen.queryByRole("dialog", { name: "Mission commands" })).not.toBeInTheDocument();
+
+  const heal = screen.getByRole("button", { name: "Heal" });
+  fireEvent.focus(heal);
+  expect(screen.getByRole("tooltip")).toHaveTextContent(/Heal your hero/i);
+  fireEvent.click(heal);
+  await waitFor(() => expect(screen.getByText("heal completed successfully.")).toBeInTheDocument());
+
+  fireEvent.click(screen.getByRole("button", { name: "Formation" }));
+  expect(screen.getByRole("dialog", { name: "Choose formation" })).toBeInTheDocument();
+  fireEvent.keyDown(document, { key: "Escape" });
+  expect(screen.queryByRole("dialog", { name: "Choose formation" })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Formation" }));
+  fireEvent.pointerDown(document.body);
+  expect(screen.queryByRole("dialog", { name: "Choose formation" })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Formation" }));
+  fireEvent.click(screen.getByRole("button", { name: "Infantry" }));
+  await waitFor(() => expect(screen.queryByRole("dialog", { name: "Choose formation" })).not.toBeInTheDocument());
 });

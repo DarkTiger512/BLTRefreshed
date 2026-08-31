@@ -1153,14 +1153,7 @@
         "strategy": "legacy"
       },
       "mutatesCampaign": true,
-      "inputs": [
-        {
-          "id": "power",
-          "label": "Power",
-          "type": "text",
-          "required": true
-        }
-      ],
+      "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
         "line": 671
