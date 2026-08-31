@@ -8,7 +8,8 @@ const manifest = { protocolVersion: 1, actions: [
   { id: "command.equipcustom", legacyName: "equipcustom", handler: "EquipCustomItemAction", category: "Equipment", description: "Equip custom item", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "item", type: "text", required: true }] },
   { id: "command.retinue", legacyName: "retinue", handler: "Retinue", category: "Retinue", description: "Manage battle retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
   { id: "command.eliteretinue", legacyName: "eliteretinue", handler: "Retinue2", category: "Retinue", description: "Manage elite retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
-  { id: "command.summon", legacyName: "summon", handler: "SummonHero", category: "Battle", description: "Summon your hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [{ id: "side", type: "choice", required: false, options: [{ value: "player", label: "Player" }] }] },
+  { id: "command.summon", legacyName: "summon", handler: "SummonHero", category: "Battle", description: "Summon your hero on the streamer's side", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [{ id: "shout", label: "Optional battle shout", type: "text", required: false }] },
+  { id: "command.attack", legacyName: "attack", handler: "SummonHero", category: "Battle", description: "Summon your hero on the enemy side", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [{ id: "shout", label: "Optional battle shout", type: "text", required: false }] },
   { id: "command.heal", legacyName: "heal", handler: "HealHero", category: "Battle", description: "Heal your hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: true, inputs: [] },
   { id: "command.battle", legacyName: "battle", handler: "BattleInfo", category: "Battle", description: "Battle info", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["mission.active"], mutatesCampaign: false, inputs: [] },
 ] };
@@ -64,6 +65,8 @@ test("forces the live battle workspace and renders mission forms", async () => {
   expect(screen.getByText("Shieldmaiden")).toBeInTheDocument();
   expect(screen.getByText("BlackWolf")).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Mission commands" })).toBeInTheDocument();
+  expect(screen.getAllByRole("textbox", { name: /optional battle shout/i })).toHaveLength(2);
+  expect(screen.queryByRole("combobox", { name: /battle side/i })).not.toBeInTheDocument();
   expect(screen.getAllByRole("button", { name: /confirm action/i }).length).toBeGreaterThan(0);
   expect(screen.queryByRole("button", { name: /my inventory/i })).not.toBeInTheDocument();
   expect(screen.queryByText("Battle info")).not.toBeInTheDocument();

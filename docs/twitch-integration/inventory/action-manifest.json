@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T21:04:59.590Z",
+  "generatedAt": "2026-08-31T21:12:06.402Z",
   "actions": [
     {
       "id": "command.objective",
@@ -410,10 +410,10 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "target",
-          "label": "Target hero or party",
+          "id": "shout",
+          "label": "Optional battle shout",
           "type": "text",
-          "required": true
+          "required": false
         }
       ],
       "source": {
@@ -1524,20 +1524,10 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "side",
-          "label": "Battle side",
-          "type": "choice",
-          "required": false,
-          "options": [
-            {
-              "value": "player",
-              "label": "Player"
-            },
-            {
-              "value": "enemy",
-              "label": "Enemy"
-            }
-          ]
+          "id": "shout",
+          "label": "Optional battle shout",
+          "type": "text",
+          "required": false
         }
       ],
       "source": {

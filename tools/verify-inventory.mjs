@@ -29,6 +29,12 @@ assert(manifest.actions.every(action => action.response?.extension === true), "E
 assert(manifest.actions.every(action => action.permissions?.length > 0), "Every action must declare permissions");
 const eliteRetinue = manifest.actions.find(action => action.id === "command.eliteretinue");
 const adoptByCulture = manifest.actions.find(action => action.id === "command.adoptbyculture");
+const attack = manifest.actions.find(action => action.id === "command.attack");
+const summon = manifest.actions.find(action => action.id === "command.summon");
+for (const action of [attack, summon]) {
+  assert.equal(action?.handler, "SummonHero", `${action?.id} must use the configured SummonHero handler`);
+  assert.deepEqual(action?.inputs?.map(input => [input.id, input.type, input.required]), [["shout", "text", false]], `${action?.id} only accepts an optional in-game shout`);
+}
 assert.equal(adoptByCulture?.inputs?.[0]?.type, "choice", "Adopt by culture must use a structured culture selector");
 assert.equal(adoptByCulture.inputs[0].optionsSource, "cultures", "Adopt by culture must use cultures from the running campaign");
 assert.deepEqual(adoptByCulture.inputs[0].options, [], "Overhaul-compatible culture choices must not be hard-coded in the manifest");

@@ -157,7 +157,7 @@ function actionInput(command) {
   const definitions = {
     objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), textInput("objective", "Objective", false)],
     adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [dynamicChoice("culture", "Culture", "cultures")], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
-    attack: [textInput("target", "Target hero or party")], auction: [textInput("item", "Item")], bid: [numberInput("amount", "Bid amount")],
+    attack: [textInput("shout", "Optional battle shout", false)], auction: [textInput("item", "Item")], bid: [numberInput("amount", "Bid amount")],
     bltbet: [numberInput("entrant", "Entrant number"), numberInput("amount", "Bet amount")], buymount: [textInput("mount", "Mount")],
     clan: [choice("operation", "Clan operation", ["create", "join", "leave", "invite", "kick", "info"]), textInput("target", "Target", false)],
     class: [textInput("class", "Hero class")], customitems: [textInput("filter", "Item filter", false)], discarditem: [textInput("item", "Item")],
@@ -175,7 +175,7 @@ function actionInput(command) {
       numberInput("count", "Troops to recruit or upgrade", false),
     ], retire: [confirm()],
     smitharmor: [textInput("name", "Armor name"), textInput("culture", "Culture", false)], smithweapon: [textInput("name", "Weapon name"), textInput("culture", "Culture", false)],
-    summon: [choice("side", "Battle side", ["player", "enemy"], false)], itemstats: [textInput("item", "Item")], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm()],
+    summon: [textInput("shout", "Optional battle shout", false)], itemstats: [textInput("item", "Item")], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm()],
     heir: [textInput("target", "Heir")], diplomacy: [choice("operation", "Diplomacy action", ["war", "peace", "ally", "trade", "policy"]), textInput("kingdom", "Kingdom")],
     reinforce: [numberInput("amount", "Troops")], transfer: [textInput("target", "Target"), textInput("asset", "Transfer item")], buyfocus: [textInput("skill", "Skill")],
     party: [choice("operation", "Party order", ["status", "follow", "patrol", "raid", "garrison", "army", "train"]), textInput("target", "Target", false)],
