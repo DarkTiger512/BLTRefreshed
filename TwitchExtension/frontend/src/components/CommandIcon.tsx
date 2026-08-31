@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import iconSheet from "../assets/blt-command-icons-v1.png";
+import iconSheet from "../assets/blt-command-icons-v2.png";
 
 const positions: Record<string, string> = {
   Hero: "0%",
