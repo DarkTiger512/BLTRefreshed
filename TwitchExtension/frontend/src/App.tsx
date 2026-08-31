@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleDot, X } from "lucide-react";
+import { CircleDot, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { requestInventory, requestRetinue, submitAction } from "./api";
 import { ActionBrowser } from "./components/ActionBrowser";
@@ -13,7 +13,7 @@ import { authorizeViewer, requestIdentity } from "./twitch";
 import type { ActionManifest, ManifestAction, ViewerIdentity } from "./types";
 import bltLogo from "./assets/blt-logo-v2.png";
 
-const categories = ["Hero", "Battle", "Retinue", "Kingdom", "Equipment", "Progression", "Tournament", "Community", "General", "My Feed"];
+const categories = ["Hero", "Battle", "Retinue", "Kingdom", "Equipment", "Progression", "Tournament", "Community", "General"];
 
 export function App() {
   const [manifest, setManifest] = useState<ActionManifest | null>(null);
@@ -24,7 +24,7 @@ export function App() {
   const [open, setOpen] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
-  const [toast, setToast] = useState<string>();
+  const [feedExpanded, setFeedExpanded] = useState(false);
   const [showInventory, setShowInventory] = useState(false);
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [retinueLoading, setRetinueLoading] = useState(false);
@@ -52,8 +52,6 @@ export function App() {
       const response = await submitAction(identity!, selected, args);
       state.recordCommand({ requestId: response.requestId, actionId: selected.id, actionName: selected.legacyName, status: "pending" });
       if (identity!.token === "development-token") state.completeDevelopmentCommand(response.requestId, `${selected.legacyName} completed successfully.`);
-      setToast(`${selected.legacyName.replace(/^['"]?\{=[^}]+\}/, "").replace(/['"]$/, "")} sent to your hero`);
-      window.setTimeout(() => setToast(undefined), 4200);
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Action failed"); }
     finally { setBusy(false); }
   }
@@ -88,8 +86,6 @@ export function App() {
       const response = await submitAction(identity!, action, args);
       state.recordCommand({ requestId: response.requestId, actionId: action.id, actionName: action.legacyName, status: "pending" });
       if (identity!.token === "development-token") state.completeDevelopmentCommand(response.requestId, `${action.legacyName} completed successfully.`);
-      setToast(operation.startsWith("clear") ? "Retinue updated" : "Retinue order sent");
-      window.setTimeout(() => setToast(undefined), 3200);
       window.setTimeout(() => void loadRetinue(), identity!.token === "development-token" ? 350 : 700);
     } catch (reason) { state.setRetinueError(reason instanceof Error ? reason.message : "That retinue order could not be completed."); }
     finally { setBusy(false); }
@@ -109,7 +105,6 @@ export function App() {
         slots: current.slots.map(slot => slot.id === slotId ? { ...slot, itemName: current.items.find(item => item.index === itemIndex)?.name, customItemIndex: itemIndex } : slot),
         updatedAt: new Date().toISOString(),
       } : current);
-      setToast("Equipment updated"); window.setTimeout(() => setToast(undefined), 3200);
       if (identity!.token !== "development-token") window.setTimeout(() => void loadInventory(), 700);
     } catch (reason) { state.setInventoryError(reason instanceof Error ? reason.message : "That item could not be equipped."); }
     finally { setInventoryLoading(false); }
@@ -118,7 +113,6 @@ export function App() {
   const integratedActions = new Set(["command.equipcustom", "command.retinue", "command.eliteretinue", "command.retinuelist"]);
   const browserActions = manifest.actions.filter(action => !integratedActions.has(action.id));
   const showRetinue = !showInventory && category === "Retinue";
-  const showCommandFeed = !showInventory && category === "My Feed";
 
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
     {!open ? <button className="open-launcher" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
@@ -126,9 +120,13 @@ export function App() {
       <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
       <div className="overlay-content">
         <CategoryRail categories={categories} selected={category} inventorySelected={showInventory} onSelect={selectCategory} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} />
-        {showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : showRetinue ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : showCommandFeed ? <CommandFeedView entries={state.commandActivity} onClear={state.clearCommandActivity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
+        <div className="workspace-stack">
+          <div className="workspace-main">
+            {showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : showRetinue ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
+          </div>
+          <CommandFeedView entries={state.commandActivity} expanded={feedExpanded} onToggle={() => setFeedExpanded(value => !value)} onClear={state.clearCommandActivity} />
+        </div>
       </div>
     </div> : null}
-    {toast ? <div className="success-toast" role="status"><CheckCircle2 />{toast}</div> : null}
   </main>;
 }
