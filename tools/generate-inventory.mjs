@@ -81,6 +81,70 @@ const textInput = (id, label, required = true) => ({ id, label, type: "text", re
 const numberInput = (id, label, required = true) => ({ id, label, type: "integer", required });
 const confirm = () => ({ id: "confirm", label: "I understand this changes the campaign", type: "confirmation", required: true });
 
+const actionDescriptions = {
+  objective: "Manage community stream objectives as a moderator.",
+  objectives: "View the active community objective and your contribution.",
+  ammo: "Check the ammunition remaining for your hero in the current battle.",
+  ach: "View your hero's achievements and tracked statistics.",
+  adopt: "Adopt a newly created hero for this campaign.",
+  adoptbyclan: "Adopt a random available hero from a chosen clan.",
+  adoptbyculture: "Adopt a random available hero from a chosen culture.",
+  adoptbyfaction: "Adopt a random available hero from a chosen faction.",
+  adoptbyname: "Adopt an available hero by name.",
+  adoptrandom: "Adopt a random available hero from the campaign.",
+  attack: "Summon your hero and retinue on the enemy side of the current battle.",
+  auction: "Auction one of your custom items with a reserve price.",
+  bid: "Bid gold on the active custom-item auction.",
+  bltbet: "Bet your hero's gold on a team in the current viewer tournament.",
+  buymount: "Buy a randomly tiered mount for a mounted hero class.",
+  clan: "Create, join, leave, inspect, or manage a viewer clan.",
+  class: "Choose your hero's class and update equipment requirements.",
+  customitems: "View the custom items stored by your hero.",
+  discarditem: "Permanently discard one of your stored custom items.",
+  equip: "Purchase an equipment-tier upgrade for your hero.",
+  giveitem: "Give one of your custom items to another viewer's hero.",
+  gold: "View the amount of gold owned by your hero.",
+  heal: "Heal your summoned hero over time during a battle.",
+  hero: "Change your hero's appearance, gender, or marriage options.",
+  inv: "View the equipment currently worn and carried by your hero.",
+  kingdom: "Join, leave, rebel against, or inspect a kingdom.",
+  nameitem: "Give one of your custom items a new name.",
+  power: "Activate one of the special powers unlocked by your hero.",
+  powers: "View the active and passive powers available to your hero.",
+  reequip: "Reroll equipment at your current tier without replacing superior or custom items.",
+  retinue: "Recruit or upgrade troops in your hero's battle retinue.",
+  retinuelist: "View the troops currently serving in your hero's retinue.",
+  retire: "Retire your adopted hero and resolve configured inheritance.",
+  smitharmor: "Commission a named custom armor item for your hero.",
+  smithweapon: "Commission a named custom weapon for your hero.",
+  stats: "View your hero's location, health, skills, attributes, clan, and gold.",
+  summon: "Summon your hero and retinue on the streamer's side of the current battle.",
+  tournament: "Add your adopted hero to the viewer tournament queue.",
+  itemstats: "Inspect detailed stats for equipped, stored, or custom items.",
+  buyattribute: "Spend gold to increase one of your hero's attributes.",
+  info: "View current campaign, settlement, faction, or world information.",
+  rejuvenate: "Spend gold to make your adopted hero younger.",
+  leaderboard: "View campaign rankings for participating viewer heroes.",
+  heir: "Choose or create the hero who will inherit your legacy.",
+  diplomacy: "Manage wars, peace, alliances, and other diplomatic actions.",
+  battle: "View the current battle, participants, teams, and mission status.",
+  reinforce: "Send additional troops to reinforce an eligible party or army.",
+  transfer: "Transfer supported assets between your hero, clan, or another target.",
+  buyfocus: "Spend gold to add a focus point to one of your hero's skills.",
+  party: "Review or issue orders to your hero's campaign party.",
+  income: "View your hero's recurring income and financial sources.",
+  upgrade: "Purchase and manage available hero, clan, or settlement upgrades.",
+  family: "View and manage your hero's spouse, children, and family actions.",
+  logs: "View recent campaign events relevant to viewer heroes.",
+  equipcustom: "Equip a stored custom item in a compatible equipment slot.",
+  formation: "Choose the battle formation used by your summoned hero.",
+  fief: "Inspect and manage settlements controlled by your hero or clan.",
+  vassal: "Manage your hero's vassal status and related kingdom actions.",
+  capital: "Choose or inspect the capital settlement for your domain.",
+  eliteretinue: "Recruit or upgrade troops in your hero's elite retinue.",
+  skills: "View your hero's skills, focus points, and current progression.",
+};
+
 function actionInput(command) {
   const name = cleanLoc(command.Name).toLowerCase();
   const noInput = new Set(["objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "hero", "inv", "powers", "reequip", "retinuelist", "stats", "tournament", "info", "leaderboard", "battle", "income", "logs", "skills"]);
@@ -109,12 +173,15 @@ function actionInput(command) {
 }
 
 function buildActions(commands) {
-  return commands.map(command => ({
+  return commands.map(command => {
+    const legacyName = cleanLoc(command.Name).toLowerCase();
+    if (!actionDescriptions[legacyName]) throw new Error(`Missing curated description for command '${legacyName}'`);
+    return ({
     id: `command.${cleanLoc(command.Name ?? command.Handler).trim().toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.|\.$/g, "")}`,
     legacyName: cleanLoc(command.Name),
     handler: command.Handler,
     category: categoryFor(command),
-    description: command.Documentation || command.Help || command.Handler,
+    description: actionDescriptions[legacyName],
     enabledByDefault: command.Enabled === true,
     hiddenFromHelp: command.HideHelp === true,
     permissions: command.ModeratorOnly ? ["moderator", "broadcaster"] : ["viewer", "moderator", "broadcaster"],
@@ -129,7 +196,8 @@ function buildActions(commands) {
     mutatesCampaign: !/info|status|check|list|leaderboard|help|logs|ammo/i.test(`${command.Handler} ${command.Name}`),
     inputs: actionInput(command),
     source: { file: path.relative(root, yamlPath).replaceAll("\\", "/"), line: command.sourceLine },
-  }));
+    });
+  });
 }
 
 function extractComponents(files) {

@@ -790,6 +790,10 @@
       "configuration"
     ],
     "symbols": [
+      "IntegrationInventoryItem",
+      "IntegrationEquipmentSlot",
+      "IntegrationInventorySnapshot",
+      "IntegrationInventoryProvider",
       "ManagedIntegrationClient"
     ]
   },

@@ -1,13 +1,13 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T14:16:48.563Z",
+  "generatedAt": "2026-08-31T16:38:31.759Z",
   "actions": [
     {
       "id": "command.objective",
       "legacyName": "objective",
       "handler": "StreamObjectiveAdminCommand",
       "category": "Community",
-      "description": "Moderator controls for community stream objectives. Use list, start, status, or stop.",
+      "description": "Manage community stream objectives as a moderator.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -69,7 +69,7 @@
       "legacyName": "objectives",
       "handler": "StreamObjectivesStatusCommand",
       "category": "Community",
-      "description": "Show the active community objective and your contribution.",
+      "description": "View the active community objective and your contribution.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -101,7 +101,7 @@
       "legacyName": "ammo",
       "handler": "CheckAmmo",
       "category": "Battle",
-      "description": "Check how much live ammunition your adopted hero has remaining in the current mission. Shows each ammunition stack and the combined total.",
+      "description": "Check the ammunition remaining for your hero in the current battle.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -133,7 +133,7 @@
       "legacyName": "ach",
       "handler": "HeroInfoCommand",
       "category": "Hero",
-      "description": "{=ZVxCqyJL}Show the heroes achievements and tracked stats.",
+      "description": "View your hero's achievements and tracked statistics.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -165,7 +165,7 @@
       "legacyName": "adopt",
       "handler": "AdoptAHero",
       "category": "Hero",
-      "description": "Adopt a newly created Hero. Almost all other actions require an adopted hero.",
+      "description": "Adopt a newly created hero for this campaign.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -197,7 +197,7 @@
       "legacyName": "adoptByClan",
       "handler": "AdoptAHero",
       "category": "Kingdom",
-      "description": "Adopt a randomly selected Hero, filtered by Clan",
+      "description": "Adopt a random available hero from a chosen clan.",
       "enabledByDefault": false,
       "hiddenFromHelp": true,
       "permissions": [
@@ -236,7 +236,7 @@
       "legacyName": "adoptByCulture",
       "handler": "AdoptAHero",
       "category": "Hero",
-      "description": "Adopt a randomly selected Hero, filtered by Culture <br> Can do \"!adoptByCulture list\" for a list of cultures",
+      "description": "Adopt a random available hero from a chosen culture.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -275,7 +275,7 @@
       "legacyName": "adoptByFaction",
       "handler": "AdoptAHero",
       "category": "Hero",
-      "description": "Adopt a randomly selected Hero, filtered by Faction <br> Can do \"!adoptByFaction list\" for a list of factions",
+      "description": "Adopt a random available hero from a chosen faction.",
       "enabledByDefault": false,
       "hiddenFromHelp": true,
       "permissions": [
@@ -314,7 +314,7 @@
       "legacyName": "adoptByName",
       "handler": "AdoptAHero",
       "category": "Hero",
-      "description": "Adopt a randomly selected Hero, filtered by Hero Name",
+      "description": "Adopt an available hero by name.",
       "enabledByDefault": false,
       "hiddenFromHelp": true,
       "permissions": [
@@ -353,7 +353,7 @@
       "legacyName": "adoptRandom",
       "handler": "AdoptAHero",
       "category": "Hero",
-      "description": "Adopt a randomly selected Hero",
+      "description": "Adopt a random available hero from the campaign.",
       "enabledByDefault": false,
       "hiddenFromHelp": true,
       "permissions": [
@@ -385,7 +385,7 @@
       "legacyName": "attack",
       "handler": "SummonHero",
       "category": "Battle",
-      "description": "Use this when the streamer enters a battle, to spawn your adopted hero on the enemy side (along with your retinue).",
+      "description": "Summon your hero and retinue on the enemy side of the current battle.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -424,7 +424,7 @@
       "legacyName": "auction",
       "handler": "AuctionItem",
       "category": "Equipment",
-      "description": "Start an auction on a custom item you own, with a specified reserve price. Other viewers are able to bid upon your item, and the highest bidder will receive it at the end of the auction.<br>Usage is <code>!auction (custom item index) (reserve price)</code>, e.g. <code>!auction 3 50000</code> would start a new auction for your custom item with the index of 3 (as shown by the 'customitems' command), with a reserve price of 50000.",
+      "description": "Auction one of your custom items with a reserve price.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -463,7 +463,7 @@
       "legacyName": "bid",
       "handler": "BidOnItem",
       "category": "Equipment",
-      "description": "{=1TBIIJVZ}Place a bid on the current auction, if one is active.<br>Usage is <code>!bid (gold amount)</code>, e.g. <code>!bid 100000</code>. If there is no auction, or the bid doesn't exceed the reserve price, it will be rejected.",
+      "description": "Bid gold on the active custom-item auction.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -502,7 +502,7 @@
       "legacyName": "bltbet",
       "handler": "TournamentBet",
       "category": "Tournament",
-      "description": "{=thajdk5s}Use this to bet on tournament matches, when available.<br>Usage is <code>!bltbet (team) (gold)</code>, for example <code>!bltbet red 10000</code> to bet 10000 gold on red. Winnings are divided up from the whole pot, based on relative bet size.<br>If only one team is bet upon, the bets will be refunded.",
+      "description": "Bet your hero's gold on a team in the current viewer tournament.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -547,7 +547,7 @@
       "legacyName": "buymount",
       "handler": "SmithItem",
       "category": "Equipment",
-      "description": "Buy a randomly tiered mount for your Hero.Only for mounted classes.(1250000 gold)",
+      "description": "Buy a randomly tiered mount for a mounted hero class.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -586,7 +586,7 @@
       "legacyName": "clan",
       "handler": "ClanManagement",
       "category": "Kingdom",
-      "description": "Use to manage clan actions <br> Usage is <code>!clan (join/create/lead/rename/stats/leave/buy title/banner) name </code> <br> Example: !clan join Banu Tammar or !clan stats",
+      "description": "Create, join, leave, inspect, or manage a viewer clan.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -657,7 +657,7 @@
       "legacyName": "class",
       "handler": "SetHeroClass",
       "category": "Equipment",
-      "description": "{=K3297TEM}Selects a new class for your hero, updating your existing equipment to match the class requirements.<br>Usage is <code>!class (new class name)</code>, e.g. <code>!class archer</code>.",
+      "description": "Choose your hero's class and update equipment requirements.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -696,7 +696,7 @@
       "legacyName": "customitems",
       "handler": "HeroInfoCommand",
       "category": "Equipment",
-      "description": "Shows the viewers custom item list, which is required so they know what item index to use in the custom item related commands.",
+      "description": "View the custom items stored by your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -735,7 +735,7 @@
       "legacyName": "discarditem",
       "handler": "DiscardItem",
       "category": "Equipment",
-      "description": "Throw away one of your custom items.<br>Usage is <code>!discarditem (custom item index)</code>, e.g. <code>!discarditem 3</code> would discard your custom item with the index 3. The custom item index is shown in the 'customs' command.",
+      "description": "Permanently discard one of your stored custom items.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -774,7 +774,7 @@
       "legacyName": "equip",
       "handler": "EquipHero",
       "category": "Equipment",
-      "description": "Upgrades your heroes equipment tier, replacing any existing equipment of lower tier, except for custom items. The cost depends on the tier you are trying to upgrade to. <br> Usage is <code>!equip (blank for auto upgrade/tier number) </code> <br> Example: !equip 1 or !equip",
+      "description": "Purchase an equipment-tier upgrade for your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -841,7 +841,7 @@
       "legacyName": "giveitem",
       "handler": "GiveItem",
       "category": "Equipment",
-      "description": "Give one of your custom items to another viewer.<br>Usage is <code>!giveitem (custom item index) (viewer)</code>, e.g. <code>!giveitem 3 C4alad0g</code> would give your custom item with the index 3 to the viewer called C4lad0g. The custom item index is shown in the 'customitems' command.",
+      "description": "Give one of your custom items to another viewer's hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -886,7 +886,7 @@
       "legacyName": "gold",
       "handler": "HeroInfoCommand",
       "category": "Progression",
-      "description": "{=eWI5oDce}Show your heroes current gold.",
+      "description": "View the amount of gold owned by your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -918,7 +918,7 @@
       "legacyName": "heal",
       "handler": "CharacterEffect",
       "category": "Battle",
-      "description": "Heals your hero over time. Only works in battle, when your hero is summoned.",
+      "description": "Heal your summoned hero over time during a battle.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -950,7 +950,7 @@
       "legacyName": "hero",
       "handler": "HeroFeatures",
       "category": "Kingdom",
-      "description": "Use to adjust hero physical features <br> Usage is <code>!hero gender (male/female) / !hero looks (appearance string) / !hero marry (culture/clan/name)</code> <br> Example: !hero gender male",
+      "description": "Change your hero's appearance, gender, or marriage options.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -982,7 +982,7 @@
       "legacyName": "inv",
       "handler": "HeroInfoCommand",
       "category": "Equipment",
-      "description": "Shows your heroes equipped loadout and inventory, excluding custom items (do !customItems instead)",
+      "description": "View the equipment currently worn and carried by your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1014,7 +1014,7 @@
       "legacyName": "kingdom",
       "handler": "KingdomManagement",
       "category": "Kingdom",
-      "description": "Use to manage clan actions <br> Usage is <code>!kingdom (join/rebel/leave/stats) name </code> <br> Example: !kingdom join Aserai or !clan stats",
+      "description": "Join, leave, rebel against, or inspect a kingdom.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1085,7 +1085,7 @@
       "legacyName": "nameitem",
       "handler": "NameItem",
       "category": "Equipment",
-      "description": "You can use this to name your custom items.<br>Usage is <code>!nameitem (custom item index) (name)</code>, for example <code>!nameitem 3 Foehammer</code>. The custom item index is shown in the 'customitems' command.",
+      "description": "Give one of your custom items a new name.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1130,7 +1130,7 @@
       "legacyName": "power",
       "handler": "UsePower",
       "category": "Progression",
-      "description": "UsePower",
+      "description": "Activate one of the special powers unlocked by your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1169,7 +1169,7 @@
       "legacyName": "powers",
       "handler": "HeroInfoCommand",
       "category": "Progression",
-      "description": "{=GYYbCXmu}Shows your available powers",
+      "description": "View the active and passive powers available to your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1201,7 +1201,7 @@
       "legacyName": "reequip",
       "handler": "EquipHero",
       "category": "Tournament",
-      "description": "{=zBIv0a4I}Randomizes your equipment, at its current tier. It will not replace items that are higher than your current tier, or custom items. e.g. if you are equipment tier 3, but also have a tier 6 weapon won in a tournament, this command will not replace that weapon. Sometimes you will end up with some items not changing, particularly if there aren't many items of that type available at your current tier.",
+      "description": "Reroll equipment at your current tier without replacing superior or custom items.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1233,7 +1233,7 @@
       "legacyName": "retinue",
       "handler": "Retinue",
       "category": "Battle",
-      "description": "Purchases new retinue troops, or upgrades existing ones to the next tier if you have reached the limit. Retinue will appear with you in battle when you summon, earning you money when they make kills. <br> Usage is <code>!retinue (blank or all for auto upgrade/upgrade amount) </code> <br> Example: !retinue 1 or !retinue all",
+      "description": "Recruit or upgrade troops in your hero's battle retinue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1272,7 +1272,7 @@
       "legacyName": "retinuelist",
       "handler": "HeroInfoCommand",
       "category": "Equipment",
-      "description": "{=BlBiEmbf}Shows your current retinue troops.",
+      "description": "View the troops currently serving in your hero's retinue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1304,7 +1304,7 @@
       "legacyName": "retire",
       "handler": "RetireMyHero",
       "category": "Hero",
-      "description": "RetireMyHero",
+      "description": "Retire your adopted hero and resolve configured inheritance.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1343,7 +1343,7 @@
       "legacyName": "smitharmor",
       "handler": "SmithItem",
       "category": "Equipment",
-      "description": "Smith a custom armor item(500000 gold)",
+      "description": "Commission a named custom armor item for your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1388,7 +1388,7 @@
       "legacyName": "smithweapon",
       "handler": "SmithItem",
       "category": "Equipment",
-      "description": "Smith a custom weapon(1000000 gold)",
+      "description": "Commission a named custom weapon for your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1433,7 +1433,7 @@
       "legacyName": "stats",
       "handler": "HeroInfoCommand",
       "category": "Battle",
-      "description": "{=JiMaaypq}Shows your heroes general information, including clan, gold, location, HP, skills, attributes and retinue.",
+      "description": "View your hero's location, health, skills, attributes, clan, and gold.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1465,7 +1465,7 @@
       "legacyName": "summon",
       "handler": "SummonHero",
       "category": "Battle",
-      "description": "Use this when the streamer enters a battle, to spawn your adopted hero on the streamers side (along with your retinue).",
+      "description": "Summon your hero and retinue on the streamer's side of the current battle.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1514,7 +1514,7 @@
       "legacyName": "tournament",
       "handler": "JoinTournament",
       "category": "Tournament",
-      "description": "Join the tournament queue with your adopted hero. You can see the queue in the overlay. Each tournament can have up to 16 heroes in it, once it is full further heroes will remain in the queue for the next tournament.",
+      "description": "Add your adopted hero to the viewer tournament queue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1546,7 +1546,7 @@
       "legacyName": "itemstats",
       "handler": "ItemStats",
       "category": "Equipment",
-      "description": "ItemStats",
+      "description": "Inspect detailed stats for equipped, stored, or custom items.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1585,7 +1585,7 @@
       "legacyName": "buyattribute",
       "handler": "AttributePoints",
       "category": "Progression",
-      "description": "AttributePoints",
+      "description": "Spend gold to increase one of your hero's attributes.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
       "permissions": [
@@ -1624,7 +1624,7 @@
       "legacyName": "info",
       "handler": "CampaignInfo",
       "category": "General",
-      "description": "CampaignInfo",
+      "description": "View current campaign, settlement, faction, or world information.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1656,7 +1656,7 @@
       "legacyName": "rejuvenate",
       "handler": "Rejuvenate",
       "category": "Hero",
-      "description": "Rejuvenate",
+      "description": "Spend gold to make your adopted hero younger.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1695,7 +1695,7 @@
       "legacyName": "leaderboard",
       "handler": "Leaderboard",
       "category": "Community",
-      "description": "Leaderboard",
+      "description": "View campaign rankings for participating viewer heroes.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1727,7 +1727,7 @@
       "legacyName": "heir",
       "handler": "HeirCommand",
       "category": "Hero",
-      "description": "HeirCommand",
+      "description": "Choose or create the hero who will inherit your legacy.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1766,7 +1766,7 @@
       "legacyName": "diplomacy",
       "handler": "Diplomacy",
       "category": "Kingdom",
-      "description": "Diplomacy",
+      "description": "Manage wars, peace, alliances, and other diplomatic actions.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1833,7 +1833,7 @@
       "legacyName": "battle",
       "handler": "BattleInfo",
       "category": "Battle",
-      "description": "BattleInfo",
+      "description": "View the current battle, participants, teams, and mission status.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1865,7 +1865,7 @@
       "legacyName": "reinforce",
       "handler": "ReinforceAction",
       "category": "General",
-      "description": "ReinforceAction",
+      "description": "Send additional troops to reinforce an eligible party or army.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1904,7 +1904,7 @@
       "legacyName": "transfer",
       "handler": "TransferAction",
       "category": "General",
-      "description": "TransferAction",
+      "description": "Transfer supported assets between your hero, clan, or another target.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1949,7 +1949,7 @@
       "legacyName": "buyfocus",
       "handler": "FocusPoints",
       "category": "Progression",
-      "description": "FocusPoints",
+      "description": "Spend gold to add a focus point to one of your hero's skills.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -1988,7 +1988,7 @@
       "legacyName": "party",
       "handler": "PartyManagement",
       "category": "Kingdom",
-      "description": "PartyManagement",
+      "description": "Review or issue orders to your hero's campaign party.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2063,7 +2063,7 @@
       "legacyName": "income",
       "handler": "GoldIncomeAction",
       "category": "Progression",
-      "description": "GoldIncomeAction",
+      "description": "View your hero's recurring income and financial sources.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2095,7 +2095,7 @@
       "legacyName": "upgrade",
       "handler": "UpgradeAction",
       "category": "Equipment",
-      "description": "UpgradeAction",
+      "description": "Purchase and manage available hero, clan, or settlement upgrades.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2154,7 +2154,7 @@
       "legacyName": "family",
       "handler": "FamilyManagement",
       "category": "Hero",
-      "description": "FamilyManagement",
+      "description": "View and manage your hero's spouse, children, and family actions.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2217,7 +2217,7 @@
       "legacyName": "logs",
       "handler": "CampaignLogs",
       "category": "General",
-      "description": "CampaignLogs",
+      "description": "View recent campaign events relevant to viewer heroes.",
       "enabledByDefault": false,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2249,7 +2249,7 @@
       "legacyName": "equipcustom",
       "handler": "EquipCustomItemAction",
       "category": "Equipment",
-      "description": "EquipCustomItemAction",
+      "description": "Equip a stored custom item in a compatible equipment slot.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2288,7 +2288,7 @@
       "legacyName": "formation",
       "handler": "FormationCommand",
       "category": "Battle",
-      "description": "FormationCommand",
+      "description": "Choose the battle formation used by your summoned hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2345,7 +2345,7 @@
       "legacyName": "fief",
       "handler": "ManageFief",
       "category": "Kingdom",
-      "description": "ManageFief",
+      "description": "Inspect and manage settlements controlled by your hero or clan.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2408,7 +2408,7 @@
       "legacyName": "vassal",
       "handler": "VassalManagement",
       "category": "Kingdom",
-      "description": "VassalManagement",
+      "description": "Manage your hero's vassal status and related kingdom actions.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2447,7 +2447,7 @@
       "legacyName": "capital",
       "handler": "CapitalAction",
       "category": "Kingdom",
-      "description": "CapitalAction",
+      "description": "Choose or inspect the capital settlement for your domain.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2486,7 +2486,7 @@
       "legacyName": "eliteretinue",
       "handler": "Retinue2",
       "category": "Equipment",
-      "description": "Retinue2",
+      "description": "Recruit or upgrade troops in your hero's elite retinue.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [
@@ -2525,7 +2525,7 @@
       "legacyName": "skills",
       "handler": "HeroInfoCommand",
       "category": "Progression",
-      "description": "HeroInfoCommand",
+      "description": "View your hero's skills, focus points, and current progression.",
       "enabledByDefault": true,
       "hiddenFromHelp": false,
       "permissions": [

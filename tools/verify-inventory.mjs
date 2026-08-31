@@ -8,6 +8,10 @@ const read = name => JSON.parse(fs.readFileSync(path.join(inventory, name), "utf
 const commands = read("commands.json");
 const rewards = read("rewards.json");
 const manifest = read("action-manifest.json");
+for (const action of manifest.actions) {
+  assert(action.description && action.description !== action.handler && !/^\{=/.test(action.description) && !/<[^>]+>/.test(action.description) && action.description.length <= 140,
+    `Invalid viewer description for ${action.id}: ${action.description}`);
+}
 const settings = read("settings.json");
 const components = read("components.json");
 const cleanLoc = value => String(value ?? "").replace(/^\{=[^}]+\}/, "");

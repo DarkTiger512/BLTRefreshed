@@ -8,7 +8,7 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 |---|---:|
 | Commands | 61 |
 | Rewards | 15 |
-| Settings | 1321 |
+| Settings | 1335 |
 | Source components | 343 |
 
 ## Action categories
