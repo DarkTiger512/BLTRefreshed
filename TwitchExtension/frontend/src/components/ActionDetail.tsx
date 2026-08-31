@@ -22,9 +22,12 @@ export function ActionDetail({ action, linked, unavailableReason, busy, error, s
   useEffect(() => setValues({}), [action?.id]);
   if (!action) return <section className="detail-panel empty-detail"><ShieldAlert /><h2>Select an action</h2><p>Browse the available interactions for this campaign.</p></section>;
   const blocked = Boolean(unavailableReason);
+  const summonSide = action.id === "command.attack" ? "Enemy side" : action.id === "command.summon" ? "Streamer side" : undefined;
+  const submitLabel = action.id === "command.attack" ? "Join enemy side" : action.id === "command.summon" ? "Join streamer side" : "Confirm action";
   return <section className="detail-panel">
     <header className="detail-header"><CommandIcon category={action.category} className="detail-icon" /><div><h2>{clean(action.legacyName)}</h2><p>{action.description}</p></div></header>
     <div className={blocked ? "detail-status blocked" : "detail-status ready"}>{blocked ? <AlertCircle /> : <CheckCircle2 />}{unavailableReason ?? "Available"}</div>
+    {summonSide ? <div className={`summon-side ${action.id === "command.attack" ? "enemy" : "streamer"}`}><span>Spawn side</span><strong>{summonSide}</strong><small>This side is configured by the command and cannot be changed.</small></div> : null}
     <div className="detail-rule" />
     <form onSubmit={event => { event.preventDefault(); onSubmit(values); }}>
       {action.inputs.map(input => <label className="field" key={input.id}>
@@ -44,7 +47,7 @@ export function ActionDetail({ action, linked, unavailableReason, busy, error, s
       {action.mutatesCampaign ? <div className="impact-note"><AlertCircle />This action can change the current campaign.</div> : null}
       {error ? <div className="form-error" role="alert">{error}</div> : null}
       {!linked ? <button type="button" className="primary-action" onClick={onRequestIdentity}>Share identity to interact</button> :
-        <button className="primary-action" disabled={blocked || busy} type="submit"><Send />{busy ? "Sending…" : "Confirm action"}</button>}
+        <button className="primary-action" disabled={blocked || busy} type="submit"><Send />{busy ? "Sending…" : submitLabel}</button>}
     </form>
   </section>;
 }

@@ -67,9 +67,12 @@ test("forces the live battle workspace and renders mission forms", async () => {
   expect(screen.getByRole("heading", { name: "Mission commands" })).toBeInTheDocument();
   expect(screen.getAllByRole("textbox", { name: /optional battle shout/i })).toHaveLength(2);
   expect(screen.queryByRole("combobox", { name: /battle side/i })).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /join enemy side/i })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: /join streamer side/i })).toBeInTheDocument();
+  expect(screen.getAllByText("This side is configured by the command and cannot be changed.")).toHaveLength(2);
   expect(screen.getAllByRole("button", { name: /confirm action/i }).length).toBeGreaterThan(0);
   expect(screen.queryByRole("button", { name: /my inventory/i })).not.toBeInTheDocument();
   expect(screen.queryByText("Battle info")).not.toBeInTheDocument();
-  fireEvent.click(screen.getAllByRole("button", { name: /confirm action/i })[0]);
+  fireEvent.click(screen.getByRole("button", { name: /join streamer side/i }));
   await waitFor(() => expect(screen.getByText("summon completed successfully.")).toBeInTheDocument());
 });
