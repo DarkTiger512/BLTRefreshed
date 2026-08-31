@@ -30,8 +30,9 @@ assert(manifest.actions.every(action => action.permissions?.length > 0), "Every 
 const eliteRetinue = manifest.actions.find(action => action.id === "command.eliteretinue");
 assert.equal(eliteRetinue?.handler, "Retinue2", "Elite retinue must use the existing Retinue2 handler");
 assert.equal(eliteRetinue?.inputs?.[0]?.type, "choice", "Elite retinue must expose structured choices instead of raw command text");
-assert.deepEqual(eliteRetinue.inputs[0].options.map(option => option.value), ["upgrade-one", "upgrade-all", "clear-slot", "clear-all"], "Elite retinue must expose every legacy operation");
+assert.deepEqual(eliteRetinue.inputs[0].options.map(option => option.value), ["upgrade-one", "upgrade-count", "upgrade-all", "clear-slot", "clear-all"], "Elite retinue must expose every legacy operation");
 assert.equal(eliteRetinue.inputs[1].type, "integer", "Elite retinue must accept a typed dismissal slot");
+assert.equal(eliteRetinue.inputs.find(input => input.id === "count")?.type, "integer", "Elite retinue must accept a typed recruit or upgrade quantity");
 assert(settings.length > 0, "No settings were inventoried");
 assert(components.some(component => component.kinds.includes("action-handler")), "Action handlers missing from component map");
 assert(components.some(component => component.kinds.includes("harmony-patch")), "Harmony patches missing from component map");

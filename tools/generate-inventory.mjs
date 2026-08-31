@@ -165,11 +165,13 @@ function actionInput(command) {
     nameitem: [textInput("item", "Item"), textInput("name", "New name")], power: [textInput("power", "Power")], retinue: [
       labeledChoice("operation", "Retinue action", [
         { value: "upgrade-one", label: "Recruit or upgrade one" },
+        { value: "upgrade-count", label: "Recruit or upgrade a chosen quantity" },
         { value: "upgrade-all", label: "Recruit or upgrade as many as possible" },
         { value: "clear-slot", label: "Dismiss a troop from a numbered slot" },
         { value: "clear-all", label: "Dismiss every retinue troop" },
       ]),
       numberInput("slot", "Slot to dismiss (only for numbered dismissal)", false),
+      numberInput("count", "Troops to recruit or upgrade", false),
     ], retire: [confirm()],
     smitharmor: [textInput("name", "Armor name"), textInput("culture", "Culture", false)], smithweapon: [textInput("name", "Weapon name"), textInput("culture", "Culture", false)],
     summon: [choice("side", "Battle side", ["player", "enemy"], false)], itemstats: [textInput("item", "Item")], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm()],
@@ -183,11 +185,13 @@ function actionInput(command) {
     eliteretinue: [
       labeledChoice("operation", "Elite retinue action", [
         { value: "upgrade-one", label: "Recruit or upgrade one" },
+        { value: "upgrade-count", label: "Recruit or upgrade a chosen quantity" },
         { value: "upgrade-all", label: "Recruit or upgrade as many as possible" },
         { value: "clear-slot", label: "Dismiss a troop from a numbered slot" },
         { value: "clear-all", label: "Dismiss every elite-retinue troop" },
       ]),
       numberInput("slot", "Slot to dismiss (only for numbered dismissal)", false),
+      numberInput("count", "Troops to recruit or upgrade", false),
     ]
   };
   return definitions[name] ?? [textInput("query", "Action selection")];

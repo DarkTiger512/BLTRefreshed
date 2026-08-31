@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T17:10:07.875Z",
+  "generatedAt": "2026-08-31T17:39:58.252Z",
   "actions": [
     {
       "id": "command.objective",
@@ -1266,6 +1266,10 @@
               "label": "Recruit or upgrade one"
             },
             {
+              "value": "upgrade-count",
+              "label": "Recruit or upgrade a chosen quantity"
+            },
+            {
               "value": "upgrade-all",
               "label": "Recruit or upgrade as many as possible"
             },
@@ -1282,6 +1286,12 @@
         {
           "id": "slot",
           "label": "Slot to dismiss (only for numbered dismissal)",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "id": "count",
+          "label": "Troops to recruit or upgrade",
           "type": "integer",
           "required": false
         }
@@ -2543,6 +2553,10 @@
               "label": "Recruit or upgrade one"
             },
             {
+              "value": "upgrade-count",
+              "label": "Recruit or upgrade a chosen quantity"
+            },
+            {
               "value": "upgrade-all",
               "label": "Recruit or upgrade as many as possible"
             },
@@ -2559,6 +2573,12 @@
         {
           "id": "slot",
           "label": "Slot to dismiss (only for numbered dismissal)",
+          "type": "integer",
+          "required": false
+        },
+        {
+          "id": "count",
+          "label": "Troops to recruit or upgrade",
           "type": "integer",
           "required": false
         }

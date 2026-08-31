@@ -81,6 +81,8 @@ namespace BannerlordTwitch.Integration
             return operation switch
             {
                 "upgrade-one" => "1",
+                "upgrade-count" when values.TryGetValue("count", out var count) && count.TryGetInt32(out var quantity) && quantity > 0 => quantity.ToString(),
+                "upgrade-count" => throw new ArgumentException("A positive troop quantity is required"),
                 "upgrade-all" => "all",
                 "clear-all" => "clear all",
                 "clear-slot" when values.TryGetValue("slot", out var slot) && slot.TryGetInt32(out var index) && index > 0 => $"clear {index}",

@@ -34,7 +34,7 @@ Generated from the default v4 profile and structured manifest. “Mapped” prov
 | `command.power` | `!power` | `UsePower` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.powers` | `!powers` | `HeroInfoCommand` | 0 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.reequip` | `!reequip` | `EquipHero` | 0 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
-| `command.retinue` | `!retinue` | `Retinue` | 2 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
+| `command.retinue` | `!retinue` | `Retinue` | 3 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.retinuelist` | `!retinuelist` | `HeroInfoCommand` | 0 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.retire` | `!retire` | `RetireMyHero` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.smitharmor` | `!smitharmor` | `SmithItem` | 2 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
@@ -63,5 +63,5 @@ Generated from the default v4 profile and structured manifest. “Mapped” prov
 | `command.fief` | `!fief` | `ManageFief` | 2 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.vassal` | `!vassal` | `VassalManagement` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.capital` | `!capital` | `CapitalAction` | 1 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
-| `command.eliteretinue` | `!eliteretinue` | `Retinue2` | 2 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
+| `command.eliteretinue` | `!eliteretinue` | `Retinue2` | 3 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |
 | `command.skills` | `!skills` | `HeroInfoCommand` | 0 | viewer, moderator, broadcaster | Mapped | Pending hosted game test |

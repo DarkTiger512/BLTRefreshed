@@ -76,12 +76,13 @@ export function App() {
     if (value === "Retinue" && identity!.linked && !state.retinue && !retinueLoading) void loadRetinue();
   }
 
-  async function manageRetinue(actionId: "command.retinue" | "command.eliteretinue", operation: string, slot?: number) {
+  async function manageRetinue(actionId: "command.retinue" | "command.eliteretinue", operation: string, value?: number) {
     const action = manifest!.actions.find(candidate => candidate.id === actionId);
     if (!action) { state.setRetinueError("Retinue controls are unavailable."); return; }
     setBusy(true); state.setRetinueError(undefined);
     try {
-      await submitAction(identity!, action, slot ? { operation, slot } : { operation });
+      const args = operation === "upgrade-count" ? { operation, count: value } : operation === "clear-slot" ? { operation, slot: value } : { operation };
+      await submitAction(identity!, action, args);
       setToast(operation.startsWith("clear") ? "Retinue updated" : "Retinue order sent");
       window.setTimeout(() => setToast(undefined), 3200);
       window.setTimeout(() => void loadRetinue(), identity!.token === "development-token" ? 350 : 700);

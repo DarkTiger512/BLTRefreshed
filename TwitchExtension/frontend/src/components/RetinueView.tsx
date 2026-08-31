@@ -1,4 +1,5 @@
 import { Crown, RefreshCw, Shield, UserRoundCheck } from "lucide-react";
+import { useState } from "react";
 import type { RetinueSnapshot, RetinueTroop } from "../types";
 
 interface Props {
@@ -13,12 +14,13 @@ interface Props {
 }
 
 function Roster({ title, elite, troops, actionId, disabled, onManage }: { title: string; elite?: boolean; troops: RetinueTroop[]; actionId: "command.retinue" | "command.eliteretinue"; disabled: boolean; onManage: Props["onManage"] }) {
+  const [quantity, setQuantity] = useState(1);
   return <section className={elite ? "retinue-roster elite" : "retinue-roster"}>
     <div className="retinue-roster-heading">
       <span className="retinue-emblem">{elite ? <Crown /> : <Shield />}</span>
       <div><h3>{title}</h3><small>{troops.length} {troops.length === 1 ? "troop" : "troops"}</small></div>
       <div className="retinue-actions">
-        <button disabled={disabled} onClick={() => onManage(actionId, "upgrade-one")}>Recruit / upgrade one</button>
+        <label className="retinue-quantity"><span>Recruit / upgrade troops</span><span className="retinue-quantity-control"><input aria-label={`${title} recruit or upgrade quantity`} type="number" min="1" step="1" value={quantity} disabled={disabled} onChange={event => setQuantity(Math.max(1, Number.parseInt(event.target.value, 10) || 1))} /><button disabled={disabled} onClick={() => onManage(actionId, "upgrade-count", quantity)}>Send order</button></span></label>
         <button disabled={disabled} onClick={() => onManage(actionId, "upgrade-all")}>Upgrade all</button>
       </div>
     </div>

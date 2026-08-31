@@ -34,6 +34,7 @@ test("renders the command browser and selected action", async () => {
   await waitFor(() => expect(screen.getByText("Battle Retinue")).toBeInTheDocument());
   expect(screen.getByText("Elite Retinue")).toBeInTheDocument();
   expect(screen.getByText("Vlandian Banner Knight")).toBeInTheDocument();
-  fireEvent.click(screen.getAllByRole("button", { name: /recruit \/ upgrade one/i })[0]);
+  fireEvent.change(screen.getByRole("spinbutton", { name: /battle retinue recruit or upgrade quantity/i }), { target: { value: "3" } });
+  fireEvent.click(screen.getAllByRole("button", { name: /send order/i })[0]);
   await waitFor(() => expect(screen.getByText("Retinue order sent")).toBeInTheDocument());
 });
