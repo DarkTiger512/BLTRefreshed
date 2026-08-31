@@ -28,7 +28,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .loading-screen svg { color: var(--gold); animation: pulse 1.2s infinite; }
 
 .overlay-shell { width: 100%; height: 100%; position: relative; padding: clamp(14px, 2vw, 32px); pointer-events: none; }
-.overlay-window { width: min(650px, 34vw); height: min(900px, calc(100vh - 64px)); min-width: 620px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 10px; background: linear-gradient(145deg, rgba(10, 21, 31, .985), rgba(4, 11, 18, .98)); box-shadow: 0 24px 70px rgba(0, 0, 0, .48); pointer-events: auto; }
+.overlay-window { width: min(740px, 39vw); height: min(900px, calc(100vh - 64px)); min-width: 700px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 10px; background: linear-gradient(145deg, rgba(10, 21, 31, .985), rgba(4, 11, 18, .98)); box-shadow: 0 24px 70px rgba(0, 0, 0, .48); pointer-events: auto; }
 .top-bar { height: 68px; display: flex; align-items: center; padding: 0 18px 0 24px; border-bottom: 1px solid var(--line); background: linear-gradient(90deg, rgba(14, 29, 40, .98), rgba(7, 15, 23, .98)); }
 .app-logo { width: 42px; height: 42px; margin-right: 10px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,.45)); }
 .top-bar h1 { margin: 0; font: 700 20px/1 Cinzel, Georgia, serif; color: #f0c56f; letter-spacing: .015em; }
@@ -38,13 +38,14 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .close-button { width: 44px; height: 44px; display: grid; place-items: center; margin-left: 8px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
 .close-button:hover { background: rgba(255,255,255,.07); }
 .close-button svg { width: 18px; }
-.overlay-content { height: calc(100% - 68px); display: grid; grid-template-columns: 96px minmax(246px, 1fr) minmax(270px, .95fr); }
+.overlay-content { height: calc(100% - 68px); display: grid; grid-template-columns: 116px minmax(270px, 1fr) minmax(292px, .95fr); }
 
 .category-rail { min-width: 0; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: rgba(7, 15, 23, .92); }
 .brand-mark { height: 52px; display: grid; place-items: center; color: var(--gold); border-bottom: 1px solid var(--line); }
 .brand-mark img { width: 38px; height: 38px; object-fit: contain; }
 .category-links { min-width: 0; overflow-x: hidden; overflow-y: auto; padding: 8px 0; scrollbar-width: thin; }
 .category { position: relative; width: 100%; min-height: 54px; padding: 7px 8px; display: flex; align-items: center; gap: 9px; border: 0; background: transparent; color: #cbd3d8; cursor: pointer; text-align: left; font-size: 10px; font-weight: 600; }
+.category > span { min-width: 0; white-space: nowrap; }
 .command-icon { display: block; flex: none; background-image: var(--icon-sheet); background-repeat: no-repeat; background-size: 800% auto; background-position: var(--icon-position) center; }
 .category .command-icon { width: 28px; height: 28px; filter: saturate(.82) brightness(.92); }
 .category:hover { background: rgba(255,255,255,.05); }
@@ -117,7 +118,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 @media (max-width: 1000px) {
   .overlay-shell { padding: 10px; }
   .overlay-window { width: min(96vw, 760px); min-width: 0; height: calc(100vh - 20px); }
-  .overlay-content { grid-template-columns: 94px minmax(240px, 1fr) minmax(250px, .9fr); }
+  .overlay-content { grid-template-columns: 112px minmax(240px, 1fr) minmax(250px, .9fr); }
   .category { gap: 6px; font-size: 9px; }.category .command-icon { width: 25px; height: 25px; }
 }
 

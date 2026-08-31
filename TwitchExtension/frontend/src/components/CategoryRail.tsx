@@ -1,5 +1,5 @@
 import { CommandIcon } from "./CommandIcon";
-import bltLogo from "../assets/blt-logo-v1.png";
+import bltLogo from "../assets/blt-logo-v2.png";
 
 interface Props { categories: string[]; selected: string; onSelect(category: string): void; identityName: string; linked: boolean }
 

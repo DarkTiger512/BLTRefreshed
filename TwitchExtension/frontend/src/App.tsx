@@ -8,7 +8,7 @@ import { ConfigurationView } from "./components/ConfigurationView";
 import { useIntegrationState } from "./hooks/useIntegrationState";
 import { authorizeViewer, requestIdentity } from "./twitch";
 import type { ActionManifest, ManifestAction, ViewerIdentity } from "./types";
-import bltLogo from "./assets/blt-logo-v1.png";
+import bltLogo from "./assets/blt-logo-v2.png";
 
 const categories = ["Hero", "Battle", "Kingdom", "Equipment", "Progression", "Tournament", "Community", "General"];
 
