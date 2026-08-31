@@ -63,6 +63,7 @@ function parseTopLevelSequence(lines, start, end) {
 }
 
 function categoryFor(command) {
+  if (cleanLoc(command.Name).toLowerCase() === "power") return "Battle";
   const haystack = `${command.Name ?? ""} ${command.Handler ?? ""} ${command.Documentation ?? ""}`.toLowerCase();
   const categories = [
     ["Tournament", /tournament|arena|bet/],

@@ -16,12 +16,12 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 | Category | Commands |
 |---|---:|
 | Community | 3 |
-| Battle | 8 |
+| Battle | 9 |
 | Hero | 10 |
 | Kingdom | 9 |
 | Equipment | 17 |
 | Tournament | 3 |
-| Progression | 7 |
+| Progression | 6 |
 | General | 4 |
 
 ## Component map

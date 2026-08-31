@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T16:38:31.759Z",
+  "generatedAt": "2026-08-31T16:41:30.632Z",
   "actions": [
     {
       "id": "command.objective",
@@ -1129,7 +1129,7 @@
       "id": "command.power",
       "legacyName": "power",
       "handler": "UsePower",
-      "category": "Progression",
+      "category": "Battle",
       "description": "Activate one of the special powers unlocked by your hero.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
