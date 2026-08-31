@@ -66,6 +66,18 @@ namespace BannerlordTwitch.Integration
         public static IntegrationRetinueSnapshot For(string userName) => Get?.Invoke(userName) ?? new IntegrationRetinueSnapshot { Error = "Retinue data is unavailable in this game." };
     }
 
+    public sealed class IntegrationSelectorSnapshot
+    {
+        public string[] Cultures { get; set; } = Array.Empty<string>();
+    }
+
+    public static class IntegrationSelectorProvider
+    {
+        private static string[] cultures = Array.Empty<string>();
+        public static void SetCultures(IEnumerable<string> values) => cultures = values == null ? Array.Empty<string>() : new List<string>(values).ToArray();
+        public static IntegrationSelectorSnapshot Current() => new IntegrationSelectorSnapshot { Cultures = cultures };
+    }
+
     public sealed class ManagedIntegrationClient : IDisposable
     {
         private readonly AuthSettings auth;
@@ -107,7 +119,7 @@ namespace BannerlordTwitch.Integration
                     Log.LogFeedSystem("[Integration] Connected to managed Twitch Extension service");
                     await SendAsync("hello", new { modVersion = typeof(ManagedIntegrationClient).Assembly.GetName().Version?.ToString(), protocolVersion = IntegrationProtocol.Version }, lifetime.Token);
                     await SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = Guid.NewGuid(), kind = "manifest", channelId, timestamp = DateTimeOffset.UtcNow, data = JsonSerializer.Deserialize<JsonElement>(catalog.ManifestJson) }), lifetime.Token);
-                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { } }, lifetime.Token);
+                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = new { cultures = IntegrationSelectorProvider.Current().Cultures } }, lifetime.Token);
                     await ReceiveAsync(lifetime.Token);
                 }
                 catch (OperationCanceledException) { return; }

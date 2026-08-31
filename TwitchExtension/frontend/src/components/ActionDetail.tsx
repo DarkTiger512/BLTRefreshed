@@ -1,6 +1,6 @@
 import { AlertCircle, CheckCircle2, Send, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { ManifestAction } from "../types";
+import type { GameState, ManifestAction } from "../types";
 import { CommandIcon } from "./CommandIcon";
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   unavailableReason?: string;
   busy: boolean;
   error?: string;
+  selectors: GameState["selectors"];
   onRequestIdentity(): void;
   onSubmit(args: Record<string, unknown>): void;
 }
@@ -16,7 +17,7 @@ interface Props {
 const labelFor = (value: string) => value.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/[._-]/g, " ").replace(/^./, c => c.toUpperCase());
 const clean = (value: string) => value.replace(/^['"]?\{=[^}]+\}/, "").replace(/['"]$/, "");
 
-export function ActionDetail({ action, linked, unavailableReason, busy, error, onRequestIdentity, onSubmit }: Props) {
+export function ActionDetail({ action, linked, unavailableReason, busy, error, selectors, onRequestIdentity, onSubmit }: Props) {
   const [values, setValues] = useState<Record<string, unknown>>({});
   useEffect(() => setValues({}), [action?.id]);
   if (!action) return <section className="detail-panel empty-detail"><ShieldAlert /><h2>Select an action</h2><p>Browse the available interactions for this campaign.</p></section>;
@@ -30,8 +31,8 @@ export function ActionDetail({ action, linked, unavailableReason, busy, error, o
         <span>{input.label ?? labelFor(input.id)}{input.required ? " *" : ""}</span>
         {input.type === "boolean" || input.type === "confirmation" ?
           <input type="checkbox" checked={Boolean(values[input.id])} onChange={event => setValues(current => ({ ...current, [input.id]: event.target.checked }))} required={input.required} /> :
-          input.type === "choice" && input.options ?
-            <select value={String(values[input.id] ?? "")} onChange={event => setValues(current => ({ ...current, [input.id]: event.target.value }))} required={input.required}><option value="">Select an option</option>{input.options.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select> :
+          input.type === "choice" ?
+            <select value={String(values[input.id] ?? "")} onChange={event => setValues(current => ({ ...current, [input.id]: event.target.value }))} required={input.required}><option value="">Select an option</option>{(input.optionsSource === "cultures" ? selectors.cultures.map(value => ({ value, label: value })) : input.options ?? []).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select> :
             <input
               type={input.type === "integer" || input.type === "number" ? "number" : "text"}
               value={String(values[input.id] ?? "")}

@@ -213,6 +213,7 @@ namespace BLTAdoptAHero
 
                     var campaignStarter = (CampaignGameStarter)gameStarterObject;
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
+                    IntegrationSelectorProvider.SetCultures(CampaignHelpers.MainCultures.Select(culture => culture.Name.ToString()));
                     IntegrationInventoryProvider.Get = userName =>
                     {
                         var behavior = BLTAdoptAHeroCampaignBehavior.Current;
@@ -322,6 +323,7 @@ namespace BLTAdoptAHero
             base.OnGameEnd(game);
             if (game.GameType is Campaign campaign)
             {
+                IntegrationSelectorProvider.SetCultures(Array.Empty<string>());
                 JoinTournament.OnGameEnd(campaign);
             }
         }

@@ -81,6 +81,7 @@ function categoryFor(command) {
 
 const choice = (id, label, values, required = true) => ({ id, label, type: "choice", required, options: values.map(value => ({ value, label: value.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, c => c.toUpperCase()) })) });
 const labeledChoice = (id, label, options, required = true) => ({ id, label, type: "choice", required, options });
+const dynamicChoice = (id, label, optionsSource, required = true) => ({ id, label, type: "choice", required, options: [], optionsSource });
 const textInput = (id, label, required = true) => ({ id, label, type: "text", required });
 const numberInput = (id, label, required = true) => ({ id, label, type: "integer", required });
 const confirm = () => ({ id: "confirm", label: "I understand this changes the campaign", type: "confirmation", required: true });
@@ -155,14 +156,7 @@ function actionInput(command) {
   if (noInput.has(name)) return [];
   const definitions = {
     objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), textInput("objective", "Objective", false)],
-    adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [labeledChoice("culture", "Culture", [
-      { value: "Aserai", label: "Aserai" },
-      { value: "Battania", label: "Battania" },
-      { value: "Empire", label: "Empire" },
-      { value: "Khuzait", label: "Khuzait" },
-      { value: "Sturgia", label: "Sturgia" },
-      { value: "Vlandia", label: "Vlandia" },
-    ])], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
+    adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [dynamicChoice("culture", "Culture", "cultures")], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
     attack: [textInput("target", "Target hero or party")], auction: [textInput("item", "Item")], bid: [numberInput("amount", "Bid amount")],
     bltbet: [numberInput("entrant", "Entrant number"), numberInput("amount", "Bet amount")], buymount: [textInput("mount", "Mount")],
     clan: [choice("operation", "Clan operation", ["create", "join", "leave", "invite", "kick", "info"]), textInput("target", "Target", false)],

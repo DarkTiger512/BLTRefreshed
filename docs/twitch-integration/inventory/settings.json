@@ -2158,6 +2158,19 @@
     }
   },
   {
+    "path": "ManagedIntegrationClient.Cultures",
+    "type": "string[]",
+    "default": "Array.Empty<string>()",
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 71
+    }
+  },
+  {
     "path": "TwitchService.UserName",
     "type": "string",
     "default": null,

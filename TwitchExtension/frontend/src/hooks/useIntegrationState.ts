@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CommandActivity, GameState, InventorySnapshot, RetinueSnapshot, ViewerIdentity } from "../types";
 
-const initialState: GameState = { connected: true, gameStarted: true, unavailable: {}, cooldowns: {} };
+const initialState: GameState = { connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"] } };
 
 export function useIntegrationState(identity: ViewerIdentity | null) {
   const [state, setState] = useState<GameState>(initialState);

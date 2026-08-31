@@ -797,6 +797,8 @@
       "IntegrationRetinueTroop",
       "IntegrationRetinueSnapshot",
       "IntegrationRetinueProvider",
+      "IntegrationSelectorSnapshot",
+      "IntegrationSelectorProvider",
       "ManagedIntegrationClient"
     ]
   },

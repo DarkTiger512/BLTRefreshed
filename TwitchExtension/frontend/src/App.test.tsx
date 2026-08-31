@@ -4,7 +4,7 @@ import { App } from "./App";
 
 const manifest = { protocolVersion: 1, actions: [
   { id: "command.adopt", legacyName: "adopt", handler: "AdoptAHero", category: "Hero", description: "Adopt a hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [] },
-  { id: "command.adoptbyculture", legacyName: "adoptByCulture", handler: "AdoptAHero", category: "Hero", description: "Adopt by culture", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "culture", label: "Culture", type: "choice", required: true, options: [{ value: "Aserai", label: "Aserai" }, { value: "Battania", label: "Battania" }, { value: "Empire", label: "Empire" }, { value: "Khuzait", label: "Khuzait" }, { value: "Sturgia", label: "Sturgia" }, { value: "Vlandia", label: "Vlandia" }] }] },
+  { id: "command.adoptbyculture", legacyName: "adoptByCulture", handler: "AdoptAHero", category: "Hero", description: "Adopt by culture", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "culture", label: "Culture", type: "choice", required: true, options: [], optionsSource: "cultures" }] },
   { id: "command.equipcustom", legacyName: "equipcustom", handler: "EquipCustomItemAction", category: "Equipment", description: "Equip custom item", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "item", type: "text", required: true }] },
   { id: "command.retinue", legacyName: "retinue", handler: "Retinue", category: "Retinue", description: "Manage battle retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
   { id: "command.eliteretinue", legacyName: "eliteretinue", handler: "Retinue2", category: "Retinue", description: "Manage elite retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
@@ -20,7 +20,7 @@ test("renders the command browser and selected action", async () => {
   expect(screen.getByRole("button", { name: /confirm action/i })).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: /adoptbycultureadopt by culture/i }));
   expect(screen.getByRole("combobox", { name: /^Culture/ })).toBeInTheDocument();
-  expect(screen.getByRole("option", { name: "Vlandia" })).toBeInTheDocument();
+  expect(screen.getByRole("option", { name: "Realm of Thrones" })).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: /my inventory/i }));
   await waitFor(() => expect(screen.getByText("Wolf's Oath Longsword — +12 Damage, +8 Swing Speed")).toBeInTheDocument());
   expect(screen.getByText(/visible only to you/i)).toBeInTheDocument();

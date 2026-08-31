@@ -8,6 +8,7 @@ export interface ActionInput {
   label?: string;
   description?: string;
   options?: Array<{ value: string; label: string }>;
+  optionsSource?: "cultures";
 }
 
 export interface ManifestAction {
@@ -40,6 +41,7 @@ export interface GameState {
   gameStarted: boolean;
   unavailable: Record<string, string>;
   cooldowns: Record<string, number>;
+  selectors: { cultures: string[] };
 }
 
 export interface InventoryItem { index: number; name: string; type: string; equipped: boolean }
