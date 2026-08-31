@@ -64,6 +64,11 @@ test("forces the live battle workspace and renders mission forms", async () => {
   expect(screen.getByText("86 / 112 HP")).toBeInTheDocument();
   expect(screen.getByText("Shieldmaiden")).toBeInTheDocument();
   expect(screen.getByText("BlackWolf")).toBeInTheDocument();
+  expect(screen.getByText("War Cry")).toBeInTheDocument();
+  expect(screen.getByText("42%")).toBeInTheDocument();
+  expect(screen.queryByRole("dialog", { name: "Mission commands" })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /mission commands/i }));
+  expect(screen.getByRole("dialog", { name: "Mission commands" })).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "Mission commands" })).toBeInTheDocument();
   expect(screen.getAllByRole("textbox", { name: /optional battle shout/i })).toHaveLength(2);
   expect(screen.queryByRole("combobox", { name: /battle side/i })).not.toBeInTheDocument();
@@ -81,4 +86,6 @@ test("forces the live battle workspace and renders mission forms", async () => {
   fireEvent.change(missionSearch, { target: { value: "heal" } });
   await waitFor(() => expect(screen.getByRole("heading", { name: "heal" })).toBeInTheDocument());
   expect(screen.queryByRole("heading", { name: "attack" })).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /close mission commands/i }));
+  expect(screen.queryByRole("dialog", { name: "Mission commands" })).not.toBeInTheDocument();
 });

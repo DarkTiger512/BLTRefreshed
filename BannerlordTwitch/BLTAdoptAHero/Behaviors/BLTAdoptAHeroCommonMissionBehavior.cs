@@ -367,6 +367,7 @@ namespace BLTAdoptAHero
                     heroState.LastTeamIndex = agent.Team.TeamIndex;
                 }
 
+                var activePower = ActivePowerState(hero, state is AgentState.Active);
                 MissionInfoHub.UpdateHero(new()
                 {
                     Id = hero.StringId,
@@ -377,7 +378,9 @@ namespace BLTAdoptAHero
                     HP = agent != null && state == AgentState.Active ? agent.Health : 0,
                     CooldownFractionRemaining = 1 - summonState?.CoolDownFraction ?? 0,
                     CooldownSecondsRemaining = summonState?.CooldownRemaining ?? 0,
-                    ActivePowerFractionRemaining = state is AgentState.Active ? ActivePowerFractionRemaining(hero) : 0,
+                    ActivePowerName = activePower.name,
+                    ActivePowerActive = activePower.active,
+                    ActivePowerFractionRemaining = activePower.fraction,
                     //HealFractionRemaining = state is AgentState.Active ? HealFractionRemaining(hero) : 0,
                     State = state.ToString().ToLower(),
                     Retinue = summonState?.ActiveRetinue ?? 0,
@@ -394,11 +397,17 @@ namespace BLTAdoptAHero
             }
         }
 
-        private static float ActivePowerFractionRemaining(Hero hero)
+        private static (string name, bool active, float fraction) ActivePowerState(Hero hero, bool heroActive)
         {
             var classDef = BLTAdoptAHeroCampaignBehavior.Current?.GetClass(hero);
-            (float duration, float remaining) = classDef?.ActivePower?.DurationRemaining(hero) ?? (1, 0);
-            return duration == 0 ? 0 : remaining / duration;
+            var power = classDef?.ActivePower;
+            var name = power?.Name?.ToString() ?? "Power";
+            if (!heroActive || power == null || !power.IsActive(hero))
+                return (name, false, 0);
+
+            (float duration, float remaining) = power.DurationRemaining(hero);
+            var fraction = duration <= 0 ? 0 : Math.Max(0, Math.Min(1, remaining / duration));
+            return (name, remaining > 0, fraction);
         }
         //private static float HealFractionRemaining(Hero hero)
         //{

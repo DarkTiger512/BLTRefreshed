@@ -57,6 +57,8 @@ export interface MissionCombatant {
   cooldownFractionRemaining: number;
   cooldownSecondsRemaining: number;
   activePowerFractionRemaining: number;
+  activePowerName?: string;
+  activePowerActive?: boolean;
   kills: number;
   retinue: number;
   deadRetinue: number;

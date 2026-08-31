@@ -26,6 +26,8 @@ namespace BLTAdoptAHero.UI
             [UsedImplicitly] public float CooldownSecondsRemaining;
 
             [UsedImplicitly] public float ActivePowerFractionRemaining;
+            [UsedImplicitly] public string ActivePowerName;
+            [UsedImplicitly] public bool ActivePowerActive;
             [UsedImplicitly] public float HealFractionRemaining;
 
             [UsedImplicitly] public bool IsPlayerSide;
@@ -82,6 +84,7 @@ namespace BLTAdoptAHero.UI
                             Id = state.Id ?? state.Name, Name = state.Name, HP = state.HP, MaxHP = state.MaxHP, State = state.State,
                             IsPlayerSide = state.IsPlayerSide, TournamentTeam = state.TournamentTeam,
                             CooldownFractionRemaining = state.CooldownFractionRemaining, CooldownSecondsRemaining = state.CooldownSecondsRemaining,
+                            ActivePowerName = state.ActivePowerName, ActivePowerActive = state.ActivePowerActive,
                             ActivePowerFractionRemaining = state.ActivePowerFractionRemaining, Kills = state.Kills,
                             Retinue = state.Retinue, DeadRetinue = state.DeadRetinue, EliteRetinue = state.Retinue2,
                             DeadEliteRetinue = state.DeadRetinue2, RetinueKills = state.RetinueKills,

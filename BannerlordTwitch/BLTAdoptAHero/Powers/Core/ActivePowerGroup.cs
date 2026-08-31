@@ -123,15 +123,18 @@ namespace BLTAdoptAHero.Powers
 
         public (float duration, float remaining) DurationRemaining(Hero hero)
         {
-            if (!ValidPowers.Any())
-                return (1, 0);
-            var remaining = ValidPowers
-                .Select(active => active.Power.DurationRemaining(hero))
+            var remaining = GetUnlockedPowers(hero)
+                .Where(power => power.IsActive(hero))
+                .Select(power => power.DurationRemaining(hero))
+                .Where(value => value.duration > 0 && value.remaining > 0)
                 .ToList();
-            return (
-                duration: remaining.Max(r => r.duration),
-                remaining: remaining.Max(r => r.remaining)
-            );
+            if (!remaining.Any())
+                return (1, 0);
+
+            // A group may contain effects with different durations. Keep the total
+            // and remaining values from the same longest-running active effect so
+            // consumers never derive a fraction from two unrelated powers.
+            return remaining.OrderByDescending(value => value.remaining).First();
         }
 
         public override string ToString() => $"{Name} {string.Join(" ", Powers.Select(p => p.ToString()))}";

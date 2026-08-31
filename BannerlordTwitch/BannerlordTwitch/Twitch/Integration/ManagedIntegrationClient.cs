@@ -91,6 +91,8 @@ namespace BannerlordTwitch.Integration
         [JsonPropertyName("cooldownFractionRemaining")] public float CooldownFractionRemaining { get; set; }
         [JsonPropertyName("cooldownSecondsRemaining")] public float CooldownSecondsRemaining { get; set; }
         [JsonPropertyName("activePowerFractionRemaining")] public float ActivePowerFractionRemaining { get; set; }
+        [JsonPropertyName("activePowerName")] public string ActivePowerName { get; set; }
+        [JsonPropertyName("activePowerActive")] public bool ActivePowerActive { get; set; }
         [JsonPropertyName("kills")] public int Kills { get; set; }
         [JsonPropertyName("retinue")] public int Retinue { get; set; }
         [JsonPropertyName("deadRetinue")] public int DeadRetinue { get; set; }
