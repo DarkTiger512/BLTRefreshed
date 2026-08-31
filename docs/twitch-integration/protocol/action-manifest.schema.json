@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://blt.example/schemas/action-manifest.v1.json",
+  "title": "BLT Action Manifest",
+  "type": "object",
+  "required": ["protocolVersion", "actions"],
+  "properties": {
+    "protocolVersion": { "const": 1 },
+    "generatedAt": { "type": "string" },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "legacyName", "handler", "category", "description", "permissions", "availability", "inputs"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^command\\.[a-z0-9.]+$" },
+          "legacyName": { "type": ["string", "null"] },
+          "handler": { "type": "string" },
+          "category": { "type": "string" },
+          "description": { "type": "string" },
+          "enabledByDefault": { "type": "boolean" },
+          "hiddenFromHelp": { "type": "boolean" },
+          "permissions": { "type": "array", "items": { "enum": ["viewer", "moderator", "broadcaster"] } },
+          "availability": { "type": "array", "items": { "type": "string" } },
+          "mutatesCampaign": { "type": "boolean" },
+          "inputs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type", "required"],
+              "properties": {
+                "id": { "type": "string" },
+                "type": { "enum": ["text", "integer", "number", "boolean", "choice", "hero", "item", "confirmation"] },
+                "required": { "type": "boolean" },
+                "legacyFallback": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,2327 @@
+{
+  "protocolVersion": 1,
+  "generatedAt": "2026-08-31T13:21:01.965Z",
+  "actions": [
+    {
+      "id": "command.objective",
+      "legacyName": "objective",
+      "handler": "StreamObjectiveAdminCommand",
+      "category": "Community",
+      "description": "Moderator controls for community stream objectives. Use list, start, status, or stop.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": false
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 2
+      }
+    },
+    {
+      "id": "command.objectives",
+      "legacyName": "objectives",
+      "handler": "StreamObjectivesStatusCommand",
+      "category": "Community",
+      "description": "Show the active community objective and your contribution.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 15
+      }
+    },
+    {
+      "id": "command.ammo",
+      "legacyName": "ammo",
+      "handler": "CheckAmmo",
+      "category": "Battle",
+      "description": "Check how much live ammunition your adopted hero has remaining in the current mission. Shows each ammunition stack and the combined total.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 28
+      }
+    },
+    {
+      "id": "command.ach",
+      "legacyName": "{=woTpsqyV}ach",
+      "handler": "HeroInfoCommand",
+      "category": "Hero",
+      "description": "{=ZVxCqyJL}Show the heroes achievements and tracked stats.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 41
+      }
+    },
+    {
+      "id": "command.adopt",
+      "legacyName": "{=0grO6hB5}adopt",
+      "handler": "AdoptAHero",
+      "category": "Hero",
+      "description": "Adopt a newly created Hero. Almost all other actions require an adopted hero.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 70
+      }
+    },
+    {
+      "id": "command.adoptbyclan",
+      "legacyName": "adoptByClan",
+      "handler": "AdoptAHero",
+      "category": "Kingdom",
+      "description": "Adopt a randomly selected Hero, filtered by Clan",
+      "enabledByDefault": false,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 114
+      }
+    },
+    {
+      "id": "command.adoptbyculture",
+      "legacyName": "adoptByCulture",
+      "handler": "AdoptAHero",
+      "category": "Hero",
+      "description": "Adopt a randomly selected Hero, filtered by Culture <br> Can do \"!adoptByCulture list\" for a list of cultures",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 149
+      }
+    },
+    {
+      "id": "command.adoptbyfaction",
+      "legacyName": "adoptByFaction",
+      "handler": "AdoptAHero",
+      "category": "Hero",
+      "description": "Adopt a randomly selected Hero, filtered by Faction <br> Can do \"!adoptByFaction list\" for a list of factions",
+      "enabledByDefault": false,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 184
+      }
+    },
+    {
+      "id": "command.adoptbyname",
+      "legacyName": "adoptByName",
+      "handler": "AdoptAHero",
+      "category": "Hero",
+      "description": "Adopt a randomly selected Hero, filtered by Hero Name",
+      "enabledByDefault": false,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 219
+      }
+    },
+    {
+      "id": "command.adoptrandom",
+      "legacyName": "adoptRandom",
+      "handler": "AdoptAHero",
+      "category": "Hero",
+      "description": "Adopt a randomly selected Hero",
+      "enabledByDefault": false,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 254
+      }
+    },
+    {
+      "id": "command.attack",
+      "legacyName": "attack",
+      "handler": "SummonHero",
+      "category": "Battle",
+      "description": "Use this when the streamer enters a battle, to spawn your adopted hero on the enemy side (along with your retinue).",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 289
+      }
+    },
+    {
+      "id": "command.auction",
+      "legacyName": "{=QQX2aboq}auction",
+      "handler": "AuctionItem",
+      "category": "Equipment",
+      "description": "Start an auction on a custom item you own, with a specified reserve price. Other viewers are able to bid upon your item, and the highest bidder will receive it at the end of the auction.<br>Usage is <code>!auction (custom item index) (reserve price)</code>, e.g. <code>!auction 3 50000</code> would start a new auction for your custom item with the index of 3 (as shown by the 'customitems' command), with a reserve price of 50000.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 314
+      }
+    },
+    {
+      "id": "command.bid",
+      "legacyName": "{=taI6SRSG}bid",
+      "handler": "BidOnItem",
+      "category": "Equipment",
+      "description": "{=1TBIIJVZ}Place a bid on the current auction, if one is active.<br>Usage is <code>!bid (gold amount)</code>, e.g. <code>!bid 100000</code>. If there is no auction, or the bid doesn't exceed the reserve price, it will be rejected.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "amount",
+          "type": "integer",
+          "required": false
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 328
+      }
+    },
+    {
+      "id": "command.bltbet",
+      "legacyName": "{=haKiwbsR}bltbet",
+      "handler": "TournamentBet",
+      "category": "Tournament",
+      "description": "{=thajdk5s}Use this to bet on tournament matches, when available.<br>Usage is <code>!bltbet (team) (gold)</code>, for example <code>!bltbet red 10000</code> to bet 10000 gold on red. Winnings are divided up from the whole pot, based on relative bet size.<br>If only one team is bet upon, the bets will be refunded.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 340
+      }
+    },
+    {
+      "id": "command.buymount",
+      "legacyName": "buymount",
+      "handler": "SmithItem",
+      "category": "Equipment",
+      "description": "Buy a randomly tiered mount for your Hero.Only for mounted classes.(1250000 gold)",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "amount",
+          "type": "integer",
+          "required": false
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 352
+      }
+    },
+    {
+      "id": "command.clan",
+      "legacyName": "clan",
+      "handler": "ClanManagement",
+      "category": "Kingdom",
+      "description": "Use to manage clan actions <br> Usage is <code>!clan (join/create/lead/rename/stats/leave/buy title/banner) name </code> <br> Example: !clan join Banu Tammar or !clan stats",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 371
+      }
+    },
+    {
+      "id": "command.class",
+      "legacyName": "{=nV9iIsDC}class",
+      "handler": "SetHeroClass",
+      "category": "Equipment",
+      "description": "{=K3297TEM}Selects a new class for your hero, updating your existing equipment to match the class requirements.<br>Usage is <code>!class (new class name)</code>, e.g. <code>!class archer</code>.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 404
+      }
+    },
+    {
+      "id": "command.customitems",
+      "legacyName": "customitems",
+      "handler": "HeroInfoCommand",
+      "category": "Equipment",
+      "description": "Shows the viewers custom item list, which is required so they know what item index to use in the custom item related commands.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 424
+      }
+    },
+    {
+      "id": "command.discarditem",
+      "legacyName": "discarditem",
+      "handler": "DiscardItem",
+      "category": "Equipment",
+      "description": "Throw away one of your custom items.<br>Usage is <code>!discarditem (custom item index)</code>, e.g. <code>!discarditem 3</code> would discard your custom item with the index 3. The custom item index is shown in the 'customs' command.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 453
+      }
+    },
+    {
+      "id": "command.equip",
+      "legacyName": "{=wHqxd4kb}equip",
+      "handler": "EquipHero",
+      "category": "Equipment",
+      "description": "Upgrades your heroes equipment tier, replacing any existing equipment of lower tier, except for custom items. The cost depends on the tier you are trying to upgrade to. <br> Usage is <code>!equip (blank for auto upgrade/tier number) </code> <br> Example: !equip 1 or !equip",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 465
+      }
+    },
+    {
+      "id": "command.giveitem",
+      "legacyName": "{=osvl34my}giveitem",
+      "handler": "GiveItem",
+      "category": "Equipment",
+      "description": "Give one of your custom items to another viewer.<br>Usage is <code>!giveitem (custom item index) (viewer)</code>, e.g. <code>!giveitem 3 C4alad0g</code> would give your custom item with the index 3 to the viewer called C4lad0g. The custom item index is shown in the 'customitems' command.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 485
+      }
+    },
+    {
+      "id": "command.gold",
+      "legacyName": "{=W5uX9HCJ}gold",
+      "handler": "HeroInfoCommand",
+      "category": "Progression",
+      "description": "{=eWI5oDce}Show your heroes current gold.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "amount",
+          "type": "integer",
+          "required": false
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 497
+      }
+    },
+    {
+      "id": "command.heal",
+      "legacyName": "heal",
+      "handler": "CharacterEffect",
+      "category": "Battle",
+      "description": "Heals your hero over time. Only works in battle, when your hero is summoned.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 526
+      }
+    },
+    {
+      "id": "command.hero",
+      "legacyName": "hero",
+      "handler": "HeroFeatures",
+      "category": "Kingdom",
+      "description": "Use to adjust hero physical features <br> Usage is <code>!hero gender (male/female) / !hero looks (appearance string) / !hero marry (culture/clan/name)</code> <br> Example: !hero gender male",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 555
+      }
+    },
+    {
+      "id": "command.inv",
+      "legacyName": "{=UbklIEGh}inv",
+      "handler": "HeroInfoCommand",
+      "category": "Equipment",
+      "description": "Shows your heroes equipped loadout and inventory, excluding custom items (do !customItems instead)",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 579
+      }
+    },
+    {
+      "id": "command.kingdom",
+      "legacyName": "kingdom",
+      "handler": "KingdomManagement",
+      "category": "Kingdom",
+      "description": "Use to manage clan actions <br> Usage is <code>!kingdom (join/rebel/leave/stats) name </code> <br> Example: !kingdom join Aserai or !clan stats",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 608
+      }
+    },
+    {
+      "id": "command.nameitem",
+      "legacyName": "nameitem",
+      "handler": "NameItem",
+      "category": "Equipment",
+      "description": "You can use this to name your custom items.<br>Usage is <code>!nameitem (custom item index) (name)</code>, for example <code>!nameitem 3 Foehammer</code>. The custom item index is shown in the 'customitems' command.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 659
+      }
+    },
+    {
+      "id": "command.power",
+      "legacyName": "{=NUQ5PsjF}power",
+      "handler": "UsePower",
+      "category": "Progression",
+      "description": "UsePower",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 671
+      }
+    },
+    {
+      "id": "command.powers",
+      "legacyName": "{=GHCxNIaR}powers",
+      "handler": "HeroInfoCommand",
+      "category": "Progression",
+      "description": "{=GYYbCXmu}Shows your available powers",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 683
+      }
+    },
+    {
+      "id": "command.reequip",
+      "legacyName": "{=fGfTaAoD}reequip",
+      "handler": "EquipHero",
+      "category": "Tournament",
+      "description": "{=zBIv0a4I}Randomizes your equipment, at its current tier. It will not replace items that are higher than your current tier, or custom items. e.g. if you are equipment tier 3, but also have a tier 6 weapon won in a tournament, this command will not replace that weapon. Sometimes you will end up with some items not changing, particularly if there aren't many items of that type available at your current tier.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 712
+      }
+    },
+    {
+      "id": "command.retinue",
+      "legacyName": "{=mge9rH9J}retinue",
+      "handler": "Retinue",
+      "category": "Battle",
+      "description": "Purchases new retinue troops, or upgrades existing ones to the next tier if you have reached the limit. Retinue will appear with you in battle when you summon, earning you money when they make kills. <br> Usage is <code>!retinue (blank or all for auto upgrade/upgrade amount) </code> <br> Example: !retinue 1 or !retinue all",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "amount",
+          "type": "integer",
+          "required": false
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 732
+      }
+    },
+    {
+      "id": "command.retinuelist",
+      "legacyName": "{=kG6yjBBR}retinuelist",
+      "handler": "HeroInfoCommand",
+      "category": "Equipment",
+      "description": "{=BlBiEmbf}Shows your current retinue troops.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 759
+      }
+    },
+    {
+      "id": "command.retire",
+      "legacyName": "retire",
+      "handler": "RetireMyHero",
+      "category": "Hero",
+      "description": "RetireMyHero",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 788
+      }
+    },
+    {
+      "id": "command.smitharmor",
+      "legacyName": "smitharmor",
+      "handler": "SmithItem",
+      "category": "Equipment",
+      "description": "Smith a custom armor item(500000 gold)",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "amount",
+          "type": "integer",
+          "required": false
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 801
+      }
+    },
+    {
+      "id": "command.smithweapon",
+      "legacyName": "smithweapon",
+      "handler": "SmithItem",
+      "category": "Equipment",
+      "description": "Smith a custom weapon(1000000 gold)",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "amount",
+          "type": "integer",
+          "required": false
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 820
+      }
+    },
+    {
+      "id": "command.stats",
+      "legacyName": "{=J2AqvpeF}stats",
+      "handler": "HeroInfoCommand",
+      "category": "Battle",
+      "description": "{=JiMaaypq}Shows your heroes general information, including clan, gold, location, HP, skills, attributes and retinue.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 839
+      }
+    },
+    {
+      "id": "command.summon",
+      "legacyName": "summon",
+      "handler": "SummonHero",
+      "category": "Battle",
+      "description": "Use this when the streamer enters a battle, to spawn your adopted hero on the streamers side (along with your retinue).",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 868
+      }
+    },
+    {
+      "id": "command.tournament",
+      "legacyName": "tournament",
+      "handler": "JoinTournament",
+      "category": "Tournament",
+      "description": "Join the tournament queue with your adopted hero. You can see the queue in the overlay. Each tournament can have up to 16 heroes in it, once it is full further heroes will remain in the queue for the next tournament.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "name",
+          "type": "text",
+          "required": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 893
+      }
+    },
+    {
+      "id": "command.itemstats",
+      "legacyName": "itemstats",
+      "handler": "ItemStats",
+      "category": "Equipment",
+      "description": "ItemStats",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 906
+      }
+    },
+    {
+      "id": "command.buyattribute",
+      "legacyName": "buyattribute",
+      "handler": "AttributePoints",
+      "category": "Progression",
+      "description": "AttributePoints",
+      "enabledByDefault": true,
+      "hiddenFromHelp": true,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 918
+      }
+    },
+    {
+      "id": "command.info",
+      "legacyName": "info",
+      "handler": "CampaignInfo",
+      "category": "General",
+      "description": "CampaignInfo",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 934
+      }
+    },
+    {
+      "id": "command.rejuvenate",
+      "legacyName": "rejuvenate",
+      "handler": "Rejuvenate",
+      "category": "Hero",
+      "description": "Rejuvenate",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 946
+      }
+    },
+    {
+      "id": "command.leaderboard",
+      "legacyName": "leaderboard",
+      "handler": "Leaderboard",
+      "category": "Community",
+      "description": "Leaderboard",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 961
+      }
+    },
+    {
+      "id": "command.heir",
+      "legacyName": "heir",
+      "handler": "HeirCommand",
+      "category": "Hero",
+      "description": "HeirCommand",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 973
+      }
+    },
+    {
+      "id": "command.diplomacy",
+      "legacyName": "diplomacy",
+      "handler": "Diplomacy",
+      "category": "Kingdom",
+      "description": "Diplomacy",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 995
+      }
+    },
+    {
+      "id": "command.battle",
+      "legacyName": "battle",
+      "handler": "BattleInfo",
+      "category": "Battle",
+      "description": "BattleInfo",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1044
+      }
+    },
+    {
+      "id": "command.reinforce",
+      "legacyName": "reinforce",
+      "handler": "ReinforceAction",
+      "category": "General",
+      "description": "ReinforceAction",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1056
+      }
+    },
+    {
+      "id": "command.transfer",
+      "legacyName": "transfer",
+      "handler": "TransferAction",
+      "category": "General",
+      "description": "TransferAction",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1083
+      }
+    },
+    {
+      "id": "command.buyfocus",
+      "legacyName": "buyfocus",
+      "handler": "FocusPoints",
+      "category": "Progression",
+      "description": "FocusPoints",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1097
+      }
+    },
+    {
+      "id": "command.party",
+      "legacyName": "party",
+      "handler": "PartyManagement",
+      "category": "Kingdom",
+      "description": "PartyManagement",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1114
+      }
+    },
+    {
+      "id": "command.income",
+      "legacyName": "income",
+      "handler": "GoldIncomeAction",
+      "category": "Progression",
+      "description": "GoldIncomeAction",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1153
+      }
+    },
+    {
+      "id": "command.upgrade",
+      "legacyName": "upgrade",
+      "handler": "UpgradeAction",
+      "category": "Equipment",
+      "description": "UpgradeAction",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1165
+      }
+    },
+    {
+      "id": "command.family",
+      "legacyName": "family",
+      "handler": "FamilyManagement",
+      "category": "Hero",
+      "description": "FamilyManagement",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1184
+      }
+    },
+    {
+      "id": "command.logs",
+      "legacyName": "logs",
+      "handler": "CampaignLogs",
+      "category": "General",
+      "description": "CampaignLogs",
+      "enabledByDefault": false,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1197
+      }
+    },
+    {
+      "id": "command.equipcustom",
+      "legacyName": "equipcustom",
+      "handler": "EquipCustomItemAction",
+      "category": "Equipment",
+      "description": "EquipCustomItemAction",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1213
+      }
+    },
+    {
+      "id": "command.formation",
+      "legacyName": "formation",
+      "handler": "FormationCommand",
+      "category": "Battle",
+      "description": "FormationCommand",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1227
+      }
+    },
+    {
+      "id": "command.fief",
+      "legacyName": "fief",
+      "handler": "ManageFief",
+      "category": "Kingdom",
+      "description": "ManageFief",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1240
+      }
+    },
+    {
+      "id": "command.vassal",
+      "legacyName": "vassal",
+      "handler": "VassalManagement",
+      "category": "Kingdom",
+      "description": "VassalManagement",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1252
+      }
+    },
+    {
+      "id": "command.capital",
+      "legacyName": "capital",
+      "handler": "CapitalAction",
+      "category": "Kingdom",
+      "description": "CapitalAction",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1271
+      }
+    },
+    {
+      "id": "command.eliteretinue",
+      "legacyName": "eliteretinue",
+      "handler": "Retinue2",
+      "category": "Equipment",
+      "description": "Retinue2",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": false,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1284
+      }
+    },
+    {
+      "id": "command.skills",
+      "legacyName": "skills",
+      "handler": "HeroInfoCommand",
+      "category": "Progression",
+      "description": "HeroInfoCommand",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": false,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": false,
+      "inputs": [
+        {
+          "id": "arguments",
+          "type": "text",
+          "required": false,
+          "legacyFallback": true
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 1311
+      }
+    }
+  ]
+}

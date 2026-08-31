@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://blt.example/schemas/envelope.v1.json",
+  "title": "BLT Integration Envelope",
+  "type": "object",
+  "required": ["v", "id", "kind", "channelId", "timestamp", "data"],
+  "properties": {
+    "v": { "const": 1 },
+    "id": { "type": "string", "format": "uuid" },
+    "kind": {
+      "enum": ["hello", "manifest", "state.snapshot", "state.patch", "action.request", "action.accepted", "action.result", "action.error", "connection.status"]
+    },
+    "channelId": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "format": "date-time" },
+    "user": {
+      "type": ["object", "null"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "roles": { "type": "array", "items": { "enum": ["viewer", "moderator", "broadcaster"] } }
+      },
+      "required": ["id", "name", "roles"]
+    },
+    "data": { "type": "object" }
+  }
+}

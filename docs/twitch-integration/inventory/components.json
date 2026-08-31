@@ -1,0 +1,4079 @@
+[
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Actions/ActionHandlerBase.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "ActionHandlerBase"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Actions/ActionManager.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "action-handler",
+      "persistence",
+      "twitch-service",
+      "configuration"
+    ],
+    "symbols": [
+      "ActionManager"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Actions/ICommandHandler.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "ICommandHandler"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Actions/IRewardHandler.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "IRewardHandler"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/BannerlordTwitch.csproj",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "action-handler",
+      "persistence",
+      "twitch-service",
+      "test",
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Behaviors/BLTAgentModifierBehavior.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "AgentModifierConfig",
+      "BLTAgentModifierBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Behaviors/BLTAgentPfxBehaviour.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BoneAttachments",
+      "BLTAgentPfxBehaviour"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/BLTModule.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "configuration"
+    ],
+    "symbols": [
+      "BLTModule"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Documentation/DocumentationGenerator.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "harmony-patch",
+      "configuration"
+    ],
+    "symbols": [
+      "DocumentationGenerator"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Documentation/DocumentationHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DocumentationHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Documentation/DocumentAttribute.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DocumentAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Documentation/IDocumentable.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "IDocumentable"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Documentation/IDocumentationGenerator.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "IDocumentationGenerator"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/AgentExtensions.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "AgentExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/AgentHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "AgentHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/AgentPfx.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "ParticleEffectDef",
+      "AttachPointEnum",
+      "AgentPfx",
+      "PfxState"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/AutoMissionBehavior.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "behavior"
+    ],
+    "symbols": [
+      "AutoMissionBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/CampaignHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CampaignHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/DrivenPropertyItemSource.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DrivenPropertyItemSource"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/EquipmentType.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "EquipmentType",
+      "EquipmentTypeItemSource",
+      "EquipmentTypeHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/MissionHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "MissionHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/OneShotEffect.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/PropertyModifierDef.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "PropertyModifierDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/SkillGroup.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "SkillsEnum",
+      "SkillGroup"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Helpers/SkillModifierDef.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "SkillModifierDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Localization/LocCategoryAttribute.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LocCategoryAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Localization/LocDescriptionAttribute.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LocDescriptionAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Localization/LocDisplayNameAttribute.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "LocDisplayNameAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Localization/LocString.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LocString",
+      "LocStringConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Localization/Naming.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "Naming"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Models/BLTAgentStatCalculateModel.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTAgentStatCalculateModel"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/BLTOverlay.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTOverlay",
+      "OverlayProvider"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "overlay-hub"
+    ],
+    "symbols": [
+      "ConsoleFeedHub",
+      "Message"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.css",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.html",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/Logger.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LoggerFactory",
+      "Logger"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/PhysicalFileSystemEx.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "PhysicalFileSystemEx",
+      "PhysicalFileInfo",
+      "PhysicalDirectoryInfo"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Overlay/TwitchHub.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "overlay-hub"
+    ],
+    "symbols": [
+      "TwitchHub",
+      "User"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Properties/Annotations.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "test"
+    ],
+    "symbols": [
+      "CanBeNullAttribute",
+      "NotNullAttribute",
+      "ItemNotNullAttribute",
+      "ItemCanBeNullAttribute",
+      "StringFormatMethodAttribute",
+      "Constants",
+      "Class1",
+      "ValueProviderAttribute",
+      "ValueRangeAttribute",
+      "NonNegativeValueAttribute",
+      "InvokerParameterNameAttribute",
+      "and",
+      "Foo",
+      "NotifyPropertyChangedInvocatorAttribute",
+      "ContractAnnotationAttribute",
+      "Foo",
+      "LocalizationRequiredAttribute",
+      "NoEquality",
+      "UsesNoEquality",
+      "CannotApplyEqualityOperatorAttribute",
+      "ComponentAttribute",
+      "MyComponent",
+      "BaseTypeRequiredAttribute",
+      "UsedImplicitlyAttribute",
+      "MeansImplicitUseAttribute",
+      "ImplicitUseKindFlags",
+      "ImplicitUseTargetFlags",
+      "PublicAPIAttribute",
+      "InstantHandleAttribute",
+      "PureAttribute",
+      "MustUseReturnValueAttribute",
+      "Foo",
+      "ProvidesContextAttribute",
+      "PathReferenceAttribute",
+      "SourceTemplateAttribute",
+      "MacroAttribute",
+      "AspMvcAreaMasterLocationFormatAttribute",
+      "AspMvcAreaPartialViewLocationFormatAttribute",
+      "AspMvcAreaViewLocationFormatAttribute",
+      "AspMvcMasterLocationFormatAttribute",
+      "AspMvcPartialViewLocationFormatAttribute",
+      "AspMvcViewLocationFormatAttribute",
+      "AspMvcActionAttribute",
+      "AspMvcAreaAttribute",
+      "AspMvcControllerAttribute",
+      "AspMvcMasterAttribute",
+      "AspMvcModelTypeAttribute",
+      "AspMvcPartialViewAttribute",
+      "or",
+      "AspMvcSuppressViewErrorAttribute",
+      "AspMvcDisplayTemplateAttribute",
+      "AspMvcEditorTemplateAttribute",
+      "AspMvcTemplateAttribute",
+      "AspMvcViewAttribute",
+      "AspMvcViewComponentAttribute",
+      "AspMvcViewComponentViewAttribute",
+      "AspMvcActionSelectorAttribute",
+      "HtmlElementAttributesAttribute",
+      "HtmlAttributeValueAttribute",
+      "RazorSectionAttribute",
+      "MyStringCollection",
+      "Test",
+      "CollectionAccessAttribute",
+      "CollectionAccessType",
+      "AssertionMethodAttribute",
+      "AssertionConditionAttribute",
+      "AssertionConditionType",
+      "TerminatesProgramAttribute",
+      "LinqTunnelAttribute",
+      "NoEnumerationAttribute",
+      "RegexPatternAttribute",
+      "NoReorderAttribute",
+      "XamlItemsControlAttribute",
+      "XamlItemBindingOfItemsControlAttribute",
+      "XamlItemStyleOfItemsControlAttribute",
+      "AspChildControlTypeAttribute",
+      "AspDataFieldAttribute",
+      "AspDataFieldsAttribute",
+      "AspMethodPropertyAttribute",
+      "AspRequiredAttributeAttribute",
+      "AspTypePropertyAttribute",
+      "RazorImportNamespaceAttribute",
+      "RazorInjectionAttribute",
+      "RazorDirectiveAttribute",
+      "RazorPageBaseTypeAttribute",
+      "RazorHelperCommonAttribute",
+      "RazorLayoutAttribute",
+      "RazorWriteLiteralMethodAttribute",
+      "RazorWriteMethodAttribute",
+      "RazorWriteMethodParameterAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Properties/AssemblyInfo.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/SaveSystem/DictionaryToArrayConverter.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DictionaryToArrayConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/SaveSystem/MBGUIDConverter.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "MBGUIDConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/SaveSystem/MBObjectBaseConverter.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence"
+    ],
+    "symbols": [
+      "MBObjectBaseConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/SaveSystem/ScopedJsonSync.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "ScopedJsonSync",
+      "FormatDataPair"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/ActionBase.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "ActionBase"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/AuthSettings.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "AuthSettings",
+      "powers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/Command.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "Command"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/CommandHandlerItemsSource.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CommandHandlerItemsSource"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/GlobalConfig.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "GlobalConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/ILoaded.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "ILoaded"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/ISaving.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "ISaving"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/IUpdateFromDefault.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "IUpdateFromDefault"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/Reward.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "Reward"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/RewardHandlerItemsSource.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RewardHandlerItemsSource"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/RewardSpec.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "RewardSpec"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/Settings.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/SettingsHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "SettingsHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/SimTestingConfig.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "SimTestingConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Settings/SimTestingItem.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "SimActionType",
+      "SimTestingItem"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Testing/SimulationTest.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "SimulationTest",
+      "User"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/CustomTwitchHttpClient.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CustomTwitchHttpClient"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/Dummy/AffiliateSpoofingHttpCallHandler.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "configuration"
+    ],
+    "symbols": [
+      "AffiliateSpoofingHttpCallHandler",
+      "CustomReward",
+      "Redemption"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/Dummy/TwitchRedirectingHttpCallHandler.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "TwitchRedirectingHttpCallHandler"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/ExtensionService.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service"
+    ],
+    "symbols": [
+      "ExtensionPubSubService",
+      "ExtensionPubSubPayload",
+      "ExtensionMessage",
+      "BltWireMessage",
+      "BltWireUser"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/BLTProtocol.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTProtocol",
+      "BltMessage",
+      "BltUser",
+      "CommandData",
+      "OverlayCommandTranslator"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/ExtensionReceiverService.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "ExtensionReceiverService",
+      "OverlayCommandMessage"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/LocalRelayService.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service"
+    ],
+    "symbols": [
+      "LocalRelayService"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/public/RandomOverlay.html",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/server.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/TwitchEventSubSocket.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service"
+    ],
+    "symbols": [
+      "TwitchEventSubSocket"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/TwitchService.Bot.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "configuration"
+    ],
+    "symbols": [
+      "TwitchService",
+      "Bot"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/TwitchService.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "ReplyContext",
+      "TwitchService"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/CollectionPropertyEditor.xaml",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/CollectionPropertyEditor.xaml.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CollectionPropertyEditor",
+      "OpenCollectionEditorEventArgs"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/DefaultCollectionEditor.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "InstanceNameAttribute",
+      "DefaultCollectionEditor"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/DerivedClassCollectionEditor.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DerivedClassCollectionEditor"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/ExpandAttribute.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "ExpandAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/ParticleEffectItemSource.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "OneShotParticleEffectItemSource",
+      "LoopingParticleEffectItemSource"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/RangeFloatControl.xaml",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/RangeFloatControl.xaml.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RangeFloatControl"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/RangeFloatEditor.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RangeFloatEditor"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/RangeIntControl.xaml",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/RangeIntControl.xaml.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RangeIntControl"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/RangeIntEditor.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RangeIntEditor"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/SliderFloatControl.xaml",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/SliderFloatControl.xaml.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "SliderFloatControl"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/SliderFloatEditor.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "SliderFloatEditor"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/SoundEffectItemSource.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "SoundEffectItemSource"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/UI/UIRangeAttribute.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "UIRangeAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Assembly.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "AssemblyHelper"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/CloneHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CloneHelpers",
+      "CloneProperties"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/ConfigureContext.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "ConfigureContext"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/ConsoleCommands.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "test"
+    ],
+    "symbols": [
+      "ConsoleCommands"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/DisplayNameExtensions.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DisplayNameExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Extensions.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "Extensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/FileSystem.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "FileSystem"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/GameVersion.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "GameVersion"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/LINQExtensions.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LINQExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Log.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "Log",
+      "Level",
+      "LogTraceListener",
+      "LogStyle",
+      "Sound"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/MainThreadSync.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "MainThreadSync"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/MiscExtensions.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "MiscExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Paths.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "Paths"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/RangeFloat.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/RangeInt.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/SaveSystem/DictionaryToArrayConverter.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "DictionaryToArrayConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/SaveSystem/MBGUIDConverter.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "MBGUIDConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/SaveSystem/MBObjectBaseConverter.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence"
+    ],
+    "symbols": [
+      "MBObjectBaseConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/SaveSystem/ScopedJsonSync.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "ScopedJsonSync",
+      "FormatDataPair"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery-3.7.1.intellisense.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "attribute",
+      "names",
+      "name",
+      "name",
+      "to",
+      "name",
+      "attribute",
+      "names",
+      "value",
+      "names",
+      "names",
+      "should",
+      "should",
+      "names",
+      "attribute",
+      "value",
+      "should"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery-3.7.1.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "behavior",
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "names",
+      "names",
+      "name",
+      "name"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery-3.7.1.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery-3.7.1.slim.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "behavior",
+      "test"
+    ],
+    "symbols": [
+      "names",
+      "names",
+      "name",
+      "name"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery-3.7.1.slim.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery.signalR-2.4.3.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Scripts/jquery.signalR-2.4.3.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/StaticRandom.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "StaticRandom"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/StringExtensions.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "StringExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/Testing/SimulationTest.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "twitch-service",
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "SimulationTest",
+      "User"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Util/YamlHelpers.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "persistence"
+    ],
+    "symbols": [
+      "YamlTagged",
+      "YamlHelpers",
+      "LocStringStringConverter",
+      "SortedTypeInspector",
+      "TaggedNodeTypeResolver"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-Documentation.css",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "td",
+      "td"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/index-template.html",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-1.6.4-vsdoc.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "names",
+      "attribute",
+      "name",
+      "attribute",
+      "names",
+      "should",
+      "names"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-1.6.4.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "names",
+      "attributes"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-1.6.4.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-3.4.1.intellisense.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "attribute",
+      "names",
+      "name",
+      "name",
+      "to",
+      "name",
+      "attribute",
+      "names",
+      "value",
+      "names",
+      "names",
+      "should",
+      "should",
+      "names",
+      "attribute",
+      "value",
+      "should"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-3.4.1.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "names",
+      "names",
+      "name",
+      "name"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-3.4.1.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-3.4.1.slim.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "test"
+    ],
+    "symbols": [
+      "names",
+      "names",
+      "name",
+      "name"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery-3.4.1.slim.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery.signalR-2.2.2.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery.signalR-2.2.2.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery.signalR-2.4.2.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/jquery.signalR-2.4.2.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/progress-ring.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/twitch.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/vue.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "test"
+    ],
+    "symbols": [
+      "that",
+      "are",
+      "bindings",
+      "if",
+      "with",
+      "with",
+      "applied"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/Scripts/vue.min.js",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/_Module/web/style.css",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Achievements/AchievementDef.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "AchievementDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Achievements/AchievementStatsData.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "AchievementStatsData",
+      "Statistic",
+      "and"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Achievements/ClassLevelRequirement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "ClassLevelRequirement",
+      "level",
+      "level"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Achievements/IAchievementRequirement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "IAchievementRequirement"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Achievements/StatisticClassSpecificRequirement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "StatisticClassSpecificRequirement",
+      "power",
+      "explicitly",
+      "set"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Achievements/StatisticTotalRequirement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "StatisticRequirement",
+      "Operator"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/AddGoldToHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "AddGoldToHero",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "AdoptAHero",
+      "Settings",
+      "ViewerSelect",
+      "of",
+      "destination",
+      "to"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/AttributePoints.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "AttributePoints",
+      "AttributePointsSettings",
+      "value"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/AuctionItem.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "AuctionItem",
+      "Settings",
+      "BidOnItem"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/BattleInfo.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "BattleInfo",
+      "Documentation"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/CampaignInfo.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "CampaignInfo"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/CampaignLogs.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "CampaignLogs",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/CheckAmmo.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "CheckAmmo"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/ClanManagement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "ClanManagement",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/DiscardItem.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "DiscardItem"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/DuelCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "DuelCommand",
+      "MarkPropertyModifier",
+      "Settings",
+      "GoldSettings",
+      "MarkEffectSettings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/EquipCustomItem.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "EquipCustomItemAction",
+      "Settings",
+      "if"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/EquipHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "EquipHero",
+      "Settings",
+      "not",
+      "specific",
+      "specified",
+      "definition",
+      "definition",
+      "MountFamilyType",
+      "FindFlags"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/FamilyManagement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "FamilyManagement",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/FocusPoints.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "FocusPoints",
+      "FocusPointsSettings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/FollowCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "FollowCommand",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/FormationCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "FormationCommand",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/GiveItem.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "GiveItem"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/GoldIncomeFeature.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "GoldIncomeAction"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/GuardCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "GuardCommand",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/HeirCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "HeirCommand",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroActionHandlerBase.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "HeroActionHandlerBase"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroCommandHandlerBase.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "HeroCommandHandlerBase"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroFeatures.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "HeroFeatures",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "HeroInfoCommand",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroToHeroGold.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "HeroToHeroGold"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/ImproveAdoptedHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "ImproveAdoptedHero",
+      "SettingsBase"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/ItemStats.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "ItemStats"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/JoinTournament.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "JoinTournament",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/KingdomManagement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "KingdomManagement",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Leaderboard.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "Leaderboard",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/ManageFief.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "ManageFief",
+      "Documentation"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/NameItem.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "NameItem"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/NavalHarmonyPatches.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "NavalHarmonyPatches"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/NavalSummonHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "NavalSummonHero"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/PartyManagement.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "PartyManagement",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/ReinforceAction.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "ReinforceAction",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Rejuvenate.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "Rejuvenate",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Retinue.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "Retinue",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Retinue2.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "Retinue2",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/RetireMyHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "RetireMyHero",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/SetHeroClass.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "SetHeroClass",
+      "Settings",
+      "already",
+      "change",
+      "change",
+      "change",
+      "change",
+      "change",
+      "change",
+      "name",
+      "to"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/SimpleDiplomacy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "SimpleDiplomacy",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/SkillXP.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "SkillXP",
+      "SkillXPSettings",
+      "skills"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/SmithItem.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "SmithItem",
+      "Settings",
+      "must"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/StreamObjectiveCommands.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "StreamObjectiveAdminCommand",
+      "StreamObjectivesStatusCommand"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "behavior",
+      "harmony-patch",
+      "configuration"
+    ],
+    "symbols": [
+      "SummonHero",
+      "FormationItemSource",
+      "Settings",
+      "SimpleAgentOrigin",
+      "Shout"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/TournamentBet.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "TournamentBet"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/TransferAction.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "TransferAction",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/UpgradeAction.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "UpgradeAction",
+      "Settings",
+      "UpgradeSystemDocumentation",
+      "if",
+      "PurchaseResult"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/UpgradeDefinitions.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "UpgradeBase",
+      "TroopTreeType",
+      "FiefUpgrade",
+      "ClanUpgrade",
+      "KingdomUpgrade"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/UsePower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "active",
+      "UsePower"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Util/CustomItems.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "test"
+    ],
+    "symbols": [
+      "CustomItems"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Util/HeroClassDef.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "HeroClassDef",
+      "is",
+      "that",
+      "ItemSource"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Util/ItemModifierAccess.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "ItemModifierAccess"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Util/KillStreakDef.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "KillStreakDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/Util/SkillRangeDef.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "SkillRangeDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/VassalCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "VassalManagement",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "BLTAdoptAHeroCampaignBehavior",
+      "HeroData",
+      "RetinueData",
+      "Retinue2Data",
+      "SavedEquipment",
+      "Auction",
+      "change",
+      "RetinueSettings",
+      "Retinue2Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCommonMissionBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "BLTAdoptAHeroCommonMissionBehavior",
+      "HeroMissionState"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCustomMissionBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTAdoptAHeroCustomMissionBehavior",
+      "Listeners"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTClanBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTClanBehavior",
+      "BLTFamily",
+      "BLTFamilyData",
+      "BLTSocialSecurity",
+      "BLTPrisoner"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTCustomItemsCampaignBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTCustomItemsCampaignBehavior",
+      "ItemModifierData"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTFollowBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior"
+    ],
+    "symbols": [
+      "BLTFollowBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTGuardBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior"
+    ],
+    "symbols": [
+      "BLTGuardBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTHeirBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTHeirBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTHeroDetachmentBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTHeroDetachmentBehavior",
+      "DetachmentOrder",
+      "DetachmentState",
+      "HeroDetachment"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTHeroPowersMissionBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "harmony-patch"
+    ],
+    "symbols": [
+      "RefHandle",
+      "BLTHeroPowersMissionBehavior",
+      "DecideWeaponCollisionReactionParams",
+      "MeleeHitParams",
+      "MissileHitParams",
+      "RegisterBlowParams"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTHeroWidgetBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "HeroWidgetMissionView",
+      "HeroWidgetVM",
+      "HeroIconVM"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTLogsBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "BLTLogsBehavior",
+      "HeroLogs",
+      "ClanLogs",
+      "KingdomLogs",
+      "FiefLogs",
+      "BLTLogsSaveDefiner"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTRemoveAgentsBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTRemoveAgentsBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSettlementUpgradeBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTSettlementUpgradeBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSummonBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTSummonBehavior",
+      "RetinueState",
+      "HeroSummonState"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTTournamentBetMissionBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "BLTTournamentBetMissionBehavior",
+      "BettingState",
+      "TeamBet"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTTournamentMissionBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "BLTTournamentMissionBehavior",
+      "var",
+      "equipment",
+      "name"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTTournamentQueueBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "harmony-patch",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTTournamentQueueBehavior",
+      "TournamentQueueEntry",
+      "TournamentQueueEntrySavable"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTTournamentSkillAdjustBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "BLTTournamentSkillAdjustBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/CursedArtifactBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "CursedArtifactBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/DuelMissionBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "configuration"
+    ],
+    "symbols": [
+      "BLTDuelBehavior",
+      "DuelInfo"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/FollowCombat.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "FollowCombat"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/GoldIncomeBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "GoldIncomeBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/HarmonyPatches.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "AdoptedHeroFlags",
+      "FactionDiscontinuationPatches",
+      "ChangeKingdomActionPatches",
+      "KingdomLeaveGuardPatch",
+      "DeclareWarDecisionConstructorPatch",
+      "KingdomPolicyDecisionConstructorPatch",
+      "ExpelClanFromKingdomDecisionConstructorPatch",
+      "SettlementClaimantDecisionConstructorPatch",
+      "DetermineChooserPatch",
+      "KingdomDiplomacyVMPatches",
+      "KingdomDecisionProposalBehaviorPatches",
+      "ClanPatches",
+      "BLTAfterMarriage",
+      "BLTNoPregnancyDeath_Action",
+      "BLTMarriageBlock",
+      "BLTNoDeathAllowed",
+      "FoodStocksUpperLimitUncap",
+      "HearthExpansionPatch",
+      "BLTDiplomacyPatches",
+      "BLT_ArmyDispersionPatch",
+      "BLT_ArmyCohesionSetterPatch",
+      "Town_GetDefenderParties_Patch",
+      "BLT_SiegeRetreatFix",
+      "BLT_SiegeLordFugitiveFix",
+      "BLT_BlockAIArmyCreation",
+      "BLT_ClanArmyFindGatheringPatch",
+      "BLT_PartyHourlyAiTickPatch",
+      "GovernorDailyTickSettlementPatch",
+      "BuildingsDailyTickSettlementPatch",
+      "SettlementClaimantDailyTickSettlementPatch",
+      "GovernorRepairPatch",
+      "NavalPatrolRadiusPatch",
+      "NullSettlementAiActionPatch",
+      "RaidNullSettlementPatch",
+      "whose",
+      "PatchAfterModulesLoadedAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/ImmortalEncounterBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "ImmortalEncounterBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/KingdomTaxBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "KingdomTaxBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/PartyOrderBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "PartyOrderType",
+      "PartyOrderBehavior",
+      "for",
+      "PartyOrderData"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/PowerHandler.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "PowerHandler",
+      "Handlers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/PriestCrusadeBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "PriestCrusadeBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/ReinforcementBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "harmony-patch",
+      "persistence"
+    ],
+    "symbols": [
+      "ReinforcementBehavior",
+      "BLTSiegeStartPatch"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/StreamObjectivesBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "StreamObjectivesBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/TrainingBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "TrainingBehavior",
+      "TrainingEntry"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/UpgradeBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "UpgradeBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/VassalBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "VassalBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/BLTAdoptAHero.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "TwitchDevUsers",
+      "BLTAdoptAHeroModule",
+      "MissionAgentMarkerTargetVM_Ctor_Patch",
+      "BLTAgentApplyDamageModel",
+      "DecideCrushedThroughParams",
+      "DecideMissileWeaponFlagsParams"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/BLTAdoptAHero.csproj",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Capital/CapitalAction.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "CapitalAction",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Capital/CapitalBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "CapitalBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Capital/CapitalDefinitions.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "CapitalConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTAllianceBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTAllianceBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTDiplomacyBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "only",
+      "BLTDiplomacyBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTDiplomacyExtensions.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTDiplomacyExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTDiplomacyHelper.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTDiplomacyHelper"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTPlayerOffersBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTPlayerOffersBehavior",
+      "for",
+      "BLTNAPOfferBehavior",
+      "BLTCTWOfferBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTProposalData.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTPeaceProposal",
+      "BLTAllianceProposal",
+      "BLTTradeProposal",
+      "BLTNAPProposal"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTTreatyData.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "TreatyType",
+      "for",
+      "BLTTreaty",
+      "BLTTruce",
+      "BLTNAP",
+      "BLTAlliance",
+      "BLTTribute",
+      "BLTCTWProposal",
+      "BLTWar"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/BLTTreatyManager.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTTreatyManager"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/Diplomacy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "Diplomacy",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "CampaignMapPanelCorner",
+      "CampaignMapLabelDensity",
+      "GlobalCommonConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalHeroClassConfig.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "GlobalHeroClassConfig",
+      "levels",
+      "ClassLevelRequirementsDef",
+      "level"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalHeroPowerConfig.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "GlobalHeroPowerConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalTournamentConfig.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "GlobalTournamentConfig",
+      "Round1Def",
+      "Round2Def",
+      "Round3Def",
+      "RoundRewardsDef",
+      "SkillDebuffDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/IndependentsOverhaul/BLTClanArmyBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "BLTClanArmyBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/IndependentsOverhaul/BLTClanDiplomacyBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "BLTClanAlliance",
+      "BLTClanAllianceProposal",
+      "BLTClanDiplomacyBehavior",
+      "ClanCTWProposal"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Models/BLTUpgradeModels.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "UpgradeModelHelper",
+      "BLTPartySpeedModel",
+      "BLTPartySizeLimitModel",
+      "BLTClanTierModel"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/CampaignMap/CampaignMap.css",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/CampaignMap/CampaignMap.html",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/CampaignMap/CampaignMap.js",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/CampaignMap/MapHub.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "overlay-hub",
+      "configuration"
+    ],
+    "symbols": [
+      "MapHub",
+      "MapSnapshot",
+      "GeographyData",
+      "DynamicMapData",
+      "ProjectionData",
+      "MapSettingsData",
+      "KingdomData",
+      "SettlementData",
+      "SettlementOwnershipData",
+      "CoastlineSegment",
+      "LandArea",
+      "TerrainData",
+      "HeroMarkerData"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/MissionInfo/MissionInfo.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "overlay-hub"
+    ],
+    "symbols": [
+      "MissionInfoHub",
+      "HeroState"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/MissionInfo/MissionInfo.css",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/MissionInfo/MissionInfo.html",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/MissionInfo/MissionInfo.js",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/StreamObjectives/StreamObjectives.css",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/StreamObjectives/StreamObjectives.html",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/StreamObjectives/StreamObjectives.js",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/StreamObjectives/StreamObjectivesHub.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "overlay-hub"
+    ],
+    "symbols": [
+      "StreamObjectivesHub",
+      "StreamObjectiveOverlayData",
+      "StreamObjectiveContributorData"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/Tournament/Tournament.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "overlay-hub"
+    ],
+    "symbols": [
+      "TournamentHub"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/Tournament/Tournament.css",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/Tournament/Tournament.html",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Overlay/Tournament/Tournament.js",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/AbsorbHealthPower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "AbsorbHealthPower"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/AddDamagePower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "AddDamagePower",
+      "AreaOfEffectDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/AddHealthPower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "AddHealthPower"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/ActivePowerGroup.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "ActivePowerGroupItem",
+      "ActivePowerGroup"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/DurationMissionHeroPowerDefBase.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "DurationMissionHeroPowerDefBase",
+      "DeactivationHandler"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/HeroPowerDefBase.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "for",
+      "HeroPowerDefBase",
+      "ItemSourcePassive",
+      "ItemSourceActive"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/HitBehavior.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/IHeroPowerActive.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "IHeroPowerActive"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/IHeroPowerPassive.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "IHeroPowerPassive"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/PassivePowerGroup.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "PassivePowerGroupItem",
+      "PassivePowerGroup"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/Core/PowerGroupItemBase.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "PowerGroupItemBase"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/ReflectDamgePower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "ReflectDamagePower"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/StatModifyPower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "StatModifyPower"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Powers/TakeDamagePower.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "TakeDamagePower"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Properties/Annotations.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "test"
+    ],
+    "symbols": [
+      "CanBeNullAttribute",
+      "NotNullAttribute",
+      "ItemNotNullAttribute",
+      "ItemCanBeNullAttribute",
+      "StringFormatMethodAttribute",
+      "Constants",
+      "Class1",
+      "ValueProviderAttribute",
+      "ValueRangeAttribute",
+      "NonNegativeValueAttribute",
+      "InvokerParameterNameAttribute",
+      "and",
+      "Foo",
+      "NotifyPropertyChangedInvocatorAttribute",
+      "ContractAnnotationAttribute",
+      "Foo",
+      "LocalizationRequiredAttribute",
+      "NoEquality",
+      "UsesNoEquality",
+      "CannotApplyEqualityOperatorAttribute",
+      "ComponentAttribute",
+      "MyComponent",
+      "BaseTypeRequiredAttribute",
+      "UsedImplicitlyAttribute",
+      "MeansImplicitUseAttribute",
+      "ImplicitUseKindFlags",
+      "ImplicitUseTargetFlags",
+      "PublicAPIAttribute",
+      "InstantHandleAttribute",
+      "PureAttribute",
+      "MustUseReturnValueAttribute",
+      "Foo",
+      "ProvidesContextAttribute",
+      "PathReferenceAttribute",
+      "SourceTemplateAttribute",
+      "MacroAttribute",
+      "AspMvcAreaMasterLocationFormatAttribute",
+      "AspMvcAreaPartialViewLocationFormatAttribute",
+      "AspMvcAreaViewLocationFormatAttribute",
+      "AspMvcMasterLocationFormatAttribute",
+      "AspMvcPartialViewLocationFormatAttribute",
+      "AspMvcViewLocationFormatAttribute",
+      "AspMvcActionAttribute",
+      "AspMvcAreaAttribute",
+      "AspMvcControllerAttribute",
+      "AspMvcMasterAttribute",
+      "AspMvcModelTypeAttribute",
+      "AspMvcPartialViewAttribute",
+      "or",
+      "AspMvcSuppressViewErrorAttribute",
+      "AspMvcDisplayTemplateAttribute",
+      "AspMvcEditorTemplateAttribute",
+      "AspMvcTemplateAttribute",
+      "AspMvcViewAttribute",
+      "AspMvcViewComponentAttribute",
+      "AspMvcViewComponentViewAttribute",
+      "AspMvcActionSelectorAttribute",
+      "HtmlElementAttributesAttribute",
+      "HtmlAttributeValueAttribute",
+      "RazorSectionAttribute",
+      "MyStringCollection",
+      "Test",
+      "CollectionAccessAttribute",
+      "CollectionAccessType",
+      "AssertionMethodAttribute",
+      "AssertionConditionAttribute",
+      "AssertionConditionType",
+      "TerminatesProgramAttribute",
+      "LinqTunnelAttribute",
+      "NoEnumerationAttribute",
+      "RegexPatternAttribute",
+      "NoReorderAttribute",
+      "XamlItemsControlAttribute",
+      "XamlItemBindingOfItemsControlAttribute",
+      "XamlItemStyleOfItemsControlAttribute",
+      "AspChildControlTypeAttribute",
+      "AspDataFieldAttribute",
+      "AspDataFieldsAttribute",
+      "AspMethodPropertyAttribute",
+      "AspRequiredAttributeAttribute",
+      "AspTypePropertyAttribute",
+      "RazorImportNamespaceAttribute",
+      "RazorInjectionAttribute",
+      "RazorDirectiveAttribute",
+      "RazorPageBaseTypeAttribute",
+      "RazorHelperCommonAttribute",
+      "RazorLayoutAttribute",
+      "RazorWriteLiteralMethodAttribute",
+      "RazorWriteMethodAttribute",
+      "RazorWriteMethodParameterAttribute"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Properties/AssemblyInfo.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Rewards/GeneratedRewardDef.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "GeneratedRewardDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Rewards/RandomItemModifierDef.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "RandomItemModifierDef"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Rewards/RewardHelpers.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RewardHelpers",
+      "RewardType",
+      "then",
+      "count",
+      "requirements",
+      "requirements",
+      "then",
+      "count",
+      "requirements",
+      "then",
+      "count",
+      "requirements",
+      "requirements",
+      "then",
+      "count",
+      "requirements"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Templates/ActionTemplate.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "TemplateAction",
+      "Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Templates/BehaviorTemplate.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "persistence"
+    ],
+    "symbols": [
+      "TemplateBehavior",
+      "TemplateSubBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/AgentExtensions.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "AgentExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/AmmoReport.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "AmmoReportKind",
+      "AmmoStackSnapshot",
+      "AmmoReportResult",
+      "AmmoReport"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/CampaignMapGeometry.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "MapProjection",
+      "MapMarkerInput",
+      "CampaignMapGeometry"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/ConsoleCommands.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "ConsoleCommands",
+      "FakeMarketData"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/CursedArtifactPolicy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CurseLifecycle",
+      "CurseRecord",
+      "CurseHistoryEntry",
+      "CursedArtifactPolicy"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/CycleSafeGraph.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CycleSafeGraph"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/HeroExtensions.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "HeroExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/Patches.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "harmony-patch"
+    ],
+    "symbols": [
+      "CompanionPatch",
+      "CompanionsCampaignBehaviorPatch",
+      "CompanionLimitPatch"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/RandomEventPolicy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RandomEventLifecycle",
+      "ImmortalEncounterState",
+      "PriestCrusadeState",
+      "RandomEventPolicy"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/SmartTroopPolicy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "conversion",
+      "SmartTroopPolicy",
+      "SmartTroopRole"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/StreamObjectivePolicy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "StreamObjectiveKind",
+      "StreamObjectiveStatus",
+      "StreamObjectiveState",
+      "StreamObjectiveContribution",
+      "StreamObjectiveStart",
+      "StreamObjectivePolicy"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/TournamentHelpers.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "TournamentHelpers"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/TroopTreeIndex.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "TroopTreeIndex",
+      "TroopInfo",
+      "SelectionResult"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/UIExtensions.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "UIExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero.Tests/BLTAdoptAHero.Tests.csproj",
+    "project": "BLTAdoptAHero.Tests",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero.Tests/Program.cs",
+    "project": "BLTAdoptAHero.Tests",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/AddGoldToPlayer.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "AddGoldToPlayer",
+      "Config"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/CharacterEffect.BLTEffectsBehaviour.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "behavior"
+    ],
+    "symbols": [
+      "CharacterEffect",
+      "CharacterEffectState",
+      "PfxState",
+      "BLTEffectsBehaviour"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/CharacterEffect.Config.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "CharacterEffect",
+      "Target",
+      "ParticleEffectDef",
+      "AttachPointEnum",
+      "PropertyDef",
+      "Config"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/CharacterEffect.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "CharacterEffect"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/SendMessage.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "SendMessage",
+      "Config"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/TestPfx.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "TestPfx"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/TestSfx.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "TestSfx"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Actions/Utils/BLTBoneAttachmentsUpdateBehaviour.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "behavior"
+    ],
+    "symbols": [
+      "BoneAttachments",
+      "BLTBoneAttachmentsUpdateBehaviour"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/BLTBuffet.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "BLTBuffetModule",
+      "GlobalEffectsConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/BLTBuffet.csproj",
+    "project": "BLTBuffet",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Patches.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "harmony-patch",
+      "test"
+    ],
+    "symbols": [
+      "Patches"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Properties/AssemblyInfo.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTBuffet/Util/Patches.cs",
+    "project": "BLTBuffet",
+    "kinds": [
+      "harmony-patch",
+      "test"
+    ],
+    "symbols": [
+      "Patches"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/BLTConfigure.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "BLTConfigureModule"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/BLTConfigure.csproj",
+    "project": "BLTConfigure",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/BLTConfigureWindow.xaml",
+    "project": "BLTConfigure",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/BLTConfigureWindow.xaml.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "NewActionViewModel",
+      "LogMessage",
+      "BLTConfigureWindow",
+      "TypeGroupDescription",
+      "ResponseFile",
+      "ResponseFiles"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/GlobalConfigs/GlobalOverlayConfig.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "persistence",
+      "configuration"
+    ],
+    "symbols": [
+      "GlobalOverlayConfig"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/Properties/AssemblyInfo.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/CollectionEditorPage.xaml",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/CollectionEditorPage.xaml.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "CollectionEditorPage"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/ConfigurationRootPage.xaml",
+    "project": "BLTConfigure",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/ConfigurationRootPage.xaml.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "ConfigurationRootPage"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/ConfigurationRootViewModel.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "ConfigurationRootViewModel"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/LocStringControl.xaml",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/LocStringControl.xaml.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LocStringControl"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/LocStringEditor.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "LocStringEditor",
+      "PropertyGridEditorLocString"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/Styles.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "Styles"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/Styles.xaml",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": []
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/UI/WindowBehavior.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "WindowBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/Utils/BoolToVisibilityConverter.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BoolToVisibilityConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/Utils/ListBoxExtenders.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "contains",
+      "ListBoxExtenders"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/Utils/NonDefaultVisibilityConverter.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "NonDefaultVisibilityConverter"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/Utils/RelayCommand.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "RelayCommand"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTConfigure/Utils/TwitchAuthHelper.cs",
+    "project": "BLTConfigure",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "TwitchAuthHelper"
+    ]
+  }
+]
