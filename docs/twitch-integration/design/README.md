@@ -27,3 +27,5 @@ The generated mockup is not shipped as application UI. All text, controls, state
 ## Generated command icons
 
 `TwitchExtension/frontend/src/assets/blt-command-icons-v1.png` is the production category-icon sprite generated with the built-in ImageGen workflow. It contains eight transparent heraldic icons in manifest category order: Hero, Battle, Kingdom, Equipment, Progression, Tournament, Community, and General. Command cards and detail views inherit their manifest category icon, giving all actions a consistent visual identity without generated text or inaccessible image-only labels.
+
+`TwitchExtension/frontend/src/assets/blt-logo-v1.png` is the matching transparent BLT shield-and-sword monogram used in the overlay header, category rail, and collapsed launcher.
