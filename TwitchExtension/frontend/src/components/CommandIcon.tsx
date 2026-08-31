@@ -23,6 +23,17 @@ const insetPositions: Record<string, string> = {
   General: "101.0417%",
 };
 
+const cardPositions: Record<string, string> = {
+  Hero: "-2.5%",
+  Battle: "12.5%",
+  Kingdom: "27.5%",
+  Equipment: "42.5%",
+  Progression: "57.5%",
+  Tournament: "72.5%",
+  Community: "87.5%",
+  General: "102.5%",
+};
+
 export function CommandIcon({ category, className = "" }: { category: string; className?: string }) {
   return <span
     className={`command-icon ${className}`}
@@ -32,6 +43,7 @@ export function CommandIcon({ category, className = "" }: { category: string; cl
       "--icon-sheet": `url(${iconSheet})`,
       "--icon-position": positions[category] ?? positions.General,
       "--icon-position-inset": insetPositions[category] ?? insetPositions.General,
+      "--icon-position-card": cardPositions[category] ?? cardPositions.General,
     } as CSSProperties}
   />;
 }
