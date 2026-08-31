@@ -155,7 +155,14 @@ function actionInput(command) {
   if (noInput.has(name)) return [];
   const definitions = {
     objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), textInput("objective", "Objective", false)],
-    adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [textInput("culture", "Culture")], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
+    adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [labeledChoice("culture", "Culture", [
+      { value: "Aserai", label: "Aserai" },
+      { value: "Battania", label: "Battania" },
+      { value: "Empire", label: "Empire" },
+      { value: "Khuzait", label: "Khuzait" },
+      { value: "Sturgia", label: "Sturgia" },
+      { value: "Vlandia", label: "Vlandia" },
+    ])], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
     attack: [textInput("target", "Target hero or party")], auction: [textInput("item", "Item")], bid: [numberInput("amount", "Bid amount")],
     bltbet: [numberInput("entrant", "Entrant number"), numberInput("amount", "Bet amount")], buymount: [textInput("mount", "Mount")],
     clan: [choice("operation", "Clan operation", ["create", "join", "leave", "invite", "kick", "info"]), textInput("target", "Target", false)],

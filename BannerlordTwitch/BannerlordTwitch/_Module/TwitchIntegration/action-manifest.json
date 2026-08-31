@@ -1,6 +1,6 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T17:39:58.252Z",
+  "generatedAt": "2026-08-31T18:26:48.244Z",
   "actions": [
     {
       "id": "command.objective",
@@ -261,8 +261,34 @@
         {
           "id": "culture",
           "label": "Culture",
-          "type": "text",
-          "required": true
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "Aserai",
+              "label": "Aserai"
+            },
+            {
+              "value": "Battania",
+              "label": "Battania"
+            },
+            {
+              "value": "Empire",
+              "label": "Empire"
+            },
+            {
+              "value": "Khuzait",
+              "label": "Khuzait"
+            },
+            {
+              "value": "Sturgia",
+              "label": "Sturgia"
+            },
+            {
+              "value": "Vlandia",
+              "label": "Vlandia"
+            }
+          ]
         }
       ],
       "source": {

@@ -28,6 +28,9 @@ assert(manifest.actions.every(action => !action.inputs.some(input => input.id ==
 assert(manifest.actions.every(action => action.response?.extension === true), "Every ordinary command must provide an Extension response");
 assert(manifest.actions.every(action => action.permissions?.length > 0), "Every action must declare permissions");
 const eliteRetinue = manifest.actions.find(action => action.id === "command.eliteretinue");
+const adoptByCulture = manifest.actions.find(action => action.id === "command.adoptbyculture");
+assert.equal(adoptByCulture?.inputs?.[0]?.type, "choice", "Adopt by culture must use a structured culture selector");
+assert.deepEqual(adoptByCulture.inputs[0].options.map(option => option.value), ["Aserai", "Battania", "Empire", "Khuzait", "Sturgia", "Vlandia"], "Adopt by culture must expose every native culture");
 assert.equal(eliteRetinue?.handler, "Retinue2", "Elite retinue must use the existing Retinue2 handler");
 assert.equal(eliteRetinue?.inputs?.[0]?.type, "choice", "Elite retinue must expose structured choices instead of raw command text");
 assert.deepEqual(eliteRetinue.inputs[0].options.map(option => option.value), ["upgrade-one", "upgrade-count", "upgrade-all", "clear-slot", "clear-all"], "Elite retinue must expose every legacy operation");
