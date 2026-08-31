@@ -60,7 +60,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .inventory-nav svg { width: 25px; height: 25px; color: #e6bd68; }.inventory-nav:hover, .inventory-nav.active { color: #ffe3a4; background: var(--gold-soft); }.inventory-nav.active { box-shadow: inset 3px 0 var(--gold); }
 .inventory-nav + .viewer-identity { margin-top: 0; }
 
-.browser-panel { min-width: 0; display: flex; flex-direction: column; padding: 14px 12px; border-right: 1px solid var(--line); background: rgba(9, 20, 30, .86); }
+.browser-panel { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; padding: 14px 12px; border-right: 1px solid var(--line); background: rgba(9, 20, 30, .86); }
 .search-box { height: 42px; display: flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid var(--line); border-radius: 6px; background: rgba(1, 7, 12, .52); }
 .search-box:focus-within { border-color: var(--gold); }
 .search-box svg { width: 17px; color: var(--muted); }
@@ -68,7 +68,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .search-box input::placeholder { color: #8997a1; }
 .list-heading { display: flex; justify-content: space-between; margin: 15px 2px 8px; color: #d7dde0; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .055em; }
 .list-heading span:last-child { color: var(--muted); }
-.action-list { min-height: 0; overflow-y: auto; padding-right: 3px; scrollbar-color: #576675 transparent; scrollbar-width: thin; }
+.action-list { min-height: 0; overflow-y: scroll; padding-right: 7px; scrollbar-color: #718493 rgba(2,8,13,.34); scrollbar-width: auto; }
+.action-list::-webkit-scrollbar { width: 9px; }.action-list::-webkit-scrollbar-track { border-radius: 9px; background: rgba(2,8,13,.34); }.action-list::-webkit-scrollbar-thumb { border: 2px solid rgba(2,8,13,.34); border-radius: 9px; background: #718493; }.action-list::-webkit-scrollbar-thumb:hover { background: #91a4b1; }
 .action-row { width: 100%; min-height: 64px; margin-bottom: 7px; display: grid; grid-template-columns: 42px minmax(90px, 1fr) auto 14px; align-items: center; gap: 8px; padding: 7px; border: 1px solid var(--line); border-radius: 6px; color: #e6eaec; background: rgba(14, 29, 41, .72); text-align: left; cursor: pointer; }
 .action-row:hover { border-color: rgba(221, 169, 63, .58); background: rgba(21, 37, 49, .9); }
 .action-row.selected { border-color: var(--gold); box-shadow: inset 0 0 0 1px rgba(221,169,63,.28); }
