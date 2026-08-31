@@ -227,4 +227,12 @@ const markdown = `# BLT Twitch Integration Inventory\n\n` +
   `- \`components.json\`: project files, symbols, and architectural roles.\n`;
 fs.writeFileSync(path.join(outputRoot, "README.md"), markdown);
 
+const parityMatrix = `# Command parity matrix\n\n` +
+  `Generated from the default v4 profile and structured manifest. “Mapped” proves structural parity; live outcome parity remains a release-validation task.\n\n` +
+  `| Action ID | Legacy command | Handler | Inputs | Permission | Structural parity | Live parity |\n|---|---|---|---:|---|---|---|\n` +
+  actions.map(action => `| \`${action.id}\` | \`!${action.legacyName}\` | \`${action.handler}\` | ${action.inputs.length} | ${action.permissions.join(", ")} | Mapped | Pending hosted game test |`).join("\n") + `\n`;
+const readinessRoot = path.join(root, "docs", "twitch-integration", "readiness");
+fs.mkdirSync(readinessRoot, { recursive: true });
+fs.writeFileSync(path.join(readinessRoot, "COMMAND-PARITY.md"), parityMatrix);
+
 console.log(JSON.stringify({ commands: commands.length, rewards: rewards.length, actions: actions.length, settings: settings.length, components: components.length }, null, 2));

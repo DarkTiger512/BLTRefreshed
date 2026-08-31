@@ -76,6 +76,13 @@ public sealed class Database(NpgsqlDataSource dataSource)
         return json is null ? new ChannelConfiguration([], DateTimeOffset.UtcNow) : JsonSerializer.Deserialize<ChannelConfiguration>(json)!;
     }
 
+    public async Task<bool> IsActionEnabledAsync(string channel, string actionId, CancellationToken token)
+    {
+        var configuration = await GetConfigurationAsync(channel, token);
+        var preference = configuration.Commands.FirstOrDefault(item => string.Equals(item.ActionId, actionId, StringComparison.Ordinal));
+        return preference?.Enabled ?? true;
+    }
+
     public async Task AuditAsync(Guid requestId, string channel, string user, string action, string status, string? detail, CancellationToken token)
     {
         await using var command = dataSource.CreateCommand("INSERT INTO action_audit(request_id,channel_id,user_id,action_id,status,detail,created_at) VALUES($1,$2,$3,$4,$5,$6,now()) ON CONFLICT(request_id) DO NOTHING");

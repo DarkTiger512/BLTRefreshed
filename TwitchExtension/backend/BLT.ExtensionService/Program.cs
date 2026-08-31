@@ -69,6 +69,7 @@ app.MapPost("/api/channels/{channel}/actions", async (string channel, ActionSubm
     if (!principal!.IsLinked) return Results.Problem("Share Twitch identity before triggering actions.", statusCode: 403);
     if (!Guid.TryParse(submission.RequestId, out var requestId)) return Results.Problem("requestId must be a UUID.", statusCode: 400);
     if (!submission.ActionId.StartsWith("command.", StringComparison.Ordinal)) return Results.Problem("Unknown action namespace.", statusCode: 400);
+    if (!await database.IsActionEnabledAsync(channel, submission.ActionId, token)) return Results.Problem("This action is disabled by the broadcaster.", statusCode: 403);
     if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:{submission.ActionId}", submission.Timestamp, out var guardError))
         return Results.Problem(guardError, statusCode: 429);
     var envelope = new

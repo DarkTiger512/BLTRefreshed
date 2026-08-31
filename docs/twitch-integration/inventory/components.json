@@ -779,6 +779,7 @@
       "IntegrationActionManifest",
       "IntegrationActionDefinition",
       "IntegrationActionInput",
+      "IntegrationActionOption",
       "PairingExchangeResponse"
     ]
   },

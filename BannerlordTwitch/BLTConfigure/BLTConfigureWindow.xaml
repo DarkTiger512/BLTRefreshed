@@ -277,6 +277,35 @@
                             </Hyperlink>, and disconnect the BannerlordIntegrationMod.
                         </TextBlock>
                         <Separator Height="20"/>
+                        <TextBlock TextWrapping="Wrap" FontSize="20">Managed Twitch Extension</TextBlock>
+                        <TextBlock Margin="0 4 0 8" TextWrapping="Wrap">
+                            Install BLT from the Twitch Extension configuration page, copy its short-lived pairing code,
+                            and enter it below. BLT connects outward; no local overlay server or Extension secret is needed.
+                        </TextBlock>
+                        <Grid Margin="8 2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="150"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" VerticalAlignment="Center">Service URL</TextBlock>
+                            <TextBox Grid.Row="0" Grid.Column="1" Margin="4" MinWidth="320"
+                                     Text="{Binding ConfigurationRoot.IntegrationServiceUrl, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Grid.Row="1" VerticalAlignment="Center">Pairing code</TextBlock>
+                            <TextBox Grid.Row="1" Grid.Column="1" Margin="4" MinWidth="220"
+                                     Text="{Binding ConfigurationRoot.IntegrationPairingCode, UpdateSourceTrigger=LostFocus}"/>
+                            <TextBlock Grid.Row="2" VerticalAlignment="Center">Status</TextBlock>
+                            <TextBlock Grid.Row="2" Grid.Column="1" Margin="4" FontWeight="Bold"
+                                       Text="{Binding ConfigurationRoot.IntegrationStatus}"/>
+                        </Grid>
+                        <TextBlock Margin="8 2" TextWrapping="Wrap" FontStyle="Italic">
+                            Restart BLT after entering a new code. Installation credentials are revocable and stored only in the local auth file.
+                        </TextBlock>
+                        <Separator Height="20"/>
                         <TextBlock TextWrapping="Wrap" FontSize="20">Miscellaneous Settings</TextBlock>
                         <CheckBox Margin="8 2" IsChecked="{Binding ConfigurationRoot.AffiliateSpoofing}"
                                   VerticalContentAlignment="Center">
