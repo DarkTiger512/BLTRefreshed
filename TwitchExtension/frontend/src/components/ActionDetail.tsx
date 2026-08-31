@@ -1,6 +1,7 @@
 import { AlertCircle, CheckCircle2, Send, ShieldAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { ManifestAction } from "../types";
+import { CommandIcon } from "./CommandIcon";
 
 interface Props {
   action?: ManifestAction;
@@ -21,7 +22,7 @@ export function ActionDetail({ action, linked, unavailableReason, busy, error, o
   if (!action) return <section className="detail-panel empty-detail"><ShieldAlert /><h2>Select an action</h2><p>Browse the available interactions for this campaign.</p></section>;
   const blocked = Boolean(unavailableReason);
   return <section className="detail-panel">
-    <header className="detail-header"><div className="detail-icon">{clean(action.legacyName).slice(0, 2).toUpperCase()}</div><div><h2>{clean(action.legacyName)}</h2><p>{action.description}</p></div></header>
+    <header className="detail-header"><CommandIcon category={action.category} className="detail-icon" /><div><h2>{clean(action.legacyName)}</h2><p>{action.description}</p></div></header>
     <div className={blocked ? "detail-status blocked" : "detail-status ready"}>{blocked ? <AlertCircle /> : <CheckCircle2 />}{unavailableReason ?? "Available"}</div>
     <div className="detail-rule" />
     <form onSubmit={event => { event.preventDefault(); onSubmit(values); }}>

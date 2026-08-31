@@ -23,3 +23,7 @@
 | Responsive behavior | Narrow layouts stack browser and detail regions beside an icon-only category rail. |
 
 The generated mockup is not shipped as application UI. All text, controls, state, and interaction are implemented in React and CSS.
+
+## Generated command icons
+
+`TwitchExtension/frontend/src/assets/blt-command-icons-v1.png` is the production category-icon sprite generated with the built-in ImageGen workflow. It contains eight transparent heraldic icons in manifest category order: Hero, Battle, Kingdom, Equipment, Progression, Tournament, Community, and General. Command cards and detail views inherit their manifest category icon, giving all actions a consistent visual identity without generated text or inaccessible image-only labels.

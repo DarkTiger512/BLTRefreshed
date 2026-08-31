@@ -1,6 +1,5 @@
-import { Castle, CircleUserRound, Crown, Flag, Gauge, ScrollText, Shield, Swords } from "lucide-react";
-
-const icons = { Hero: CircleUserRound, Battle: Swords, Kingdom: Crown, Equipment: Shield, Progression: Gauge, Tournament: Flag, Community: ScrollText, General: Castle };
+import { Shield } from "lucide-react";
+import { CommandIcon } from "./CommandIcon";
 
 interface Props { categories: string[]; selected: string; onSelect(category: string): void; identityName: string; linked: boolean }
 
@@ -9,9 +8,8 @@ export function CategoryRail({ categories, selected, onSelect, identityName, lin
     <div className="brand-mark" aria-hidden="true"><Shield /></div>
     <div className="category-links">
       {categories.map(category => {
-        const Icon = icons[category as keyof typeof icons] ?? ScrollText;
         return <button key={category} className={selected === category ? "category active" : "category"} onClick={() => onSelect(category)} aria-current={selected === category ? "page" : undefined}>
-          <Icon /><span>{category}</span>
+          <CommandIcon category={category} /><span>{category}</span>
         </button>;
       })}
     </div>

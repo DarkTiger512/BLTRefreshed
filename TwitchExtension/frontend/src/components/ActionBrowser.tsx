@@ -1,6 +1,7 @@
 import { ChevronRight, Clock3, Search } from "lucide-react";
 import { useDeferredValue } from "react";
 import type { ManifestAction } from "../types";
+import { CommandIcon } from "./CommandIcon";
 
 interface Props {
   actions: ManifestAction[];
@@ -27,7 +28,7 @@ export function ActionBrowser({ actions, category, selectedId, query, unavailabl
         const reason = unavailable[action.id];
         const cooldown = cooldowns[action.id];
         return <button key={action.id} className={selectedId === action.id ? "action-row selected" : "action-row"} onClick={() => onSelect(action)}>
-          <span className="action-monogram">{clean(action.legacyName).slice(0, 2).toUpperCase()}</span>
+          <CommandIcon category={action.category} className="action-monogram" />
           <span className="action-copy"><strong>{clean(action.legacyName)}</strong><small>{action.description}</small></span>
           <span className={reason ? "availability unavailable" : cooldown ? "availability cooldown" : "availability available"}>
             {cooldown ? <Clock3 /> : <i />}{reason ?? (cooldown ? `Ready in ${Math.ceil(cooldown / 1000)}s` : "Available")}
