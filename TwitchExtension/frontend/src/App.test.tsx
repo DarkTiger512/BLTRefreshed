@@ -69,7 +69,9 @@ test("forces the live battle workspace and renders mission forms", async () => {
   expect(screen.queryByRole("combobox", { name: /battle side/i })).not.toBeInTheDocument();
   expect(screen.getByRole("button", { name: /join enemy side/i })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: /join streamer side/i })).toBeInTheDocument();
-  expect(screen.getAllByText("This side is configured by the command and cannot be changed.")).toHaveLength(2);
+  expect(screen.getByText("enemy side")).toHaveClass("enemy");
+  expect(screen.getByText("streamer's side")).toHaveClass("streamer");
+  expect(document.querySelector(".summon-side")).toBeNull();
   expect(screen.getAllByRole("button", { name: /confirm action/i }).length).toBeGreaterThan(0);
   expect(screen.queryByRole("button", { name: /my inventory/i })).not.toBeInTheDocument();
   expect(screen.queryByText("Battle info")).not.toBeInTheDocument();

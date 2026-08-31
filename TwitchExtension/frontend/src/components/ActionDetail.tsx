@@ -22,12 +22,10 @@ export function ActionDetail({ action, linked, unavailableReason, busy, error, s
   useEffect(() => setValues({}), [action?.id]);
   if (!action) return <section className="detail-panel empty-detail"><ShieldAlert /><h2>Select an action</h2><p>Browse the available interactions for this campaign.</p></section>;
   const blocked = Boolean(unavailableReason);
-  const summonSide = action.id === "command.attack" ? "Enemy side" : action.id === "command.summon" ? "Streamer side" : undefined;
   const submitLabel = action.id === "command.attack" ? "Join enemy side" : action.id === "command.summon" ? "Join streamer side" : "Confirm action";
   return <section className="detail-panel">
-    <header className="detail-header"><CommandIcon category={action.category} className="detail-icon" /><div><h2>{clean(action.legacyName)}</h2><p>{action.description}</p></div></header>
+    <header className="detail-header"><CommandIcon category={action.category} className="detail-icon" /><div><h2>{clean(action.legacyName)}</h2>{action.id === "command.attack" ? <p>Summon your hero and retinue on the <strong className="description-side enemy">enemy side</strong> of the current battle.</p> : action.id === "command.summon" ? <p>Summon your hero and retinue on the <strong className="description-side streamer">streamer&apos;s side</strong> of the current battle.</p> : <p>{action.description}</p>}</div></header>
     <div className={blocked ? "detail-status blocked" : "detail-status ready"}>{blocked ? <AlertCircle /> : <CheckCircle2 />}{unavailableReason ?? "Available"}</div>
-    {summonSide ? <div className={`summon-side ${action.id === "command.attack" ? "enemy" : "streamer"}`}><span>Spawn side</span><strong>{summonSide}</strong><small>This side is configured by the command and cannot be changed.</small></div> : null}
     <div className="detail-rule" />
     <form onSubmit={event => { event.preventDefault(); onSubmit(values); }}>
       {action.inputs.map(input => <label className="field" key={input.id}>
