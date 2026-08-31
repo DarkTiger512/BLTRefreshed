@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { expect, test, vi } from "vitest";
 import { App } from "./App";
 
@@ -12,4 +12,7 @@ test("renders the command browser and selected action", async () => {
   expect(screen.getAllByText("adopt").length).toBeGreaterThan(0);
   expect(screen.getByPlaceholderText("Search actions")).toBeInTheDocument();
   expect(screen.getByRole("button", { name: /confirm action/i })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /my inventory/i }));
+  await waitFor(() => expect(screen.getByText("Wolf's Oath Longsword — +12 Damage, +8 Swing Speed")).toBeInTheDocument());
+  expect(screen.getByText(/visible only to you/i)).toBeInTheDocument();
 });

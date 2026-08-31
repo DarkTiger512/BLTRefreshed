@@ -78,8 +78,21 @@ app.MapPost("/api/channels/{channel}/actions", async (string channel, ActionSubm
         user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles),
         data = new { actionId = submission.ActionId, args = submission.Args }
     };
-    if (!await router.SendGameAsync(channel, envelope, token)) return Results.Problem("The streamer's game is offline.", statusCode: 409);
+    router.RegisterPrivateRequest(requestId, channel, principal.UserId);
+    if (!await router.SendGameAsync(channel, envelope, token)) { router.ForgetPrivateRequest(requestId); return Results.Problem("The streamer's game is offline.", statusCode: 409); }
     await database.AuditAsync(requestId, channel, principal.UserId, submission.ActionId, "accepted", null, token);
+    return Results.Accepted(value: new { requestId, status = "accepted" });
+});
+
+app.MapPost("/api/channels/{channel}/inventory", async (string channel, InventorySubmission submission, HttpContext context, TwitchExtensionTokenValidator validator, ChannelRouter router, RequestGuard guard, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (!principal!.IsLinked) return Results.Problem("Share Twitch identity before viewing your inventory.", statusCode: 403);
+    if (!Guid.TryParse(submission.RequestId, out var requestId)) return Results.Problem("requestId must be a UUID.", statusCode: 400);
+    if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:inventory", submission.Timestamp, out var guardError)) return Results.Problem(guardError, statusCode: 429);
+    var envelope = new { v = ProtocolKinds.Version, id = requestId, kind = "inventory.request", channelId = channel, timestamp = submission.Timestamp, user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles), data = new { } };
+    router.RegisterPrivateRequest(requestId, channel, principal.UserId);
+    if (!await router.SendGameAsync(channel, envelope, token)) { router.ForgetPrivateRequest(requestId); return Results.Problem("The streamer's game is offline.", statusCode: 409); }
     return Results.Accepted(value: new { requestId, status = "accepted" });
 });
 
@@ -97,9 +110,9 @@ app.Map("/ws/viewer/{channel}", async (string channel, HttpContext context, Twit
 {
     if (!context.WebSockets.IsWebSocketRequest) { context.Response.StatusCode = 400; return; }
     var tokenValue = context.Request.Query["token"].ToString();
-    if (!validator.TryValidate($"Bearer {tokenValue}", channel, out _, out _)) { context.Response.StatusCode = 401; return; }
+    if (!validator.TryValidate($"Bearer {tokenValue}", channel, out var principal, out _)) { context.Response.StatusCode = 401; return; }
     using var socket = await context.WebSockets.AcceptWebSocketAsync("blt.viewer.v1");
-    await router.AttachViewerAsync(channel, socket, token);
+    await router.AttachViewerAsync(channel, principal!.UserId, socket, token);
 });
 
 app.Run();

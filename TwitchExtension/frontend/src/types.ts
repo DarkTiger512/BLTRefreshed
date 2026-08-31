@@ -42,6 +42,9 @@ export interface GameState {
   cooldowns: Record<string, number>;
 }
 
+export interface InventoryItem { index: number; name: string; type: string; equipped: boolean }
+export interface InventorySnapshot { heroName: string; limit: number; items: InventoryItem[]; updatedAt?: string }
+
 declare global {
   interface Window {
     Twitch?: {

@@ -30,6 +30,7 @@ using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using BLTAdoptAHero.Models;
 using BLTAdoptAHero.Actions;
 using BLTAdoptAHero.Behaviors;
+using BannerlordTwitch.Integration;
 
 #pragma warning disable 649
 
@@ -212,6 +213,25 @@ namespace BLTAdoptAHero
 
                     var campaignStarter = (CampaignGameStarter)gameStarterObject;
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
+                    IntegrationInventoryProvider.Get = userName =>
+                    {
+                        var behavior = BLTAdoptAHeroCampaignBehavior.Current;
+                        var hero = behavior?.GetAdoptedHero(userName);
+                        if (hero == null) return new IntegrationInventorySnapshot { Error = "Adopt a hero to unlock your inventory." };
+                        var equipped = hero.BattleEquipment.YieldFilledEquipmentSlots().Select(slot => slot.element).ToList();
+                        return new IntegrationInventorySnapshot
+                        {
+                            HeroName = hero.Name.ToString(),
+                            Limit = CommonConfig.CustomItemLimit,
+                            Items = behavior.GetCustomItems(hero).Select((item, index) => new IntegrationInventoryItem
+                            {
+                                Index = index + 1,
+                                Name = RewardHelpers.GetItemNameAndModifiers(item).Replace("(no modifiers)", "").Trim(),
+                                Type = item.Item.ItemType.ToString(),
+                                Equipped = equipped.Any(element => element.IsEqualTo(item))
+                            }).ToArray()
+                        };
+                    };
                     campaignStarter.AddBehavior(new StreamObjectivesBehavior());
                     campaignStarter.AddBehavior(new CursedArtifactBehavior());
                     campaignStarter.AddBehavior(new ImmortalEncounterBehavior());

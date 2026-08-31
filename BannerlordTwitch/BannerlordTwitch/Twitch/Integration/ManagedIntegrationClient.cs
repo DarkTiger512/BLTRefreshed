@@ -12,6 +12,28 @@ using BannerlordTwitch.Util;
 
 namespace BannerlordTwitch.Integration
 {
+    public sealed class IntegrationInventoryItem
+    {
+        public int Index { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public bool Equipped { get; set; }
+    }
+
+    public sealed class IntegrationInventorySnapshot
+    {
+        public string HeroName { get; set; }
+        public int Limit { get; set; }
+        public string Error { get; set; }
+        public IntegrationInventoryItem[] Items { get; set; } = Array.Empty<IntegrationInventoryItem>();
+    }
+
+    public static class IntegrationInventoryProvider
+    {
+        public static Func<string, IntegrationInventorySnapshot> Get { private get; set; }
+        public static IntegrationInventorySnapshot For(string userName) => Get?.Invoke(userName) ?? new IntegrationInventorySnapshot { Error = "Inventory is unavailable in this game." };
+    }
+
     public sealed class ManagedIntegrationClient : IDisposable
     {
         private readonly AuthSettings auth;
@@ -103,9 +125,24 @@ namespace BannerlordTwitch.Integration
             {
                 using var doc = JsonDocument.Parse(json);
                 var root = doc.RootElement;
-                if (root.GetProperty("v").GetInt32() != IntegrationProtocol.Version || root.GetProperty("kind").GetString() != "action.request") return;
+                if (root.GetProperty("v").GetInt32() != IntegrationProtocol.Version) return;
+                var kind = root.GetProperty("kind").GetString();
                 var data = root.GetProperty("data");
                 var user = root.GetProperty("user");
+                if (kind == "inventory.request")
+                {
+                    var requestId = root.GetProperty("id").GetGuid();
+                    var userName = user.GetProperty("name").GetString();
+                    MainThreadSync.Run(() =>
+                    {
+                        var inventory = IntegrationInventoryProvider.For(userName);
+                        _ = string.IsNullOrEmpty(inventory.Error)
+                            ? SendAsync("inventory.snapshot", inventory, lifetime.Token, requestId)
+                            : SendAsync("inventory.error", new { error = inventory.Error }, lifetime.Token, requestId);
+                    });
+                    return;
+                }
+                if (kind != "action.request") return;
                 var request = new IntegrationActionRequest
                 {
                     RequestId = root.GetProperty("id").GetGuid(), ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),

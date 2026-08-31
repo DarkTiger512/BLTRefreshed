@@ -1,10 +1,11 @@
 import { CheckCircle2, CircleDot, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { submitAction } from "./api";
+import { requestInventory, submitAction } from "./api";
 import { ActionBrowser } from "./components/ActionBrowser";
 import { ActionDetail } from "./components/ActionDetail";
 import { CategoryRail } from "./components/CategoryRail";
 import { ConfigurationView } from "./components/ConfigurationView";
+import { InventoryView } from "./components/InventoryView";
 import { useIntegrationState } from "./hooks/useIntegrationState";
 import { authorizeViewer, requestIdentity } from "./twitch";
 import type { ActionManifest, ManifestAction, ViewerIdentity } from "./types";
@@ -22,6 +23,8 @@ export function App() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [toast, setToast] = useState<string>();
+  const [showInventory, setShowInventory] = useState(false);
+  const [inventoryLoading, setInventoryLoading] = useState(false);
   const state = useIntegrationState(identity);
 
   useEffect(() => {
@@ -50,14 +53,22 @@ export function App() {
     finally { setBusy(false); }
   }
 
+  async function loadInventory() {
+    setInventoryLoading(true); state.setInventoryError(undefined);
+    try { const snapshot = await requestInventory(identity!); if (snapshot) state.setInventory(snapshot); }
+    catch (reason) { state.setInventoryError(reason instanceof Error ? reason.message : "Your inventory could not be loaded."); }
+    finally { setInventoryLoading(false); }
+  }
+
+  function openInventory() { setShowInventory(true); if (identity!.linked && !state.inventory && !inventoryLoading) void loadInventory(); }
+
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
     {!open ? <button className="open-launcher" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
     {open ? <div className="overlay-window">
       <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
       <div className="overlay-content">
-        <CategoryRail categories={categories} selected={category} onSelect={value => { setCategory(value); setQuery(""); }} identityName={identity.displayName} linked={identity.linked} />
-        <ActionBrowser actions={manifest.actions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} />
-        <ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} />
+        <CategoryRail categories={categories} selected={category} inventorySelected={showInventory} onSelect={value => { setShowInventory(false); setCategory(value); setQuery(""); }} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} />
+        {showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={manifest.actions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
       </div>
     </div> : null}
     {toast ? <div className="success-toast" role="status"><CheckCircle2 />{toast}</div> : null}
