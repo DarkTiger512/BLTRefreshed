@@ -405,3 +405,10 @@ AutoTranslate/.venv/
 AutoTranslate/.key/
 
 .idea
+
+# Twitch Extension generated frontend artifacts
+TwitchExtension/frontend/dist/
+TwitchExtension/frontend/public/action-manifest.json
+TwitchExtension/frontend/*.tsbuildinfo
+TwitchExtension/frontend/vite.config.js
+TwitchExtension/frontend/vite.config.d.ts
