@@ -43,7 +43,8 @@ export interface GameState {
 }
 
 export interface InventoryItem { index: number; name: string; type: string; equipped: boolean }
-export interface InventorySnapshot { heroName: string; limit: number; items: InventoryItem[]; updatedAt?: string }
+export interface EquipmentSlot { id: string; label: string; accepts: string; itemName?: string; customItemIndex?: number }
+export interface InventorySnapshot { heroName: string; limit: number; items: InventoryItem[]; slots: EquipmentSlot[]; updatedAt?: string }
 
 declare global {
   interface Window {

@@ -62,13 +62,33 @@ export function App() {
 
   function openInventory() { setShowInventory(true); if (identity!.linked && !state.inventory && !inventoryLoading) void loadInventory(); }
 
+  async function equipInventoryItem(itemIndex: number, slotId: string) {
+    const equipAction = manifest!.actions.find(action => action.id === "command.equipcustom");
+    if (!equipAction) { state.setInventoryError("Equipment controls are unavailable."); return; }
+    setInventoryLoading(true); state.setInventoryError(undefined);
+    try {
+      await submitAction(identity!, equipAction, { item: `${itemIndex} @${slotId}` });
+      state.setInventory(current => current ? {
+        ...current,
+        items: current.items.map(item => ({ ...item, equipped: item.index === itemIndex || current.slots.some(slot => slot.customItemIndex === item.index && slot.id !== slotId) })),
+        slots: current.slots.map(slot => slot.id === slotId ? { ...slot, itemName: current.items.find(item => item.index === itemIndex)?.name, customItemIndex: itemIndex } : slot),
+        updatedAt: new Date().toISOString(),
+      } : current);
+      setToast("Equipment updated"); window.setTimeout(() => setToast(undefined), 3200);
+      if (identity!.token !== "development-token") window.setTimeout(() => void loadInventory(), 700);
+    } catch (reason) { state.setInventoryError(reason instanceof Error ? reason.message : "That item could not be equipped."); }
+    finally { setInventoryLoading(false); }
+  }
+
+  const browserActions = manifest.actions.filter(action => action.id !== "command.equipcustom");
+
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
     {!open ? <button className="open-launcher" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
     {open ? <div className="overlay-window">
       <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
       <div className="overlay-content">
         <CategoryRail categories={categories} selected={category} inventorySelected={showInventory} onSelect={value => { setShowInventory(false); setCategory(value); setQuery(""); }} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} />
-        {showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={manifest.actions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
+        {showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={state.unavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? state.unavailable[selected.id] : undefined} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
       </div>
     </div> : null}
     {toast ? <div className="success-toast" role="status"><CheckCircle2 />{toast}</div> : null}

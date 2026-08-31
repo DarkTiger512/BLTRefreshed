@@ -116,8 +116,17 @@ namespace BLTAdoptAHero.Actions
                 return;
             }
 
+            var requestedArgs = context.Args.Trim();
+            string requestedSlot = null;
+            var slotMarker = requestedArgs.LastIndexOf(" @", StringComparison.Ordinal);
+            if (slotMarker >= 0)
+            {
+                requestedSlot = requestedArgs.Substring(slotMarker + 2);
+                requestedArgs = requestedArgs.Substring(0, slotMarker).Trim();
+            }
+
             // Try to find the item by name or index
-            EquipmentElement? itemToEquip = FindCustomItem(customItems, context.Args.Trim());
+            EquipmentElement? itemToEquip = FindCustomItem(customItems, requestedArgs.TrimStart('#'));
 
             if (!itemToEquip.HasValue)
             {
@@ -135,7 +144,9 @@ namespace BLTAdoptAHero.Actions
                 }
 
                 // Equip the item to all matching slots (no stat comparison - user choice)
-                int slotsEquipped = EquipCustomItemToAllSlots(adoptedHero, itemToEquip.Value);
+                int slotsEquipped = string.IsNullOrEmpty(requestedSlot)
+                    ? EquipCustomItemToAllSlots(adoptedHero, itemToEquip.Value)
+                    : EquipCustomItemToSlot(adoptedHero, itemToEquip.Value, requestedSlot);
 
                 if (slotsEquipped > 0)
                 {
@@ -227,6 +238,27 @@ namespace BLTAdoptAHero.Actions
             }
 
             return slotsEquipped;
+        }
+
+        private int EquipCustomItemToSlot(Hero hero, EquipmentElement customItem, string requestedSlot)
+        {
+            if (!Enum.TryParse(requestedSlot, true, out EquipmentIndex slot) || slot == EquipmentIndex.None)
+                return 0;
+            var weaponSlot = hero.GetClass().IndexedSlots.FirstOrDefault(value => value.index == slot);
+            bool compatible = slot switch
+            {
+                EquipmentIndex.Head => customItem.Item.ItemType == ItemObject.ItemTypeEnum.HeadArmor,
+                EquipmentIndex.Body => customItem.Item.ItemType == ItemObject.ItemTypeEnum.BodyArmor,
+                EquipmentIndex.Leg => customItem.Item.ItemType == ItemObject.ItemTypeEnum.LegArmor,
+                EquipmentIndex.Gloves => customItem.Item.ItemType == ItemObject.ItemTypeEnum.HandArmor,
+                EquipmentIndex.Cape => customItem.Item.ItemType == ItemObject.ItemTypeEnum.Cape,
+                EquipmentIndex.Horse => customItem.Item.ItemType == ItemObject.ItemTypeEnum.Horse,
+                EquipmentIndex.HorseHarness => customItem.Item.ItemType == ItemObject.ItemTypeEnum.HorseHarness,
+                _ => IsItemCompatibleWithSlot(customItem.Item, weaponSlot.type)
+            };
+            if (!compatible) return 0;
+            hero.BattleEquipment[slot] = customItem;
+            return 1;
         }
 
         private bool IsItemCompatibleWithSlot(ItemObject item, EquipmentType slotType)

@@ -37,6 +37,13 @@ export async function requestInventory(identity: ViewerIdentity) {
       { index: 3, name: "Ashen Tournament Bow — +10 Damage, +6 Speed", type: "Bow", equipped: false },
       { index: 4, name: "Banner of the Iron Stag — +14 Hit Points", type: "Shield", equipped: false },
       { index: 5, name: "Stormhoof — +8 Mount Speed, +12 Charge", type: "Horse", equipped: false },
+    ], slots: [
+      { id: "Weapon0", label: "Weapon 1", accepts: "Weapon", itemName: "Wolf's Oath Longsword", customItemIndex: 1 },
+      { id: "Weapon1", label: "Weapon 2", accepts: "Weapon" }, { id: "Weapon2", label: "Weapon 3", accepts: "Weapon" }, { id: "Weapon3", label: "Weapon 4", accepts: "Weapon" },
+      { id: "Head", label: "Head", accepts: "Head", itemName: "Gilded Vlandian War Helm", customItemIndex: 2 },
+      { id: "Cape", label: "Shoulders", accepts: "Shoulders" }, { id: "Body", label: "Body", accepts: "Body" },
+      { id: "Gloves", label: "Hands", accepts: "Hands" }, { id: "Leg", label: "Legs", accepts: "Legs" },
+      { id: "Horse", label: "Mount", accepts: "Mount" }, { id: "HorseHarness", label: "Harness", accepts: "Harness" },
     ] };
   }
   const requestId = crypto.randomUUID();

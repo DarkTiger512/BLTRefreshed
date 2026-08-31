@@ -20,12 +20,22 @@ namespace BannerlordTwitch.Integration
         public bool Equipped { get; set; }
     }
 
+    public sealed class IntegrationEquipmentSlot
+    {
+        public string Id { get; set; }
+        public string Label { get; set; }
+        public string Accepts { get; set; }
+        public string ItemName { get; set; }
+        public int? CustomItemIndex { get; set; }
+    }
+
     public sealed class IntegrationInventorySnapshot
     {
         public string HeroName { get; set; }
         public int Limit { get; set; }
         public string Error { get; set; }
         public IntegrationInventoryItem[] Items { get; set; } = Array.Empty<IntegrationInventoryItem>();
+        public IntegrationEquipmentSlot[] Slots { get; set; } = Array.Empty<IntegrationEquipmentSlot>();
     }
 
     public static class IntegrationInventoryProvider

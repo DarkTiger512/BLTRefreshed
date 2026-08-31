@@ -219,16 +219,37 @@ namespace BLTAdoptAHero
                         var hero = behavior?.GetAdoptedHero(userName);
                         if (hero == null) return new IntegrationInventorySnapshot { Error = "Adopt a hero to unlock your inventory." };
                         var equipped = hero.BattleEquipment.YieldFilledEquipmentSlots().Select(slot => slot.element).ToList();
+                        var customItems = behavior.GetCustomItems(hero);
+                        var slotLabels = new Dictionary<EquipmentIndex, string>
+                        {
+                            [EquipmentIndex.Weapon0] = "Weapon 1", [EquipmentIndex.Weapon1] = "Weapon 2",
+                            [EquipmentIndex.Weapon2] = "Weapon 3", [EquipmentIndex.Weapon3] = "Weapon 4",
+                            [EquipmentIndex.Head] = "Head", [EquipmentIndex.Cape] = "Shoulders", [EquipmentIndex.Body] = "Body",
+                            [EquipmentIndex.Gloves] = "Hands", [EquipmentIndex.Leg] = "Legs", [EquipmentIndex.Horse] = "Mount",
+                            [EquipmentIndex.HorseHarness] = "Harness"
+                        };
                         return new IntegrationInventorySnapshot
                         {
                             HeroName = hero.Name.ToString(),
                             Limit = CommonConfig.CustomItemLimit,
-                            Items = behavior.GetCustomItems(hero).Select((item, index) => new IntegrationInventoryItem
+                            Items = customItems.Select((item, index) => new IntegrationInventoryItem
                             {
                                 Index = index + 1,
                                 Name = RewardHelpers.GetItemNameAndModifiers(item).Replace("(no modifiers)", "").Trim(),
                                 Type = item.Item.ItemType.ToString(),
                                 Equipped = equipped.Any(element => element.IsEqualTo(item))
+                            }).ToArray(),
+                            Slots = slotLabels.Select(pair =>
+                            {
+                                var element = hero.BattleEquipment[pair.Key];
+                                var customIndex = customItems.FindIndex(item => item.IsEqualTo(element));
+                                return new IntegrationEquipmentSlot
+                                {
+                                    Id = pair.Key.ToString(), Label = pair.Value,
+                                    Accepts = pair.Key <= EquipmentIndex.Weapon3 ? "Weapon" : pair.Value,
+                                    ItemName = element.IsEmpty ? null : element.GetModifiedItemName().ToString(),
+                                    CustomItemIndex = customIndex >= 0 ? customIndex + 1 : (int?)null
+                                };
                             }).ToArray()
                         };
                     };
