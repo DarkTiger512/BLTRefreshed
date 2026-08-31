@@ -1,49 +1,17 @@
-import type { CSSProperties } from "react";
-import iconSheet from "../assets/blt-command-icons-v2.png";
+import heroIcon from "../assets/command-icons/hero.png";
+import battleIcon from "../assets/command-icons/battle.png";
+import kingdomIcon from "../assets/command-icons/kingdom.png";
+import equipmentIcon from "../assets/command-icons/equipment.png";
+import progressionIcon from "../assets/command-icons/progression.png";
+import tournamentIcon from "../assets/command-icons/tournament.png";
+import communityIcon from "../assets/command-icons/community.png";
+import generalIcon from "../assets/command-icons/general.png";
 
-const positions: Record<string, string> = {
-  Hero: "0%",
-  Battle: "14.2857%",
-  Kingdom: "28.5714%",
-  Equipment: "42.8571%",
-  Progression: "57.1429%",
-  Tournament: "71.4286%",
-  Community: "85.7143%",
-  General: "100%",
-};
-
-const insetPositions: Record<string, string> = {
-  Hero: "-1.0417%",
-  Battle: "13.5417%",
-  Kingdom: "28.125%",
-  Equipment: "42.7083%",
-  Progression: "57.2917%",
-  Tournament: "71.875%",
-  Community: "86.4583%",
-  General: "101.0417%",
-};
-
-const cardPositions: Record<string, string> = {
-  Hero: "-2.5%",
-  Battle: "12.5%",
-  Kingdom: "27.5%",
-  Equipment: "42.5%",
-  Progression: "57.5%",
-  Tournament: "72.5%",
-  Community: "87.5%",
-  General: "102.5%",
+const icons: Record<string, string> = {
+  Hero: heroIcon, Battle: battleIcon, Kingdom: kingdomIcon, Equipment: equipmentIcon,
+  Progression: progressionIcon, Tournament: tournamentIcon, Community: communityIcon, General: generalIcon,
 };
 
 export function CommandIcon({ category, className = "" }: { category: string; className?: string }) {
-  return <span
-    className={`command-icon ${className}`}
-    role="img"
-    aria-label={`${category} action`}
-    style={{
-      "--icon-sheet": `url(${iconSheet})`,
-      "--icon-position": positions[category] ?? positions.General,
-      "--icon-position-inset": insetPositions[category] ?? insetPositions.General,
-      "--icon-position-card": cardPositions[category] ?? cardPositions.General,
-    } as CSSProperties}
-  />;
+  return <img className={`command-icon ${className}`} src={icons[category] ?? generalIcon} alt="" aria-hidden="true" />;
 }
