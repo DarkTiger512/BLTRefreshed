@@ -6,13 +6,12 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using BannerlordTwitch.Dummy;
-using BannerlordTwitch.Extension;
+using BannerlordTwitch.Integration;
 using BannerlordTwitch.Localization;
 using BannerlordTwitch.Rewards;
 using BannerlordTwitch.Testing;
 using BannerlordTwitch.Twitch;
 using BannerlordTwitch.Util;
-using BLTOverlay;
 using JetBrains.Annotations;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.Library;
@@ -47,6 +46,7 @@ namespace BannerlordTwitch
         [UsedImplicitly] public bool IsSubscriber { get; private set; }
         [UsedImplicitly] public bool IsVip { get; private set; }
         [UsedImplicitly] public string RedemptionId { get; private set; }
+        [UsedImplicitly] public Guid? IntegrationRequestId { get; private set; }
         [UsedImplicitly] public ActionBase Source { get; private set; }
 
         public string ArgsErrorMessage(string args)
@@ -104,9 +104,19 @@ namespace BannerlordTwitch
             {
                 UserName = CleanDisplayName(userName),
                 Args = args,
+                Source = source
+            };
+
+        public static ReplyContext FromIntegration(ActionBase source, IntegrationActionRequest request, string args) =>
+            new()
+            {
+                UserName = CleanDisplayName(request.User.Name),
+                Args = args,
                 Source = source,
-                IsModerator = true,      // ← IMPORTANT (see below)
-                IsBroadcaster = true     // overlay = trusted
+                IntegrationRequestId = request.RequestId,
+                IsModerator = request.User.IsModerator,
+                IsBroadcaster = request.User.IsBroadcaster,
+                IsSubscriber = request.User.IsSubscriber,
             };
     }
 
@@ -119,17 +129,13 @@ namespace BannerlordTwitch
         public string channelId;
         public readonly AuthSettings authSettings;
 
-        private TwitchPubSub pubSub;
-
         private readonly Settings settings;
         private CancellationToken token;
 
         private readonly ConcurrentDictionary<string, ChannelPointsCustomRewardRedemption> redemptionCache = new();
         private Bot bot;
 
-        // ── Extension PubSub ─────────────────────────────────────────────────
-        private ExtensionPubSubService extensionPubSub;
-        private LocalRelayService localRelay;
+        private ManagedIntegrationClient integrationClient;
 
         public TwitchService()
         {
@@ -177,40 +183,26 @@ namespace BannerlordTwitch
                     Log.Info($"Channel ID is {user.Id}");
                     channelId = user.Id;
 
-                    // ── Init extension PubSub (requires channelId) ────────────
-                    // Each service is wrapped in its own try/catch so a failure in
-                    // either one cannot prevent bot and eventsub from initialising.
-                    if (authSettings.ExtensionConfigured)
+                    // Managed integration uses an outbound authenticated WebSocket.
+                    // The Twitch Extension shared secret never enters the mod.
+                    if (!string.IsNullOrWhiteSpace(authSettings.IntegrationServiceUrl) &&
+                        (!string.IsNullOrWhiteSpace(authSettings.IntegrationCredential) ||
+                         !string.IsNullOrWhiteSpace(authSettings.IntegrationPairingCode)))
                     {
                         try
                         {
-                            extensionPubSub = new ExtensionPubSubService(
-                                new CustomTwitchHttpClient(),
-                                authSettings.ExtensionClientId,
-                                authSettings.ExtensionSecret,
-                                channelId,
-                                authSettings.AccessToken,
-                                authSettings.ClientID);
-                            Log.Info("[Extension] PubSub service ready");
+                            integrationClient = new ManagedIntegrationClient(authSettings, channelId);
+                            integrationClient.ActionRequested += ExecuteIntegrationAction;
+                            Log.Info("[Integration] Managed service connector started");
                         }
                         catch (Exception ex)
                         {
-                            Log.Error($"[Extension] PubSub init failed: {ex.Message}");
-                        }
-
-                        try
-                        {
-                            localRelay = new LocalRelayService();
-                            Log.Info("[LocalRelay] Service started — OBS source: http://localhost:3000");
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error($"[LocalRelay] Init failed — OBS overlay may not function: {ex.Message}");
+                            Log.Error($"[Integration] Connector init failed: {ex.Message}");
                         }
                     }
                     else
                     {
-                        Log.Info("[Extension] ExtensionClientId/ExtensionSecret not configured — PubSub disabled");
+                        Log.Info("[Integration] Not paired; chat commands and channel-point rewards remain available");
                     }
 
                     // Connect the chatbot
@@ -481,7 +473,7 @@ namespace BannerlordTwitch
             if (context.Source.RespondInOverlay || IsSimTesting)
                 Log.LogFeedResponse(context.UserName, messages);
 
-            if (context.Source.RespondInTwitch && !IsSimTesting)
+            if (context.Source.RespondInTwitch && !IsSimTesting && !context.IntegrationRequestId.HasValue)
             {
                 if (context.UserName != null)
                 {
@@ -494,21 +486,8 @@ namespace BannerlordTwitch
                 }
             }
 
-            if (context.Source.RespondInExtension && !IsSimTesting)
-            {
-                // Twitch Extension PubSub (if configured)
-                if (extensionPubSub != null)
-                {
-                    if (context.UserName != null)
-                        _ = extensionPubSub.SendWhisperToUserNameAsync(context.UserName, messages);
-                    else
-                        _ = extensionPubSub.SendBroadcastAsync(messages);
-                }
-
-                // Local relay — always active, no configuration needed
-                if (localRelay != null)
-                    _ = localRelay.SendReplyAsync(context.UserName, messages);
-            }
+            if (context.IntegrationRequestId.HasValue && !IsSimTesting)
+                _ = integrationClient?.SendActionResultAsync(context.IntegrationRequestId.Value, messages);
         }
 
         public void SendNonReply(ReplyContext context, params string[] messages)
@@ -517,16 +496,13 @@ namespace BannerlordTwitch
             {
                 Log.LogFeedMessage(messages);
             }
-            if (context.Source.RespondInTwitch && !IsSimTesting)
+            if (context.Source.RespondInTwitch && !IsSimTesting && !context.IntegrationRequestId.HasValue)
             {
                 bot.SendChat(messages);
             }
 
-            // Extension PubSub: non-replies are always broadcast (no specific user)
-            if (context.Source.RespondInExtension && extensionPubSub != null && !IsSimTesting)
-            {
-                _ = extensionPubSub.SendBroadcastAsync(messages);
-            }
+            if (context.IntegrationRequestId.HasValue && !IsSimTesting)
+                _ = integrationClient?.SendActionResultAsync(context.IntegrationRequestId.Value, messages);
         }
 
         public void SendChat(params string[] messages)
@@ -541,15 +517,6 @@ namespace BannerlordTwitch
             }
 
             Log.Trace($"[{nameof(TwitchService)}] Chat: {string.Join(", ", messages)}");
-        }
-
-        /// <summary>
-        /// Call this from the BLTOverlay /register endpoint after validating
-        /// the viewer's JWT. Pre-warms the userId cache so first whisper is instant.
-        /// </summary>
-        public void RegisterExtensionUser(string userName, string userId)
-        {
-            extensionPubSub?.RegisterUser(userName, userId);
         }
 
         private void ShowCommandHelp()
@@ -606,44 +573,30 @@ namespace BannerlordTwitch
             });
         }
 
-        public void ExecuteOverlayRaw(string rawCommand, string userName)
-        {
-            if (string.IsNullOrWhiteSpace(rawCommand))
-                return;
-
-            // Match Bot.cs parsing EXACTLY
-            var parts = rawCommand.Split(new[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 0)
-                return;
-
-            string cmdName = parts[0];
-            string args = parts.Length > 1 ? parts[1] : string.Empty;
-
-            ExecuteOverlayCommand(cmdName, userName, args);
-        }
-
-        public void ExecuteOverlayCommand(string cmdName, string userName, string args)
+        private void ExecuteIntegrationAction(IntegrationActionRequest request)
         {
             MainThreadSync.Run(() =>
             {
-                var cmd = this.settings.GetCommand(cmdName);
+                if (request == null || integrationClient == null)
+                    return;
+                if (!integrationClient.TryResolve(request, out var action, out var args, out var error))
+                {
+                    _ = integrationClient.SendActionErrorAsync(request.RequestId, error ?? "Invalid action request.");
+                    return;
+                }
+                var cmd = settings.GetCommand(action.LegacyName);
                 if (cmd == null)
                 {
-                    Log.Trace($"[Overlay] Unknown command '{cmdName}'");
+                    _ = integrationClient.SendActionErrorAsync(request.RequestId, "This action is disabled by the streamer.");
                     return;
                 }
-
-                var context = ReplyContext.FromOverlay(cmd, userName, args);
-
-                if (cmd.ModeratorOnly && !context.IsModerator && !context.IsBroadcaster)
+                if (cmd.ModeratorOnly && !request.User.IsModerator && !request.User.IsBroadcaster)
                 {
-                    Log.Info($"[Overlay] Blocked '{cmdName}' from '{context.UserName}' (not mod)");
-                    SendReply(context,
-                        "{=X9J4K2L8}@{DisplayName}, Only moderators and broadcaster can use this command"
-                            .Translate(("DisplayName", context.UserName)));
+                    _ = integrationClient.SendActionErrorAsync(request.RequestId, "Only moderators and the broadcaster may use this action.");
                     return;
                 }
-
+                var context = ReplyContext.FromIntegration(cmd, request, args);
+                _ = integrationClient.SendActionAcceptedAsync(request.RequestId);
 #if !DEBUG
                 try
                 {
@@ -651,23 +604,13 @@ namespace BannerlordTwitch
                     ActionManager.HandleCommand(cmd.Handler, context, cmd.HandlerConfig);
 #if !DEBUG
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Log.Exception($"Overlay command {cmdName} failed: {e.Message}", e);
+                    Log.Exception($"Integration action {request.ActionId} failed: {ex.Message}", ex);
+                    _ = integrationClient.SendActionErrorAsync(request.RequestId, "The game rejected this action.");
                 }
 #endif
             });
-        }
-
-        public void ExecuteOverlayWire(BltWireMessage wire)
-        {
-            if (wire == null || wire.Kind != "command" || string.IsNullOrWhiteSpace(wire.Command))
-                return;
-
-            ExecuteOverlayCommand(
-                wire.Command,
-                wire.User?.Name,
-                wire.Args ?? string.Empty);
         }
 
         public bool TestCommand(string cmdName, string userName, string args)
@@ -785,6 +728,8 @@ namespace BannerlordTwitch
             StopSim();
             RemoveRewards();
             bot?.Dispose();
+            integrationClient?.Dispose();
+            integrationClient = null;
             _ = eventsub?.StopAsync(token);
             //pubSub?.Disconnect();
             Log.LogFeedSystem("{=mEcBdqNC}TwitchService stopped".Translate());

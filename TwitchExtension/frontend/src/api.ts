@@ -2,6 +2,18 @@ import type { ManifestAction, ViewerIdentity } from "./types";
 
 const apiBase = import.meta.env.VITE_BLT_API_URL ?? "http://127.0.0.1:5188";
 
+export async function createPairingCode(identity: ViewerIdentity) {
+  if (identity.token === "development-token") {
+    return { code: "BLT-DEMO-PAIR", expiresAt: new Date(Date.now() + 600_000).toISOString() };
+  }
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/pairing`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${identity.token}` },
+  });
+  if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "A pairing code could not be created.");
+  return response.json() as Promise<{ code: string; expiresAt: string }>;
+}
+
 export async function submitAction(identity: ViewerIdentity, action: ManifestAction, args: Record<string, unknown>) {
   if (identity.token === "development-token") {
     await new Promise(resolve => setTimeout(resolve, 350));

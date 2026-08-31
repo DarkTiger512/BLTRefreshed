@@ -66,12 +66,12 @@ namespace BLTConfigure.UI
         /// <summary>
         /// Client ID of the Twitch Extension (from dev console → Extension Settings).
         /// </summary>
-        public string ExtensionClientId
+        public string IntegrationServiceUrl
         {
-            get => EditedAuthSettings.ExtensionClientId;
+            get => EditedAuthSettings.IntegrationServiceUrl;
             set
             {
-                EditedAuthSettings.ExtensionClientId = value;
+                EditedAuthSettings.IntegrationServiceUrl = value;
                 SaveAuth();
             }
         }
@@ -79,15 +79,19 @@ namespace BLTConfigure.UI
         /// <summary>
         /// Base64-encoded extension secret (from dev console → Extension Settings → Show Secret).
         /// </summary>
-        public string ExtensionSecret
+        public string IntegrationPairingCode
         {
-            get => EditedAuthSettings.ExtensionSecret;
+            get => EditedAuthSettings.IntegrationPairingCode;
             set
             {
-                EditedAuthSettings.ExtensionSecret = value;
+                EditedAuthSettings.IntegrationPairingCode = value;
                 SaveAuth();
             }
         }
+
+        public string IntegrationStatus => EditedAuthSettings.IntegrationConfigured
+            ? "Paired"
+            : "Not paired";
 
         // ── Actions ───────────────────────────────────────────────────────────
 

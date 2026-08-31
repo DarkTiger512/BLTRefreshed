@@ -6,7 +6,8 @@ const sourceRoot = path.join(root, "BannerlordTwitch");
 const outputRoot = path.join(root, "docs", "twitch-integration", "inventory");
 const yamlPath = path.join(sourceRoot, "BannerlordTwitch", "_Module", "Bannerlord-Twitch-v4.yaml");
 
-const normalize = value => value?.replace(/^['"]|['"]$/g, "").trim() ?? "";
+const normalize = value => value?.replace(/^['"]/, "").replace(/['"]$/, "").trim() ?? "";
+const cleanLoc = value => normalize(String(value ?? "")).replace(/^\{=[^}]+\}/, "");
 const scalar = value => {
   const text = normalize(value);
   if (text === "") return null;
@@ -75,18 +76,42 @@ function categoryFor(command) {
   return categories.find(([, pattern]) => pattern.test(haystack))?.[0] ?? "General";
 }
 
+const choice = (id, label, values, required = true) => ({ id, label, type: "choice", required, options: values.map(value => ({ value, label: value.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, c => c.toUpperCase()) })) });
+const textInput = (id, label, required = true) => ({ id, label, type: "text", required });
+const numberInput = (id, label, required = true) => ({ id, label, type: "integer", required });
+const confirm = () => ({ id: "confirm", label: "I understand this changes the campaign", type: "confirmation", required: true });
+
 function actionInput(command) {
-  const text = `${command.Help ?? ""} ${command.Documentation ?? ""}`.toLowerCase();
-  if (/list|status|info|check|leaderboard/.test(text)) return [];
-  if (/name/.test(text)) return [{ id: "name", type: "text", required: true }];
-  if (/amount|gold|points|xp/.test(text)) return [{ id: "amount", type: "integer", required: false }];
-  return [{ id: "arguments", type: "text", required: false, legacyFallback: true }];
+  const name = cleanLoc(command.Name).toLowerCase();
+  const noInput = new Set(["objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "hero", "inv", "powers", "reequip", "retinuelist", "stats", "tournament", "info", "leaderboard", "battle", "income", "logs", "skills"]);
+  if (noInput.has(name)) return [];
+  const definitions = {
+    objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), textInput("objective", "Objective", false)],
+    adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [textInput("culture", "Culture")], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
+    attack: [textInput("target", "Target hero or party")], auction: [textInput("item", "Item")], bid: [numberInput("amount", "Bid amount")],
+    bltbet: [numberInput("entrant", "Entrant number"), numberInput("amount", "Bet amount")], buymount: [textInput("mount", "Mount")],
+    clan: [choice("operation", "Clan operation", ["create", "join", "leave", "invite", "kick", "info"]), textInput("target", "Target", false)],
+    class: [textInput("class", "Hero class")], customitems: [textInput("filter", "Item filter", false)], discarditem: [textInput("item", "Item")],
+    equip: [choice("slot", "Equipment slot", ["weapon", "shield", "bow", "armor", "mount"]), textInput("item", "Item", false)],
+    giveitem: [textInput("target", "Viewer or hero"), textInput("item", "Item")], kingdom: [choice("operation", "Kingdom operation", ["info", "join", "leave", "policy", "war", "peace"]), textInput("target", "Target", false)],
+    nameitem: [textInput("item", "Item"), textInput("name", "New name")], power: [textInput("power", "Power")], retinue: [textInput("troop", "Troop", false)], retire: [confirm()],
+    smitharmor: [textInput("name", "Armor name"), textInput("culture", "Culture", false)], smithweapon: [textInput("name", "Weapon name"), textInput("culture", "Culture", false)],
+    summon: [choice("side", "Battle side", ["player", "enemy"], false)], itemstats: [textInput("item", "Item")], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm()],
+    heir: [textInput("target", "Heir")], diplomacy: [choice("operation", "Diplomacy action", ["war", "peace", "ally", "trade", "policy"]), textInput("kingdom", "Kingdom")],
+    reinforce: [numberInput("amount", "Troops")], transfer: [textInput("target", "Target"), textInput("asset", "Transfer item")], buyfocus: [textInput("skill", "Skill")],
+    party: [choice("operation", "Party order", ["status", "follow", "patrol", "raid", "garrison", "army", "train"]), textInput("target", "Target", false)],
+    upgrade: [choice("scope", "Upgrade scope", ["hero", "clan", "fief"]), textInput("upgrade", "Upgrade")], family: [choice("operation", "Family action", ["info", "marry", "adopt", "divorce"]), textInput("target", "Target", false)],
+    equipcustom: [textInput("item", "Custom item")], formation: [choice("formation", "Formation", ["infantry", "ranged", "cavalry", "horseArcher"])],
+    fief: [choice("operation", "Fief action", ["info", "manage", "give", "upgrade"]), textInput("target", "Settlement", false)], vassal: [textInput("target", "Vassal")],
+    capital: [textInput("settlement", "Capital settlement")], eliteretinue: [textInput("troop", "Elite troop")]
+  };
+  return definitions[name] ?? [textInput("query", "Action selection")];
 }
 
 function buildActions(commands) {
   return commands.map(command => ({
-    id: `command.${String(command.Name ?? command.Handler).replace(/^\{=[^}]+\}/, "").trim().toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.|\.$/g, "")}`,
-    legacyName: command.Name,
+    id: `command.${cleanLoc(command.Name ?? command.Handler).trim().toLowerCase().replace(/[^a-z0-9]+/g, ".").replace(/^\.|\.$/g, "")}`,
+    legacyName: cleanLoc(command.Name),
     handler: command.Handler,
     category: categoryFor(command),
     description: command.Documentation || command.Help || command.Handler,
@@ -177,7 +202,11 @@ fs.mkdirSync(outputRoot, { recursive: true });
 const writeJson = (name, data) => fs.writeFileSync(path.join(outputRoot, name), `${JSON.stringify(data, null, 2)}\n`);
 writeJson("commands.json", commands);
 writeJson("rewards.json", rewards);
-writeJson("action-manifest.json", { protocolVersion: 1, generatedAt: new Date().toISOString(), actions });
+const actionManifest = { protocolVersion: 1, generatedAt: new Date().toISOString(), actions };
+writeJson("action-manifest.json", actionManifest);
+const moduleManifestPath = path.join(sourceRoot, "BannerlordTwitch", "_Module", "TwitchIntegration", "action-manifest.json");
+fs.mkdirSync(path.dirname(moduleManifestPath), { recursive: true });
+fs.writeFileSync(moduleManifestPath, `${JSON.stringify(actionManifest, null, 2)}\n`);
 writeJson("settings.json", settings);
 writeJson("components.json", components);
 

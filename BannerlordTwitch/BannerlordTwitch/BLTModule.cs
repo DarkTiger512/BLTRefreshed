@@ -26,8 +26,6 @@ namespace BannerlordTwitch
 
         public static TwitchService TwitchService { get; private set; }
 
-        private ExtensionReceiverService extensionReceiver;
-
         [DllImport("user32.dll")]
         private static extern int SetWindowText(IntPtr hWnd, string text);
 
@@ -95,56 +93,6 @@ namespace BannerlordTwitch
             }
         }
 
-        private void InitializeExtensionReceiver()
-        {
-            try
-            {
-                if (TwitchService == null)
-                {
-                    Log.LogFeedSystem("[Overlay] TwitchService not ready - skipping receiver init");
-                    return;
-                }
-
-                string channelId = TwitchService.channelId;
-                string accessToken = TwitchService.authSettings.AccessToken;
-
-                if (string.IsNullOrEmpty(channelId) || string.IsNullOrEmpty(accessToken))
-                {
-                    Log.LogFeedSystem("[Overlay] Missing channelId or accessToken");
-                    return;
-                }
-
-                extensionReceiver = new ExtensionReceiverService(channelId, accessToken);
-                extensionReceiver.OnMessageReceived += OnExtensionMessageReceived;
-                extensionReceiver.Start();
-
-                Log.LogFeedSystem("[Overlay] Extension receiver started");
-            }
-            catch (Exception ex)
-            {
-                Log.Exception("[Overlay] Failed to start extension receiver", ex);
-            }
-        }
-
-        private void OnExtensionMessageReceived(ExtensionReceiverService.OverlayCommandMessage msg)
-        {
-            try
-            {
-                if (msg == null || string.IsNullOrWhiteSpace(msg.Command))
-                    return;
-
-                Log.LogFeedSystem($"[Overlay CMD] {msg.Command}");
-
-                // 🚨 THIS is the entire point:
-                // Send directly into your existing command pipeline
-                TwitchService.ExecuteOverlayRaw(msg.Command, msg.UserName);
-            }
-            catch (Exception ex)
-            {
-                Log.Exception("[Overlay] Failed to process command", ex);
-            }
-        }
-
         public static void AddToFeed(string text, string style)
         {
             ConsoleFeedHub.SendMessage(text, style);
@@ -182,8 +130,6 @@ namespace BannerlordTwitch
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             RestartTwitchService();
-
-            InitializeExtensionReceiver();
 
             try
             {

@@ -10,6 +10,7 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
     const apiBase = import.meta.env.VITE_BLT_API_URL ?? window.location.origin;
     const url = new URL(`/ws/viewer/${encodeURIComponent(identity.channelId)}`, apiBase);
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
+    url.searchParams.set("token", identity.token);
     const socket = new WebSocket(url);
     socket.addEventListener("open", () => setState(value => ({ ...value, connected: true })));
     socket.addEventListener("close", () => setState(value => ({ ...value, connected: false })));

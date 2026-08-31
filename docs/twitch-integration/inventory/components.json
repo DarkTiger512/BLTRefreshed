@@ -80,8 +80,7 @@
     "path": "BannerlordTwitch/BannerlordTwitch/BLTModule.cs",
     "project": "BannerlordTwitch",
     "kinds": [
-      "twitch-service",
-      "configuration"
+      "twitch-service"
     ],
     "symbols": [
       "BLTModule"
@@ -758,69 +757,40 @@
     ]
   },
   {
-    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/ExtensionService.cs",
-    "project": "BannerlordTwitch",
-    "kinds": [
-      "twitch-service"
-    ],
-    "symbols": [
-      "ExtensionPubSubService",
-      "ExtensionPubSubPayload",
-      "ExtensionMessage",
-      "BltWireMessage",
-      "BltWireUser"
-    ]
-  },
-  {
-    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/BLTProtocol.cs",
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationActionCatalog.cs",
     "project": "BannerlordTwitch",
     "kinds": [
       "support"
     ],
     "symbols": [
-      "BLTProtocol",
-      "BltMessage",
-      "BltUser",
-      "CommandData",
-      "OverlayCommandTranslator"
+      "IntegrationActionCatalog"
     ]
   },
   {
-    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/ExtensionReceiverService.cs",
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
     "project": "BannerlordTwitch",
     "kinds": [
       "support"
     ],
     "symbols": [
-      "ExtensionReceiverService",
-      "OverlayCommandMessage"
+      "IntegrationProtocol",
+      "IntegrationUser",
+      "IntegrationActionRequest",
+      "IntegrationActionManifest",
+      "IntegrationActionDefinition",
+      "IntegrationActionInput",
+      "PairingExchangeResponse"
     ]
   },
   {
-    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/LocalRelayService.cs",
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
     "project": "BannerlordTwitch",
     "kinds": [
-      "twitch-service"
+      "configuration"
     ],
     "symbols": [
-      "LocalRelayService"
+      "ManagedIntegrationClient"
     ]
-  },
-  {
-    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/public/RandomOverlay.html",
-    "project": "BannerlordTwitch",
-    "kinds": [
-      "support"
-    ],
-    "symbols": []
-  },
-  {
-    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/RandomOverlay/server.js",
-    "project": "BannerlordTwitch",
-    "kinds": [
-      "support"
-    ],
-    "symbols": []
   },
   {
     "path": "BannerlordTwitch/BannerlordTwitch/Twitch/TwitchEventSubSocket.cs",

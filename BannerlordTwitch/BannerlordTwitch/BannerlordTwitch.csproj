@@ -444,13 +444,12 @@
     <Compile Include="Settings\SimTestingConfig.cs" />
     <Compile Include="Settings\SimTestingItem.cs" />
     <Compile Include="Testing\SimulationTest.cs" />
-    <Compile Include="Twitch\ExtensionService.cs" />
     <Compile Include="Twitch\CustomTwitchHttpClient.cs" />
     <Compile Include="Twitch\Dummy\AffiliateSpoofingHttpCallHandler.cs" />
     <Compile Include="Twitch\Dummy\TwitchRedirectingHttpCallHandler.cs" />
-    <Compile Include="Twitch\RandomOverlay\BLTProtocol.cs" />
-    <Compile Include="Twitch\RandomOverlay\ExtensionReceiverService.cs" />
-    <Compile Include="Twitch\RandomOverlay\LocalRelayService.cs" />
+    <Compile Include="Twitch\Integration\IntegrationActionCatalog.cs" />
+    <Compile Include="Twitch\Integration\IntegrationContracts.cs" />
+    <Compile Include="Twitch\Integration\ManagedIntegrationClient.cs" />
     <Compile Include="Twitch\TwitchEventSubSocket.cs" />
     <Compile Include="Twitch\TwitchService.Bot.cs" />
     <Compile Include="Twitch\TwitchService.cs" />
@@ -519,11 +518,13 @@
     <Content Include="Scripts\jquery-3.7.1.slim.min.js" />
     <Content Include="Scripts\jquery.signalR-2.4.3.js" />
     <Content Include="Scripts\jquery.signalR-2.4.3.min.js" />
-    <Content Include="Twitch\RandomOverlay\server.js" />
     <Content Include="Web.config" />
     <Content Include="_Module\Bannerlord-Twitch-Auth.yaml" />
     <Content Include="_Module\Bannerlord-Twitch-Documentation.css" />
     <Content Include="_Module\Bannerlord-Twitch-v4.yaml" />
+    <Content Include="_Module\TwitchIntegration\action-manifest.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="_Module\ModuleData\Languages\BR\language_data.xml" />
     <Content Include="_Module\ModuleData\Languages\BR\strings-achievements-BR.xml" />
     <Content Include="_Module\ModuleData\Languages\BR\strings-classes-BR.xml" />
@@ -649,9 +650,6 @@
     <None Include="app.config" />
     <None Include="Scripts\jquery-3.7.1.min.map" />
     <None Include="Scripts\jquery-3.7.1.slim.min.map" />
-    <None Include="Twitch\RandomOverlay\package.json" />
-    <None Include="Twitch\RandomOverlay\start.bat" />
-    <None Include="Twitch\RandomOverlay\start.sh" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
