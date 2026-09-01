@@ -403,14 +403,20 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .native-shortcuts {
   position: absolute;
   z-index: 10;
-  top: 40px;
-  right: 306px;
-  width: clamp(330px,25vw,440px);
+  top: auto;
+  right: auto;
+  bottom: 16px;
+  left: 16px;
+  width: clamp(280px,22vw,340px);
   margin: 0;
   grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 7px;
   pointer-events: auto;
 }
-.native-shortcuts button { min-height: 58px; padding: 9px 12px; }
+.native-shortcuts button { min-height: 48px; gap: 8px; padding: 7px 10px; border-radius: 7px; }
+.native-shortcuts svg { width: 21px; }
+.native-shortcuts strong { font-size: 10px; }
+.native-shortcuts small { font-size: 6px; line-height: 1.2; }
 .command-help {
   position: absolute;
   inset: 80px auto 28px 74px;
@@ -494,7 +500,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 
 @media (max-width:1000px) and (min-width:681px) {
   .viewer-strip,.command-center { width: min(400px,calc(100vw - 310px)); }
-  .native-shortcuts { right: 246px; width: 310px; }
+  .native-shortcuts { right: auto; width: 292px; }
   .command-feed-dock,.battle-active .command-feed-dock { width: 218px; right: 12px; }
   .command-feed-dock.expanded { width: min(440px,calc(100vw - 24px)); }
   .workspace-main > .inventory-view,.workspace-main > .retinue-view { right: 246px; left: 64px; }
@@ -512,8 +518,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .viewer-strip { top: 78px; left: 8px; width: calc(100vw - 16px); }
   .command-center { top: 134px; left: 8px; width: calc(100vw - 16px); }
   .command-hint { display: none; }
-  .native-shortcuts { top: 200px; right: 8px; left: 8px; width: auto; }
-  .native-shortcuts button { min-height: 52px; }
+  .native-shortcuts { top: auto; right: auto; bottom: 84px; left: 8px; width: min(292px,calc(100vw - 16px)); }
+  .native-shortcuts button { min-height: 46px; }
   .command-help { inset: 70px 8px 82px; width: auto; }
   .command-feed-dock,.battle-active .command-feed-dock {
     inset: auto 8px 8px;
