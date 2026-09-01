@@ -132,11 +132,11 @@ public sealed class Database(NpgsqlDataSource dataSource)
         return id;
     }
 
-    public async Task<bool> ValidateInstallationAsync(string channel, string credentialHash, CancellationToken token)
+    public async Task<Guid?> ValidateInstallationAsync(string channel, string credentialHash, CancellationToken token)
     {
         await using var command = dataSource.CreateCommand("UPDATE installations SET last_seen_at=now() WHERE channel_id=$1 AND credential_hash=$2 AND revoked_at IS NULL RETURNING installation_id");
         command.Parameters.AddWithValue(channel); command.Parameters.AddWithValue(credentialHash);
-        return await command.ExecuteScalarAsync(token) is Guid;
+        return await command.ExecuteScalarAsync(token) is Guid installationId ? installationId : null;
     }
 
     public async Task<ChannelConfiguration?> SaveConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token)

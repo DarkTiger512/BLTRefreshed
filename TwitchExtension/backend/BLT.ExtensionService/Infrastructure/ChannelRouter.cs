@@ -9,12 +9,13 @@ namespace BLT.ExtensionService.Infrastructure;
 public sealed class ChannelRouter(ChannelStateCache stateCache, Database database)
 {
     private static readonly JsonSerializerOptions WireJson = new(JsonSerializerDefaults.Web);
-    private readonly ConcurrentDictionary<string, WebSocket> games = new(StringComparer.Ordinal);
+    private sealed record GameConnection(Guid InstallationId, WebSocket Socket);
+    private readonly ConcurrentDictionary<string, GameConnection> games = new(StringComparer.Ordinal);
     private sealed record ViewerConnection(string UserId, string DisplayName, IReadOnlyList<string> Roles, WebSocket Socket);
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<Guid, ViewerConnection>> viewers = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<Guid, (string Channel, string UserId)> privateRequests = new();
 
-    public bool IsGameConnected(string channel) => games.TryGetValue(channel, out var socket) && socket.State == WebSocketState.Open;
+    public bool IsGameConnected(string channel) => games.TryGetValue(channel, out var game) && game.Socket.State == WebSocketState.Open;
     public DateTimeOffset? LastStateAt(string channel) => stateCache.LastStateAt(channel);
     public JsonElement RuntimeCommands(string channel)
     {
@@ -32,21 +33,32 @@ public sealed class ChannelRouter(ChannelStateCache stateCache, Database databas
         await SendGameAsync(channel, JsonSerializer.Deserialize<JsonElement>(envelope), token);
     }
 
-    public async Task AttachGameAsync(string channel, WebSocket socket, CancellationToken token)
+    public async Task AttachGameAsync(string channel, Guid installationId, WebSocket socket, CancellationToken token)
     {
-        if (games.TryGetValue(channel, out var previous) && previous.State == WebSocketState.Open)
-            await previous.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Replaced by a new game connection", token);
+        if (games.TryGetValue(channel, out var previous) && previous.Socket.State == WebSocketState.Open)
+            await previous.Socket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Replaced by a new game connection", token);
         stateCache.Clear(channel);
-        games[channel] = socket;
+        var connection = new GameConnection(installationId, socket);
+        games[channel] = connection;
         var configuration = await database.GetConfigurationAsync(channel, token);
         await SendAsync(socket, Envelope("configuration.updated", channel, new { configuration.SchemaVersion, configuration.ExtensionEnabled, configuration.Commands, configuration.Revision, configuration.UpdatedAt }), token);
         await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = true, gameStarted = true }), token);
         await PumpAsync(socket, async message => await RouteGameMessageAsync(channel, message, token), token);
-        if (games.TryRemove(new KeyValuePair<string, WebSocket>(channel, socket)))
+        if (games.TryRemove(new KeyValuePair<string, GameConnection>(channel, connection)))
         {
             stateCache.Clear(channel);
             await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = false, gameStarted = false }), CancellationToken.None);
         }
+    }
+
+    public async Task DisconnectInstallationAsync(string channel, Guid installationId, CancellationToken token)
+    {
+        if (!games.TryGetValue(channel, out var game) || game.InstallationId != installationId) return;
+        if (!games.TryRemove(new KeyValuePair<string, GameConnection>(channel, game))) return;
+        stateCache.Clear(channel);
+        if (game.Socket.State is WebSocketState.Open or WebSocketState.CloseReceived)
+            await game.Socket.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Installation revoked", token);
+        await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = false, gameStarted = false }), CancellationToken.None);
     }
 
     public async Task AttachViewerAsync(string channel, TwitchPrincipal principal, WebSocket socket, CancellationToken token)
@@ -64,8 +76,8 @@ public sealed class ChannelRouter(ChannelStateCache stateCache, Database databas
 
     public async Task<bool> SendGameAsync(string channel, object payload, CancellationToken token)
     {
-        if (!games.TryGetValue(channel, out var socket) || socket.State != WebSocketState.Open) return false;
-        await SendAsync(socket, JsonSerializer.Serialize(payload, WireJson), token);
+        if (!games.TryGetValue(channel, out var game) || game.Socket.State != WebSocketState.Open) return false;
+        await SendAsync(game.Socket, JsonSerializer.Serialize(payload, WireJson), token);
         return true;
     }
 

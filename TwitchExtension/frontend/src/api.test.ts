@@ -36,4 +36,5 @@ test("mock installation revocation persists across configuration refreshes", asy
   await revokeInstallation(identity, before.installations[0].installationId);
   const after = await getConfigurationContext(identity);
   expect(after.installations[0].revokedAt).toBeTruthy();
+  expect(after.gameConnected).toBe(false);
 });

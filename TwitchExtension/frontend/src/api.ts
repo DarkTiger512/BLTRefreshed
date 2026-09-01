@@ -9,7 +9,7 @@ export async function getConfigurationContext(identity: ViewerIdentity) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     return {
       configuration: { schemaVersion: 2, extensionEnabled: true, commands: [], activeProfile: 1, profiles: [1, 2, 3].map(profileId => ({ profileId, extensionEnabled: true, commands: [] })), revision: 4, updatedAt: new Date(Date.now() - 180_000).toISOString() },
-      gameConnected: true,
+      gameConnected: !mockInstallationRevokedAt,
       lastStateAt: new Date(Date.now() - 12_000).toISOString(),
       installations: [{ installationId: "a89b210d-50ce-47d0-8b75-244563848001", createdAt: new Date(Date.now() - 86_400_000 * 12).toISOString(), lastSeenAt: new Date(Date.now() - 12_000).toISOString(), revokedAt: mockInstallationRevokedAt }],
       pairingRequests: [],

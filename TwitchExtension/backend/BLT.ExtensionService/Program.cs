@@ -121,11 +121,13 @@ app.MapPut("/api/channels/{channel}/configuration", async (string channel, Chann
     return Results.Ok(saved);
 });
 
-app.MapDelete("/api/channels/{channel}/installations/{installationId:guid}", async (string channel, Guid installationId, HttpContext context, TwitchExtensionTokenValidator validator, Database database, CancellationToken token) =>
+app.MapDelete("/api/channels/{channel}/installations/{installationId:guid}", async (string channel, Guid installationId, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, CancellationToken token) =>
 {
     if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
     if (principal!.Role != "broadcaster") return Results.Forbid();
-    return await database.RevokeInstallationAsync(channel, installationId, token) ? Results.NoContent() : Results.NotFound();
+    if (!await database.RevokeInstallationAsync(channel, installationId, token)) return Results.NotFound();
+    await router.DisconnectInstallationAsync(channel, installationId, token);
+    return Results.NoContent();
 });
 
 app.MapPost("/api/channels/{channel}/actions", async (string channel, ActionSubmission submission, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, RequestGuard guard, CancellationToken token) =>
@@ -201,10 +203,11 @@ app.Map("/ws/game/{channel}", async (string channel, HttpContext context, Databa
 {
     if (!context.WebSockets.IsWebSocketRequest) { context.Response.StatusCode = 400; return; }
     var authorization = context.Request.Headers.Authorization.ToString();
-    if (!authorization.StartsWith("Bearer ") || !await database.ValidateInstallationAsync(channel, InstallationCredentialService.Hash(authorization[7..].Trim()), token))
-    { context.Response.StatusCode = 401; return; }
+    if (!authorization.StartsWith("Bearer ")) { context.Response.StatusCode = 401; return; }
+    var installationId = await database.ValidateInstallationAsync(channel, InstallationCredentialService.Hash(authorization[7..].Trim()), token);
+    if (installationId is null) { context.Response.StatusCode = 401; return; }
     using var socket = await context.WebSockets.AcceptWebSocketAsync("blt.integration.v1");
-    await router.AttachGameAsync(channel, socket, token);
+    await router.AttachGameAsync(channel, installationId.Value, socket, token);
 });
 
 app.Map("/ws/viewer/{channel}", async (string channel, HttpContext context, TwitchExtensionTokenValidator validator, ChannelRouter router, CancellationToken token) =>
