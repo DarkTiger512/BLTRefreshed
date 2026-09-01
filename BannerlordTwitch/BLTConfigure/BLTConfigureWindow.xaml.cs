@@ -49,25 +49,16 @@ namespace BLTConfigure
             public override object GroupNameFromItem(object item, int level, CultureInfo culture) => item switch { null => "", GlobalConfig => "Global Configs", Reward => "Channel Rewards", Command => "Chat Commands", SimTestingConfig => "Sim Testing Config", _ => item.GetType().Name };
         }
 
-        private static readonly string[] MainScopes = { "user:read:email", "chat:edit", "chat:read", "whispers:read", "channel:read:subscriptions", "channel:read:redemptions", "channel:manage:redemptions" };
-        private static readonly string[] BotScopes = MainScopes;
+        private static readonly string[] MainScopes = { "user:read:email", "channel:read:subscriptions", "channel:read:redemptions", "channel:manage:redemptions" };
 
         private async void GenerateToken_OnClick(object sender, RoutedEventArgs e)
         {
-            try { GenerateTokenButton.IsEnabled = false; GenerateTokenCancel.Visibility = Visibility.Visible; ConfigurationRoot.EditedAuthSettings.AccessToken = await TwitchAuthHelper.Authorize(MainScopes) ?? throw new AuthenticationException("No token was returned."); if (string.IsNullOrWhiteSpace(ConfigurationRoot.EditedAuthSettings.BotAccessToken)) ConfigurationRoot.EditedAuthSettings.BotAccessToken = ConfigurationRoot.EditedAuthSettings.AccessToken; ConfigurationRoot.SaveAuth(); }
+            try { GenerateTokenButton.IsEnabled = false; GenerateTokenCancel.Visibility = Visibility.Visible; ConfigurationRoot.EditedAuthSettings.AccessToken = await TwitchAuthHelper.Authorize(MainScopes) ?? throw new AuthenticationException("No token was returned."); ConfigurationRoot.SaveAuth(); }
             catch (Exception ex) { BroadcasterStatus.Text = $"Authorization failed: {ex.Message}"; }
             finally { GenerateTokenButton.IsEnabled = true; GenerateTokenCancel.Visibility = Visibility.Collapsed; RefreshAuthorizationStatus(); }
         }
 
-        private async void GenerateBotToken_OnClick(object sender, RoutedEventArgs e)
-        {
-            try { GenerateBotTokenButton.IsEnabled = false; GenerateBotTokenCancel.Visibility = Visibility.Visible; ConfigurationRoot.EditedAuthSettings.BotAccessToken = await TwitchAuthHelper.Authorize(BotScopes) ?? throw new AuthenticationException("No token was returned."); ConfigurationRoot.SaveAuth(); }
-            catch (Exception ex) { BotStatus.Text = $"Bot authorization failed: {ex.Message}"; }
-            finally { GenerateBotTokenButton.IsEnabled = true; GenerateBotTokenCancel.Visibility = Visibility.Collapsed; RefreshAuthorizationStatus(); }
-        }
-
         private void CancelAuth_OnClick(object sender, RoutedEventArgs e) => TwitchAuthHelper.CancelAuth();
-        private void UseMainAccountForBot_OnClick(object sender, RoutedEventArgs e) { ConfigurationRoot.EditedAuthSettings.BotAccessToken = ConfigurationRoot.EditedAuthSettings.AccessToken; ConfigurationRoot.SaveAuth(); RefreshAuthorizationStatus(); }
 
         private async void Pair_OnClick(object sender, RoutedEventArgs e)
         {
@@ -122,7 +113,7 @@ namespace BLTConfigure
 
         private void Repair_OnClick(object sender, RoutedEventArgs e) { var auth = ConfigurationRoot.EditedAuthSettings; auth.IntegrationCredential = null; auth.IntegrationInstallationId = null; auth.IntegrationChannelId = null; ConfigurationRoot.SaveAuth(); PairingCodeTextBox.Clear(); RefreshPairingStatus(); }
         private void PairingCode_OnTextChanged(object sender, TextChangedEventArgs e) { if (PairButton != null) PairButton.IsEnabled = !requestInFlight && !string.IsNullOrWhiteSpace(PairingCodeTextBox.Text); }
-        private void RefreshAuthorizationStatus() { bool authorized = !string.IsNullOrWhiteSpace(ConfigurationRoot.EditedAuthSettings.AccessToken); BroadcasterStatus.Text = authorized ? "Broadcaster account authorized." : "Authorization is required for chat, rewards, and channel identification."; bool separateBot = !string.IsNullOrWhiteSpace(ConfigurationRoot.EditedAuthSettings.BotAccessToken) && ConfigurationRoot.EditedAuthSettings.BotAccessToken != ConfigurationRoot.EditedAuthSettings.AccessToken; BotStatus.Text = separateBot ? "A separate bot account is authorized." : "The broadcaster account is used for chat."; }
+        private void RefreshAuthorizationStatus() { bool authorized = !string.IsNullOrWhiteSpace(ConfigurationRoot.EditedAuthSettings.AccessToken); BroadcasterStatus.Text = authorized ? "Broadcaster account authorized." : "Authorization is required for rewards and channel identification."; }
         private void RefreshPairingStatus() { var auth = ConfigurationRoot.EditedAuthSettings; bool paired = auth.IntegrationConfigured; bool pending = !string.IsNullOrWhiteSpace(auth.IntegrationPairingRequestId) && !string.IsNullOrWhiteSpace(auth.IntegrationPairingRequestToken); RepairButton.Visibility = paired ? Visibility.Visible : Visibility.Collapsed; PairButton.Visibility = paired ? Visibility.Collapsed : Visibility.Visible; CancelPairingButton.Visibility = pending ? Visibility.Visible : Visibility.Collapsed; PairButton.Content = pending ? "Check status" : "Pair"; if (paired) SetPairingState("Paired", $"Approved for channel {auth.IntegrationChannelId}."); else if (pending) SetPairingState("Approval pending", "Press Check status to resume polling; reopening this window never resumes automatically."); else SetPairingState("Not paired", "Generate a code in Twitch Config to begin."); }
         private void ClearPendingAuthentication(bool save = true) { var auth = ConfigurationRoot.EditedAuthSettings; auth.IntegrationPairingCode = null; auth.IntegrationPairingRequestId = null; auth.IntegrationPairingRequestToken = null; auth.IntegrationCandidateCredential = null; auth.IntegrationPairingExpiresAt = null; PairingCodeTextBox.Text = string.Empty; CancelPairingButton.Visibility = Visibility.Collapsed; PairButton.Visibility = Visibility.Visible; PairButton.Content = "Pair"; if (save) ConfigurationRoot.SaveAuth(); }
         private void SetPairingState(string title, string detail) { PairingStateTitle.Text = title; PairingStateDetail.Text = detail; }

@@ -141,8 +141,6 @@ namespace BannerlordTwitch
         private CancellationToken token;
 
         private readonly ConcurrentDictionary<string, ChannelPointsCustomRewardRedemption> redemptionCache = new();
-        private Bot bot;
-
         private ManagedIntegrationClient integrationClient;
 
         public TwitchService()
@@ -210,11 +208,11 @@ namespace BannerlordTwitch
                     }
                     else
                     {
-                        Log.Info("[Integration] Not paired; chat commands and channel-point rewards remain available");
+                        Log.Info("[Integration] Not paired; channel-point rewards remain available");
                     }
 
-                    // Connect the chatbot
-                    bot = new Bot(user.Login, authSettings);
+                    // Viewer commands and their private replies are handled by the Extension.
+                    // Do not connect an IRC bot or use the broadcaster account to read/write chat.
 
                     if (string.IsNullOrEmpty(user.BroadcasterType))
                     {
@@ -481,19 +479,6 @@ namespace BannerlordTwitch
             if (context.Source.RespondInOverlay || IsSimTesting)
                 Log.LogFeedResponse(context.UserName, messages);
 
-            if (context.Source.RespondInTwitch && !IsSimTesting && !context.IntegrationRequestId.HasValue)
-            {
-                if (context.UserName != null)
-                {
-                    bot.SendChatReply(context.UserName, messages);
-                    Log.Trace($"[TwitchService] Reply to {context.UserName}: {string.Join(", ", messages)}");
-                }
-                else
-                {
-                    bot.SendChat(messages);
-                }
-            }
-
             if (context.IntegrationRequestId.HasValue && !IsSimTesting)
                 _ = integrationClient?.SendActionResultAsync(context.IntegrationRequestId.Value, messages);
         }
@@ -504,22 +489,13 @@ namespace BannerlordTwitch
             {
                 Log.LogFeedMessage(messages);
             }
-            if (context.Source.RespondInTwitch && !IsSimTesting && !context.IntegrationRequestId.HasValue)
-            {
-                bot.SendChat(messages);
-            }
-
             if (context.IntegrationRequestId.HasValue && !IsSimTesting)
                 _ = integrationClient?.SendActionResultAsync(context.IntegrationRequestId.Value, messages);
         }
 
         public void SendChat(params string[] messages)
         {
-            if (!IsSimTesting)
-            {
-                bot.SendChat(messages);
-            }
-            else
+            if (IsSimTesting)
             {
                 Log.LogFeedMessage("[CHAT]".Yield().Concat(messages).ToArray());
             }
@@ -541,7 +517,7 @@ namespace BannerlordTwitch
                     help.Add("{=0o3dPQSk}Also see Channel Point Rewards".Translate());
                 }
 
-                bot.SendChat(help.ToArray());
+                Log.Trace($"[{nameof(TwitchService)}] Chat help suppressed; commands are exposed by the Extension: {string.Join(", ", help)}");
             });
         }
 
@@ -777,7 +753,6 @@ namespace BannerlordTwitch
         {
             StopSim();
             RemoveRewards();
-            bot?.Dispose();
             integrationClient?.Dispose();
             integrationClient = null;
             _ = eventsub?.StopAsync(token);
