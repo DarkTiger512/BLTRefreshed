@@ -139,6 +139,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .config-emblem { width: 56px; height: 56px; display: grid; place-items: center; color: var(--gold); border: 1px solid var(--gold); border-radius: 8px; background: var(--gold-soft); }
 .configuration-card h1 { margin: 22px 0 10px; color: #f0c56f; font: 700 26px Cinzel, serif; }.configuration-card > p { color: #b6c0c6; line-height: 1.6; }
 .pairing-code { margin-top: 24px; min-height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 10px 0 22px; border: 1px solid var(--gold); border-radius: 7px; background: #0d1b26; }
+.pairing-code em{color:#9ae0b9;font-size:12px;font-style:normal;font-weight:800}
 .pairing-code span { color: #f5d188; font: 700 24px/1 Cinzel, monospace; letter-spacing: .08em; }.pairing-code button, .pairing-meta button { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 6px; background: rgba(255,255,255,.06); cursor: pointer; }
 .pairing-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; color: var(--muted); font-size: 11px; }.pairing-meta button { padding: 0 11px; color: #dbe2e5; }.pairing-meta svg { width: 15px; }
 .copied { margin-top: 12px; display: flex; gap: 7px; align-items: center; color: var(--green); font-size: 12px; }.copied svg { width: 16px; }
