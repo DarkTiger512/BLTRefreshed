@@ -382,15 +382,15 @@ namespace BannerlordTwitch.Integration
                 if (kind == "command.request")
                 {
                     requestIdForError = root.GetProperty("id").GetGuid();
-                    var request = new IntegrationCommandRequest
+                    var commandRequest = new IntegrationCommandRequest
                     {
                         RequestId = requestIdForError.Value, ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
                         CommandLine = data.GetProperty("commandLine").GetString(),
                         User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
                     };
-                    if (!string.Equals(request.ChannelId, channelId, StringComparison.Ordinal)) return;
-                    if (Math.Abs((DateTimeOffset.UtcNow - request.Timestamp).TotalSeconds) > 30 || !receivedRequests.TryAdd(request.RequestId, 0)) return;
-                    CommandRequested?.Invoke(request);
+                    if (!string.Equals(commandRequest.ChannelId, channelId, StringComparison.Ordinal)) return;
+                    if (Math.Abs((DateTimeOffset.UtcNow - commandRequest.Timestamp).TotalSeconds) > 30 || !receivedRequests.TryAdd(commandRequest.RequestId, 0)) return;
+                    CommandRequested?.Invoke(commandRequest);
                     return;
                 }
                 if (kind == "configuration.updated")
@@ -400,16 +400,16 @@ namespace BannerlordTwitch.Integration
                 }
                 if (kind != "action.request") return;
                 requestIdForError = root.GetProperty("id").GetGuid();
-                var request = new IntegrationActionRequest
+                var actionRequest = new IntegrationActionRequest
                 {
                     RequestId = requestIdForError.Value, ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
                     ActionId = data.GetProperty("actionId").GetString(), Args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(data.GetProperty("args").GetRawText()),
                     User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
                 };
-                if (!string.Equals(request.ChannelId, channelId, StringComparison.Ordinal)) return;
-                if (Math.Abs((DateTimeOffset.UtcNow - request.Timestamp).TotalSeconds) > 30) return;
-                if (!receivedRequests.TryAdd(request.RequestId, 0)) return;
-                ActionRequested?.Invoke(request);
+                if (!string.Equals(actionRequest.ChannelId, channelId, StringComparison.Ordinal)) return;
+                if (Math.Abs((DateTimeOffset.UtcNow - actionRequest.Timestamp).TotalSeconds) > 30) return;
+                if (!receivedRequests.TryAdd(actionRequest.RequestId, 0)) return;
+                ActionRequested?.Invoke(actionRequest);
             }
             catch (Exception ex)
             {
