@@ -12,17 +12,17 @@ namespace BLTAdoptAHero
             var adoptedHero = BLTAdoptAHeroCampaignBehavior.Current.GetAdoptedHero(context.UserName);
             if (adoptedHero == null)
             {
-                ActionManager.SendReply(context, AdoptAHero.NoHeroMessage);
+                ActionManager.SendFailure(context, AdoptAHero.NoHeroMessage);
                 return;
             }
 
             ExecuteInternal(adoptedHero, context, config, s =>
                 {
-                    if (!string.IsNullOrEmpty(s)) ActionManager.SendReply(context, s);
+                    if (!string.IsNullOrEmpty(s)) ActionManager.SendSuccess(context, s);
                 },
                 s =>
                 {
-                    if (!string.IsNullOrEmpty(s)) ActionManager.SendReply(context, s);
+                    if (!string.IsNullOrEmpty(s)) ActionManager.SendFailure(context, s);
                 });
         }
 

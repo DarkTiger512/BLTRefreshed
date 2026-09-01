@@ -213,7 +213,13 @@ namespace BLTAdoptAHero
 
                     var campaignStarter = (CampaignGameStarter)gameStarterObject;
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
-                    IntegrationSelectorProvider.SetCultures(CampaignHelpers.MainCultures.Select(culture => culture.Name.ToString()));
+                    IntegrationSelectorProvider.Set(
+                        CampaignHelpers.MainCultures.Select(culture => culture.Name.ToString()),
+                        Hero.AllAliveHeroes.Select(hero => hero.Name.ToString()),
+                        Clan.All.Where(clan => !clan.IsEliminated).Select(clan => clan.Name.ToString()),
+                        Kingdom.All.Where(kingdom => !kingdom.IsEliminated).Select(kingdom => kingdom.Name.ToString()),
+                        Settlement.All.Select(settlement => settlement.Name.ToString()),
+                        CampaignHelpers.AllSkillObjects.Select(skill => skill.Name.ToString()));
                     IntegrationInventoryProvider.Get = userName =>
                     {
                         var behavior = BLTAdoptAHeroCampaignBehavior.Current;
@@ -323,7 +329,7 @@ namespace BLTAdoptAHero
             base.OnGameEnd(game);
             if (game.GameType is Campaign campaign)
             {
-                IntegrationSelectorProvider.SetCultures(Array.Empty<string>());
+                IntegrationSelectorProvider.Clear();
                 JoinTournament.OnGameEnd(campaign);
             }
         }

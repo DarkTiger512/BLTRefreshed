@@ -1543,7 +1543,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationActionCatalog.cs",
-      "line": 13
+      "line": 14
     }
   },
   {
@@ -1820,6 +1820,58 @@
     }
   },
   {
+    "path": "IntegrationContracts.ConfirmationPolicy",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
+      "line": 57
+    }
+  },
+  {
+    "path": "IntegrationContracts.LegacyToken",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
+      "line": 58
+    }
+  },
+  {
+    "path": "IntegrationContracts.VisibleWhenInput",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
+      "line": 59
+    }
+  },
+  {
+    "path": "IntegrationContracts.VisibleWhenValues",
+    "type": "string[]",
+    "default": "Array.Empty<string>()",
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
+      "line": 60
+    }
+  },
+  {
     "path": "IntegrationContracts.Value",
     "type": "string",
     "default": null,
@@ -1829,7 +1881,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
-      "line": 61
+      "line": 65
     }
   },
   {
@@ -1842,7 +1894,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
-      "line": 66
+      "line": 70
     }
   },
   {
@@ -1855,7 +1907,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
-      "line": 67
+      "line": 71
     }
   },
   {
@@ -1868,7 +1920,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationContracts.cs",
-      "line": 68
+      "line": 72
     }
   },
   {
@@ -2301,8 +2353,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Kills",
-    "type": "int",
+    "path": "ManagedIntegrationClient.ActivePowerName",
+    "type": "string",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2314,8 +2366,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Retinue",
-    "type": "int",
+    "path": "ManagedIntegrationClient.ActivePowerActive",
+    "type": "bool",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2327,7 +2379,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.DeadRetinue",
+    "path": "ManagedIntegrationClient.Kills",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2340,7 +2392,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.EliteRetinue",
+    "path": "ManagedIntegrationClient.Retinue",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2353,7 +2405,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.DeadEliteRetinue",
+    "path": "ManagedIntegrationClient.DeadRetinue",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2366,7 +2418,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.RetinueKills",
+    "path": "ManagedIntegrationClient.EliteRetinue",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2379,7 +2431,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.GoldEarned",
+    "path": "ManagedIntegrationClient.DeadEliteRetinue",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2392,7 +2444,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.XPEarned",
+    "path": "ManagedIntegrationClient.RetinueKills",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2405,7 +2457,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.AmmoCurrent",
+    "path": "ManagedIntegrationClient.GoldEarned",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2418,7 +2470,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.AmmoMaximum",
+    "path": "ManagedIntegrationClient.XPEarned",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2431,6 +2483,32 @@
     }
   },
   {
+    "path": "ManagedIntegrationClient.AmmoCurrent",
+    "type": "int",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 104
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.AmmoMaximum",
+    "type": "int",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 105
+    }
+  },
+  {
     "path": "ManagedIntegrationClient.Active",
     "type": "bool",
     "default": null,
@@ -2440,7 +2518,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 108
+      "line": 110
     }
   },
   {
@@ -2453,7 +2531,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 109
+      "line": 111
     }
   },
   {
@@ -2466,7 +2544,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 110
+      "line": 112
     }
   },
   {
@@ -2479,7 +2557,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 111
+      "line": 113
     }
   },
   {
@@ -2492,7 +2570,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 112
+      "line": 114
     }
   },
   {

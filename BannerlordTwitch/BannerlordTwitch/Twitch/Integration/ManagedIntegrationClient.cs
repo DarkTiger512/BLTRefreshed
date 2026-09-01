@@ -70,13 +70,30 @@ namespace BannerlordTwitch.Integration
     public sealed class IntegrationSelectorSnapshot
     {
         public string[] Cultures { get; set; } = Array.Empty<string>();
+        public string[] Heroes { get; set; } = Array.Empty<string>();
+        public string[] Clans { get; set; } = Array.Empty<string>();
+        public string[] Kingdoms { get; set; } = Array.Empty<string>();
+        public string[] Settlements { get; set; } = Array.Empty<string>();
+        public string[] Skills { get; set; } = Array.Empty<string>();
     }
 
     public static class IntegrationSelectorProvider
     {
-        private static string[] cultures = Array.Empty<string>();
-        public static void SetCultures(IEnumerable<string> values) => cultures = values == null ? Array.Empty<string>() : new List<string>(values).ToArray();
-        public static IntegrationSelectorSnapshot Current() => new IntegrationSelectorSnapshot { Cultures = cultures };
+        private static IntegrationSelectorSnapshot current = new IntegrationSelectorSnapshot();
+        private static string[] Values(IEnumerable<string> values) => values == null ? Array.Empty<string>() : new List<string>(values).ToArray();
+        public static void Set(
+            IEnumerable<string> cultures,
+            IEnumerable<string> heroes,
+            IEnumerable<string> clans,
+            IEnumerable<string> kingdoms,
+            IEnumerable<string> settlements,
+            IEnumerable<string> skills) => current = new IntegrationSelectorSnapshot
+        {
+            Cultures = Values(cultures), Heroes = Values(heroes), Clans = Values(clans),
+            Kingdoms = Values(kingdoms), Settlements = Values(settlements), Skills = Values(skills)
+        };
+        public static void Clear() => current = new IntegrationSelectorSnapshot();
+        public static IntegrationSelectorSnapshot Current() => current;
     }
 
     public sealed class IntegrationBattleCombatant
@@ -195,7 +212,7 @@ namespace BannerlordTwitch.Integration
                     await SendAsync("hello", new { modVersion = typeof(ManagedIntegrationClient).Assembly.GetName().Version?.ToString(), protocolVersion = IntegrationProtocol.Version }, lifetime.Token);
                     await SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = Guid.NewGuid(), kind = "manifest", channelId, timestamp = DateTimeOffset.UtcNow, data = JsonSerializer.Deserialize<JsonElement>(catalog.ManifestJson) }), lifetime.Token);
                     var battle = IntegrationBattleProvider.Current();
-                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = new { cultures = IntegrationSelectorProvider.Current().Cultures }, mission = battle }, lifetime.Token);
+                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = IntegrationSelectorProvider.Current(), mission = battle }, lifetime.Token);
                     await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, lifetime.Token));
                 }
                 catch (OperationCanceledException) { return; }

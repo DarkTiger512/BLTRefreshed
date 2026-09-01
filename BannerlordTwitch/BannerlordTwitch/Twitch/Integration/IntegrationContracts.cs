@@ -52,8 +52,13 @@ namespace BannerlordTwitch.Integration
         public string Type { get; set; }
         public bool Required { get; set; }
         public List<IntegrationActionOption> Options { get; set; } = new();
+        public string OptionsSource { get; set; }
         public double? Minimum { get; set; }
         public double? Maximum { get; set; }
+        public string ConfirmationPolicy { get; set; }
+        public string LegacyToken { get; set; }
+        public string VisibleWhenInput { get; set; }
+        public string[] VisibleWhenValues { get; set; } = Array.Empty<string>();
     }
 
     public sealed class IntegrationActionOption

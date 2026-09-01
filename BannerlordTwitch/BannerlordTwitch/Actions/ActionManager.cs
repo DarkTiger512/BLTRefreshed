@@ -289,6 +289,22 @@ namespace BannerlordTwitch.Rewards
             BLTModule.TwitchService?.SendReply(context, messages);
         }
 
+        public static void SendSuccess(ReplyContext context, params string[] messages)
+        {
+            if (context.IntegrationRequestId.HasValue)
+                BLTModule.TwitchService?.SendIntegrationResult(context, messages);
+            else
+                SendReply(context, messages);
+        }
+
+        public static void SendFailure(ReplyContext context, params string[] messages)
+        {
+            if (context.IntegrationRequestId.HasValue)
+                BLTModule.TwitchService?.SendIntegrationError(context, messages.FirstOrDefault() ?? "The command failed.");
+            else
+                SendReply(context, messages);
+        }
+
         public static void SendNonReply(ReplyContext context, params string[] messages)
         {
             BLTModule.TwitchService?.SendNonReply(context, messages);

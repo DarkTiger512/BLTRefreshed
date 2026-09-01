@@ -8,7 +8,13 @@ export interface ActionInput {
   label?: string;
   description?: string;
   options?: Array<{ value: string; label: string }>;
-  optionsSource?: "cultures";
+  optionsSource?: keyof GameSelectors;
+  minimum?: number;
+  maximum?: number;
+  confirmationPolicy?: "legacy-token" | "ui-only";
+  legacyToken?: string;
+  visibleWhenInput?: string;
+  visibleWhenValues?: string[];
 }
 
 export interface ManifestAction {
@@ -36,12 +42,21 @@ export interface ViewerIdentity {
   linked: boolean;
 }
 
+export interface GameSelectors {
+  cultures: string[];
+  heroes: string[];
+  clans: string[];
+  kingdoms: string[];
+  settlements: string[];
+  skills: string[];
+}
+
 export interface GameState {
   connected: boolean;
   gameStarted: boolean;
   unavailable: Record<string, string>;
   cooldowns: Record<string, number>;
-  selectors: { cultures: string[] };
+  selectors: GameSelectors;
   mission: MissionState;
 }
 

@@ -1,0 +1,1687 @@
+[
+  {
+    "actionId": "command.objective",
+    "legacyName": "objective",
+    "handler": "StreamObjectiveAdminCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/StreamObjectiveCommands.cs",
+    "legacyPattern": "<operation> <objective>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Objective operation",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "list",
+          "start",
+          "status",
+          "stop"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "objective",
+        "label": "Objective type and goal options",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "start"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.objectives",
+    "legacyName": "objectives",
+    "handler": "StreamObjectivesStatusCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/StreamObjectiveCommands.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.ammo",
+    "legacyName": "ammo",
+    "handler": "CheckAmmo",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/CheckAmmo.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.ach",
+    "legacyName": "ach",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.adopt",
+    "legacyName": "adopt",
+    "handler": "AdoptAHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.adoptbyclan",
+    "legacyName": "adoptByClan",
+    "handler": "AdoptAHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "legacyPattern": "<clan>",
+    "parameters": [
+      {
+        "id": "clan",
+        "label": "Clan",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.adoptbyculture",
+    "legacyName": "adoptByCulture",
+    "handler": "AdoptAHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "legacyPattern": "<culture>",
+    "parameters": [
+      {
+        "id": "culture",
+        "label": "Culture",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": "cultures",
+        "acceptedValues": [],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.adoptbyfaction",
+    "legacyName": "adoptByFaction",
+    "handler": "AdoptAHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "legacyPattern": "<faction>",
+    "parameters": [
+      {
+        "id": "faction",
+        "label": "Faction",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.adoptbyname",
+    "legacyName": "adoptByName",
+    "handler": "AdoptAHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "legacyPattern": "<hero>",
+    "parameters": [
+      {
+        "id": "hero",
+        "label": "Hero name",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.adoptrandom",
+    "legacyName": "adoptRandom",
+    "handler": "AdoptAHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AdoptAHero.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.attack",
+    "legacyName": "attack",
+    "handler": "SummonHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
+    "legacyPattern": "<shout>",
+    "parameters": [
+      {
+        "id": "shout",
+        "label": "Optional battle shout",
+        "type": "text",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.auction",
+    "legacyName": "auction",
+    "handler": "AuctionItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AuctionItem.cs",
+    "legacyPattern": "<item> <reserve>",
+    "parameters": [
+      {
+        "id": "item",
+        "label": "Custom item number",
+        "type": "integer",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "reserve",
+        "label": "Reserve price",
+        "type": "integer",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.bid",
+    "legacyName": "bid",
+    "handler": "BidOnItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AuctionItem.cs",
+    "legacyPattern": "<amount>",
+    "parameters": [
+      {
+        "id": "amount",
+        "label": "Bid amount",
+        "type": "integer",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.bltbet",
+    "legacyName": "bltbet",
+    "handler": "TournamentBet",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/TournamentBet.cs",
+    "legacyPattern": "<entrant> <amount>",
+    "parameters": [
+      {
+        "id": "entrant",
+        "label": "Team number",
+        "type": "integer",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "amount",
+        "label": "Gold to bet",
+        "type": "integer",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.buymount",
+    "legacyName": "buymount",
+    "handler": "SmithItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/SmithItem.cs",
+    "legacyPattern": "<culture>",
+    "parameters": [
+      {
+        "id": "culture",
+        "label": "Item culture",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": "cultures",
+        "acceptedValues": [],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.clan",
+    "legacyName": "clan",
+    "handler": "ClanManagement",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/ClanManagement.cs",
+    "legacyPattern": "<operation> <target>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Clan operation",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": [
+          "join",
+          "create",
+          "lead",
+          "rename",
+          "stats",
+          "party",
+          "fiefs",
+          "leave",
+          "buy title",
+          "banner",
+          "ship",
+          "home"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Clan name, banner code, ship, or home settlement",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "join",
+          "create",
+          "rename",
+          "banner",
+          "ship",
+          "home"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.class",
+    "legacyName": "class",
+    "handler": "SetHeroClass",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/SetHeroClass.cs",
+    "legacyPattern": "<class>",
+    "parameters": [
+      {
+        "id": "class",
+        "label": "Hero class",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.customitems",
+    "legacyName": "customitems",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "<filter>",
+    "parameters": [
+      {
+        "id": "filter",
+        "label": "Item filter",
+        "type": "text",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.discarditem",
+    "legacyName": "discarditem",
+    "handler": "DiscardItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/DiscardItem.cs",
+    "legacyPattern": "<item>",
+    "parameters": [
+      {
+        "id": "item",
+        "label": "Custom item number",
+        "type": "integer",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.equip",
+    "legacyName": "equip",
+    "handler": "EquipHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/EquipHero.cs",
+    "legacyPattern": "<culture>",
+    "parameters": [
+      {
+        "id": "culture",
+        "label": "Equipment culture",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": "cultures",
+        "acceptedValues": [],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.giveitem",
+    "legacyName": "giveitem",
+    "handler": "GiveItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/GiveItem.cs",
+    "legacyPattern": "<item> <target>",
+    "parameters": [
+      {
+        "id": "item",
+        "label": "Custom item number",
+        "type": "integer",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Recipient viewer",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.gold",
+    "legacyName": "gold",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.heal",
+    "legacyName": "heal",
+    "handler": "CharacterEffect",
+    "parserSource": "BannerlordTwitch/BLTBuffet/Actions/CharacterEffect.BLTEffectsBehaviour.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.hero",
+    "legacyName": "hero",
+    "handler": "HeroFeatures",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroFeatures.cs",
+    "legacyPattern": "<operation> <value>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Hero action",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "gender",
+          "looks",
+          "marry",
+          "race",
+          "culture"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "value",
+        "label": "Gender, appearance, spouse, race, or culture",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "gender",
+          "looks",
+          "marry",
+          "race",
+          "culture"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.inv",
+    "legacyName": "inv",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.kingdom",
+    "legacyName": "kingdom",
+    "handler": "KingdomManagement",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/KingdomManagement.cs",
+    "legacyPattern": "<operation> <target>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Kingdom operation",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": [
+          "join",
+          "merc",
+          "rebel",
+          "leave",
+          "create",
+          "release",
+          "expel",
+          "stats",
+          "armies",
+          "tax",
+          "sponsor",
+          "policy"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Kingdom, hero, clan, rate, amount, or policy",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "join",
+          "merc",
+          "create",
+          "release",
+          "expel",
+          "armies",
+          "tax",
+          "sponsor",
+          "policy"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.nameitem",
+    "legacyName": "nameitem",
+    "handler": "NameItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/NameItem.cs",
+    "legacyPattern": "<item> <name>",
+    "parameters": [
+      {
+        "id": "item",
+        "label": "Custom item number",
+        "type": "integer",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "name",
+        "label": "New item name",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.power",
+    "legacyName": "power",
+    "handler": "UsePower",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/UsePower.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.powers",
+    "legacyName": "powers",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.reequip",
+    "legacyName": "reequip",
+    "handler": "EquipHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/EquipHero.cs",
+    "legacyPattern": "<culture>",
+    "parameters": [
+      {
+        "id": "culture",
+        "label": "Equipment culture",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": "cultures",
+        "acceptedValues": [],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.retinue",
+    "legacyName": "retinue",
+    "handler": "Retinue",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/Retinue.cs",
+    "legacyPattern": "<operation> <slot> <count>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Retinue action",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "upgrade-one",
+          "upgrade-count",
+          "upgrade-all",
+          "clear-slot",
+          "clear-all"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "slot",
+        "label": "Slot to dismiss (only for numbered dismissal)",
+        "type": "integer",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "count",
+        "label": "Troops to recruit or upgrade",
+        "type": "integer",
+        "position": 2,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.retinuelist",
+    "legacyName": "retinuelist",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.retire",
+    "legacyName": "retire",
+    "handler": "RetireMyHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/RetireMyHero.cs",
+    "legacyPattern": "<retire-yes>",
+    "parameters": [
+      {
+        "id": "confirm",
+        "label": "I understand this changes the campaign",
+        "type": "confirmation",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": "legacy-token",
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.smitharmor",
+    "legacyName": "smitharmor",
+    "handler": "SmithItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/SmithItem.cs",
+    "legacyPattern": "<culture>",
+    "parameters": [
+      {
+        "id": "culture",
+        "label": "Armor culture",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": "cultures",
+        "acceptedValues": [],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.smithweapon",
+    "legacyName": "smithweapon",
+    "handler": "SmithItem",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/SmithItem.cs",
+    "legacyPattern": "<culture>",
+    "parameters": [
+      {
+        "id": "culture",
+        "label": "Weapon culture",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": "cultures",
+        "acceptedValues": [],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.stats",
+    "legacyName": "stats",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.summon",
+    "legacyName": "summon",
+    "handler": "SummonHero",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
+    "legacyPattern": "<shout>",
+    "parameters": [
+      {
+        "id": "shout",
+        "label": "Optional battle shout",
+        "type": "text",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.tournament",
+    "legacyName": "tournament",
+    "handler": "JoinTournament",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/JoinTournament.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.itemstats",
+    "legacyName": "itemstats",
+    "handler": "ItemStats",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/ItemStats.cs",
+    "legacyPattern": "<mode> <item>",
+    "parameters": [
+      {
+        "id": "mode",
+        "label": "Item source",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "armor",
+          "inv",
+          "custom",
+          "store"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "item",
+        "label": "Item name or number",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.buyattribute",
+    "legacyName": "buyattribute",
+    "handler": "AttributePoints",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/AttributePoints.cs",
+    "legacyPattern": "<attribute>",
+    "parameters": [
+      {
+        "id": "attribute",
+        "label": "Attribute",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.info",
+    "legacyName": "info",
+    "handler": "CampaignInfo",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/CampaignInfo.cs",
+    "legacyPattern": "<mode> <target>",
+    "parameters": [
+      {
+        "id": "mode",
+        "label": "Campaign information",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "kingdomlist",
+          "culturelist",
+          "warlist",
+          "kingdom",
+          "war",
+          "wars",
+          "fief",
+          "fiefs",
+          "clan",
+          "clans",
+          "vassals",
+          "time",
+          "date",
+          "player"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Kingdom, clan, or settlement",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.rejuvenate",
+    "legacyName": "rejuvenate",
+    "handler": "Rejuvenate",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/Rejuvenate.cs",
+    "legacyPattern": "",
+    "parameters": [
+      {
+        "id": "confirm",
+        "label": "I understand this changes the campaign",
+        "type": "confirmation",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": "ui-only",
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.leaderboard",
+    "legacyName": "leaderboard",
+    "handler": "Leaderboard",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/Leaderboard.cs",
+    "legacyPattern": "<scope> <stat>",
+    "parameters": [
+      {
+        "id": "scope",
+        "label": "Leaderboard",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "hero",
+          "clan"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "stat",
+        "label": "Statistic",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.heir",
+    "legacyName": "heir",
+    "handler": "HeirCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeirCommand.cs",
+    "legacyPattern": "<target>",
+    "parameters": [
+      {
+        "id": "target",
+        "label": "Heir name",
+        "type": "text",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.diplomacy",
+    "legacyName": "diplomacy",
+    "handler": "Diplomacy",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Diplomacy/Diplomacy.cs",
+    "legacyPattern": "<operation> <kingdom>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Diplomacy action",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "war",
+          "peace",
+          "alliance",
+          "trade",
+          "army"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "kingdom",
+        "label": "Kingdom or army order",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.battle",
+    "legacyName": "battle",
+    "handler": "BattleInfo",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/BattleInfo.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.reinforce",
+    "legacyName": "reinforce",
+    "handler": "ReinforceAction",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/ReinforceAction.cs",
+    "legacyPattern": "<operation> <settlement> <amount>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Reinforcement type",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "info",
+          "militia",
+          "elitemilitia"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "settlement",
+        "label": "Settlement",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "amount",
+        "label": "Troops or all",
+        "type": "text",
+        "position": 2,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "militia",
+          "elitemilitia"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.transfer",
+    "legacyName": "transfer",
+    "handler": "TransferAction",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/TransferAction.cs",
+    "legacyPattern": "<mode> <settlement> <recipientType> <target>",
+    "parameters": [
+      {
+        "id": "mode",
+        "label": "Transfer mode",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "normal",
+          "force"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "settlement",
+        "label": "Settlement",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "recipientType",
+        "label": "Recipient type",
+        "type": "choice",
+        "position": 2,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "clan",
+          "hero"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Recipient viewer",
+        "type": "text",
+        "position": 3,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.buyfocus",
+    "legacyName": "buyfocus",
+    "handler": "FocusPoints",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/FocusPoints.cs",
+    "legacyPattern": "<skill>",
+    "parameters": [
+      {
+        "id": "skill",
+        "label": "Skill",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.party",
+    "legacyName": "party",
+    "handler": "PartyManagement",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/PartyManagement.cs",
+    "legacyPattern": "<operation> <target>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Party order",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "govern",
+          "create",
+          "stats",
+          "disband",
+          "train",
+          "army",
+          "release",
+          "siege",
+          "defend",
+          "guard",
+          "patrol",
+          "raid",
+          "garrison"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Target, amount, or subcommand",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.income",
+    "legacyName": "income",
+    "handler": "GoldIncomeAction",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/GoldIncomeFeature.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.upgrade",
+    "legacyName": "upgrade",
+    "handler": "UpgradeAction",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/UpgradeAction.cs",
+    "legacyPattern": "<operation> <scope> <target> <upgrade>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Upgrade operation",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "apply",
+          "auto",
+          "bulk",
+          "info",
+          "list",
+          "remove"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "scope",
+        "label": "Upgrade scope",
+        "type": "choice",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "fief",
+          "clan",
+          "kingdom"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "apply",
+          "auto",
+          "bulk",
+          "info",
+          "list",
+          "remove"
+        ]
+      },
+      {
+        "id": "target",
+        "label": "Settlement, clan, or kingdom",
+        "type": "text",
+        "position": 2,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "upgrade",
+        "label": "Upgrade ID",
+        "type": "text",
+        "position": 3,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.family",
+    "legacyName": "family",
+    "handler": "FamilyManagement",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/FamilyManagement.cs",
+    "legacyPattern": "<operation> <target>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Family view",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": [
+          "spouse",
+          "children",
+          "parents",
+          "member"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Family member or spouse action",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.logs",
+    "legacyName": "logs",
+    "handler": "CampaignLogs",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/CampaignLogs.cs",
+    "legacyPattern": "<scope> <target>",
+    "parameters": [
+      {
+        "id": "scope",
+        "label": "Log scope",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "hero",
+          "clan",
+          "kingdom",
+          "fief"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Clan, kingdom, or fief",
+        "type": "text",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.equipcustom",
+    "legacyName": "equipcustom",
+    "handler": "EquipCustomItemAction",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/EquipCustomItem.cs",
+    "legacyPattern": "<item>",
+    "parameters": [
+      {
+        "id": "item",
+        "label": "Custom item name or number",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.formation",
+    "legacyName": "formation",
+    "handler": "FormationCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/FormationCommand.cs",
+    "legacyPattern": "<formation>",
+    "parameters": [
+      {
+        "id": "formation",
+        "label": "Formation action",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "detach",
+          "attach",
+          "charge",
+          "hold",
+          "follow",
+          "gate",
+          "walls",
+          "front",
+          "back"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.fief",
+    "legacyName": "fief",
+    "handler": "ManageFief",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/ManageFief.cs",
+    "legacyPattern": "<operation> <target> <value>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Fief action",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "info",
+          "projects",
+          "gold",
+          "explanation"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "target",
+        "label": "Settlement or building",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "value",
+        "label": "Buildings or gold amount",
+        "type": "text",
+        "position": 2,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "projects",
+          "gold"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.vassal",
+    "legacyName": "vassal",
+    "handler": "VassalManagement",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/VassalCommand.cs",
+    "legacyPattern": "<target>",
+    "parameters": [
+      {
+        "id": "target",
+        "label": "Vassal action and target",
+        "type": "text",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.capital",
+    "legacyName": "capital",
+    "handler": "CapitalAction",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Capital/CapitalAction.cs",
+    "legacyPattern": "<operation> <settlement>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Capital action",
+        "type": "choice",
+        "position": 0,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": [
+          "info",
+          "list",
+          "set",
+          "cancel"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "settlement",
+        "label": "Capital settlement",
+        "type": "text",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "set"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.eliteretinue",
+    "legacyName": "eliteretinue",
+    "handler": "Retinue2",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/Retinue2.cs",
+    "legacyPattern": "<operation> <slot> <count>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Elite retinue action",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "upgrade-one",
+          "upgrade-count",
+          "upgrade-all",
+          "clear-slot",
+          "clear-all"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "slot",
+        "label": "Slot to dismiss (only for numbered dismissal)",
+        "type": "integer",
+        "position": 1,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "count",
+        "label": "Troops to recruit or upgrade",
+        "type": "integer",
+        "position": 2,
+        "required": false,
+        "optionsSource": null,
+        "acceptedValues": null,
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
+    "actionId": "command.skills",
+    "legacyName": "skills",
+    "handler": "HeroInfoCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/HeroInfoCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  }
+]

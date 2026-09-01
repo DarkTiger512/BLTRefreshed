@@ -613,6 +613,18 @@ namespace BannerlordTwitch
             });
         }
 
+        public void SendIntegrationResult(ReplyContext context, params string[] messages)
+        {
+            if (context.IntegrationRequestId.HasValue && !IsSimTesting)
+                _ = integrationClient?.SendActionResultAsync(context.IntegrationRequestId.Value, messages);
+        }
+
+        public void SendIntegrationError(ReplyContext context, string message)
+        {
+            if (context.IntegrationRequestId.HasValue && !IsSimTesting)
+                _ = integrationClient?.SendActionErrorAsync(context.IntegrationRequestId.Value, message);
+        }
+
         public bool TestCommand(string cmdName, string userName, string args)
         {
             var cmd = this.settings.GetCommand(cmdName);

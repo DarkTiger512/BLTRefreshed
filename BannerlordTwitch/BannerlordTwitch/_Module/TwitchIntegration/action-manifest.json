@@ -1,12 +1,12 @@
 {
   "protocolVersion": 1,
-  "generatedAt": "2026-08-31T21:12:06.402Z",
+  "generatedAt": "2026-09-01T10:29:51.355Z",
   "actions": [
     {
       "id": "command.objective",
       "legacyName": "objective",
       "handler": "StreamObjectiveAdminCommand",
-      "category": "Community",
+      "category": "Stream Control",
       "description": "Manage community stream objectives as a moderator.",
       "enabledByDefault": true,
       "hiddenFromHelp": true,
@@ -54,9 +54,13 @@
         },
         {
           "id": "objective",
-          "label": "Objective",
+          "label": "Objective type and goal options",
           "type": "text",
-          "required": false
+          "required": false,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "start"
+          ]
         }
       ],
       "source": {
@@ -450,8 +454,14 @@
       "inputs": [
         {
           "id": "item",
-          "label": "Item",
-          "type": "text",
+          "label": "Custom item number",
+          "type": "integer",
+          "required": true
+        },
+        {
+          "id": "reserve",
+          "label": "Reserve price",
+          "type": "integer",
           "required": true
         }
       ],
@@ -528,13 +538,13 @@
       "inputs": [
         {
           "id": "entrant",
-          "label": "Entrant number",
+          "label": "Team number",
           "type": "integer",
           "required": true
         },
         {
           "id": "amount",
-          "label": "Bet amount",
+          "label": "Gold to bet",
           "type": "integer",
           "required": true
         }
@@ -572,10 +582,12 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "mount",
-          "label": "Mount",
-          "type": "text",
-          "required": true
+          "id": "culture",
+          "label": "Item culture",
+          "type": "choice",
+          "required": false,
+          "options": [],
+          "optionsSource": "cultures"
         }
       ],
       "source": {
@@ -614,39 +626,72 @@
           "id": "operation",
           "label": "Clan operation",
           "type": "choice",
-          "required": true,
+          "required": false,
           "options": [
+            {
+              "value": "join",
+              "label": "Join"
+            },
             {
               "value": "create",
               "label": "Create"
             },
             {
-              "value": "join",
-              "label": "Join"
+              "value": "lead",
+              "label": "Lead"
+            },
+            {
+              "value": "rename",
+              "label": "Rename"
+            },
+            {
+              "value": "stats",
+              "label": "Stats"
+            },
+            {
+              "value": "party",
+              "label": "Party"
+            },
+            {
+              "value": "fiefs",
+              "label": "Fiefs"
             },
             {
               "value": "leave",
               "label": "Leave"
             },
             {
-              "value": "invite",
-              "label": "Invite"
+              "value": "buy title",
+              "label": "Buy title"
             },
             {
-              "value": "kick",
-              "label": "Kick"
+              "value": "banner",
+              "label": "Banner"
             },
             {
-              "value": "info",
-              "label": "Info"
+              "value": "ship",
+              "label": "Ship"
+            },
+            {
+              "value": "home",
+              "label": "Home"
             }
           ]
         },
         {
           "id": "target",
-          "label": "Target",
+          "label": "Clan name, banner code, ship, or home settlement",
           "type": "text",
-          "required": false
+          "required": false,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "join",
+            "create",
+            "rename",
+            "banner",
+            "ship",
+            "home"
+          ]
         }
       ],
       "source": {
@@ -761,8 +806,8 @@
       "inputs": [
         {
           "id": "item",
-          "label": "Item",
-          "type": "text",
+          "label": "Custom item number",
+          "type": "integer",
           "required": true
         }
       ],
@@ -799,38 +844,12 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "slot",
-          "label": "Equipment slot",
+          "id": "culture",
+          "label": "Equipment culture",
           "type": "choice",
-          "required": true,
-          "options": [
-            {
-              "value": "weapon",
-              "label": "Weapon"
-            },
-            {
-              "value": "shield",
-              "label": "Shield"
-            },
-            {
-              "value": "bow",
-              "label": "Bow"
-            },
-            {
-              "value": "armor",
-              "label": "Armor"
-            },
-            {
-              "value": "mount",
-              "label": "Mount"
-            }
-          ]
-        },
-        {
-          "id": "item",
-          "label": "Item",
-          "type": "text",
-          "required": false
+          "required": false,
+          "options": [],
+          "optionsSource": "cultures"
         }
       ],
       "source": {
@@ -866,14 +885,14 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "target",
-          "label": "Viewer or hero",
-          "type": "text",
+          "id": "item",
+          "label": "Custom item number",
+          "type": "integer",
           "required": true
         },
         {
-          "id": "item",
-          "label": "Item",
+          "id": "target",
+          "label": "Recipient viewer",
           "type": "text",
           "required": true
         }
@@ -973,7 +992,50 @@
         "strategy": "legacy"
       },
       "mutatesCampaign": true,
-      "inputs": [],
+      "inputs": [
+        {
+          "id": "operation",
+          "label": "Hero action",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "gender",
+              "label": "Gender"
+            },
+            {
+              "value": "looks",
+              "label": "Looks"
+            },
+            {
+              "value": "marry",
+              "label": "Marry"
+            },
+            {
+              "value": "race",
+              "label": "Race"
+            },
+            {
+              "value": "culture",
+              "label": "Culture"
+            }
+          ]
+        },
+        {
+          "id": "value",
+          "label": "Gender, appearance, spouse, race, or culture",
+          "type": "text",
+          "required": true,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "gender",
+            "looks",
+            "marry",
+            "race",
+            "culture"
+          ]
+        }
+      ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
         "line": 555
@@ -1042,39 +1104,75 @@
           "id": "operation",
           "label": "Kingdom operation",
           "type": "choice",
-          "required": true,
+          "required": false,
           "options": [
-            {
-              "value": "info",
-              "label": "Info"
-            },
             {
               "value": "join",
               "label": "Join"
+            },
+            {
+              "value": "merc",
+              "label": "Merc"
+            },
+            {
+              "value": "rebel",
+              "label": "Rebel"
             },
             {
               "value": "leave",
               "label": "Leave"
             },
             {
+              "value": "create",
+              "label": "Create"
+            },
+            {
+              "value": "release",
+              "label": "Release"
+            },
+            {
+              "value": "expel",
+              "label": "Expel"
+            },
+            {
+              "value": "stats",
+              "label": "Stats"
+            },
+            {
+              "value": "armies",
+              "label": "Armies"
+            },
+            {
+              "value": "tax",
+              "label": "Tax"
+            },
+            {
+              "value": "sponsor",
+              "label": "Sponsor"
+            },
+            {
               "value": "policy",
               "label": "Policy"
-            },
-            {
-              "value": "war",
-              "label": "War"
-            },
-            {
-              "value": "peace",
-              "label": "Peace"
             }
           ]
         },
         {
           "id": "target",
-          "label": "Target",
+          "label": "Kingdom, hero, clan, rate, amount, or policy",
           "type": "text",
-          "required": false
+          "required": false,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "join",
+            "merc",
+            "create",
+            "release",
+            "expel",
+            "armies",
+            "tax",
+            "sponsor",
+            "policy"
+          ]
         }
       ],
       "source": {
@@ -1111,13 +1209,13 @@
       "inputs": [
         {
           "id": "item",
-          "label": "Item",
-          "type": "text",
+          "label": "Custom item number",
+          "type": "integer",
           "required": true
         },
         {
           "id": "name",
-          "label": "New name",
+          "label": "New item name",
           "type": "text",
           "required": true
         }
@@ -1217,7 +1315,16 @@
         "strategy": "legacy"
       },
       "mutatesCampaign": true,
-      "inputs": [],
+      "inputs": [
+        {
+          "id": "culture",
+          "label": "Equipment culture",
+          "type": "choice",
+          "required": false,
+          "options": [],
+          "optionsSource": "cultures"
+        }
+      ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
         "line": 712
@@ -1359,7 +1466,9 @@
           "id": "confirm",
           "label": "I understand this changes the campaign",
           "type": "confirmation",
-          "required": true
+          "required": true,
+          "confirmationPolicy": "legacy-token",
+          "legacyToken": "retire-yes"
         }
       ],
       "source": {
@@ -1395,16 +1504,12 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "name",
-          "label": "Armor name",
-          "type": "text",
-          "required": true
-        },
-        {
           "id": "culture",
-          "label": "Culture",
-          "type": "text",
-          "required": false
+          "label": "Armor culture",
+          "type": "choice",
+          "required": false,
+          "options": [],
+          "optionsSource": "cultures"
         }
       ],
       "source": {
@@ -1440,16 +1545,12 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "name",
-          "label": "Weapon name",
-          "type": "text",
-          "required": true
-        },
-        {
           "id": "culture",
-          "label": "Culture",
-          "type": "text",
-          "required": false
+          "label": "Weapon culture",
+          "type": "choice",
+          "required": false,
+          "options": [],
+          "optionsSource": "cultures"
         }
       ],
       "source": {
@@ -1588,10 +1689,34 @@
       "mutatesCampaign": true,
       "inputs": [
         {
+          "id": "mode",
+          "label": "Item source",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "armor",
+              "label": "Armor"
+            },
+            {
+              "value": "inv",
+              "label": "Inv"
+            },
+            {
+              "value": "custom",
+              "label": "Custom"
+            },
+            {
+              "value": "store",
+              "label": "Store"
+            }
+          ]
+        },
+        {
           "id": "item",
-          "label": "Item",
+          "label": "Item name or number",
           "type": "text",
-          "required": true
+          "required": false
         }
       ],
       "source": {
@@ -1664,7 +1789,78 @@
         "strategy": "legacy"
       },
       "mutatesCampaign": false,
-      "inputs": [],
+      "inputs": [
+        {
+          "id": "mode",
+          "label": "Campaign information",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "kingdomlist",
+              "label": "Kingdomlist"
+            },
+            {
+              "value": "culturelist",
+              "label": "Culturelist"
+            },
+            {
+              "value": "warlist",
+              "label": "Warlist"
+            },
+            {
+              "value": "kingdom",
+              "label": "Kingdom"
+            },
+            {
+              "value": "war",
+              "label": "War"
+            },
+            {
+              "value": "wars",
+              "label": "Wars"
+            },
+            {
+              "value": "fief",
+              "label": "Fief"
+            },
+            {
+              "value": "fiefs",
+              "label": "Fiefs"
+            },
+            {
+              "value": "clan",
+              "label": "Clan"
+            },
+            {
+              "value": "clans",
+              "label": "Clans"
+            },
+            {
+              "value": "vassals",
+              "label": "Vassals"
+            },
+            {
+              "value": "time",
+              "label": "Time"
+            },
+            {
+              "value": "date",
+              "label": "Date"
+            },
+            {
+              "value": "player",
+              "label": "Player"
+            }
+          ]
+        },
+        {
+          "id": "target",
+          "label": "Kingdom, clan, or settlement",
+          "type": "text",
+          "required": false
+        }
+      ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
         "line": 934
@@ -1701,7 +1897,8 @@
           "id": "confirm",
           "label": "I understand this changes the campaign",
           "type": "confirmation",
-          "required": true
+          "required": true,
+          "confirmationPolicy": "ui-only"
         }
       ],
       "source": {
@@ -1735,7 +1932,30 @@
         "strategy": "legacy"
       },
       "mutatesCampaign": false,
-      "inputs": [],
+      "inputs": [
+        {
+          "id": "scope",
+          "label": "Leaderboard",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "hero",
+              "label": "Hero"
+            },
+            {
+              "value": "clan",
+              "label": "Clan"
+            }
+          ]
+        },
+        {
+          "id": "stat",
+          "label": "Statistic",
+          "type": "text",
+          "required": false
+        }
+      ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
         "line": 961
@@ -1770,9 +1990,9 @@
       "inputs": [
         {
           "id": "target",
-          "label": "Heir",
+          "label": "Heir name",
           "type": "text",
-          "required": true
+          "required": false
         }
       ],
       "source": {
@@ -1822,22 +2042,22 @@
               "label": "Peace"
             },
             {
-              "value": "ally",
-              "label": "Ally"
+              "value": "alliance",
+              "label": "Alliance"
             },
             {
               "value": "trade",
               "label": "Trade"
             },
             {
-              "value": "policy",
-              "label": "Policy"
+              "value": "army",
+              "label": "Army"
             }
           ]
         },
         {
           "id": "kingdom",
-          "label": "Kingdom",
+          "label": "Kingdom or army order",
           "type": "text",
           "required": true
         }
@@ -1907,10 +2127,41 @@
       "mutatesCampaign": false,
       "inputs": [
         {
-          "id": "amount",
-          "label": "Troops",
-          "type": "integer",
+          "id": "operation",
+          "label": "Reinforcement type",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "info",
+              "label": "Info"
+            },
+            {
+              "value": "militia",
+              "label": "Militia"
+            },
+            {
+              "value": "elitemilitia",
+              "label": "Elitemilitia"
+            }
+          ]
+        },
+        {
+          "id": "settlement",
+          "label": "Settlement",
+          "type": "text",
           "required": true
+        },
+        {
+          "id": "amount",
+          "label": "Troops or all",
+          "type": "text",
+          "required": false,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "militia",
+            "elitemilitia"
+          ]
         }
       ],
       "source": {
@@ -1946,16 +2197,48 @@
       "mutatesCampaign": true,
       "inputs": [
         {
-          "id": "target",
-          "label": "Target",
+          "id": "mode",
+          "label": "Transfer mode",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "normal",
+              "label": "Normal"
+            },
+            {
+              "value": "force",
+              "label": "Force"
+            }
+          ]
+        },
+        {
+          "id": "settlement",
+          "label": "Settlement",
           "type": "text",
           "required": true
         },
         {
-          "id": "asset",
-          "label": "Transfer item",
+          "id": "recipientType",
+          "label": "Recipient type",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "clan",
+              "label": "Clan"
+            },
+            {
+              "value": "hero",
+              "label": "Hero"
+            }
+          ]
+        },
+        {
+          "id": "target",
+          "label": "Recipient viewer",
           "type": "text",
-          "required": true
+          "required": false
         }
       ],
       "source": {
@@ -2036,12 +2319,44 @@
           "required": true,
           "options": [
             {
-              "value": "status",
-              "label": "Status"
+              "value": "govern",
+              "label": "Govern"
             },
             {
-              "value": "follow",
-              "label": "Follow"
+              "value": "create",
+              "label": "Create"
+            },
+            {
+              "value": "stats",
+              "label": "Stats"
+            },
+            {
+              "value": "disband",
+              "label": "Disband"
+            },
+            {
+              "value": "train",
+              "label": "Train"
+            },
+            {
+              "value": "army",
+              "label": "Army"
+            },
+            {
+              "value": "release",
+              "label": "Release"
+            },
+            {
+              "value": "siege",
+              "label": "Siege"
+            },
+            {
+              "value": "defend",
+              "label": "Defend"
+            },
+            {
+              "value": "guard",
+              "label": "Guard"
             },
             {
               "value": "patrol",
@@ -2054,20 +2369,12 @@
             {
               "value": "garrison",
               "label": "Garrison"
-            },
-            {
-              "value": "army",
-              "label": "Army"
-            },
-            {
-              "value": "train",
-              "label": "Train"
             }
           ]
         },
         {
           "id": "target",
-          "label": "Target",
+          "label": "Target, amount, or subcommand",
           "type": "text",
           "required": false
         }
@@ -2137,30 +2444,77 @@
       "mutatesCampaign": true,
       "inputs": [
         {
+          "id": "operation",
+          "label": "Upgrade operation",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "apply",
+              "label": "Apply"
+            },
+            {
+              "value": "auto",
+              "label": "Auto"
+            },
+            {
+              "value": "bulk",
+              "label": "Bulk"
+            },
+            {
+              "value": "info",
+              "label": "Info"
+            },
+            {
+              "value": "list",
+              "label": "List"
+            },
+            {
+              "value": "remove",
+              "label": "Remove"
+            }
+          ]
+        },
+        {
           "id": "scope",
           "label": "Upgrade scope",
           "type": "choice",
           "required": true,
           "options": [
             {
-              "value": "hero",
-              "label": "Hero"
+              "value": "fief",
+              "label": "Fief"
             },
             {
               "value": "clan",
               "label": "Clan"
             },
             {
-              "value": "fief",
-              "label": "Fief"
+              "value": "kingdom",
+              "label": "Kingdom"
             }
+          ],
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "apply",
+            "auto",
+            "bulk",
+            "info",
+            "list",
+            "remove"
           ]
         },
         {
-          "id": "upgrade",
-          "label": "Upgrade",
+          "id": "target",
+          "label": "Settlement, clan, or kingdom",
           "type": "text",
-          "required": true
+          "required": false
+        },
+        {
+          "id": "upgrade",
+          "label": "Upgrade ID",
+          "type": "text",
+          "required": false
         }
       ],
       "source": {
@@ -2197,31 +2551,31 @@
       "inputs": [
         {
           "id": "operation",
-          "label": "Family action",
+          "label": "Family view",
           "type": "choice",
-          "required": true,
+          "required": false,
           "options": [
             {
-              "value": "info",
-              "label": "Info"
+              "value": "spouse",
+              "label": "Spouse"
             },
             {
-              "value": "marry",
-              "label": "Marry"
+              "value": "children",
+              "label": "Children"
             },
             {
-              "value": "adopt",
-              "label": "Adopt"
+              "value": "parents",
+              "label": "Parents"
             },
             {
-              "value": "divorce",
-              "label": "Divorce"
+              "value": "member",
+              "label": "Member"
             }
           ]
         },
         {
           "id": "target",
-          "label": "Target",
+          "label": "Family member or spouse action",
           "type": "text",
           "required": false
         }
@@ -2257,7 +2611,38 @@
         "strategy": "legacy"
       },
       "mutatesCampaign": false,
-      "inputs": [],
+      "inputs": [
+        {
+          "id": "scope",
+          "label": "Log scope",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "hero",
+              "label": "Hero"
+            },
+            {
+              "value": "clan",
+              "label": "Clan"
+            },
+            {
+              "value": "kingdom",
+              "label": "Kingdom"
+            },
+            {
+              "value": "fief",
+              "label": "Fief"
+            }
+          ]
+        },
+        {
+          "id": "target",
+          "label": "Clan, kingdom, or fief",
+          "type": "text",
+          "required": false
+        }
+      ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
         "line": 1197
@@ -2292,7 +2677,7 @@
       "inputs": [
         {
           "id": "item",
-          "label": "Custom item",
+          "label": "Custom item name or number",
           "type": "text",
           "required": true
         }
@@ -2331,25 +2716,77 @@
       "inputs": [
         {
           "id": "formation",
-          "label": "Formation",
+          "label": "Formation action",
           "type": "choice",
           "required": true,
           "options": [
             {
-              "value": "infantry",
-              "label": "Infantry"
+              "value": "1",
+              "label": "1"
             },
             {
-              "value": "ranged",
-              "label": "Ranged"
+              "value": "2",
+              "label": "2"
             },
             {
-              "value": "cavalry",
-              "label": "Cavalry"
+              "value": "3",
+              "label": "3"
             },
             {
-              "value": "horseArcher",
-              "label": "Horse Archer"
+              "value": "4",
+              "label": "4"
+            },
+            {
+              "value": "5",
+              "label": "5"
+            },
+            {
+              "value": "6",
+              "label": "6"
+            },
+            {
+              "value": "7",
+              "label": "7"
+            },
+            {
+              "value": "8",
+              "label": "8"
+            },
+            {
+              "value": "detach",
+              "label": "Detach"
+            },
+            {
+              "value": "attach",
+              "label": "Attach"
+            },
+            {
+              "value": "charge",
+              "label": "Charge"
+            },
+            {
+              "value": "hold",
+              "label": "Hold"
+            },
+            {
+              "value": "follow",
+              "label": "Follow"
+            },
+            {
+              "value": "gate",
+              "label": "Gate"
+            },
+            {
+              "value": "walls",
+              "label": "Walls"
+            },
+            {
+              "value": "front",
+              "label": "Front"
+            },
+            {
+              "value": "back",
+              "label": "Back"
             }
           ]
         }
@@ -2397,24 +2834,35 @@
               "label": "Info"
             },
             {
-              "value": "manage",
-              "label": "Manage"
+              "value": "projects",
+              "label": "Projects"
             },
             {
-              "value": "give",
-              "label": "Give"
+              "value": "gold",
+              "label": "Gold"
             },
             {
-              "value": "upgrade",
-              "label": "Upgrade"
+              "value": "explanation",
+              "label": "Explanation"
             }
           ]
         },
         {
           "id": "target",
-          "label": "Settlement",
+          "label": "Settlement or building",
           "type": "text",
-          "required": false
+          "required": true
+        },
+        {
+          "id": "value",
+          "label": "Buildings or gold amount",
+          "type": "text",
+          "required": false,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "projects",
+            "gold"
+          ]
         }
       ],
       "source": {
@@ -2451,7 +2899,7 @@
       "inputs": [
         {
           "id": "target",
-          "label": "Vassal",
+          "label": "Vassal action and target",
           "type": "text",
           "required": true
         }
@@ -2489,10 +2937,38 @@
       "mutatesCampaign": true,
       "inputs": [
         {
+          "id": "operation",
+          "label": "Capital action",
+          "type": "choice",
+          "required": false,
+          "options": [
+            {
+              "value": "info",
+              "label": "Info"
+            },
+            {
+              "value": "list",
+              "label": "List"
+            },
+            {
+              "value": "set",
+              "label": "Set"
+            },
+            {
+              "value": "cancel",
+              "label": "Cancel"
+            }
+          ]
+        },
+        {
           "id": "settlement",
           "label": "Capital settlement",
           "type": "text",
-          "required": true
+          "required": true,
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "set"
+          ]
         }
       ],
       "source": {

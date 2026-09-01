@@ -117,7 +117,9 @@ export function App() {
   }
 
   const integratedActions = new Set(["command.equipcustom", "command.retinue", "command.eliteretinue", "command.retinuelist"]);
-  const browserActions = manifest.actions.filter(action => !integratedActions.has(action.id));
+  const elevated = identity.roles.includes("moderator") || identity.roles.includes("broadcaster");
+  const visibleCategories = elevated ? [...categories, "Stream Control"] : categories;
+  const browserActions = manifest.actions.filter(action => !integratedActions.has(action.id) && action.permissions.some(role => identity.roles.includes(role)));
   const effectiveUnavailable = state.connected ? state.unavailable : Object.fromEntries(manifest.actions.map(action => [action.id, "The streamer's game is offline."]));
   const showRetinue = !showInventory && category === "Retinue";
   const redundantBattleActions = new Set(["command.battle", "command.stats", "command.ammo"]);
@@ -130,7 +132,7 @@ export function App() {
       <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
       <IntegrationDiagnostics identity={identity} />
       <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
-        {!battleActive ? <CategoryRail categories={categories} selected={category} inventorySelected={showInventory} onSelect={selectCategory} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} /> : null}
+        {!battleActive ? <CategoryRail categories={visibleCategories} selected={category} inventorySelected={showInventory} onSelect={selectCategory} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} /> : null}
         <div className="workspace-stack">
           <div className="workspace-main">
             {battleActive ? <BattleWorkspace mission={state.mission} actions={battleActions} identity={identity} cooldowns={state.cooldowns} selectors={state.selectors} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleActionSubmit} /> : showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : showRetinue ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={effectiveUnavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? effectiveUnavailable[selected.id] : undefined} busy={busy} error={error} selectors={state.selectors} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}

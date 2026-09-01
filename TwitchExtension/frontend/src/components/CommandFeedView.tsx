@@ -8,7 +8,7 @@ function StatusIcon({ status }: { status: CommandActivity["status"] }) {
 }
 
 function FeedEntry({ entry, compact }: { entry: CommandActivity; compact?: boolean }) {
-  const message = entry.messages[0] ?? "Command accepted and queued for Bannerlord.";
+  const message = entry.messages[0] ?? "Waiting for Bannerlord…";
   return <article className={`command-feed-entry ${entry.status}${compact ? " compact" : ""}`}>
     <span className="command-status"><StatusIcon status={entry.status} /></span>
     <div className="command-feed-copy">

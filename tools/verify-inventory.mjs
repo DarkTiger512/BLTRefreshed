@@ -8,6 +8,7 @@ const read = name => JSON.parse(fs.readFileSync(path.join(inventory, name), "utf
 const commands = read("commands.json");
 const rewards = read("rewards.json");
 const manifest = read("action-manifest.json");
+const semantics = read("command-semantics.json");
 for (const action of manifest.actions) {
   assert(action.description && action.description !== action.handler && !/^\{=/.test(action.description) && !/<[^>]+>/.test(action.description) && action.description.length <= 140,
     `Invalid viewer description for ${action.id}: ${action.description}`);
@@ -19,6 +20,9 @@ const cleanLoc = value => String(value ?? "").replace(/^\{=[^}]+\}/, "");
 assert(commands.length > 0, "No commands were inventoried");
 assert(rewards.length > 0, "No rewards were inventoried");
 assert.equal(manifest.actions.length, commands.length, "Every configured command must have a manifest action");
+assert.equal(semantics.length, commands.length, "Every configured command must have audited parameter semantics");
+assert.deepEqual(semantics.map(item => item.actionId), manifest.actions.map(action => action.id), "Semantics must cover every manifest action in order");
+assert(semantics.every(item => item.parserSource && item.auditBasis === "handler-source"), "Every command audit must identify its handler parser source");
 assert.equal(new Set(manifest.actions.map(action => action.id)).size, manifest.actions.length, "Action IDs must be unique");
 assert.deepEqual(manifest.actions.map(action => action.legacyName), commands.map(command => cleanLoc(command.Name)), "Manifest order and legacy mappings must match configured commands");
 assert(manifest.actions.every(action => action.id === `command.${action.legacyName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`), "Action IDs must be stable derivatives of legacy names");
@@ -31,6 +35,10 @@ const eliteRetinue = manifest.actions.find(action => action.id === "command.elit
 const adoptByCulture = manifest.actions.find(action => action.id === "command.adoptbyculture");
 const attack = manifest.actions.find(action => action.id === "command.attack");
 const summon = manifest.actions.find(action => action.id === "command.summon");
+const retire = manifest.actions.find(action => action.id === "command.retire");
+const rejuvenate = manifest.actions.find(action => action.id === "command.rejuvenate");
+const auction = manifest.actions.find(action => action.id === "command.auction");
+const giveItem = manifest.actions.find(action => action.id === "command.giveitem");
 for (const action of [attack, summon]) {
   assert.equal(action?.handler, "SummonHero", `${action?.id} must use the configured SummonHero handler`);
   assert.deepEqual(action?.inputs?.map(input => [input.id, input.type, input.required]), [["shout", "text", false]], `${action?.id} only accepts an optional in-game shout`);
@@ -43,6 +51,11 @@ assert.equal(eliteRetinue?.inputs?.[0]?.type, "choice", "Elite retinue must expo
 assert.deepEqual(eliteRetinue.inputs[0].options.map(option => option.value), ["upgrade-one", "upgrade-count", "upgrade-all", "clear-slot", "clear-all"], "Elite retinue must expose every legacy operation");
 assert.equal(eliteRetinue.inputs[1].type, "integer", "Elite retinue must accept a typed dismissal slot");
 assert.equal(eliteRetinue.inputs.find(input => input.id === "count")?.type, "integer", "Elite retinue must accept a typed recruit or upgrade quantity");
+assert.equal(retire.inputs[0].confirmationPolicy, "legacy-token", "Retire confirmation must serialize the handler's yes token");
+assert.equal(retire.inputs[0].legacyToken, "retire-yes", "Retire confirmation must use the localized mod-side token");
+assert.equal(rejuvenate.inputs[0].confirmationPolicy, "ui-only", "Rejuvenate confirmation must not emit a legacy argument");
+assert.deepEqual(auction.inputs.map(input => input.id), ["item", "reserve"], "Auction requires custom item number followed by reserve price");
+assert.deepEqual(giveItem.inputs.map(input => input.id), ["item", "target"], "Give item requires item number followed by recipient");
 assert(settings.length > 0, "No settings were inventoried");
 assert(components.some(component => component.kinds.includes("action-handler")), "Action handlers missing from component map");
 assert(components.some(component => component.kinds.includes("harmony-patch")), "Harmony patches missing from component map");

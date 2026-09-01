@@ -20,11 +20,11 @@ namespace BannerlordTwitch.Rewards
             ExecuteInternal(context, config,
                 s =>
                 {
-                    if (!string.IsNullOrEmpty(s)) ActionManager.SendReply(context, s);
+                    if (!string.IsNullOrEmpty(s)) ActionManager.SendSuccess(context, s);
                 },
                 s =>
                 {
-                    if (!string.IsNullOrEmpty(s)) ActionManager.SendReply(context, s);
+                    if (!string.IsNullOrEmpty(s)) ActionManager.SendFailure(context, s);
                 });
         }
 

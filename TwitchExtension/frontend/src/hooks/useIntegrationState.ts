@@ -3,7 +3,7 @@ import type { CommandActivity, GameState, InventorySnapshot, RetinueSnapshot, Vi
 import { isLiveLocalIntegration } from "../environment";
 
 const initialState: GameState = {
-  connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"] },
+  connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"], heroes: [], clans: [], kingdoms: [], settlements: [], skills: [] },
   mission: {
     active: true, kind: "battle", revision: 12, deploymentFinished: true,
     actionAvailability: { "command.summon": null, "command.attack": null, "command.heal": null, "command.power": null, "command.formation": null },
@@ -23,7 +23,7 @@ const initialState: GameState = {
 
 export function useIntegrationState(identity: ViewerIdentity | null) {
   const [state, setState] = useState<GameState>(() => isLiveLocalIntegration()
-    ? { connected: false, gameStarted: false, unavailable: {}, cooldowns: {}, selectors: { cultures: [] }, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
+    ? { connected: false, gameStarted: false, unavailable: {}, cooldowns: {}, selectors: { cultures: [], heroes: [], clans: [], kingdoms: [], settlements: [], skills: [] }, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
     : new URLSearchParams(window.location.search).get("mission") === "inactive"
     ? { ...initialState, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
     : initialState);
@@ -89,6 +89,9 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
   }, [identity]);
   function recordCommand(entry: Omit<CommandActivity, "submittedAt" | "messages">) {
     setCommandActivity(entries => [{ ...entry, submittedAt: new Date().toISOString(), messages: [] }, ...entries.filter(item => item.requestId !== entry.requestId)].slice(0, 100));
+    window.setTimeout(() => setCommandActivity(entries => entries.map(item => item.requestId === entry.requestId && item.status === "pending"
+      ? { ...item, status: "failed", messages: ["Bannerlord did not return a result within 30 seconds."], completedAt: new Date().toISOString() }
+      : item)), 30_000);
   }
   function completeDevelopmentCommand(requestId: string, message: string) {
     setCommandActivity(entries => entries.map(entry => entry.requestId === requestId ? { ...entry, status: "succeeded", messages: [message], completedAt: new Date().toISOString() } : entry));

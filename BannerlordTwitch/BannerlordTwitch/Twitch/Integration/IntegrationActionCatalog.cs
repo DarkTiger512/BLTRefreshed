@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using BannerlordTwitch.Util;
+using BannerlordTwitch.Localization;
 
 namespace BannerlordTwitch.Integration
 {
@@ -35,11 +36,18 @@ namespace BannerlordTwitch.Integration
             if (string.Equals(action.Id, "command.retinue", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(action.Id, "command.eliteretinue", StringComparison.OrdinalIgnoreCase))
                 return BuildRetinueArguments(action, values);
+            if (string.Equals(action.Id, "command.transfer", StringComparison.OrdinalIgnoreCase))
+                return BuildTransferArguments(action, values);
+            if (string.Equals(action.Id, "command.upgrade", StringComparison.OrdinalIgnoreCase))
+                return BuildUpgradeArguments(action, values);
+            if (string.Equals(action.Id, "command.family", StringComparison.OrdinalIgnoreCase))
+                return BuildFamilyArguments(action, values);
             var result = new List<string>();
             if (values.Keys.Any(key => action.Inputs.All(input => !string.Equals(input.Id, key, StringComparison.OrdinalIgnoreCase))))
                 throw new ArgumentException("The request contains an unknown argument");
             foreach (var input in action.Inputs)
             {
+                if (!IsVisible(input, values)) continue;
                 if (!values.TryGetValue(input.Id, out var value) || value.ValueKind is JsonValueKind.Null or JsonValueKind.Undefined)
                 {
                     if (input.Required) throw new ArgumentException($"{input.Id} is required");
@@ -48,14 +56,27 @@ namespace BannerlordTwitch.Integration
                 if (input.Type == "confirmation")
                 {
                     if (input.Required && value.ValueKind != JsonValueKind.True) throw new ArgumentException($"{input.Id} must be confirmed");
+                    if (value.ValueKind == JsonValueKind.True && string.Equals(input.ConfirmationPolicy, "legacy-token", StringComparison.OrdinalIgnoreCase))
+                    {
+                        var token = string.Equals(input.LegacyToken, "retire-yes", StringComparison.OrdinalIgnoreCase)
+                            ? "{=xSbB2Zw5}yes".Translate()
+                            : input.LegacyToken;
+                        if (string.IsNullOrWhiteSpace(token)) throw new ArgumentException($"{input.Id} has no confirmation token");
+                        result.Add(token);
+                    }
                     continue;
                 }
-                if (input.Type == "choice" && !input.Options.Any(option =>
-                    string.Equals(option.Value, value.GetString(), StringComparison.OrdinalIgnoreCase)))
-                    throw new ArgumentException($"{input.Id} is not a valid choice");
-                if (input.Type == "number")
+                if (input.Type == "choice")
+                {
+                    if (value.ValueKind != JsonValueKind.String) throw new ArgumentException($"{input.Id} must be a choice");
+                    var allowed = DynamicOptions(input.OptionsSource) ?? input.Options.Select(option => option.Value);
+                    if (!allowed.Any(option => string.Equals(option, value.GetString(), StringComparison.OrdinalIgnoreCase)))
+                        throw new ArgumentException($"{input.Id} is not a valid choice");
+                }
+                if (input.Type is "number" or "integer")
                 {
                     if (!value.TryGetDouble(out var number)) throw new ArgumentException($"{input.Id} must be a number");
+                    if (input.Type == "integer" && number != Math.Truncate(number)) throw new ArgumentException($"{input.Id} must be a whole number");
                     if (input.Minimum.HasValue && number < input.Minimum.Value) throw new ArgumentException($"{input.Id} is below the minimum");
                     if (input.Maximum.HasValue && number > input.Maximum.Value) throw new ArgumentException($"{input.Id} is above the maximum");
                 }
@@ -69,6 +90,29 @@ namespace BannerlordTwitch.Integration
                 result.Add(text.Trim());
             }
             return string.Join(" ", result);
+        }
+
+        private static IEnumerable<string> DynamicOptions(string source)
+        {
+            if (string.IsNullOrWhiteSpace(source)) return null;
+            var selectors = IntegrationSelectorProvider.Current();
+            return source.ToLowerInvariant() switch
+            {
+                "cultures" => selectors.Cultures,
+                "heroes" => selectors.Heroes,
+                "clans" => selectors.Clans,
+                "kingdoms" => selectors.Kingdoms,
+                "settlements" => selectors.Settlements,
+                "skills" => selectors.Skills,
+                _ => throw new ArgumentException($"Unknown selector source: {source}")
+            };
+        }
+
+        private static bool IsVisible(IntegrationActionInput input, IReadOnlyDictionary<string, JsonElement> values)
+        {
+            if (string.IsNullOrWhiteSpace(input.VisibleWhenInput)) return true;
+            if (!values.TryGetValue(input.VisibleWhenInput, out var controlling) || controlling.ValueKind != JsonValueKind.String) return false;
+            return input.VisibleWhenValues.Any(value => string.Equals(value, controlling.GetString(), StringComparison.OrdinalIgnoreCase));
         }
 
         private static string BuildRetinueArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
@@ -89,6 +133,61 @@ namespace BannerlordTwitch.Integration
                 "clear-slot" => throw new ArgumentException("A positive slot number is required when dismissing one troop"),
                 _ => throw new ArgumentException("operation is not a valid retinue action")
             };
+        }
+
+        private static string BuildTransferArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
+        {
+            RejectUnknown(action, values);
+            var mode = RequiredString(values, "mode");
+            if (mode != "normal" && mode != "force") throw new ArgumentException("mode is not a valid transfer mode");
+            var settlement = RequiredString(values, "settlement");
+            var recipientType = RequiredString(values, "recipientType");
+            if (recipientType != "clan" && recipientType != "hero") throw new ArgumentException("recipientType is not valid");
+            values.TryGetValue("target", out var targetValue);
+            var target = targetValue.ValueKind == JsonValueKind.String ? targetValue.GetString()?.Trim() : null;
+            if (recipientType == "hero" && string.IsNullOrWhiteSpace(target)) throw new ArgumentException("target is required for hero transfers");
+            return string.Join(" ", new[] { mode == "force" ? "force" : null, settlement, recipientType, target }.Where(value => !string.IsNullOrWhiteSpace(value)));
+        }
+
+        private static string BuildUpgradeArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
+        {
+            RejectUnknown(action, values);
+            var operation = RequiredString(values, "operation");
+            var scope = RequiredString(values, "scope");
+            values.TryGetValue("target", out var targetValue);
+            values.TryGetValue("upgrade", out var upgradeValue);
+            var target = targetValue.ValueKind == JsonValueKind.String ? targetValue.GetString()?.Trim() : null;
+            var upgrade = upgradeValue.ValueKind == JsonValueKind.String ? upgradeValue.GetString()?.Trim() : null;
+            if (operation == "list") return string.Join(" ", new[] { "list", scope });
+            if (operation == "info") return string.Join(" ", new[] { "info", scope, target }.Where(value => !string.IsNullOrWhiteSpace(value)));
+            if (operation == "remove") return string.Join(" ", new[] { "remove", scope, target, upgrade }.Where(value => !string.IsNullOrWhiteSpace(value)));
+            if (operation is not ("apply" or "auto" or "bulk")) throw new ArgumentException("operation is not a valid upgrade operation");
+            if (string.IsNullOrWhiteSpace(upgrade)) throw new ArgumentException("upgrade is required");
+            return string.Join(" ", new[] { operation == "apply" ? null : operation, scope, target, upgrade }.Where(value => !string.IsNullOrWhiteSpace(value)));
+        }
+
+        private static string BuildFamilyArguments(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
+        {
+            RejectUnknown(action, values);
+            values.TryGetValue("operation", out var operationValue);
+            values.TryGetValue("target", out var targetValue);
+            var operation = operationValue.ValueKind == JsonValueKind.String ? operationValue.GetString()?.Trim() : null;
+            var target = targetValue.ValueKind == JsonValueKind.String ? targetValue.GetString()?.Trim() : null;
+            if (string.IsNullOrWhiteSpace(operation)) return string.Empty;
+            return operation == "member" ? target ?? string.Empty : string.Join(" ", new[] { operation, target }.Where(value => !string.IsNullOrWhiteSpace(value)));
+        }
+
+        private static void RejectUnknown(IntegrationActionDefinition action, IReadOnlyDictionary<string, JsonElement> values)
+        {
+            if (values.Keys.Any(key => action.Inputs.All(input => !string.Equals(input.Id, key, StringComparison.OrdinalIgnoreCase))))
+                throw new ArgumentException("The request contains an unknown argument");
+        }
+
+        private static string RequiredString(IReadOnlyDictionary<string, JsonElement> values, string name)
+        {
+            if (!values.TryGetValue(name, out var value) || value.ValueKind != JsonValueKind.String || string.IsNullOrWhiteSpace(value.GetString()))
+                throw new ArgumentException($"{name} is required");
+            return value.GetString().Trim();
         }
     }
 }

@@ -28,17 +28,19 @@ export function ActionDetail({ action, linked, unavailableReason, busy, error, s
     <div className={blocked ? "detail-status blocked" : "detail-status ready"}>{blocked ? <AlertCircle /> : <CheckCircle2 />}{unavailableReason ?? "Available"}</div>
     <div className="detail-rule" />
     <form onSubmit={event => { event.preventDefault(); onSubmit(values); }}>
-      {action.inputs.map(input => <label className="field" key={input.id}>
+      {action.inputs.filter(input => !input.visibleWhenInput || input.visibleWhenValues?.includes(String(values[input.visibleWhenInput] ?? ""))).map(input => <label className="field" key={input.id}>
         <span>{input.label ?? labelFor(input.id)}{input.required ? " *" : ""}</span>
         {input.type === "boolean" || input.type === "confirmation" ?
           <input type="checkbox" checked={Boolean(values[input.id])} onChange={event => setValues(current => ({ ...current, [input.id]: event.target.checked }))} required={input.required} /> :
           input.type === "choice" ?
-            <select value={String(values[input.id] ?? "")} onChange={event => setValues(current => ({ ...current, [input.id]: event.target.value }))} required={input.required}><option value="">Select an option</option>{(input.optionsSource === "cultures" ? selectors.cultures.map(value => ({ value, label: value })) : input.options ?? []).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select> :
+            <select value={String(values[input.id] ?? "")} onChange={event => setValues(current => ({ ...current, [input.id]: event.target.value }))} required={input.required}><option value="">Select an option</option>{(input.optionsSource ? selectors[input.optionsSource].map(value => ({ value, label: value })) : input.options ?? []).map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select> :
             <input
               type={input.type === "integer" || input.type === "number" ? "number" : "text"}
               value={String(values[input.id] ?? "")}
-              onChange={event => setValues(current => ({ ...current, [input.id]: event.target.value }))}
+              onChange={event => setValues(current => ({ ...current, [input.id]: input.type === "integer" || input.type === "number" ? (event.target.value === "" ? undefined : Number(event.target.value)) : event.target.value }))}
               required={input.required}
+              min={input.minimum}
+              max={input.maximum}
             />}
         {input.description ? <small>{input.description}</small> : null}
       </label>)}

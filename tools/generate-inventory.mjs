@@ -4,7 +4,8 @@ import path from "node:path";
 const root = path.resolve(import.meta.dirname, "..");
 const sourceRoot = path.join(root, "BannerlordTwitch");
 const outputRoot = path.join(root, "docs", "twitch-integration", "inventory");
-const yamlPath = path.join(sourceRoot, "BannerlordTwitch", "_Module", "Bannerlord-Twitch-v4.yaml");
+const yamlSourcePath = path.join(sourceRoot, "BannerlordTwitch", "_Module", "Bannerlord-Twitch-v4.yaml");
+const yamlPath = process.env.BLT_INVENTORY_YAML ? path.resolve(process.env.BLT_INVENTORY_YAML) : yamlSourcePath;
 
 const normalize = value => value?.replace(/^['"]/, "").replace(/['"]$/, "").trim() ?? "";
 const cleanLoc = value => normalize(String(value ?? "")).replace(/^\{=[^}]+\}/, "");
@@ -63,6 +64,7 @@ function parseTopLevelSequence(lines, start, end) {
 }
 
 function categoryFor(command) {
+  if (command.ModeratorOnly) return "Stream Control";
   const name = cleanLoc(command.Name).toLowerCase();
   if (["retinue", "retinuelist", "eliteretinue"].includes(name)) return "Retinue";
   if (name === "power") return "Battle";
@@ -84,7 +86,8 @@ const labeledChoice = (id, label, options, required = true) => ({ id, label, typ
 const dynamicChoice = (id, label, optionsSource, required = true) => ({ id, label, type: "choice", required, options: [], optionsSource });
 const textInput = (id, label, required = true) => ({ id, label, type: "text", required });
 const numberInput = (id, label, required = true) => ({ id, label, type: "integer", required });
-const confirm = () => ({ id: "confirm", label: "I understand this changes the campaign", type: "confirmation", required: true });
+const confirm = (confirmationPolicy = "ui-only", legacyToken = undefined) => ({ id: "confirm", label: "I understand this changes the campaign", type: "confirmation", required: true, confirmationPolicy, ...(legacyToken ? { legacyToken } : {}) });
+const when = (input, visibleWhenInput, visibleWhenValues) => ({ ...input, visibleWhenInput, visibleWhenValues });
 
 const actionDescriptions = {
   objective: "Manage community stream objectives as a moderator.",
@@ -152,18 +155,19 @@ const actionDescriptions = {
 
 function actionInput(command) {
   const name = cleanLoc(command.Name).toLowerCase();
-  const noInput = new Set(["objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "hero", "inv", "powers", "reequip", "retinuelist", "stats", "tournament", "info", "leaderboard", "battle", "income", "logs", "skills"]);
+  const noInput = new Set(["objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "inv", "powers", "retinuelist", "stats", "tournament", "battle", "income", "skills"]);
   if (noInput.has(name)) return [];
   const definitions = {
-    objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), textInput("objective", "Objective", false)],
+    objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), when(textInput("objective", "Objective type and goal options", false), "operation", ["start"])],
     adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [dynamicChoice("culture", "Culture", "cultures")], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
-    attack: [textInput("shout", "Optional battle shout", false)], auction: [textInput("item", "Item")], bid: [numberInput("amount", "Bid amount")],
-    bltbet: [numberInput("entrant", "Entrant number"), numberInput("amount", "Bet amount")], buymount: [textInput("mount", "Mount")],
-    clan: [choice("operation", "Clan operation", ["create", "join", "leave", "invite", "kick", "info"]), textInput("target", "Target", false)],
-    class: [textInput("class", "Hero class")], customitems: [textInput("filter", "Item filter", false)], discarditem: [textInput("item", "Item")],
-    equip: [choice("slot", "Equipment slot", ["weapon", "shield", "bow", "armor", "mount"]), textInput("item", "Item", false)],
-    giveitem: [textInput("target", "Viewer or hero"), textInput("item", "Item")], kingdom: [choice("operation", "Kingdom operation", ["info", "join", "leave", "policy", "war", "peace"]), textInput("target", "Target", false)],
-    nameitem: [textInput("item", "Item"), textInput("name", "New name")], power: [textInput("power", "Power")], retinue: [
+    attack: [textInput("shout", "Optional battle shout", false)], auction: [numberInput("item", "Custom item number"), numberInput("reserve", "Reserve price")], bid: [numberInput("amount", "Bid amount")],
+    bltbet: [numberInput("entrant", "Team number"), numberInput("amount", "Gold to bet")], buymount: [dynamicChoice("culture", "Item culture", "cultures", false)],
+    clan: [choice("operation", "Clan operation", ["join", "create", "lead", "rename", "stats", "party", "fiefs", "leave", "buy title", "banner", "ship", "home"], false), when(textInput("target", "Clan name, banner code, ship, or home settlement", false), "operation", ["join", "create", "rename", "banner", "ship", "home"])],
+    class: [textInput("class", "Hero class")], customitems: [textInput("filter", "Item filter", false)], discarditem: [numberInput("item", "Custom item number")],
+    hero: [choice("operation", "Hero action", ["gender", "looks", "marry", "race", "culture"]), when(textInput("value", "Gender, appearance, spouse, race, or culture"), "operation", ["gender", "looks", "marry", "race", "culture"])],
+    equip: [dynamicChoice("culture", "Equipment culture", "cultures", false)],
+    giveitem: [numberInput("item", "Custom item number"), textInput("target", "Recipient viewer")], kingdom: [choice("operation", "Kingdom operation", ["join", "merc", "rebel", "leave", "create", "release", "expel", "stats", "armies", "tax", "sponsor", "policy"], false), when(textInput("target", "Kingdom, hero, clan, rate, amount, or policy", false), "operation", ["join", "merc", "create", "release", "expel", "armies", "tax", "sponsor", "policy"])],
+    nameitem: [numberInput("item", "Custom item number"), textInput("name", "New item name")], power: [], reequip: [dynamicChoice("culture", "Equipment culture", "cultures", false)], retinue: [
       labeledChoice("operation", "Retinue action", [
         { value: "upgrade-one", label: "Recruit or upgrade one" },
         { value: "upgrade-count", label: "Recruit or upgrade a chosen quantity" },
@@ -173,16 +177,19 @@ function actionInput(command) {
       ]),
       numberInput("slot", "Slot to dismiss (only for numbered dismissal)", false),
       numberInput("count", "Troops to recruit or upgrade", false),
-    ], retire: [confirm()],
-    smitharmor: [textInput("name", "Armor name"), textInput("culture", "Culture", false)], smithweapon: [textInput("name", "Weapon name"), textInput("culture", "Culture", false)],
-    summon: [textInput("shout", "Optional battle shout", false)], itemstats: [textInput("item", "Item")], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm()],
-    heir: [textInput("target", "Heir")], diplomacy: [choice("operation", "Diplomacy action", ["war", "peace", "ally", "trade", "policy"]), textInput("kingdom", "Kingdom")],
-    reinforce: [numberInput("amount", "Troops")], transfer: [textInput("target", "Target"), textInput("asset", "Transfer item")], buyfocus: [textInput("skill", "Skill")],
-    party: [choice("operation", "Party order", ["status", "follow", "patrol", "raid", "garrison", "army", "train"]), textInput("target", "Target", false)],
-    upgrade: [choice("scope", "Upgrade scope", ["hero", "clan", "fief"]), textInput("upgrade", "Upgrade")], family: [choice("operation", "Family action", ["info", "marry", "adopt", "divorce"]), textInput("target", "Target", false)],
-    equipcustom: [textInput("item", "Custom item")], formation: [choice("formation", "Formation", ["infantry", "ranged", "cavalry", "horseArcher"])],
-    fief: [choice("operation", "Fief action", ["info", "manage", "give", "upgrade"]), textInput("target", "Settlement", false)], vassal: [textInput("target", "Vassal")],
-    capital: [textInput("settlement", "Capital settlement")],
+    ], retire: [confirm("legacy-token", "retire-yes")],
+    smitharmor: [dynamicChoice("culture", "Armor culture", "cultures", false)], smithweapon: [dynamicChoice("culture", "Weapon culture", "cultures", false)],
+    summon: [textInput("shout", "Optional battle shout", false)], itemstats: [choice("mode", "Item source", ["armor", "inv", "custom", "store"]), textInput("item", "Item name or number", false)], buyattribute: [textInput("attribute", "Attribute")], rejuvenate: [confirm("ui-only")],
+    heir: [textInput("target", "Heir name", false)], diplomacy: [choice("operation", "Diplomacy action", ["war", "peace", "alliance", "trade", "army"]), textInput("kingdom", "Kingdom or army order")],
+    reinforce: [choice("operation", "Reinforcement type", ["info", "militia", "elitemilitia"]), textInput("settlement", "Settlement"), when(textInput("amount", "Troops or all", false), "operation", ["militia", "elitemilitia"])], transfer: [choice("mode", "Transfer mode", ["normal", "force"]), textInput("settlement", "Settlement"), choice("recipientType", "Recipient type", ["clan", "hero"]), textInput("target", "Recipient viewer", false)], buyfocus: [textInput("skill", "Skill")],
+    party: [choice("operation", "Party order", ["govern", "create", "stats", "disband", "train", "army", "release", "siege", "defend", "guard", "patrol", "raid", "garrison"]), textInput("target", "Target, amount, or subcommand", false)],
+    upgrade: [choice("operation", "Upgrade operation", ["apply", "auto", "bulk", "info", "list", "remove"]), when(choice("scope", "Upgrade scope", ["fief", "clan", "kingdom"]), "operation", ["apply", "auto", "bulk", "info", "list", "remove"]), textInput("target", "Settlement, clan, or kingdom", false), textInput("upgrade", "Upgrade ID", false)], family: [choice("operation", "Family view", ["spouse", "children", "parents", "member"], false), textInput("target", "Family member or spouse action", false)],
+    equipcustom: [textInput("item", "Custom item name or number")], formation: [choice("formation", "Formation action", ["1", "2", "3", "4", "5", "6", "7", "8", "detach", "attach", "charge", "hold", "follow", "gate", "walls", "front", "back"])],
+    fief: [choice("operation", "Fief action", ["info", "projects", "gold", "explanation"]), textInput("target", "Settlement or building"), when(textInput("value", "Buildings or gold amount", false), "operation", ["projects", "gold"])], vassal: [textInput("target", "Vassal action and target")],
+    capital: [choice("operation", "Capital action", ["info", "list", "set", "cancel"], false), when(textInput("settlement", "Capital settlement"), "operation", ["set"])],
+    info: [choice("mode", "Campaign information", ["kingdomlist", "culturelist", "warlist", "kingdom", "war", "wars", "fief", "fiefs", "clan", "clans", "vassals", "time", "date", "player"]), textInput("target", "Kingdom, clan, or settlement", false)],
+    leaderboard: [choice("scope", "Leaderboard", ["hero", "clan"]), textInput("stat", "Statistic", false)],
+    logs: [choice("scope", "Log scope", ["hero", "clan", "kingdom", "fief"]), textInput("target", "Clan, kingdom, or fief", false)],
     eliteretinue: [
       labeledChoice("operation", "Elite retinue action", [
         { value: "upgrade-one", label: "Recruit or upgrade one" },
@@ -221,7 +228,7 @@ function buildActions(commands) {
     cooldown: { strategy: "legacy" },
     mutatesCampaign: !/info|status|check|list|leaderboard|help|logs|ammo/i.test(`${command.Handler} ${command.Name}`),
     inputs: actionInput(command),
-    source: { file: path.relative(root, yamlPath).replaceAll("\\", "/"), line: command.sourceLine },
+    source: { file: path.relative(root, yamlSourcePath).replaceAll("\\", "/"), line: command.sourceLine },
     });
   });
 }
@@ -291,6 +298,25 @@ const rewards = parseTopLevelSequence(yamlLines, rewardStart, yamlLines.length);
 const actions = buildActions(commands);
 const components = extractComponents(allFiles);
 const settings = extractSettings(allFiles);
+const semantics = actions.map(action => {
+  const handlerSource = components.find(component => component.symbols.includes(action.handler))?.path ?? null;
+  return {
+    actionId: action.id,
+    legacyName: action.legacyName,
+    handler: action.handler,
+    parserSource: handlerSource,
+    legacyPattern: action.inputs.filter(input => input.confirmationPolicy !== "ui-only").map(input => input.type === "confirmation" ? `<${input.legacyToken}>` : `<${input.id}>`).join(" "),
+    parameters: action.inputs.map((input, position) => ({
+      id: input.id, label: input.label, type: input.type, position,
+      required: input.required, optionsSource: input.optionsSource ?? null,
+      acceptedValues: input.options?.map(option => option.value) ?? null,
+      confirmationPolicy: input.confirmationPolicy ?? null,
+      visibleWhenInput: input.visibleWhenInput ?? null,
+      visibleWhenValues: input.visibleWhenValues ?? null,
+    })),
+    auditBasis: "handler-source",
+  };
+});
 
 fs.mkdirSync(outputRoot, { recursive: true });
 const writeJson = (name, data) => fs.writeFileSync(path.join(outputRoot, name), `${JSON.stringify(data, null, 2)}\n`);
@@ -298,6 +324,7 @@ writeJson("commands.json", commands);
 writeJson("rewards.json", rewards);
 const actionManifest = { protocolVersion: 1, generatedAt: new Date().toISOString(), actions };
 writeJson("action-manifest.json", actionManifest);
+writeJson("command-semantics.json", semantics);
 const moduleManifestPath = path.join(sourceRoot, "BannerlordTwitch", "_Module", "TwitchIntegration", "action-manifest.json");
 fs.mkdirSync(path.dirname(moduleManifestPath), { recursive: true });
 fs.writeFileSync(moduleManifestPath, `${JSON.stringify(actionManifest, null, 2)}\n`);
