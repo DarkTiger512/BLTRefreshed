@@ -29,7 +29,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .loading-screen svg { color: var(--gold); animation: pulse 1.2s infinite; }
 
 .overlay-shell { width: 100%; height: 100%; position: relative; padding: clamp(14px, 2vw, 32px); pointer-events: none; }
-.overlay-window { width: min(740px, 39vw); height: min(900px, calc(100vh - 64px)); min-width: 700px; overflow: hidden; border: 1px solid var(--line-strong); border-radius: 10px; background: linear-gradient(145deg, rgba(10, 21, 31, .985), rgba(4, 11, 18, .98)); box-shadow: 0 24px 70px rgba(0, 0, 0, .48); pointer-events: auto; }
+.overlay-window { width: min(740px, 39vw); height: min(900px, calc(100vh - 64px)); min-width: 700px; overflow: hidden; display: grid; grid-template-rows: 68px auto minmax(0, 1fr); border: 1px solid var(--line-strong); border-radius: 10px; background: linear-gradient(145deg, rgba(10, 21, 31, .985), rgba(4, 11, 18, .98)); box-shadow: 0 24px 70px rgba(0, 0, 0, .48); pointer-events: auto; }
 .top-bar { height: 68px; display: flex; align-items: center; padding: 0 18px 0 24px; border-bottom: 1px solid var(--line); background: linear-gradient(90deg, rgba(14, 29, 40, .98), rgba(7, 15, 23, .98)); }
 .app-logo { width: 42px; height: 42px; margin-right: 10px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,.45)); }
 .top-bar h1 { margin: 0; font: 700 20px/1 Cinzel, Georgia, serif; color: #f0c56f; letter-spacing: .015em; }
@@ -41,7 +41,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .close-button { width: 44px; height: 44px; display: grid; place-items: center; margin-left: 8px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
 .close-button:hover { background: rgba(255,255,255,.07); }
 .close-button svg { width: 18px; }
-.overlay-content { min-height: 0; height: calc(100% - 68px); display: grid; grid-template-columns: 116px minmax(270px, 1fr) minmax(292px, .95fr); overflow: hidden; }
+.overlay-content { min-height: 0; height: auto; display: grid; grid-template-columns: 116px minmax(270px, 1fr) minmax(292px, .95fr); overflow: hidden; }
 
 .category-rail { min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: rgba(7, 15, 23, .92); }
 .brand-mark { height: 52px; display: grid; place-items: center; color: var(--gold); border-bottom: 1px solid var(--line); }
@@ -148,9 +148,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 @media (max-width: 680px) {
   html, body, #root { overflow: auto; }
   .overlay-shell { min-height: 100%; height: auto; padding: 0; }
-  .overlay-window { width: 100%; height: 100vh; border: 0; border-radius: 0; }
+  .overlay-window { width: 100%; height: 100vh; grid-template-rows: 58px auto minmax(0, 1fr); border: 0; border-radius: 0; }
   .top-bar { height: 58px; padding-left: 12px; }.top-bar h1 { font-size: 15px; }.app-logo { width: 36px; height: 36px; margin-right: 7px; }
-  .overlay-content { height: calc(100% - 58px); grid-template-columns: 72px minmax(0, 1fr); grid-template-rows: 48% 52%; }
+  .overlay-content { height: auto; grid-template-columns: 72px minmax(0, 1fr); grid-template-rows: 48% 52%; }
   .category-rail { grid-row: 1 / span 2; }.category { justify-content: center; min-height: 52px; }.category span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }.viewer-identity strong { font-size: 9px; }
   .inventory-nav span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   .browser-panel { grid-column: 2; grid-row: 1; border-right: 0; border-bottom: 1px solid var(--line); }
