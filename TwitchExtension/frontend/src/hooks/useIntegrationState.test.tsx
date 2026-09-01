@@ -6,7 +6,7 @@ import type { ViewerIdentity } from "../types";
 class TestSocket {
   static instances: TestSocket[] = [];
   listeners = new Map<string, Array<(event: Event) => void>>();
-  constructor(public url: string | URL) { TestSocket.instances.push(this); }
+  constructor(public url: string | URL, public protocols?: string | string[]) { TestSocket.instances.push(this); }
   addEventListener(kind: string, listener: (event: Event) => void) { this.listeners.set(kind, [...(this.listeners.get(kind) ?? []), listener]); }
   emit(kind: string, event = new Event(kind)) { for (const listener of this.listeners.get(kind) ?? []) listener(event); }
   close() { }
@@ -24,6 +24,7 @@ test("live local viewer socket starts without demo state and reconnects after in
   expect(result.current.connected).toBe(false);
   expect(result.current.mission.active).toBe(false);
   expect(TestSocket.instances).toHaveLength(1);
+  expect(TestSocket.instances[0].protocols).toBe("blt.viewer.v1");
   act(() => TestSocket.instances[0].emit("open"));
   expect(result.current.connected).toBe(true);
   act(() => TestSocket.instances[0].emit("close"));

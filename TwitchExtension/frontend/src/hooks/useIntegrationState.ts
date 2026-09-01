@@ -74,7 +74,7 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
     };
     const connect = () => {
       if (disposed) return;
-      socket = new WebSocket(url);
+      socket = new WebSocket(url, "blt.viewer.v1");
       socket.addEventListener("open", () => { reconnectDelay = 1000; setState(value => ({ ...value, connected: true })); });
       socket.addEventListener("message", handleMessage);
       socket.addEventListener("close", () => {
