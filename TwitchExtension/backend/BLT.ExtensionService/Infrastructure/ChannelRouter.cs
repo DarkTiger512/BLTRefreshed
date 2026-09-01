@@ -8,6 +8,7 @@ namespace BLT.ExtensionService.Infrastructure;
 
 public sealed class ChannelRouter(ChannelStateCache stateCache)
 {
+    private static readonly JsonSerializerOptions WireJson = new(JsonSerializerDefaults.Web);
     private readonly ConcurrentDictionary<string, WebSocket> games = new(StringComparer.Ordinal);
     private sealed record ViewerConnection(string UserId, WebSocket Socket);
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<Guid, ViewerConnection>> viewers = new(StringComparer.Ordinal);
@@ -44,7 +45,7 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
     public async Task<bool> SendGameAsync(string channel, object payload, CancellationToken token)
     {
         if (!games.TryGetValue(channel, out var socket) || socket.State != WebSocketState.Open) return false;
-        await SendAsync(socket, JsonSerializer.Serialize(payload), token);
+        await SendAsync(socket, JsonSerializer.Serialize(payload, WireJson), token);
         return true;
     }
 

@@ -253,6 +253,7 @@ namespace BannerlordTwitch.Integration
 
         private void HandleMessage(string json)
         {
+            Guid? requestIdForError = null;
             try
             {
                 using var doc = JsonDocument.Parse(json);
@@ -288,9 +289,10 @@ namespace BannerlordTwitch.Integration
                     return;
                 }
                 if (kind != "action.request") return;
+                requestIdForError = root.GetProperty("id").GetGuid();
                 var request = new IntegrationActionRequest
                 {
-                    RequestId = root.GetProperty("id").GetGuid(), ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
+                    RequestId = requestIdForError.Value, ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
                     ActionId = data.GetProperty("actionId").GetString(), Args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(data.GetProperty("args").GetRawText()),
                     User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
                 };
@@ -299,7 +301,12 @@ namespace BannerlordTwitch.Integration
                 if (!receivedRequests.TryAdd(request.RequestId, 0)) return;
                 ActionRequested?.Invoke(request);
             }
-            catch (Exception ex) { Log.Error($"[Integration] Rejected malformed action request: {ex.Message}"); }
+            catch (Exception ex)
+            {
+                Log.Error($"[Integration] Rejected malformed action request: {ex.Message}");
+                if (requestIdForError.HasValue)
+                    _ = SendActionErrorAsync(requestIdForError.Value, "The game rejected a malformed action request.");
+            }
         }
 
         public bool TryResolve(IntegrationActionRequest request, out IntegrationActionDefinition definition, out string legacyArgs, out string error)
