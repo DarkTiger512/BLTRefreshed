@@ -63,7 +63,8 @@ public sealed class Database(NpgsqlDataSource dataSource)
 
     public async Task<ChannelConfiguration?> SaveConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token)
     {
-        var updated = configuration with { SchemaVersion = 1, Revision = configuration.Revision + 1, UpdatedAt = DateTimeOffset.UtcNow };
+        var normalized = Normalize(configuration);
+        var updated = normalized with { SchemaVersion = 2, Revision = configuration.Revision + 1, UpdatedAt = DateTimeOffset.UtcNow };
         var json = JsonSerializer.Serialize(updated);
         await using var command = dataSource.CreateCommand("""
           INSERT INTO channel_configurations(channel_id,document,revision,updated_at)
@@ -80,16 +81,26 @@ public sealed class Database(NpgsqlDataSource dataSource)
         await using var command = dataSource.CreateCommand("SELECT document::text FROM channel_configurations WHERE channel_id=$1");
         command.Parameters.AddWithValue(channel);
         var json = (string?)await command.ExecuteScalarAsync(token);
-        if (json is null) return new ChannelConfiguration(1, true, [], 0, DateTimeOffset.UtcNow);
+        if (json is null) return Normalize(new ChannelConfiguration(2, true, [], 0, DateTimeOffset.UtcNow));
         var stored = JsonSerializer.Deserialize<ChannelConfiguration>(json)!;
-        return stored.SchemaVersion == 0 ? stored with { SchemaVersion = 1, ExtensionEnabled = true } : stored;
+        return Normalize(stored);
     }
 
     public async Task<bool> IsActionEnabledAsync(string channel, string actionId, CancellationToken token)
     {
         var configuration = await GetConfigurationAsync(channel, token);
-        var preference = configuration.Commands.FirstOrDefault(item => string.Equals(item.ActionId, actionId, StringComparison.Ordinal));
-        return configuration.ExtensionEnabled && (preference?.Enabled ?? true);
+        var profile = configuration.Profiles!.First(item => item.ProfileId == configuration.ActiveProfile);
+        var preference = profile.Commands.FirstOrDefault(item => string.Equals(item.ActionId, actionId, StringComparison.Ordinal));
+        return profile.ExtensionEnabled && (preference?.Enabled ?? true);
+    }
+
+    private static ChannelConfiguration Normalize(ChannelConfiguration configuration)
+    {
+        var active = configuration.ActiveProfile is >= 1 and <= 3 ? configuration.ActiveProfile : 1;
+        var profiles = configuration.Profiles?.ToList() ?? [];
+        for (var id = 1; id <= 3; id++) if (profiles.All(profile => profile.ProfileId != id)) profiles.Add(new(id, id == active ? configuration.ExtensionEnabled : true, id == active ? configuration.Commands : []));
+        var selected = profiles.First(profile => profile.ProfileId == active);
+        return configuration with { SchemaVersion = 2, ActiveProfile = active, Profiles = profiles.OrderBy(profile => profile.ProfileId).ToArray(), ExtensionEnabled = selected.ExtensionEnabled, Commands = selected.Commands };
     }
 
     public async Task<IReadOnlyList<InstallationSummary>> ListInstallationsAsync(string channel, CancellationToken token)

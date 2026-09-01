@@ -113,7 +113,8 @@ export interface RetinueSnapshot { heroName: string; retinue: RetinueTroop[]; el
 export type CommandActivityStatus = "pending" | "succeeded" | "failed";
 export interface CommandActivity { requestId: string; actionId: string; actionName: string; status: CommandActivityStatus; submittedAt: string; completedAt?: string; messages: string[] }
 export interface CommandPreference { actionId: string; enabled: boolean }
-export interface ChannelConfiguration { schemaVersion: number; extensionEnabled: boolean; commands: CommandPreference[]; revision: number; updatedAt: string }
+export interface ConfigurationProfile { profileId: number; extensionEnabled: boolean; commands: CommandPreference[] }
+export interface ChannelConfiguration { schemaVersion: number; extensionEnabled: boolean; commands: CommandPreference[]; profiles: ConfigurationProfile[]; activeProfile: number; revision: number; updatedAt: string }
 export interface InstallationSummary { installationId: string; createdAt: string; lastSeenAt?: string; revokedAt?: string }
 export interface ConfigurationContext { configuration: ChannelConfiguration; gameConnected: boolean; lastStateAt?: string; installations: InstallationSummary[]; runtimeCommands: RuntimeCommand[] }
 
