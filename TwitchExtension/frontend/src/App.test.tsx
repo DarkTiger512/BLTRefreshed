@@ -3,7 +3,7 @@ import { afterEach, expect, test, vi } from "vitest";
 import { App } from "./App";
 
 const manifest = { protocolVersion: 1, actions: [
-  { id: "command.adopt", legacyName: "adopt", handler: "AdoptAHero", category: "Hero", description: "Adopt a hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [] },
+  { id: "command.adopt", legacyName: "adopt", handler: "AdoptAHero", category: "Hero", description: "Adopt a hero", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer", "moderator", "broadcaster"], availability: ["game.started"], mutatesCampaign: true, inputs: [] },
   { id: "command.adoptbyculture", legacyName: "adoptByCulture", handler: "AdoptAHero", category: "Hero", description: "Adopt by culture", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "culture", label: "Culture", type: "choice", required: true, options: [], optionsSource: "cultures" }] },
   { id: "command.equipcustom", legacyName: "equipcustom", handler: "EquipCustomItemAction", category: "Equipment", description: "Equip custom item", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "item", type: "text", required: true }] },
   { id: "command.retinue", legacyName: "retinue", handler: "Retinue", category: "Retinue", description: "Manage battle retinue", enabledByDefault: true, hiddenFromHelp: false, permissions: ["viewer"], availability: ["game.started"], mutatesCampaign: true, inputs: [{ id: "operation", type: "choice", required: true }] },
@@ -30,7 +30,8 @@ test("renders the minimal command workspace, autocomplete, help, and native view
   expect(screen.getByRole("option", { name: /^!adoptAdopt a hero$/i })).toBeInTheDocument();
   fireEvent.keyDown(commandLine, { key: "Tab" });
   expect(commandLine).toHaveValue("adopt");
-  fireEvent.click(screen.getByRole("button", { name: "Open command help" }));
+  fireEvent.change(commandLine, { target: { value: "help" } });
+  fireEvent.keyDown(commandLine, { key: "Enter" });
   expect(screen.getByRole("dialog", { name: "Command help" })).toBeInTheDocument();
   fireEvent.click(screen.getByRole("button", { name: /!adoptbyculture/i }));
   expect(commandLine).toHaveValue("adoptByCulture ");

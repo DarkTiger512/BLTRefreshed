@@ -24,7 +24,7 @@ export function CommandWorkspace({ actions, commands, identity, state, busy, onE
   const [helpQuery, setHelpQuery] = useState("");
   const deferredHelpQuery = useDeferredValue(helpQuery.trim().toLowerCase());
   const elevated = identity.roles.includes("moderator") || identity.roles.includes("broadcaster");
-  const runtime = useMemo(() => commands.length ? commands : actions.map(action => ({ name: action.legacyName, handler: action.handler, help: action.description, moderatorOnly: action.permissions.includes("moderator") || action.permissions.includes("broadcaster"), hideHelp: action.hiddenFromHelp })), [actions, commands]);
+  const runtime = useMemo(() => commands.length ? commands : actions.map(action => ({ name: action.legacyName, handler: action.handler, help: action.description, moderatorOnly: !action.permissions.includes("viewer") && (action.permissions.includes("moderator") || action.permissions.includes("broadcaster")), hideHelp: action.hiddenFromHelp })), [actions, commands]);
   const visibleCommands = useMemo(() => runtime.filter(command => !command.moderatorOnly || elevated), [runtime, elevated]);
   const actionFor = (command: RuntimeCommand) => actions.find(action => action.legacyName.toLowerCase() === command.name.toLowerCase()) ?? actions.find(action => action.handler === command.handler);
   const normalized = line.trimStart().replace(/^!/, "");
@@ -69,6 +69,7 @@ export function CommandWorkspace({ actions, commands, identity, state, busy, onE
           else if (event.key === "ArrowUp" && suggestions.length) { event.preventDefault(); setActive(index => (index - 1 + suggestions.length) % suggestions.length); }
           else if (event.key === "Tab" && suggestions.length) { event.preventDefault(); complete(suggestions[active]?.value ?? suggestions[0].value); }
           else if (event.key === "Escape") { setLine(""); setActive(0); }
+          else if (event.key === "Enter") { event.preventDefault(); submit(); }
         }} placeholder="Type a command…" aria-label="Command line" autoComplete="off" />
         <button type="button" onClick={() => setHelpOpen(true)} aria-label="Open command help"><CircleHelp /></button>
         <button type="submit" disabled={busy || !line.trim()} aria-label="Run command"><Send /></button>
