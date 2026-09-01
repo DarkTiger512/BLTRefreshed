@@ -93,5 +93,8 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
   function completeDevelopmentCommand(requestId: string, message: string) {
     setCommandActivity(entries => entries.map(entry => entry.requestId === requestId ? { ...entry, status: "succeeded", messages: [message], completedAt: new Date().toISOString() } : entry));
   }
-  return { ...state, inventory, inventoryError, retinue, retinueError, commandActivity, setInventory, setInventoryError, setRetinue, setRetinueError, recordCommand, completeDevelopmentCommand, clearCommandActivity: () => setCommandActivity([]) };
+  function failCommand(requestId: string, message: string) {
+    setCommandActivity(entries => entries.map(entry => entry.requestId === requestId ? { ...entry, status: "failed", messages: [message], completedAt: new Date().toISOString() } : entry));
+  }
+  return { ...state, inventory, inventoryError, retinue, retinueError, commandActivity, setInventory, setInventoryError, setRetinue, setRetinueError, recordCommand, completeDevelopmentCommand, failCommand, clearCommandActivity: () => setCommandActivity([]) };
 }

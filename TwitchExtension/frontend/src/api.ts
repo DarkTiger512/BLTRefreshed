@@ -15,15 +15,15 @@ export async function createPairingCode(identity: ViewerIdentity) {
   return response.json() as Promise<{ code: string; expiresAt: string }>;
 }
 
-export async function submitAction(identity: ViewerIdentity, action: ManifestAction, args: Record<string, unknown>) {
+export async function submitAction(identity: ViewerIdentity, action: ManifestAction, args: Record<string, unknown>, requestId: string = crypto.randomUUID()) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     await new Promise(resolve => setTimeout(resolve, 350));
-    return { requestId: crypto.randomUUID(), status: "accepted" };
+    return { requestId, status: "accepted" };
   }
   const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/actions`, {
     method: "POST",
     headers: { Authorization: `Bearer ${identity.token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ requestId: crypto.randomUUID(), actionId: action.id, args, timestamp: new Date().toISOString() }),
+    body: JSON.stringify({ requestId, actionId: action.id, args, timestamp: new Date().toISOString() }),
   });
   if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "The action could not be sent.");
   return response.json();

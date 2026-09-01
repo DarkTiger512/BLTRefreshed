@@ -50,11 +50,12 @@ export function App() {
 
   async function handleActionSubmit(action: ManifestAction, args: Record<string, unknown>) {
     setBusy(true); setError(undefined);
+    const requestId = crypto.randomUUID();
+    state.recordCommand({ requestId, actionId: action.id, actionName: action.legacyName, status: "pending" });
     try {
-      const response = await submitAction(identity!, action, args);
-      state.recordCommand({ requestId: response.requestId, actionId: action.id, actionName: action.legacyName, status: "pending" });
+      const response = await submitAction(identity!, action, args, requestId);
       if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, `${action.legacyName} completed successfully.`);
-    } catch (reason) { setError(reason instanceof Error ? reason.message : "Action failed"); }
+    } catch (reason) { const message = reason instanceof Error ? reason.message : "Action failed"; state.failCommand(requestId, message); setError(message); }
     finally { setBusy(false); }
   }
   async function handleSubmit(args: Record<string, unknown>) { if (selected) await handleActionSubmit(selected, args); }
@@ -84,13 +85,14 @@ export function App() {
     const action = manifest!.actions.find(candidate => candidate.id === actionId);
     if (!action) { state.setRetinueError("Retinue controls are unavailable."); return; }
     setBusy(true); state.setRetinueError(undefined);
+    const requestId = crypto.randomUUID();
+    state.recordCommand({ requestId, actionId: action.id, actionName: action.legacyName, status: "pending" });
     try {
       const args = operation === "upgrade-count" ? { operation, count: value } : operation === "clear-slot" ? { operation, slot: value } : { operation };
-      const response = await submitAction(identity!, action, args);
-      state.recordCommand({ requestId: response.requestId, actionId: action.id, actionName: action.legacyName, status: "pending" });
+      const response = await submitAction(identity!, action, args, requestId);
       if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, `${action.legacyName} completed successfully.`);
       window.setTimeout(() => void loadRetinue(), identity!.token === "development-token" && !isLiveLocalIntegration() ? 350 : 700);
-    } catch (reason) { state.setRetinueError(reason instanceof Error ? reason.message : "That retinue order could not be completed."); }
+    } catch (reason) { const message = reason instanceof Error ? reason.message : "That retinue order could not be completed."; state.failCommand(requestId, message); state.setRetinueError(message); }
     finally { setBusy(false); }
   }
 
@@ -98,9 +100,10 @@ export function App() {
     const equipAction = manifest!.actions.find(action => action.id === "command.equipcustom");
     if (!equipAction) { state.setInventoryError("Equipment controls are unavailable."); return; }
     setInventoryLoading(true); state.setInventoryError(undefined);
+    const requestId = crypto.randomUUID();
+    state.recordCommand({ requestId, actionId: equipAction.id, actionName: "Equip custom item", status: "pending" });
     try {
-      const response = await submitAction(identity!, equipAction, { item: `${itemIndex} @${slotId}` });
-      state.recordCommand({ requestId: response.requestId, actionId: equipAction.id, actionName: "Equip custom item", status: "pending" });
+      const response = await submitAction(identity!, equipAction, { item: `${itemIndex} @${slotId}` }, requestId);
       if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, "Equipment updated successfully.");
       if (!isLiveLocalIntegration()) state.setInventory(current => current ? {
         ...current,
@@ -109,7 +112,7 @@ export function App() {
         updatedAt: new Date().toISOString(),
       } : current);
       if (identity!.token !== "development-token" || isLiveLocalIntegration()) window.setTimeout(() => void loadInventory(), 700);
-    } catch (reason) { state.setInventoryError(reason instanceof Error ? reason.message : "That item could not be equipped."); }
+    } catch (reason) { const message = reason instanceof Error ? reason.message : "That item could not be equipped."; state.failCommand(requestId, message); state.setInventoryError(message); }
     finally { setInventoryLoading(false); }
   }
 
