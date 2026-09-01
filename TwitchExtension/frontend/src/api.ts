@@ -11,7 +11,7 @@ export async function getConfigurationContext(identity: ViewerIdentity) {
       gameConnected: true,
       lastStateAt: new Date(Date.now() - 12_000).toISOString(),
       installations: [{ installationId: "a89b210d-50ce-47d0-8b75-244563848001", createdAt: new Date(Date.now() - 86_400_000 * 12).toISOString(), lastSeenAt: new Date(Date.now() - 12_000).toISOString() }],
-      pairingRequests: [{ requestId: "b89b210d-50ce-47d0-8b75-244563848002", modVersion: "5.4.0", platformLabel: "Windows PC", fingerprint: "7A4D91", createdAt: new Date(Date.now() - 45_000).toISOString(), expiresAt: new Date(Date.now() + 480_000).toISOString(), status: "pending" }],
+      pairingRequests: [],
       runtimeCommands: [],
     } satisfies ConfigurationContext;
   }
