@@ -486,7 +486,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .battle-workspace {
   position: absolute;
   inset: 80px auto 22px 74px;
-  width: min(820px,calc(100vw - 380px));
+  width: calc(100vw - 380px);
   height: auto;
   padding: 0;
   pointer-events: none;
@@ -500,6 +500,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .personal-battle-hud,
 .minimal-battle-roster { pointer-events: auto; }
 .personal-battle-hud { width: min(360px,100%); }
+.minimal-team-group > div {
+  grid-template-columns: repeat(var(--roster-columns,2),minmax(104px,160px));
+  justify-content: start;
+}
 
 @media (max-width:1000px) and (min-width:681px) {
   .viewer-strip,.command-center { width: min(400px,calc(100vw - 310px)); }

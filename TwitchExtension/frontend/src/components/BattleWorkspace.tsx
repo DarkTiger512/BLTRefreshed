@@ -1,5 +1,6 @@
 import { Crosshair, Shield, Swords, Users, Zap } from "lucide-react";
 import { memo, useMemo } from "react";
+import type { CSSProperties } from "react";
 import type { GameState, ManifestAction, MissionCombatant, ViewerIdentity } from "../types";
 import { BattleCommandStrip } from "./BattleCommandStrip";
 
@@ -61,7 +62,7 @@ export function BattleWorkspace({ mission, actions, identity, cooldowns, busy, o
       </section>
       <section className="minimal-battle-roster" aria-label="Battle roster">
         <h2>Battle roster <span>{mission.combatants.length - (ownHero ? 1 : 0)}</span></h2>
-        <div className="minimal-team-groups">{Array.from(groups, ([name, heroes]) => <div className="minimal-team-group" key={name}><h3>{name}</h3><div>{heroes.map(hero => <RosterTile key={hero.id} hero={hero} tournament={mission.kind === "tournament"} />)}</div></div>)}</div>
+        <div className="minimal-team-groups">{Array.from(groups, ([name, heroes]) => <div className="minimal-team-group" key={name}><h3>{name}</h3><div style={{ "--roster-columns": Math.min(heroes.length, 8) } as CSSProperties}>{heroes.map(hero => <RosterTile key={hero.id} hero={hero} tournament={mission.kind === "tournament"} />)}</div></div>)}</div>
       </section>
     </div>
   </section>;
