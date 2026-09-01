@@ -119,6 +119,7 @@ namespace BLTAdoptAHero
             CampaignEvents.OnGameLoadFinishedEvent.AddNonSerializedListener(this, () =>
             {
                 TroopTreeIndex.BuildIndex();
+                BLTAdoptAHeroModule.RefreshIntegrationSelectors();
 
                 // Ensure all existing heroes are registered
                 foreach (var hero in CampaignHelpers.AllHeroes.Where(h => h.IsAdopted()))

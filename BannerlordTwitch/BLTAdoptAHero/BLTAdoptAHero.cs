@@ -57,6 +57,35 @@ namespace BLTAdoptAHero
         internal static GlobalHeroClassConfig HeroClassConfig { get; private set; }
         internal static GlobalHeroPowerConfig HeroPowerConfig { get; private set; }
 
+        private static IEnumerable<string> GetSelectorValues(string selectorName, Func<IEnumerable<string>> getValues)
+        {
+            try
+            {
+                return (getValues?.Invoke() ?? Enumerable.Empty<string>())
+                    .Where(value => !string.IsNullOrWhiteSpace(value))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+            }
+            catch (Exception e)
+            {
+                // Bannerlord's campaign object collections are not guaranteed to be populated in
+                // OnGameStart. An empty selector is safe here; it is refreshed after loading ends.
+                Log.Exception($"Integration selector '{selectorName}'", e);
+                return Enumerable.Empty<string>();
+            }
+        }
+
+        internal static void RefreshIntegrationSelectors()
+        {
+            IntegrationSelectorProvider.Set(
+                GetSelectorValues("cultures", () => CampaignHelpers.MainCultures.Select(culture => culture?.Name?.ToString())),
+                GetSelectorValues("heroes", () => Hero.AllAliveHeroes.Select(hero => hero?.Name?.ToString())),
+                GetSelectorValues("clans", () => Clan.All.Where(clan => clan != null && !clan.IsEliminated).Select(clan => clan.Name?.ToString())),
+                GetSelectorValues("kingdoms", () => Kingdom.All.Where(kingdom => kingdom != null && !kingdom.IsEliminated).Select(kingdom => kingdom.Name?.ToString())),
+                GetSelectorValues("settlements", () => Settlement.All.Select(settlement => settlement?.Name?.ToString())),
+                GetSelectorValues("skills", () => CampaignHelpers.AllSkillObjects.Select(skill => skill?.Name?.ToString())));
+        }
+
         public BLTAdoptAHeroModule()
         {
             ActionManager.RegisterAll(typeof(BLTAdoptAHeroModule).Assembly);
@@ -213,13 +242,7 @@ namespace BLTAdoptAHero
 
                     var campaignStarter = (CampaignGameStarter)gameStarterObject;
                     campaignStarter.AddBehavior(new BLTAdoptAHeroCampaignBehavior());
-                    IntegrationSelectorProvider.Set(
-                        CampaignHelpers.MainCultures.Select(culture => culture.Name.ToString()),
-                        Hero.AllAliveHeroes.Select(hero => hero.Name.ToString()),
-                        Clan.All.Where(clan => !clan.IsEliminated).Select(clan => clan.Name.ToString()),
-                        Kingdom.All.Where(kingdom => !kingdom.IsEliminated).Select(kingdom => kingdom.Name.ToString()),
-                        Settlement.All.Select(settlement => settlement.Name.ToString()),
-                        CampaignHelpers.AllSkillObjects.Select(skill => skill.Name.ToString()));
+                    RefreshIntegrationSelectors();
                     IntegrationViewerStateProvider.Set(userName =>
                     {
                         var behavior = BLTAdoptAHeroCampaignBehavior.Current;
