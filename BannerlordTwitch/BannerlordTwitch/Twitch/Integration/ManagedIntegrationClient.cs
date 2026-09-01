@@ -9,6 +9,8 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Text.Json.Serialization;
+using System.Reflection;
+using System.Linq;
 using BannerlordTwitch.Util;
 
 namespace BannerlordTwitch.Integration
@@ -209,6 +211,7 @@ namespace BannerlordTwitch.Integration
         private readonly ConcurrentDictionary<string, string> lastViewerStates = new(StringComparer.Ordinal);
         private readonly SemaphoreSlim sendLock = new(1, 1);
         private readonly IntegrationRuntimeCommand[] runtimeCommands;
+        private readonly Dictionary<string, Command> configuredCommands;
 
         public event Action<IntegrationActionRequest> ActionRequested;
         public event Action<IntegrationCommandRequest> CommandRequested;
@@ -219,7 +222,9 @@ namespace BannerlordTwitch.Integration
             this.auth = auth;
             this.channelId = channelId;
             catalog = IntegrationActionCatalog.Load();
-            runtimeCommands = commands.Select(command => new IntegrationRuntimeCommand
+            var commandList = commands.ToArray();
+            configuredCommands = commandList.ToDictionary(command => command.Name.ToString(), StringComparer.CurrentCultureIgnoreCase);
+            runtimeCommands = commandList.Select(command => new IntegrationRuntimeCommand
             {
                 Name = command.Name.ToString(), Handler = command.Handler, Help = command.Help.ToString(),
                 HelpKey = $"command.{command.Handler.ToLowerInvariant()}.help",
@@ -388,6 +393,11 @@ namespace BannerlordTwitch.Integration
                     CommandRequested?.Invoke(request);
                     return;
                 }
+                if (kind == "configuration.updated")
+                {
+                    MainThreadSync.Run(() => ApplyConfiguration(data));
+                    return;
+                }
                 if (kind != "action.request") return;
                 requestIdForError = root.GetProperty("id").GetGuid();
                 var request = new IntegrationActionRequest
@@ -406,6 +416,38 @@ namespace BannerlordTwitch.Integration
                 Log.Error($"[Integration] Rejected malformed action request: {ex.Message}");
                 if (requestIdForError.HasValue)
                     _ = SendActionErrorAsync(requestIdForError.Value, "The game rejected a malformed action request.");
+            }
+        }
+
+        private void ApplyConfiguration(JsonElement data)
+        {
+            if (!data.TryGetProperty("commands", out var commands) || commands.ValueKind != JsonValueKind.Array) return;
+            foreach (var preference in commands.EnumerateArray())
+            {
+                var actionId = preference.GetProperty("actionId").GetString();
+                var commandName = actionId?.StartsWith("command.", StringComparison.Ordinal) == true ? actionId.Substring(8) : actionId;
+                if (string.IsNullOrWhiteSpace(commandName) || !configuredCommands.TryGetValue(commandName, out var command)) continue;
+                if (preference.TryGetProperty("enabled", out var enabled)) command.Enabled = enabled.GetBoolean();
+                if (!preference.TryGetProperty("settings", out var settings) || settings.ValueKind != JsonValueKind.Object) continue;
+                foreach (var setting in settings.EnumerateObject())
+                {
+                    object target = command; var propertyName = setting.Name;
+                    if (propertyName.StartsWith("HandlerConfig.", StringComparison.Ordinal)) { target = command.HandlerConfig; propertyName = propertyName.Substring(14); }
+                    if (target == null) continue;
+                    var property = target.GetType().GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
+                    if (property == null || !property.CanWrite) continue;
+                    try
+                    {
+                        object value = property.PropertyType == typeof(bool) ? setting.Value.GetBoolean()
+                            : property.PropertyType == typeof(int) ? setting.Value.GetInt32()
+                            : property.PropertyType == typeof(float) ? setting.Value.GetSingle()
+                            : property.PropertyType == typeof(double) ? setting.Value.GetDouble()
+                            : property.PropertyType == typeof(string) ? setting.Value.GetString()
+                            : JsonSerializer.Deserialize(setting.Value.GetRawText(), property.PropertyType);
+                        property.SetValue(target, value);
+                    }
+                    catch (Exception ex) { Log.Error($"[Integration] Could not apply {commandName}.{setting.Name}: {ex.Message}"); }
+                }
             }
         }
 

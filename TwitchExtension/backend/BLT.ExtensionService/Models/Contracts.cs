@@ -33,7 +33,7 @@ public sealed record RetinueSubmission(string RequestId, DateTimeOffset Timestam
 public sealed record PairingExchangeRequest(string Code);
 public sealed record PairingExchangeResponse(string ChannelId, string InstallationId, string InstallationCredential, DateTimeOffset IssuedAt);
 public sealed record PairingCodeResponse(string Code, DateTimeOffset ExpiresAt);
-public sealed record CommandPreference(string ActionId, bool Enabled);
+public sealed record CommandPreference(string ActionId, bool Enabled, Dictionary<string, JsonElement>? Settings = null);
 public sealed record ConfigurationProfile(int ProfileId, bool ExtensionEnabled, IReadOnlyList<CommandPreference> Commands);
 public sealed record ChannelConfiguration(int SchemaVersion, bool ExtensionEnabled, IReadOnlyList<CommandPreference> Commands, long Revision, DateTimeOffset UpdatedAt, IReadOnlyList<ConfigurationProfile>? Profiles = null, int ActiveProfile = 1);
 public sealed record InstallationSummary(Guid InstallationId, DateTimeOffset CreatedAt, DateTimeOffset? LastSeenAt, DateTimeOffset? RevokedAt);

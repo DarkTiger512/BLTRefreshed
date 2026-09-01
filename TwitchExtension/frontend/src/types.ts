@@ -34,7 +34,9 @@ export interface ManifestAction {
   availability: string[];
   mutatesCampaign: boolean;
   inputs: ActionInput[];
+  settings?: StreamerSetting[];
 }
+export interface StreamerSetting { id: string; label: string; type: "boolean" | "number" | "string"; defaultValue: boolean | number | string }
 
 export interface ActionManifest { protocolVersion: number; manifestVersion?: number; actions: ManifestAction[] }
 
@@ -112,7 +114,7 @@ export interface RetinueTroop { slot: number; name: string; tier: number; cultur
 export interface RetinueSnapshot { heroName: string; retinue: RetinueTroop[]; eliteRetinue: RetinueTroop[]; updatedAt?: string }
 export type CommandActivityStatus = "pending" | "succeeded" | "failed";
 export interface CommandActivity { requestId: string; actionId: string; actionName: string; status: CommandActivityStatus; submittedAt: string; completedAt?: string; messages: string[] }
-export interface CommandPreference { actionId: string; enabled: boolean }
+export interface CommandPreference { actionId: string; enabled: boolean; settings?: Record<string, boolean | number | string> }
 export interface ConfigurationProfile { profileId: number; extensionEnabled: boolean; commands: CommandPreference[] }
 export interface ChannelConfiguration { schemaVersion: number; extensionEnabled: boolean; commands: CommandPreference[]; profiles: ConfigurationProfile[]; activeProfile: number; revision: number; updatedAt: string }
 export interface InstallationSummary { installationId: string; createdAt: string; lastSeenAt?: string; revokedAt?: string }

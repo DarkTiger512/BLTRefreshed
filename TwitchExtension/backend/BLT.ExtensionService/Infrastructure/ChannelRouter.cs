@@ -6,7 +6,7 @@ using BLT.ExtensionService.Models;
 
 namespace BLT.ExtensionService.Infrastructure;
 
-public sealed class ChannelRouter(ChannelStateCache stateCache)
+public sealed class ChannelRouter(ChannelStateCache stateCache, Database database)
 {
     private static readonly JsonSerializerOptions WireJson = new(JsonSerializerDefaults.Web);
     private readonly ConcurrentDictionary<string, WebSocket> games = new(StringComparer.Ordinal);
@@ -25,8 +25,12 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
         }
         return JsonSerializer.SerializeToElement(Array.Empty<object>());
     }
-    public Task BroadcastConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token) =>
-        BroadcastViewerAsync(channel, Envelope("configuration.updated", channel, new { configuration.SchemaVersion, configuration.ExtensionEnabled, configuration.Commands, configuration.Revision, configuration.UpdatedAt }), token);
+    public async Task BroadcastConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token)
+    {
+        var envelope = Envelope("configuration.updated", channel, new { configuration.SchemaVersion, configuration.ExtensionEnabled, configuration.Commands, configuration.Revision, configuration.UpdatedAt });
+        await BroadcastViewerAsync(channel, envelope, token);
+        await SendGameAsync(channel, JsonSerializer.Deserialize<JsonElement>(envelope), token);
+    }
 
     public async Task AttachGameAsync(string channel, WebSocket socket, CancellationToken token)
     {
@@ -34,6 +38,8 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
             await previous.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Replaced by a new game connection", token);
         stateCache.Clear(channel);
         games[channel] = socket;
+        var configuration = await database.GetConfigurationAsync(channel, token);
+        await SendAsync(socket, Envelope("configuration.updated", channel, new { configuration.SchemaVersion, configuration.ExtensionEnabled, configuration.Commands, configuration.Revision, configuration.UpdatedAt }), token);
         await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = true, gameStarted = true }), token);
         await PumpAsync(socket, async message => await RouteGameMessageAsync(channel, message, token), token);
         if (games.TryRemove(new KeyValuePair<string, WebSocket>(channel, socket)))

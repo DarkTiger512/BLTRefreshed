@@ -199,7 +199,7 @@ namespace BannerlordTwitch
                     {
                         try
                         {
-                            integrationClient = new ManagedIntegrationClient(authSettings, channelId, settings.EnabledCommands);
+                            integrationClient = new ManagedIntegrationClient(authSettings, channelId, settings.Commands);
                             integrationClient.ActionRequested += ExecuteIntegrationAction;
                             integrationClient.CommandRequested += ExecuteIntegrationCommand;
                             Log.Info("[Integration] Managed service connector started");

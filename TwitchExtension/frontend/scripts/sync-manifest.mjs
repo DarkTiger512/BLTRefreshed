@@ -4,6 +4,7 @@ import path from "node:path";
 const here = import.meta.dirname;
 const source = path.resolve(here, "../../../docs/twitch-integration/inventory/action-manifest.json");
 const destination = path.resolve(here, "../public/action-manifest.json");
+const commandInventory = JSON.parse(fs.readFileSync(path.resolve(here, "../../../docs/twitch-integration/inventory/commands.json"), "utf8"));
 fs.mkdirSync(path.dirname(destination), { recursive: true });
 const manifest = JSON.parse(fs.readFileSync(source, "utf8"));
 manifest.manifestVersion ??= 2;
@@ -17,6 +18,10 @@ for (const action of manifest.actions) {
     input.descriptionKey ??= `command.${key}.input.${input.id}.description`;
     for (const option of input.options ?? []) option.labelKey ??= `command.${key}.input.${input.id}.option.${option.value}`;
   }
+  const command = commandInventory.find(item => item.sourceLine === action.source?.line);
+  const common = command ? ["ModeratorOnly", "HideHelp", "RespondInDM", "RespondInExtension", "RespondInOverlay", "RespondInTwitch"].filter(name => typeof command[name] === "boolean").map(name => ({ id: name, label: name.replace(/([a-z])([A-Z])/g, "$1 $2"), type: "boolean", defaultValue: command[name] })) : [];
+  const handler = command ? Object.entries(command).filter(([name, value]) => /^ {2}[^ -]/.test(name) && !name.startsWith("    ") && ["boolean", "number", "string"].includes(typeof value)).map(([name, value]) => ({ id: `HandlerConfig.${name.trim()}`, label: name.trim().replace(/([a-z])([A-Z])/g, "$1 $2"), type: typeof value, defaultValue: value })) : [];
+  action.settings = [...common, ...handler];
 }
 fs.writeFileSync(destination, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(`Synced ${path.relative(process.cwd(), source)} -> ${path.relative(process.cwd(), destination)}`);
