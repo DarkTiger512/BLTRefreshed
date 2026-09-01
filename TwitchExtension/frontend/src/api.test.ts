@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { createPairingCode, submitAction } from "./api";
+import { createPairingCode, getConfigurationContext, revokeInstallation, submitAction } from "./api";
 import type { ManifestAction, ViewerIdentity } from "./types";
 
 const identity: ViewerIdentity = { token: "development-token", channelId: "42", userId: "9", displayName: "TestHero", roles: ["viewer"], linked: true };
@@ -28,4 +28,12 @@ test("ordinary localhost mode retains deterministic UI mocks", async () => {
   expect((await createPairingCode(identity)).code).toBe("BLT-DEMO-PAIR");
   await submitAction(identity, action, {});
   expect(fetch).not.toHaveBeenCalled();
+});
+
+test("mock installation revocation persists across configuration refreshes", async () => {
+  vi.stubEnv("VITE_BLT_LIVE_INTEGRATION", "false");
+  const before = await getConfigurationContext(identity);
+  await revokeInstallation(identity, before.installations[0].installationId);
+  const after = await getConfigurationContext(identity);
+  expect(after.installations[0].revokedAt).toBeTruthy();
 });

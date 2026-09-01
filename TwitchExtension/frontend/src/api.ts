@@ -3,6 +3,7 @@ import { isLiveLocalIntegration } from "./environment";
 
 const apiBase = import.meta.env.VITE_BLT_API_URL ?? "http://127.0.0.1:5188";
 const authHeaders = (identity: ViewerIdentity) => ({ Authorization: `Bearer ${identity.token}` });
+let mockInstallationRevokedAt: string | undefined;
 
 export async function getConfigurationContext(identity: ViewerIdentity) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) {
@@ -10,7 +11,7 @@ export async function getConfigurationContext(identity: ViewerIdentity) {
       configuration: { schemaVersion: 2, extensionEnabled: true, commands: [], activeProfile: 1, profiles: [1, 2, 3].map(profileId => ({ profileId, extensionEnabled: true, commands: [] })), revision: 4, updatedAt: new Date(Date.now() - 180_000).toISOString() },
       gameConnected: true,
       lastStateAt: new Date(Date.now() - 12_000).toISOString(),
-      installations: [{ installationId: "a89b210d-50ce-47d0-8b75-244563848001", createdAt: new Date(Date.now() - 86_400_000 * 12).toISOString(), lastSeenAt: new Date(Date.now() - 12_000).toISOString() }],
+      installations: [{ installationId: "a89b210d-50ce-47d0-8b75-244563848001", createdAt: new Date(Date.now() - 86_400_000 * 12).toISOString(), lastSeenAt: new Date(Date.now() - 12_000).toISOString(), revokedAt: mockInstallationRevokedAt }],
       pairingRequests: [],
       runtimeCommands: [],
     } satisfies ConfigurationContext;
@@ -34,7 +35,7 @@ export async function saveConfiguration(identity: ViewerIdentity, configuration:
 }
 
 export async function revokeInstallation(identity: ViewerIdentity, installationId: string) {
-  if (identity.token === "development-token" && !isLiveLocalIntegration()) { await new Promise(resolve => setTimeout(resolve, 200)); return; }
+  if (identity.token === "development-token" && !isLiveLocalIntegration()) { await new Promise(resolve => setTimeout(resolve, 200)); if (installationId === "a89b210d-50ce-47d0-8b75-244563848001") mockInstallationRevokedAt = new Date().toISOString(); return; }
   const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/installations/${encodeURIComponent(installationId)}`, { method: "DELETE", headers: authHeaders(identity) });
   if (!response.ok) throw new Error("Installation could not be revoked.");
 }
