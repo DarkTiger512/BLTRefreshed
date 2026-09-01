@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CommandActivity, GameState, InventorySnapshot, RetinueSnapshot, ViewerIdentity } from "../types";
+import { isLiveLocalIntegration } from "../environment";
 
 const initialState: GameState = {
   connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"] },
@@ -21,7 +22,9 @@ const initialState: GameState = {
 };
 
 export function useIntegrationState(identity: ViewerIdentity | null) {
-  const [state, setState] = useState<GameState>(() => new URLSearchParams(window.location.search).get("mission") === "inactive"
+  const [state, setState] = useState<GameState>(() => isLiveLocalIntegration()
+    ? { connected: false, gameStarted: false, unavailable: {}, cooldowns: {}, selectors: { cultures: [] }, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
+    : new URLSearchParams(window.location.search).get("mission") === "inactive"
     ? { ...initialState, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
     : initialState);
   const [inventory, setInventory] = useState<InventorySnapshot>();
@@ -30,42 +33,59 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
   const [retinueError, setRetinueError] = useState<string>();
   const [commandActivity, setCommandActivity] = useState<CommandActivity[]>([]);
   useEffect(() => {
-    if (!identity || identity.token === "development-token") return;
+    if (!identity || (identity.token === "development-token" && !isLiveLocalIntegration())) return;
+    let disposed = false;
+    let socket: WebSocket | undefined;
+    let reconnectTimer: number | undefined;
+    let reconnectDelay = 1000;
     const apiBase = import.meta.env.VITE_BLT_API_URL ?? window.location.origin;
     const url = new URL(`/ws/viewer/${encodeURIComponent(identity.channelId)}`, apiBase);
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
     url.searchParams.set("token", identity.token);
-    const socket = new WebSocket(url);
-    socket.addEventListener("open", () => setState(value => ({ ...value, connected: true })));
-    socket.addEventListener("close", () => setState(value => ({ ...value, connected: false })));
-    socket.addEventListener("message", event => {
-      const envelope = JSON.parse(String(event.data));
+    const handleMessage = (event: MessageEvent) => {
+      let envelope: { v?: number; id?: string; channelId?: string; kind?: string; timestamp?: string; data?: Record<string, any> };
+      try { envelope = JSON.parse(String(event.data)); } catch { return; }
+      if (envelope.v !== 1 || envelope.channelId !== identity.channelId || !envelope.data) return;
+      const data = envelope.data;
       if (envelope.kind === "connection.status") {
-        setState(value => ({ ...value, ...envelope.data, mission: envelope.data.connected ? value.mission : { active: false, kind: "inactive", revision: value.mission.revision + 1, deploymentFinished: false, combatants: [], actionAvailability: {} } }));
+        setState(value => ({ ...value, ...data, mission: data.connected ? value.mission : { active: false, kind: "inactive", revision: value.mission.revision + 1, deploymentFinished: false, combatants: [], actionAvailability: {} } }));
       } else if (envelope.kind === "state.snapshot" || envelope.kind === "state.patch") {
         setState(value => {
-          const nextMission = envelope.data.mission;
+          const nextMission = data.mission;
           if (nextMission && nextMission.revision < value.mission.revision) return value;
-          return { ...value, ...envelope.data, mission: nextMission ? { ...value.mission, ...nextMission } : value.mission };
+          return { ...value, ...data, mission: nextMission ? { ...value.mission, ...nextMission } : value.mission };
         });
       } else if (envelope.kind === "inventory.snapshot") {
-        setInventory({ ...envelope.data, updatedAt: envelope.timestamp });
+        setInventory({ ...data, updatedAt: envelope.timestamp } as InventorySnapshot);
         setInventoryError(undefined);
       } else if (envelope.kind === "inventory.error") {
-        setInventoryError(envelope.data.error);
+        setInventoryError(data.error);
       } else if (envelope.kind === "retinue.snapshot") {
-        setRetinue({ ...envelope.data, updatedAt: envelope.timestamp });
+        setRetinue({ ...data, updatedAt: envelope.timestamp } as RetinueSnapshot);
         setRetinueError(undefined);
       } else if (envelope.kind === "retinue.error") {
-        setRetinueError(envelope.data.error);
+        setRetinueError(data.error);
       } else if (envelope.kind === "action.result" || envelope.kind === "action.error") {
-        const requestId = String(envelope.data.requestId ?? envelope.id);
+        const requestId = String(data.requestId ?? envelope.id);
         const succeeded = envelope.kind === "action.result";
-        const messages = succeeded ? (envelope.data.messages ?? []) : [envelope.data.error ?? "The command failed."];
+        const messages = succeeded ? (data.messages ?? []) : [data.error ?? "The command failed."];
         setCommandActivity(entries => entries.map(entry => entry.requestId === requestId ? { ...entry, status: succeeded ? "succeeded" : "failed", messages, completedAt: envelope.timestamp } : entry));
       }
-    });
-    return () => socket.close();
+    };
+    const connect = () => {
+      if (disposed) return;
+      socket = new WebSocket(url);
+      socket.addEventListener("open", () => { reconnectDelay = 1000; setState(value => ({ ...value, connected: true })); });
+      socket.addEventListener("message", handleMessage);
+      socket.addEventListener("close", () => {
+        if (disposed) return;
+        setState(value => ({ ...value, connected: false }));
+        reconnectTimer = window.setTimeout(connect, reconnectDelay);
+        reconnectDelay = Math.min(reconnectDelay * 2, 30000);
+      });
+    };
+    connect();
+    return () => { disposed = true; if (reconnectTimer) window.clearTimeout(reconnectTimer); socket?.close(); };
   }, [identity]);
   function recordCommand(entry: Omit<CommandActivity, "submittedAt" | "messages">) {
     setCommandActivity(entries => [{ ...entry, submittedAt: new Date().toISOString(), messages: [] }, ...entries.filter(item => item.requestId !== entry.requestId)].slice(0, 100));

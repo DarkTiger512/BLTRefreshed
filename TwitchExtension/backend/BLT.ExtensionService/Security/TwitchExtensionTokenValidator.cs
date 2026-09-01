@@ -13,7 +13,11 @@ public sealed class TwitchExtensionTokenValidator(IHostEnvironment environment, 
         error = "Invalid Twitch authorization.";
         if (environment.IsDevelopment() && Environment.GetEnvironmentVariable("BLT_ALLOW_DEVELOPMENT_AUTH") == "true" && authorization == "Bearer development-token")
         {
-            principal = new TwitchPrincipal(expectedChannel, "development-user", "Udevelopment-user", "broadcaster", true, "Rowan");
+            var userId = Environment.GetEnvironmentVariable("BLT_DEVELOPMENT_USER_ID") ?? "development-user";
+            var name = Environment.GetEnvironmentVariable("BLT_DEVELOPMENT_VIEWER_NAME") ?? "Rowan";
+            var role = Environment.GetEnvironmentVariable("BLT_DEVELOPMENT_ROLE") ?? "broadcaster";
+            if (role is not ("viewer" or "moderator" or "broadcaster")) { error = "Invalid development role configuration."; return false; }
+            principal = new TwitchPrincipal(expectedChannel, userId, $"U{userId}", role, true, name);
             return true;
         }
         if (string.IsNullOrWhiteSpace(authorization) || !authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)) return false;

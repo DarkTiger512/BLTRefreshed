@@ -412,3 +412,4 @@ TwitchExtension/frontend/public/action-manifest.json
 TwitchExtension/frontend/*.tsbuildinfo
 TwitchExtension/frontend/vite.config.js
 TwitchExtension/frontend/vite.config.d.ts
+TwitchExtension/frontend/.env.live.local

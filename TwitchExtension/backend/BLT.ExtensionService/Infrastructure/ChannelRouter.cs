@@ -6,26 +6,29 @@ using BLT.ExtensionService.Models;
 
 namespace BLT.ExtensionService.Infrastructure;
 
-public sealed class ChannelRouter
+public sealed class ChannelRouter(ChannelStateCache stateCache)
 {
     private readonly ConcurrentDictionary<string, WebSocket> games = new(StringComparer.Ordinal);
     private sealed record ViewerConnection(string UserId, WebSocket Socket);
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<Guid, ViewerConnection>> viewers = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<Guid, (string Channel, string UserId)> privateRequests = new();
-    private readonly ConcurrentDictionary<string, string> latestState = new(StringComparer.Ordinal);
 
     public bool IsGameConnected(string channel) => games.TryGetValue(channel, out var socket) && socket.State == WebSocketState.Open;
+    public DateTimeOffset? LastStateAt(string channel) => stateCache.LastStateAt(channel);
 
     public async Task AttachGameAsync(string channel, WebSocket socket, CancellationToken token)
     {
         if (games.TryGetValue(channel, out var previous) && previous.State == WebSocketState.Open)
             await previous.CloseAsync(WebSocketCloseStatus.PolicyViolation, "Replaced by a new game connection", token);
+        stateCache.Clear(channel);
         games[channel] = socket;
         await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = true, gameStarted = true }), token);
         await PumpAsync(socket, async message => await RouteGameMessageAsync(channel, message, token), token);
-        games.TryRemove(new KeyValuePair<string, WebSocket>(channel, socket));
-        latestState.TryRemove(channel, out _);
-        await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = false, gameStarted = false }), CancellationToken.None);
+        if (games.TryRemove(new KeyValuePair<string, WebSocket>(channel, socket)))
+        {
+            stateCache.Clear(channel);
+            await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = false, gameStarted = false }), CancellationToken.None);
+        }
     }
 
     public async Task AttachViewerAsync(string channel, string userId, WebSocket socket, CancellationToken token)
@@ -33,7 +36,7 @@ public sealed class ChannelRouter
         var id = Guid.NewGuid();
         viewers.GetOrAdd(channel, _ => new ConcurrentDictionary<Guid, ViewerConnection>())[id] = new(userId, socket);
         await SendAsync(socket, Envelope("connection.status", channel, new { connected = IsGameConnected(channel), gameStarted = IsGameConnected(channel) }), token);
-        if (latestState.TryGetValue(channel, out var state)) await SendAsync(socket, state, token);
+        if (stateCache.TryGet(channel, out var state)) await SendAsync(socket, state, token);
         await PumpAsync(socket, _ => Task.CompletedTask, token);
         if (viewers.TryGetValue(channel, out var channelViewers)) channelViewers.TryRemove(id, out _);
     }
@@ -55,7 +58,10 @@ public sealed class ChannelRouter
             using var document = JsonDocument.Parse(message);
             var root = document.RootElement;
             var kind = root.GetProperty("kind").GetString();
-            if (kind is "state.snapshot" or "state.patch") latestState[channel] = message;
+            if (kind is "state.snapshot" or "state.patch")
+            {
+                if (!stateCache.TryAccept(channel, message, out _)) return;
+            }
             if (kind is "action.accepted" or "action.result" or "action.error" or "inventory.snapshot" or "inventory.error" or "retinue.snapshot" or "retinue.error")
             {
                 var requestId = root.GetProperty("id").GetGuid();
@@ -94,18 +100,23 @@ public sealed class ChannelRouter
     private static async Task PumpAsync(WebSocket socket, Func<string, Task> onMessage, CancellationToken token)
     {
         var buffer = new byte[64 * 1024];
-        while (socket.State == WebSocketState.Open && !token.IsCancellationRequested)
+        try
         {
-            using var stream = new MemoryStream();
-            WebSocketReceiveResult result;
-            do
+            while (socket.State == WebSocketState.Open && !token.IsCancellationRequested)
             {
-                result = await socket.ReceiveAsync(buffer, token);
-                if (result.MessageType == WebSocketMessageType.Close) return;
-                stream.Write(buffer, 0, result.Count);
-            } while (!result.EndOfMessage);
-            if (result.MessageType == WebSocketMessageType.Text) await onMessage(Encoding.UTF8.GetString(stream.ToArray()));
+                using var stream = new MemoryStream();
+                WebSocketReceiveResult result;
+                do
+                {
+                    result = await socket.ReceiveAsync(buffer, token);
+                    if (result.MessageType == WebSocketMessageType.Close) return;
+                    stream.Write(buffer, 0, result.Count);
+                } while (!result.EndOfMessage);
+                if (result.MessageType == WebSocketMessageType.Text) await onMessage(Encoding.UTF8.GetString(stream.ToArray()));
+            }
         }
+        catch (WebSocketException) { }
+        catch (OperationCanceledException) when (token.IsCancellationRequested) { }
     }
 
     private static Task SendAsync(WebSocket socket, string message, CancellationToken token) =>

@@ -36,6 +36,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .connection { margin-left: auto; display: flex; align-items: center; gap: 7px; color: #d8dee1; font-size: 12px; font-weight: 600; }
 .connection i { width: 8px; height: 8px; border-radius: 50%; background: var(--red); box-shadow: 0 0 9px currentColor; }
 .connection.connected i { background: var(--green); }
+.integration-diagnostics { min-height: 22px; padding: 4px 12px; display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; border-bottom:1px solid rgba(138,160,175,.2); background:rgba(4,12,18,.82); color:#9facb4; font-size:7px; letter-spacing:.04em; text-transform:uppercase; }
+.integration-diagnostics span::before { content:""; width:5px; height:5px; margin-right:4px; display:inline-block; border-radius:50%; background:#687780; }.integration-diagnostics .ok::before { background:var(--green); }.integration-diagnostics .bad::before { background:var(--red); }
 .close-button { width: 44px; height: 44px; display: grid; place-items: center; margin-left: 8px; border: 0; border-radius: 6px; background: transparent; cursor: pointer; }
 .close-button:hover { background: rgba(255,255,255,.07); }
 .close-button svg { width: 18px; }

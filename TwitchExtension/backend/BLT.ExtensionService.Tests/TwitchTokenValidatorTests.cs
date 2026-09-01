@@ -15,6 +15,32 @@ public sealed class EnvironmentCollection;
 public sealed class TwitchTokenValidatorTests
 {
     [Fact]
+    public void DevelopmentIdentityUsesExplicitEnvironmentConfigurationOnlyInDevelopment()
+    {
+        Environment.SetEnvironmentVariable("BLT_ALLOW_DEVELOPMENT_AUTH", "true");
+        Environment.SetEnvironmentVariable("BLT_DEVELOPMENT_USER_ID", "viewer-9");
+        Environment.SetEnvironmentVariable("BLT_DEVELOPMENT_VIEWER_NAME", "TestHero");
+        Environment.SetEnvironmentVariable("BLT_DEVELOPMENT_ROLE", "viewer");
+        try
+        {
+            var development = new TwitchExtensionTokenValidator(new TestEnvironment { EnvironmentName = Environments.Development }, NullLogger<TwitchExtensionTokenValidator>.Instance);
+            Assert.True(development.TryValidate("Bearer development-token", "123", out var principal, out _));
+            Assert.Equal("viewer-9", principal!.UserId);
+            Assert.Equal("TestHero", principal.DisplayName);
+            Assert.Equal("viewer", principal.Role);
+            var production = new TwitchExtensionTokenValidator(new TestEnvironment(), NullLogger<TwitchExtensionTokenValidator>.Instance);
+            Assert.False(production.TryValidate("Bearer development-token", "123", out _, out _));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("BLT_ALLOW_DEVELOPMENT_AUTH", null);
+            Environment.SetEnvironmentVariable("BLT_DEVELOPMENT_USER_ID", null);
+            Environment.SetEnvironmentVariable("BLT_DEVELOPMENT_VIEWER_NAME", null);
+            Environment.SetEnvironmentVariable("BLT_DEVELOPMENT_ROLE", null);
+        }
+    }
+
+    [Fact]
     public void ValidatesSignatureExpiryChannelIdentityAndRole()
     {
         var secret = RandomNumberGenerator.GetBytes(32);

@@ -1,0 +1,34 @@
+import { act, renderHook } from "@testing-library/react";
+import { afterEach, expect, test, vi } from "vitest";
+import { useIntegrationState } from "./useIntegrationState";
+import type { ViewerIdentity } from "../types";
+
+class TestSocket {
+  static instances: TestSocket[] = [];
+  listeners = new Map<string, Array<(event: Event) => void>>();
+  constructor(public url: string | URL) { TestSocket.instances.push(this); }
+  addEventListener(kind: string, listener: (event: Event) => void) { this.listeners.set(kind, [...(this.listeners.get(kind) ?? []), listener]); }
+  emit(kind: string, event = new Event(kind)) { for (const listener of this.listeners.get(kind) ?? []) listener(event); }
+  close() { }
+}
+
+const identity: ViewerIdentity = { token: "development-token", channelId: "42", userId: "9", displayName: "TestHero", roles: ["viewer"], linked: true };
+
+afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); TestSocket.instances = []; });
+
+test("live local viewer socket starts without demo state and reconnects after interruption", () => {
+  vi.useFakeTimers();
+  vi.stubEnv("VITE_BLT_LIVE_INTEGRATION", "true");
+  vi.stubGlobal("WebSocket", TestSocket);
+  const { result, unmount } = renderHook(() => useIntegrationState(identity));
+  expect(result.current.connected).toBe(false);
+  expect(result.current.mission.active).toBe(false);
+  expect(TestSocket.instances).toHaveLength(1);
+  act(() => TestSocket.instances[0].emit("open"));
+  expect(result.current.connected).toBe(true);
+  act(() => TestSocket.instances[0].emit("close"));
+  expect(result.current.connected).toBe(false);
+  act(() => vi.advanceTimersByTime(1000));
+  expect(TestSocket.instances).toHaveLength(2);
+  unmount();
+});

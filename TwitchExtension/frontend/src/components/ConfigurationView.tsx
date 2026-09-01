@@ -1,5 +1,5 @@
 import { CheckCircle2, Copy, Link2, RotateCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { createPairingCode } from "../api";
 import type { ViewerIdentity } from "../types";
 
@@ -8,12 +8,12 @@ export function ConfigurationView({ identity }: { identity: ViewerIdentity }) {
   const [expiresAt, setExpiresAt] = useState<string>();
   const [error, setError] = useState<string>();
   const [copied, setCopied] = useState(false);
-  const refresh = async () => {
+  const refresh = useCallback(async () => {
     setError(undefined); setCode("Requesting…");
     try { const response = await createPairingCode(identity); setCode(response.code); setExpiresAt(response.expiresAt); }
     catch (reason) { setCode("Unavailable"); setError(reason instanceof Error ? reason.message : "Pairing is unavailable."); }
-  };
-  useEffect(() => { void refresh(); }, [identity.channelId, identity.token]);
+  }, [identity]);
+  useEffect(() => { void refresh(); }, [refresh]);
   return <main className="configuration-view">
     <section className="configuration-card">
       <div className="config-emblem"><Link2 /></div><h1>Connect Bannerlord Twitch</h1>

@@ -1,5 +1,7 @@
 # Managed service deployment
 
+For the pre-publication Bannerlord connection workflow, see [LOCAL_GAME_TEST.md](LOCAL_GAME_TEST.md). The live-local development identity described there is intentionally unavailable in production.
+
 ## Required infrastructure
 
 - A TLS-terminating host for the ASP.NET Core service and WebSockets.

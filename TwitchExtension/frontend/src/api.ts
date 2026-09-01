@@ -1,9 +1,10 @@
 import type { ManifestAction, ViewerIdentity } from "./types";
+import { isLiveLocalIntegration } from "./environment";
 
 const apiBase = import.meta.env.VITE_BLT_API_URL ?? "http://127.0.0.1:5188";
 
 export async function createPairingCode(identity: ViewerIdentity) {
-  if (identity.token === "development-token") {
+  if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     return { code: "BLT-DEMO-PAIR", expiresAt: new Date(Date.now() + 600_000).toISOString() };
   }
   const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/pairing`, {
@@ -15,7 +16,7 @@ export async function createPairingCode(identity: ViewerIdentity) {
 }
 
 export async function submitAction(identity: ViewerIdentity, action: ManifestAction, args: Record<string, unknown>) {
-  if (identity.token === "development-token") {
+  if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     await new Promise(resolve => setTimeout(resolve, 350));
     return { requestId: crypto.randomUUID(), status: "accepted" };
   }
@@ -29,7 +30,7 @@ export async function submitAction(identity: ViewerIdentity, action: ManifestAct
 }
 
 export async function requestInventory(identity: ViewerIdentity) {
-  if (identity.token === "development-token") {
+  if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     await new Promise(resolve => setTimeout(resolve, 250));
     return { heroName: "Aldric the Bold", limit: 8, updatedAt: new Date().toISOString(), items: [
       { index: 1, name: "Wolf's Oath Longsword — +12 Damage, +8 Swing Speed", type: "One Handed Weapon", equipped: true },
@@ -57,7 +58,7 @@ export async function requestInventory(identity: ViewerIdentity) {
 }
 
 export async function requestRetinue(identity: ViewerIdentity) {
-  if (identity.token === "development-token") {
+  if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     await new Promise(resolve => setTimeout(resolve, 220));
     return { heroName: "Aldric the Bold", updatedAt: new Date().toISOString(), retinue: [
       { slot: 1, name: "Vlandian Sergeant", tier: 5, culture: "Vlandia" },
@@ -76,4 +77,12 @@ export async function requestRetinue(identity: ViewerIdentity) {
   });
   if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "Your retinue could not be loaded.");
   return null;
+}
+
+export async function getIntegrationHealth(identity: ViewerIdentity) {
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/health`, {
+    headers: { Authorization: `Bearer ${identity.token}` },
+  });
+  if (!response.ok) throw new Error("The local integration service is unavailable.");
+  return response.json() as Promise<{ status: string; channelId: string; gameConnected: boolean; lastStateAt?: string }>;
 }

@@ -6,9 +6,12 @@ using BLT.ExtensionService.Security;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders();
+builder.Logging.AddSimpleConsole(options => options.SingleLine = true);
 var connectionString = Environment.GetEnvironmentVariable("BLT_DATABASE") ?? builder.Configuration["BLT:Database"] ?? throw new InvalidOperationException("BLT database is not configured");
 builder.Services.AddSingleton(NpgsqlDataSource.Create(connectionString));
 builder.Services.AddSingleton<Database>();
+builder.Services.AddSingleton<ChannelStateCache>();
 builder.Services.AddSingleton<ChannelRouter>();
 builder.Services.AddSingleton<RequestGuard>();
 builder.Services.AddSingleton<TwitchExtensionTokenValidator>();
@@ -29,6 +32,12 @@ static bool Authorized(HttpContext context, TwitchExtensionTokenValidator valida
 }
 
 app.MapGet("/health", (ChannelRouter router) => Results.Ok(new { status = "ok", time = DateTimeOffset.UtcNow }));
+
+app.MapGet("/api/channels/{channel}/health", (string channel, HttpContext context, TwitchExtensionTokenValidator validator, ChannelRouter router) =>
+{
+    if (!Authorized(context, validator, channel, out _, out var failure)) return failure!;
+    return Results.Ok(new { status = "ok", channelId = channel, gameConnected = router.IsGameConnected(channel), lastStateAt = router.LastStateAt(channel) });
+});
 
 app.MapPost("/api/channels/{channel}/pairing", async (string channel, HttpContext context, TwitchExtensionTokenValidator validator, Database database, IConfiguration config, CancellationToken token) =>
 {

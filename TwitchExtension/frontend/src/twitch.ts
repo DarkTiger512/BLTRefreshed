@@ -1,16 +1,14 @@
 import type { ViewerIdentity } from "./types";
+import { developmentIdentityConfig, isLocalHost } from "./environment";
 
-const developmentIdentity: ViewerIdentity = {
-  token: "development-token",
-  channelId: "development-channel",
-  userId: "development-user",
-  displayName: "Rowan",
-  roles: ["viewer"],
-  linked: true,
-};
+function developmentIdentity(): ViewerIdentity {
+  const config = developmentIdentityConfig();
+  return { token: "development-token", channelId: config.channelId, userId: config.userId,
+    displayName: config.displayName, roles: [config.role], linked: true };
+}
 
 export function authorizeViewer(): Promise<ViewerIdentity> {
-  if (["127.0.0.1", "localhost"].includes(window.location.hostname) || !window.Twitch?.ext) return Promise.resolve(developmentIdentity);
+  if (isLocalHost() || !window.Twitch?.ext) return Promise.resolve(developmentIdentity());
   return new Promise(resolve => {
     window.Twitch?.ext.onAuthorized(auth => {
       const viewer = window.Twitch?.ext.viewer;
