@@ -22,7 +22,8 @@ afterEach(cleanup);
 test("renders the minimal command workspace, autocomplete, help, and native views", async () => {
   window.history.pushState({}, "", "/?mission=inactive");
   render(<App />);
-  await waitFor(() => expect(screen.getByText("Bannerlord Twitch")).toBeInTheDocument());
+  await waitFor(() => expect(screen.getByRole("button", { name: "Collapse Bannerlord Twitch overlay" })).toBeInTheDocument());
+  expect(document.querySelector(".top-bar")).not.toBeInTheDocument();
   expect(screen.getByText("50.000")).toBeInTheDocument();
   const commandLine = screen.getByRole("textbox", { name: "Command line" });
   fireEvent.change(commandLine, { target: { value: "ado" } });
@@ -76,6 +77,7 @@ test("renders the minimal battle HUD with one-click commands and formation popov
   expect(screen.getByLabelText("Shieldmaiden health 54 of 100")).toHaveTextContent("54 / 100");
   expect(screen.queryByPlaceholderText("Search mission commands")).not.toBeInTheDocument();
   expect(screen.queryByRole("button", { name: /my inventory/i })).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: /^Inventory/ })).not.toBeInTheDocument();
   expect(screen.queryByText("Battle info")).not.toBeInTheDocument();
 
   const heal = screen.getByRole("button", { name: "Heal" });

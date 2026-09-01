@@ -290,3 +290,252 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .battle-roster-tile.state-unconscious,.battle-roster-tile.state-routed,.battle-roster-tile.state-killed { opacity:.54; }.battle-roster-tile.state-unconscious > div:first-child i,.battle-roster-tile.state-routed > div:first-child i { background:var(--amber); }.battle-roster-tile.state-killed > div:first-child i { background:var(--red); }
 .battle-active .command-feed-dock { background: rgba(5,12,19,.66); }
 @media (max-width:680px) { .battle-active .workspace-stack { grid-template-rows:minmax(0,1fr) 72px; }.battle-workspace { padding:7px 8px; overflow:hidden; }.battle-stage { grid-template-columns:minmax(0,1fr); grid-template-rows:auto minmax(0,1fr); gap:7px; overflow:hidden; }.personal-battle-hud { flex:none; }.minimal-battle-roster { min-height:0; }.hero-primary-bars { grid-template-columns:repeat(2,minmax(0,1fr)); }.personal-battle-hud .hero-metrics { grid-template-columns:repeat(6,minmax(0,1fr)); }.personal-battle-hud .hero-metrics span { display:grid; justify-items:center; padding:3px 1px; font-size:5px; }.battle-command-button { min-height:48px; }.battle-command-button > svg { width:18px; height:18px; }.minimal-team-group > div { grid-template-columns:repeat(2,minmax(0,1fr)); }.battle-command-tooltip { position:fixed; left:8px; right:8px; bottom:80px; width:auto; transform:none; }.battle-command-tooltip::after { display:none; }.formation-popover { right:0; width:min(220px,90vw); } }
+
+/* Full-player Twitch overlay shell */
+.overlay-shell {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.overlay-window,
+.overlay-window:not(:has(.battle-active)),
+.overlay-window:has(.battle-active) {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
+}
+.integration-diagnostics {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 40;
+  width: 100%;
+  min-height: 24px;
+  padding: 5px 64px;
+  border: 0;
+  border-bottom: 1px solid rgba(138,160,175,.18);
+  background: rgba(4,12,18,.48);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+.floating-overlay-toggle {
+  position: absolute;
+  z-index: 45;
+  top: 34px;
+  left: 16px;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  border: 1px solid rgba(221,169,63,.58);
+  border-radius: 9px;
+  color: var(--gold);
+  background: rgba(5,14,22,.68);
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+  backdrop-filter: blur(5px);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.floating-overlay-toggle:hover { background: rgba(22,35,43,.86); }
+.floating-overlay-toggle img { width: 34px; height: 34px; object-fit: contain; }
+.overlay-content,
+.overlay-content.battle-active {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+}
+.workspace-stack,
+.battle-active .workspace-stack {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+}
+.workspace-main,
+.battle-active .workspace-main {
+  position: absolute;
+  inset: 0;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+}
+.command-workspace {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  pointer-events: none;
+}
+.viewer-strip {
+  position: absolute;
+  z-index: 10;
+  top: 88px;
+  left: 16px;
+  width: clamp(360px,31vw,500px);
+  pointer-events: auto;
+}
+.command-center {
+  position: absolute;
+  z-index: 20;
+  top: 154px;
+  left: 16px;
+  width: clamp(360px,31vw,500px);
+  margin: 0;
+  pointer-events: auto;
+}
+.native-shortcuts {
+  position: absolute;
+  z-index: 10;
+  top: 40px;
+  right: 306px;
+  width: clamp(330px,25vw,440px);
+  margin: 0;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  pointer-events: auto;
+}
+.native-shortcuts button { min-height: 58px; padding: 9px 12px; }
+.command-help {
+  position: absolute;
+  inset: 80px auto 28px 74px;
+  z-index: 35;
+  width: min(620px,calc(100vw - 410px));
+  border: 1px solid rgba(143,165,180,.36);
+  border-radius: 10px;
+  box-shadow: 0 20px 55px rgba(0,0,0,.45);
+  pointer-events: auto;
+}
+.command-feed-dock,
+.battle-active .command-feed-dock {
+  position: absolute;
+  z-index: 30;
+  inset: 34px 16px auto auto;
+  width: 274px;
+  height: min(390px,calc(100vh - 50px));
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  grid-template-rows: 58px minmax(0,1fr);
+  overflow: hidden;
+  border: 1px solid rgba(207,162,73,.3);
+  border-radius: 9px;
+  background: rgba(5,12,19,.52);
+  box-shadow: 0 12px 32px rgba(0,0,0,.2);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+}
+.command-feed-dock-header { border: 0; border-bottom: 1px solid var(--line); }
+.feed-expand-button { grid-template-columns: 24px minmax(0,1fr) 15px; }
+.command-feed-compact {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  align-content: start;
+  gap: 7px;
+  padding: 8px;
+  overflow-y: auto;
+}
+.command-feed-entry.compact { min-height: 76px; }
+.command-feed-entry.compact:nth-child(3) { display: grid; }
+.command-feed-dock:not(.expanded):not(:has(.command-feed-entry)) { height: 132px; }
+.command-feed-dock.expanded {
+  inset: 34px 16px 16px auto;
+  width: min(520px,calc(100vw - 32px));
+  height: auto;
+  grid-template-columns: minmax(0,1fr);
+  grid-template-rows: 58px minmax(0,1fr);
+}
+.command-feed-dock.expanded .command-feed-dock-header { display: flex; }
+.command-feed-dock.expanded .feed-expand-button { width: 210px; }
+.workspace-main > .inventory-view,
+.workspace-main > .retinue-view {
+  position: absolute;
+  z-index: 25;
+  top: 42px;
+  right: 306px;
+  bottom: 24px;
+  left: 74px;
+  width: auto;
+  height: auto;
+  border: 1px solid rgba(143,165,180,.36);
+  border-radius: 10px;
+  box-shadow: 0 20px 55px rgba(0,0,0,.45);
+  pointer-events: auto;
+}
+.battle-workspace {
+  position: absolute;
+  inset: 80px 306px 22px 74px;
+  width: auto;
+  height: auto;
+  padding: 0;
+  pointer-events: none;
+}
+.battle-stage {
+  grid-template-columns: minmax(310px,.8fr) minmax(420px,1.35fr);
+  gap: clamp(12px,2vw,28px);
+}
+.personal-battle-hud,
+.minimal-battle-roster { pointer-events: auto; }
+
+@media (max-width:1000px) and (min-width:681px) {
+  .viewer-strip,.command-center { width: min(400px,calc(100vw - 310px)); }
+  .native-shortcuts { right: 246px; width: 310px; }
+  .command-feed-dock,.battle-active .command-feed-dock { width: 218px; right: 12px; }
+  .command-feed-dock.expanded { width: min(440px,calc(100vw - 24px)); }
+  .workspace-main > .inventory-view,.workspace-main > .retinue-view { right: 246px; left: 64px; }
+  .battle-workspace { right: 246px; left: 64px; }
+  .battle-stage { grid-template-columns: minmax(275px,.9fr) minmax(290px,1.1fr); gap: 10px; }
+}
+
+@media (max-width:680px) {
+  html,body,#root { overflow: hidden; }
+  .overlay-shell { min-height: 0; height: 100%; }
+  .overlay-window,.overlay-window:not(:has(.battle-active)) { width: 100%; height: 100%; }
+  .integration-diagnostics { padding: 4px 8px 4px 54px; white-space: nowrap; overflow-x: auto; }
+  .floating-overlay-toggle { top: 32px; left: 8px; width: 38px; height: 38px; }
+  .floating-overlay-toggle img { width: 30px; height: 30px; }
+  .viewer-strip { top: 78px; left: 8px; width: calc(100vw - 16px); }
+  .command-center { top: 134px; left: 8px; width: calc(100vw - 16px); }
+  .command-hint { display: none; }
+  .native-shortcuts { top: 200px; right: 8px; left: 8px; width: auto; }
+  .native-shortcuts button { min-height: 52px; }
+  .command-help { inset: 70px 8px 82px; width: auto; }
+  .command-feed-dock,.battle-active .command-feed-dock {
+    inset: auto 8px 8px;
+    width: auto;
+    height: 68px;
+    grid-template-columns: 92px minmax(0,1fr);
+    grid-template-rows: minmax(0,1fr);
+  }
+  .command-feed-dock:not(.expanded):not(:has(.command-feed-entry)) { height: 68px; }
+  .command-feed-dock-header { border-right: 1px solid var(--line); border-bottom: 0; }
+  .command-feed-compact { padding: 5px; overflow: hidden; }
+  .command-feed-entry.compact { min-height: 0; }
+  .command-feed-entry.compact:not(:first-child) { display: none; }
+  .command-feed-dock.expanded {
+    inset: 28px 8px 8px;
+    width: auto;
+    height: auto;
+    grid-template-columns: minmax(0,1fr);
+    grid-template-rows: 52px minmax(0,1fr);
+  }
+  .command-feed-dock.expanded .command-feed-dock-header { border-right: 0; border-bottom: 1px solid var(--line); }
+  .workspace-main > .inventory-view,.workspace-main > .retinue-view { inset: 70px 8px 84px; }
+  .battle-workspace { inset: 78px 8px 84px; }
+  .battle-stage { grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr); gap: 7px; }
+}

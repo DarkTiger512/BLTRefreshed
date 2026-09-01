@@ -1,4 +1,4 @@
-import { CircleDot, X } from "lucide-react";
+import { CircleDot } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { requestInventory, requestRetinue, submitAction, submitCommand } from "./api";
 import { isLiveLocalIntegration } from "./environment";
@@ -129,8 +129,8 @@ export function App() {
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
     {!open ? <button className="open-launcher" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
     {open ? <div className="overlay-window">
-      <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
       <IntegrationDiagnostics identity={identity} />
+      <button className="floating-overlay-toggle" onClick={() => setOpen(false)} aria-label="Collapse Bannerlord Twitch overlay" title="Collapse BLT overlay"><img src={bltLogo} alt="" /></button>
       <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
         <div className="workspace-stack">
           <div className="workspace-main">
