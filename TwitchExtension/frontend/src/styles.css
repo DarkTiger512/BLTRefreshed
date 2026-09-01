@@ -330,8 +330,10 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .floating-overlay-toggle {
   position: absolute;
   z-index: 45;
-  top: 34px;
-  left: 16px;
+  top: auto;
+  right: 16px;
+  bottom: 16px;
+  left: auto;
   width: 42px;
   height: 42px;
   display: grid;
@@ -485,8 +487,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 }
 .battle-workspace {
   position: absolute;
-  inset: 80px auto 22px 74px;
-  width: calc(100vw - 380px);
+  inset: 34px auto 22px 16px;
+  width: calc(100vw - 322px);
   height: auto;
   padding: 0;
   pointer-events: none;
@@ -519,7 +521,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .command-feed-dock,.battle-active .command-feed-dock { width: 218px; right: 12px; }
   .command-feed-dock.expanded { width: min(440px,calc(100vw - 24px)); }
   .workspace-main > .inventory-view,.workspace-main > .retinue-view { right: 246px; left: 64px; }
-  .battle-workspace { right: auto; left: 64px; width: calc(100vw - 322px); }
+  .battle-workspace { top: 34px; right: auto; left: 16px; width: calc(100vw - 272px); }
   .battle-stage { display: block; }
 }
 
@@ -528,7 +530,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .overlay-shell { min-height: 0; height: 100%; }
   .overlay-window,.overlay-window:not(:has(.battle-active)) { width: 100%; height: 100%; }
   .integration-diagnostics { padding: 4px 8px 4px 54px; white-space: nowrap; overflow-x: auto; }
-  .floating-overlay-toggle { top: 32px; left: 8px; width: 38px; height: 38px; }
+  .floating-overlay-toggle { top: auto; right: 8px; bottom: 84px; left: auto; width: 38px; height: 38px; }
   .floating-overlay-toggle img { width: 30px; height: 30px; }
   .viewer-strip { top: 78px; left: 8px; width: calc(100vw - 16px); }
   .command-center { top: 134px; left: 8px; width: calc(100vw - 16px); }
@@ -557,6 +559,6 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   }
   .command-feed-dock.expanded .command-feed-dock-header { border-right: 0; border-bottom: 1px solid var(--line); }
   .workspace-main > .inventory-view,.workspace-main > .retinue-view { inset: 70px 8px 84px; }
-  .battle-workspace { inset: 78px 8px 84px; width: auto; }
+  .battle-workspace { inset: 32px 8px 84px; width: auto; }
   .battle-stage { display: block; }
 }
