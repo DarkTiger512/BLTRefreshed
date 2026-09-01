@@ -492,14 +492,22 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   pointer-events: none;
 }
 .battle-stage {
-  grid-template-columns: minmax(0,1fr);
-  grid-template-rows: auto minmax(0,1fr);
-  align-content: start;
-  gap: 12px;
+  position: relative;
+  display: block;
 }
 .personal-battle-hud,
 .minimal-battle-roster { pointer-events: auto; }
 .personal-battle-hud { width: min(360px,100%); }
+.minimal-battle-roster {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-height: 46%;
+  overflow-y: auto;
+  scrollbar-color: rgba(221,169,63,.5) transparent;
+  scrollbar-width: thin;
+}
 .minimal-team-group > div {
   grid-template-columns: repeat(var(--roster-columns,2),minmax(104px,160px));
   justify-content: start;
@@ -512,7 +520,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .command-feed-dock.expanded { width: min(440px,calc(100vw - 24px)); }
   .workspace-main > .inventory-view,.workspace-main > .retinue-view { right: 246px; left: 64px; }
   .battle-workspace { right: auto; left: 64px; width: calc(100vw - 322px); }
-  .battle-stage { grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr); gap: 10px; }
+  .battle-stage { display: block; }
 }
 
 @media (max-width:680px) {
@@ -550,5 +558,5 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .command-feed-dock.expanded .command-feed-dock-header { border-right: 0; border-bottom: 1px solid var(--line); }
   .workspace-main > .inventory-view,.workspace-main > .retinue-view { inset: 70px 8px 84px; }
   .battle-workspace { inset: 78px 8px 84px; width: auto; }
-  .battle-stage { grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr); gap: 7px; }
+  .battle-stage { display: block; }
 }
