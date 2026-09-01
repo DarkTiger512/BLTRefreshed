@@ -85,6 +85,14 @@ namespace BLTConfigure.UI
             set
             {
                 EditedAuthSettings.IntegrationPairingCode = value;
+                if (!string.IsNullOrWhiteSpace(value))
+                {
+                    // A newly entered pairing code represents a deliberate
+                    // re-pair. Do not let a revoked credential prevent the
+                    // managed connector from exchanging that code.
+                    EditedAuthSettings.IntegrationCredential = null;
+                    EditedAuthSettings.IntegrationInstallationId = null;
+                }
                 SaveAuth();
             }
         }
