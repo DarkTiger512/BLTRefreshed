@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: blt
+      POSTGRES_USER: blt
+      POSTGRES_PASSWORD: ${BLT_POSTGRES_PASSWORD:?set BLT_POSTGRES_PASSWORD}
+    volumes:
+      - blt-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U blt -d blt"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  service:
+    build: ./BLT.ExtensionService
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      BLT_DATABASE: Host=postgres;Port=5432;Database=blt;Username=blt;Password=${BLT_POSTGRES_PASSWORD}
+      BLT__PUBLICORIGIN: https://${BLT_HOSTNAME}
+      BLT__ALLOWEDORIGINS: ${BLT_ALLOWED_ORIGINS}
+      TWITCH_EXTENSION_SECRET: ${TWITCH_EXTENSION_SECRET}
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - service
+    environment:
+      BLT_HOSTNAME: ${BLT_HOSTNAME}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  blt-postgres:
+  caddy-data:
+  caddy-config:
