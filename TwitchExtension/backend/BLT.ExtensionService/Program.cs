@@ -101,7 +101,7 @@ app.MapPost("/api/channels/{channel}/commands", async (string channel, CommandSu
     var commandLine = submission.CommandLine?.Trim();
     if (string.IsNullOrWhiteSpace(commandLine) || commandLine.Length > 512 || commandLine.Any(char.IsControl))
         return Results.Problem("The command line is invalid.", statusCode: 400);
-    commandLine = commandLine.TrimStart('!').TrimStart();
+    if (commandLine.StartsWith('!')) commandLine = commandLine[1..].TrimStart();
     var commandName = commandLine.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0];
     if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:command.{commandName.ToLowerInvariant()}", submission.Timestamp, out var guardError))
         return Results.Problem(guardError, statusCode: 429);

@@ -40,6 +40,27 @@ namespace BannerlordTwitch.Integration
         public string CommandLine { get; set; }
     }
 
+    public sealed class IntegrationCommandLine
+    {
+        public string Name { get; private set; }
+        public string Args { get; private set; }
+
+        public static bool TryParse(string value, out IntegrationCommandLine command)
+        {
+            command = null;
+            var line = (value ?? string.Empty).Trim();
+            if (line.StartsWith("!", StringComparison.Ordinal)) line = line.Substring(1).TrimStart();
+            if (string.IsNullOrWhiteSpace(line)) return false;
+            var separator = line.IndexOf(' ');
+            command = new IntegrationCommandLine
+            {
+                Name = separator < 0 ? line : line.Substring(0, separator),
+                Args = separator < 0 ? string.Empty : line.Substring(separator + 1).Trim()
+            };
+            return true;
+        }
+    }
+
     public sealed class IntegrationActionManifest
     {
         public int ProtocolVersion { get; set; }

@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 const root = path.resolve(import.meta.dirname, "..");
 const inventory = path.join(root, "docs", "twitch-integration", "inventory");
@@ -68,3 +69,4 @@ const missingHandlers = [...configuredHandlers].filter(handler => !handlerSymbol
 assert.deepEqual(missingHandlers, [], `Configured handlers absent from component inventory: ${missingHandlers.join(", ")}`);
 
 console.log(`Inventory verified: ${commands.length} commands, ${rewards.length} rewards, ${settings.length} settings, ${components.length} components.`);
+execFileSync(process.execPath, [path.join(root, "tools", "verify-command-parity.mjs")], { stdio: "inherit", cwd: root });

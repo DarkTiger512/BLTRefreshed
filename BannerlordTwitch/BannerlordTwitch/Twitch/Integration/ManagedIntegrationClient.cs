@@ -203,6 +203,7 @@ namespace BannerlordTwitch.Integration
         private ClientWebSocket socket;
         private bool disposed;
         private readonly ConcurrentDictionary<Guid, byte> receivedRequests = new();
+        private readonly IntegrationRequestLifecycle requestLifecycle = new();
         private readonly ConcurrentDictionary<string, IntegrationUser> subscribedViewers = new(StringComparer.Ordinal);
         private readonly ConcurrentDictionary<string, string> lastViewerStates = new(StringComparer.Ordinal);
         private readonly SemaphoreSlim sendLock = new(1, 1);
@@ -418,9 +419,41 @@ namespace BannerlordTwitch.Integration
             catch (ArgumentException ex) { error = ex.Message; return false; }
         }
 
-        public Task SendActionAcceptedAsync(Guid requestId) => SendAsync("action.accepted", new { requestId }, lifetime.Token, requestId);
-        public Task SendActionResultAsync(Guid requestId, string[] messages) => SendAsync("action.result", new { requestId, messages }, lifetime.Token, requestId);
-        public Task SendActionErrorAsync(Guid requestId, string error) => SendAsync("action.error", new { requestId, error }, lifetime.Token, requestId);
+        public Task SendActionAcceptedAsync(Guid requestId)
+        {
+            if (requestLifecycle.TryAccept(requestId, out var timeoutToken))
+                _ = ExpireRequestAsync(requestId, timeoutToken);
+            return SendAsync("action.accepted", new { requestId }, lifetime.Token, requestId);
+        }
+
+        public Task SendActionResultAsync(Guid requestId, string[] messages) =>
+            SendTerminalAsync("action.result", requestId, new { requestId, messages });
+
+        public Task SendActionErrorAsync(Guid requestId, string error) =>
+            SendTerminalAsync("action.error", requestId, new { requestId, error });
+
+        private async Task SendTerminalAsync(string kind, Guid requestId, object data)
+        {
+            if (!requestLifecycle.TryComplete(requestId)) return;
+            await SendAsync(kind, data, lifetime.Token, requestId);
+            _ = ForgetTerminalAsync(requestId);
+        }
+
+        private async Task ExpireRequestAsync(Guid requestId, CancellationToken token)
+        {
+            try { await Task.Delay(TimeSpan.FromSeconds(30), token); }
+            catch (OperationCanceledException) { return; }
+            if (!requestLifecycle.TryExpire(requestId)) return;
+            await SendAsync("action.error", new { requestId, error = "Bannerlord did not return a result within 30 seconds." }, lifetime.Token, requestId);
+            _ = ForgetTerminalAsync(requestId);
+        }
+
+        private async Task ForgetTerminalAsync(Guid requestId)
+        {
+            try { await Task.Delay(TimeSpan.FromMinutes(5), lifetime.Token); }
+            catch (OperationCanceledException) { return; }
+            requestLifecycle.Forget(requestId);
+        }
 
         private Task SendAsync(string kind, object data, CancellationToken token, Guid? id = null) =>
             SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = id ?? Guid.NewGuid(), kind, channelId, timestamp = DateTimeOffset.UtcNow, data }), token);
@@ -446,7 +479,8 @@ namespace BannerlordTwitch.Integration
         public void Dispose()
         {
             if (disposed) return;
-            disposed = true; lifetime.Cancel(); socket?.Dispose(); http.Dispose(); lifetime.Dispose();
+            disposed = true; lifetime.Cancel();
+            requestLifecycle.Dispose(); socket?.Dispose(); http.Dispose(); lifetime.Dispose();
         }
     }
 }

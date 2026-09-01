@@ -1,9 +1,30 @@
 using BLTAdoptAHero.Util;
+using BannerlordTwitch.Integration;
 
 static void Assert(bool condition, string message)
 {
     if (!condition) throw new InvalidOperationException(message);
 }
+
+Assert(IntegrationCommandLine.TryParse("heal", out var bareCommand) && bareCommand.Name == "heal" && bareCommand.Args == string.Empty,
+    "A command without ! must match chat parsing.");
+Assert(IntegrationCommandLine.TryParse("  !nameitem   12 The Wolf's Oath  ", out var commandWithArgs) &&
+       commandWithArgs.Name == "nameitem" && commandWithArgs.Args == "12 The Wolf's Oath",
+    "Command parsing must preserve the complete multi-word argument substring after chat-compatible trimming.");
+Assert(!IntegrationCommandLine.TryParse(" ! ", out _), "An empty command must be rejected.");
+Assert(IntegrationCommandLine.TryParse("!!heal", out var repeatedPrefix) && repeatedPrefix.Name == "!heal",
+    "Only one optional Extension prefix may be normalized.");
+var requestLifecycle = new IntegrationRequestLifecycle();
+var completedRequest = Guid.NewGuid();
+Assert(requestLifecycle.TryAccept(completedRequest, out var completionTimeout) && !completionTimeout.IsCancellationRequested,
+    "A new Extension request must enter the running state once.");
+Assert(requestLifecycle.TryComplete(completedRequest) && completionTimeout.IsCancellationRequested &&
+       !requestLifecycle.TryComplete(completedRequest) && !requestLifecycle.TryExpire(completedRequest),
+    "Only the first terminal result may complete an Extension request.");
+var expiredRequest = Guid.NewGuid();
+Assert(requestLifecycle.TryAccept(expiredRequest, out _) && requestLifecycle.TryExpire(expiredRequest) &&
+       !requestLifecycle.TryComplete(expiredRequest), "A timed-out request must reject late handler replies.");
+requestLifecycle.Dispose();
 
 var children = new Dictionary<string, string[]>
 {

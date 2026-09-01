@@ -13,5 +13,7 @@
     <Compile Include="..\BLTAdoptAHero\Util\StreamObjectivePolicy.cs" Link="StreamObjectivePolicy.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\CursedArtifactPolicy.cs" Link="CursedArtifactPolicy.cs" />
     <Compile Include="..\BLTAdoptAHero\Util\RandomEventPolicy.cs" Link="RandomEventPolicy.cs" />
+    <Compile Include="..\BannerlordTwitch\Twitch\Integration\IntegrationContracts.cs" Link="IntegrationContracts.cs" />
+    <Compile Include="..\BannerlordTwitch\Twitch\Integration\IntegrationRequestLifecycle.cs" Link="IntegrationRequestLifecycle.cs" />
   </ItemGroup>
 </Project>

@@ -627,11 +627,9 @@ namespace BannerlordTwitch
             MainThreadSync.Run(() =>
             {
                 if (request == null || integrationClient == null) return;
-                var line = request.CommandLine?.Trim().TrimStart('!').TrimStart();
-                if (string.IsNullOrWhiteSpace(line)) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "Enter a command."); return; }
-                var separator = line.IndexOf(' ');
-                var commandName = separator < 0 ? line : line.Substring(0, separator);
-                var args = separator < 0 ? string.Empty : line.Substring(separator + 1).Trim();
+                if (!IntegrationCommandLine.TryParse(request.CommandLine, out var parsed)) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "Enter a command."); return; }
+                var commandName = parsed.Name;
+                var args = parsed.Args;
                 var cmd = settings.GetCommand(commandName);
                 if (cmd == null) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "That command is unknown or disabled."); return; }
                 if (cmd.ModeratorOnly && !request.User.IsModerator && !request.User.IsBroadcaster)

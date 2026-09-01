@@ -449,6 +449,7 @@
     <Compile Include="Twitch\Dummy\TwitchRedirectingHttpCallHandler.cs" />
     <Compile Include="Twitch\Integration\IntegrationActionCatalog.cs" />
     <Compile Include="Twitch\Integration\IntegrationContracts.cs" />
+    <Compile Include="Twitch\Integration\IntegrationRequestLifecycle.cs" />
     <Compile Include="Twitch\Integration\ManagedIntegrationClient.cs" />
     <Compile Include="Twitch\TwitchEventSubSocket.cs" />
     <Compile Include="Twitch\TwitchService.Bot.cs" />
