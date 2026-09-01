@@ -574,24 +574,13 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .command-feed-dock,
 .battle-active .command-feed-dock,
 .command-feed-dock.expanded {
-  border: 0;
   background: transparent;
   box-shadow: none;
   backdrop-filter: none;
 }
-.command-feed-dock-header,
-.command-feed-dock.expanded .command-feed-dock-header {
-  border: 0;
-}
 .command-feed-entry,
 .command-feed-entry.compact {
-  border: 0;
   background: transparent;
-}
-.command-feed-entry.succeeded,
-.command-feed-entry.failed,
-.command-feed-entry.pending {
-  border-left: 0;
 }
 .feed-expand-button,
 .feed-expand-button:hover {
@@ -605,12 +594,5 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .command-feed-copy small,
 .compact-feed-empty {
   font-weight: 700;
-  text-shadow: -1px 0 #071019, 0 1px #071019, 1px 0 #071019, 0 -1px #071019;
+  text-shadow: 0 1px 3px rgba(0,0,0,.95);
 }
-.feed-expand-button strong { color: #ffe3a3; font-size: 14px; }
-.feed-expand-button small { color: #f0f4f6; font-size: 10px; }
-.command-feed-entry.compact .command-feed-title strong { color: #fff1cf; font-size: 13px; }
-.command-feed-entry.compact .command-feed-title span { font-size: 9px; }
-.command-feed-entry.compact p { color: #fff; font-size: 11px; line-height: 1.4; }
-.command-feed-entry.compact small { color: #e5ebee; font-size: 9px; }
-.compact-feed-empty { color: #fff; font-size: 12px; line-height: 1.4; }
