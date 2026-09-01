@@ -108,6 +108,7 @@ namespace BannerlordTwitch.Integration
         public string Name { get; set; }
         public string Handler { get; set; }
         public string Help { get; set; }
+        public string HelpKey { get; set; }
         public bool ModeratorOnly { get; set; }
         public bool HideHelp { get; set; }
     }
@@ -221,6 +222,7 @@ namespace BannerlordTwitch.Integration
             runtimeCommands = commands.Select(command => new IntegrationRuntimeCommand
             {
                 Name = command.Name.ToString(), Handler = command.Handler, Help = command.Help.ToString(),
+                HelpKey = $"command.{command.Handler.ToLowerInvariant()}.help",
                 ModeratorOnly = command.ModeratorOnly, HideHelp = command.HideHelp
             }).ToArray();
             _ = RunAsync();

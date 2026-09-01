@@ -64,6 +64,7 @@ namespace BannerlordTwitch.Integration
     public sealed class IntegrationActionManifest
     {
         public int ProtocolVersion { get; set; }
+        public int ManifestVersion { get; set; } = 1;
         public List<IntegrationActionDefinition> Actions { get; set; } = new();
     }
 
@@ -72,6 +73,9 @@ namespace BannerlordTwitch.Integration
         public string Id { get; set; }
         public string LegacyName { get; set; }
         public string Handler { get; set; }
+        public string NameKey { get; set; }
+        public string DescriptionKey { get; set; }
+        public string CategoryKey { get; set; }
         public string[] Permissions { get; set; } = Array.Empty<string>();
         public List<IntegrationActionInput> Inputs { get; set; } = new();
     }

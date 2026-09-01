@@ -6,6 +6,7 @@
   "required": ["protocolVersion", "actions"],
   "properties": {
     "protocolVersion": { "const": 1 },
+    "manifestVersion": { "const": 2 },
     "generatedAt": { "type": "string" },
     "actions": {
       "type": "array",

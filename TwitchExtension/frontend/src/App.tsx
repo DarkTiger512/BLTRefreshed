@@ -13,8 +13,10 @@ import { useIntegrationState } from "./hooks/useIntegrationState";
 import { authorizeViewer, requestIdentity } from "./twitch";
 import type { ActionManifest, ManifestAction, ViewerIdentity } from "./types";
 import bltLogo from "./assets/blt-logo-v2.png";
+import { useI18n } from "./i18n";
 
 export function App() {
+  const { t } = useI18n();
   const [manifest, setManifest] = useState<ActionManifest | null>(null);
   const [identity, setIdentity] = useState<ViewerIdentity | null>(null);
   const [workspace, setWorkspace] = useState<"home" | "inventory" | "retinue">("home");
@@ -38,7 +40,7 @@ export function App() {
   }, []);
 
   const isConfiguration = useMemo(() => new URLSearchParams(window.location.search).get("anchor") === "configuration", []);
-  if (!identity || !manifest) return <div className="loading-screen"><CircleDot />Connecting to Bannerlord Twitch…</div>;
+  if (!identity || !manifest) return <div className="loading-screen"><CircleDot />{t("app.connecting")}</div>;
   if (isConfiguration) return <ConfigurationView identity={identity} />;
 
   async function handleActionSubmit(action: ManifestAction, args: Record<string, unknown>) {
@@ -48,7 +50,7 @@ export function App() {
     try {
       const response = await submitAction(identity!, action, args, requestId);
       if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, `${action.legacyName} completed successfully.`);
-    } catch (reason) { const message = reason instanceof Error ? reason.message : "Action failed"; state.failCommand(requestId, message); setError(message); }
+    } catch (reason) { const message = reason instanceof Error ? reason.message : t("error.action"); state.failCommand(requestId, message); setError(message); }
     finally { setBusy(false); }
   }
   async function handleCommand(commandLine: string) {
@@ -65,14 +67,14 @@ export function App() {
     try {
       const response = await submitCommand(identity!, normalized, requestId);
       if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, `${name} completed successfully.`);
-    } catch (reason) { const message = reason instanceof Error ? reason.message : "Command failed"; state.failCommand(requestId, message); setError(message); }
+    } catch (reason) { const message = reason instanceof Error ? reason.message : t("error.command"); state.failCommand(requestId, message); setError(message); }
     finally { setBusy(false); }
   }
 
   async function loadInventory() {
     setInventoryLoading(true); state.setInventoryError(undefined);
     try { const snapshot = await requestInventory(identity!); if (snapshot) state.setInventory(snapshot); }
-    catch (reason) { state.setInventoryError(reason instanceof Error ? reason.message : "Your inventory could not be loaded."); }
+    catch (reason) { state.setInventoryError(reason instanceof Error ? reason.message : t("error.inventory")); }
     finally { setInventoryLoading(false); }
   }
 
@@ -81,7 +83,7 @@ export function App() {
   async function loadRetinue() {
     setRetinueLoading(true); state.setRetinueError(undefined);
     try { const snapshot = await requestRetinue(identity!); if (snapshot) state.setRetinue(snapshot); }
-    catch (reason) { state.setRetinueError(reason instanceof Error ? reason.message : "Your retinue could not be loaded."); }
+    catch (reason) { state.setRetinueError(reason instanceof Error ? reason.message : t("error.retinue")); }
     finally { setRetinueLoading(false); }
   }
 
@@ -127,10 +129,10 @@ export function App() {
   const battleActive = state.mission.active && (state.mission.kind === "battle" || state.mission.kind === "tournament");
 
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
-    {!open ? <button className="floating-overlay-toggle" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch" title="Open BLT overlay"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
+    {!open ? <button className="floating-overlay-toggle" onClick={() => setOpen(true)} aria-label={t("app.open")} title={t("app.open")}><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
     {open ? <div className="overlay-window">
       <IntegrationDiagnostics identity={identity} />
-      <button className="floating-overlay-toggle" onClick={() => setOpen(false)} aria-label="Collapse Bannerlord Twitch overlay" title="Collapse BLT overlay"><img src={bltLogo} alt="" /><span>BLT</span></button>
+      <button className="floating-overlay-toggle" onClick={() => setOpen(false)} aria-label={t("app.collapse")} title={t("app.collapse")}><img src={bltLogo} alt="" /><span>BLT</span></button>
       <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
         <div className="workspace-stack">
           <div className="workspace-main">

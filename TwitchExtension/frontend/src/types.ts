@@ -6,8 +6,10 @@ export interface ActionInput {
   type: InputType;
   required: boolean;
   label?: string;
+  labelKey?: string;
   description?: string;
-  options?: Array<{ value: string; label: string }>;
+  descriptionKey?: string;
+  options?: Array<{ value: string; label: string; labelKey?: string }>;
   optionsSource?: keyof GameSelectors;
   minimum?: number;
   maximum?: number;
@@ -23,6 +25,9 @@ export interface ManifestAction {
   handler: string;
   category: string;
   description: string;
+  nameKey?: string;
+  descriptionKey?: string;
+  categoryKey?: string;
   enabledByDefault: boolean;
   hiddenFromHelp: boolean;
   permissions: Role[];
@@ -31,9 +36,9 @@ export interface ManifestAction {
   inputs: ActionInput[];
 }
 
-export interface ActionManifest { protocolVersion: number; actions: ManifestAction[] }
+export interface ActionManifest { protocolVersion: number; manifestVersion?: number; actions: ManifestAction[] }
 
-export interface RuntimeCommand { name: string; handler: string; help: string; moderatorOnly: boolean; hideHelp: boolean }
+export interface RuntimeCommand { name: string; handler: string; help: string; helpKey?: string; moderatorOnly: boolean; hideHelp: boolean }
 export interface ViewerState { adopted: boolean; heroName?: string; gold?: number }
 
 export interface ViewerIdentity {
@@ -43,6 +48,7 @@ export interface ViewerIdentity {
   displayName: string;
   roles: Role[];
   linked: boolean;
+  locale?: string;
 }
 
 export interface GameSelectors {

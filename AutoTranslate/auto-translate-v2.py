@@ -7,6 +7,7 @@ import os
 import time
 import os.path
 import glob
+import json
 
 
 def namespace(element):
@@ -16,6 +17,8 @@ def namespace(element):
 
 def translate(source_file, language, language_code, subdir, service_account_file, replace,
               update_original, update_changed):
+    if source_file.lower().endswith('.json'):
+        return translate_json(source_file, language_code, subdir, service_account_file, replace, update_changed)
     translate_client = translate_v2.Client.from_service_account_json(service_account_file)
 
     source_tree = etree.parse(source_file)
@@ -138,33 +141,86 @@ def translate(source_file, language, language_code, subdir, service_account_file
         etree.ElementTree(source_root).write(target_file, encoding="utf-8", xml_declaration=True, pretty_print=True)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Translate Bannerlord strings xml files')
-    parser.add_argument('glob_patterns', metavar='glob', type=str, nargs='+',
-                        help='globs (wild card patterns) describing what files to translate, '
-                             'output file is determined automatically')
-    parser.add_argument('--account', dest='service_account_file', action='store',
-                        help='Path to Google Service Account Credentials json file', required=True)
-    parser.add_argument('--lang', dest='lang', action='store',
-                        help='Bannerlord language name', required=True)
-    parser.add_argument('--replace', dest='replace', action='store_true',
-                        help='Entirely replace target file. WARNING: overwrites any manual changes in the target file!')
-    parser.add_argument('--update-original-tag', dest='update_original_tag', action='store_true',
-                        help='Update the "original" tag in the target file, if it exists')
-    parser.add_argument('--update-changed', dest='update_changed', action='store_true',
-                        help='Update the translation if the original text has changed, implies update-original-tag')
-    parser.add_argument('--lang-code', dest='langcode', action='store',
-                        help='international language code for translation', required=True)
-    parser.add_argument('--subdir-override', dest='subdiroverride', action='store',
-                        help='Subdirectory override (usually it is uppercased lang-code)')
-    args = parser.parse_args()
+def _flatten_json(value, prefix=''):
+    result = {}
+    for key, item in value.items():
+        path = f'{prefix}.{key}' if prefix else key
+        if isinstance(item, dict):
+            result.update(_flatten_json(item, path))
+        elif isinstance(item, str):
+            result[path] = item
+    return result
 
-    expanded_files = [glob.glob(g, recursive=True) for g in args.glob_patterns]
-    flattened_files = [f for files in expanded_files for f in files]
-    unique_files = list(set(flattened_files))
-    if len(unique_files) == 0:
+
+def _inflate_json(values):
+    result = {}
+    for path, value in values.items():
+        cursor = result
+        parts = path.split('.')
+        for part in parts[:-1]:
+            cursor = cursor.setdefault(part, {})
+        cursor[parts[-1]] = value
+    return result
+
+
+def translate_json(source_file, language_code, subdir, service_account_file, replace, update_changed):
+    """Translate the Extension's keyed JSON catalog while retaining reviewed values.
+
+    Output records include source text and generation metadata so changed English is
+    detectable without using the translated value as an identifier.
+    """
+    client = translate_v2.Client.from_service_account_json(service_account_file)
+    with open(source_file, encoding='utf-8') as source_stream:
+        source = json.load(source_stream)
+    source_values = _flatten_json(source.get('messages', source))
+    locale = subdir or language_code
+    target_file = os.path.join(os.path.dirname(source_file), f'{locale}.json')
+    existing = {}
+    if os.path.isfile(target_file) and not replace:
+        with open(target_file, encoding='utf-8') as target_stream:
+            existing = json.load(target_stream).get('messages', {})
+    pending = []
+    protected = []
+    placeholder_regex = re.compile(r'\{[A-Za-z0-9_.-]+\}|![A-Za-z0-9_-]+|<[^>]+>')
+    for key, text in source_values.items():
+        record = existing.get(key)
+        if record and record.get('source') == text and not update_changed:
+            continue
+        tokens = placeholder_regex.findall(text)
+        escaped = text
+        for index, token in enumerate(tokens):
+            escaped = escaped.replace(token, f'__BLT_TOKEN_{index}__')
+        pending.append((key, text, escaped))
+        protected.append(tokens)
+    for start in range(0, len(pending), 10):
+        chunk = pending[start:start + 10]
+        translated = client.translate([item[2] for item in chunk], source_language='en', target_language=language_code)
+        for offset, ((key, source_text, _), translated_item) in enumerate(zip(chunk, translated)):
+            value = translated_item['translatedText']
+            tokens = protected[start + offset]
+            for index, token in enumerate(tokens):
+                value = value.replace(f'__BLT_TOKEN_{index}__', token)
+            existing[key] = {'text': value, 'source': source_text, 'machineGenerated': True}
+    os.makedirs(os.path.dirname(target_file), exist_ok=True)
+    with open(target_file, 'w', encoding='utf-8') as target_stream:
+        json.dump({'locale': locale, 'messages': dict(sorted(existing.items()))}, target_stream, ensure_ascii=False, indent=2)
+        target_stream.write('\n')
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Translate Bannerlord XML or Twitch Extension JSON catalogs')
+    parser.add_argument('glob_patterns', metavar='glob', type=str, nargs='+')
+    parser.add_argument('--account', dest='service_account_file', action='store', required=True)
+    parser.add_argument('--lang', dest='lang', action='store', required=True)
+    parser.add_argument('--replace', dest='replace', action='store_true')
+    parser.add_argument('--update-original-tag', dest='update_original_tag', action='store_true')
+    parser.add_argument('--update-changed', dest='update_changed', action='store_true')
+    parser.add_argument('--lang-code', dest='langcode', action='store', required=True)
+    parser.add_argument('--subdir-override', dest='subdiroverride', action='store')
+    args = parser.parse_args()
+    unique_files = list(set(f for pattern in args.glob_patterns for f in glob.glob(pattern, recursive=True)))
+    if not unique_files:
         print('No files found matching the provided globs!')
-    else:
-        for f in unique_files:
-            translate(f, args.lang, args.langcode, args.subdiroverride, args.service_account_file, args.replace,
-                      args.update_original_tag, args.update_changed)
+    for source in unique_files:
+        translate(source, args.lang, args.langcode, args.subdiroverride, args.service_account_file, args.replace,
+                  args.update_original_tag, args.update_changed)

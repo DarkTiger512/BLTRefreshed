@@ -4,7 +4,7 @@ import { developmentIdentityConfig, isLocalHost } from "./environment";
 function developmentIdentity(): ViewerIdentity {
   const config = developmentIdentityConfig();
   return { token: "development-token", channelId: config.channelId, userId: config.userId,
-    displayName: config.displayName, roles: [config.role], linked: true };
+    displayName: config.displayName, roles: [config.role], linked: true, locale: new URLSearchParams(window.location.search).get("locale") ?? navigator.language };
 }
 
 export function authorizeViewer(): Promise<ViewerIdentity> {
@@ -20,6 +20,7 @@ export function authorizeViewer(): Promise<ViewerIdentity> {
         displayName: viewer?.displayName ?? "Viewer",
         roles: [role],
         linked: Boolean(auth.userId && viewer?.isLinked),
+        locale: new URLSearchParams(window.location.search).get("locale") ?? navigator.language,
       });
     });
   });

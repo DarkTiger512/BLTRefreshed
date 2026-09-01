@@ -1,6 +1,7 @@
 import { CircleHelp, Coins, PackageOpen, Search, Send, ShieldCheck, Users, X } from "lucide-react";
 import { useDeferredValue, useMemo, useState } from "react";
 import type { GameState, ManifestAction, RuntimeCommand, ViewerIdentity } from "../types";
+import { LanguageSelector, useI18n } from "../i18n";
 
 interface Props {
   actions: ManifestAction[];
@@ -18,6 +19,7 @@ interface Suggestion { value: string; title: string; detail: string; unavailable
 const syntaxFor = (action?: ManifestAction) => action?.inputs.map(input => input.required ? `<${input.label ?? input.id}>` : `[${input.label ?? input.id}]`).join(" ") ?? "";
 
 export function CommandWorkspace({ actions, commands, identity, state, busy, onExecute, onInventory, onRetinue }: Props) {
+  const { t, number } = useI18n();
   const [line, setLine] = useState("");
   const [active, setActive] = useState(0);
   const [helpOpen, setHelpOpen] = useState(false);
@@ -40,7 +42,7 @@ export function CommandWorkspace({ actions, commands, identity, state, busy, onE
     if (!selectedCommand) return [];
     const action = actionFor(selectedCommand); const input = action?.inputs[0];
     const values = input?.optionsSource ? state.selectors[input.optionsSource] : input?.options?.map(option => option.value) ?? [];
-    return values.filter(value => value.toLowerCase().startsWith(typedArgument)).slice(0, 6).map(value => ({ value: `!${selectedCommand.name} ${value}`, title: value, detail: input?.label ?? "Argument" }));
+    return values.filter(value => value.toLowerCase().startsWith(typedArgument)).slice(0, 6).map(value => ({ value: `!${selectedCommand.name} ${value}`, title: value, detail: input?.label ?? t("command.argument") }));
   // actionFor is a stable lookup over current props; explicit primitive dependencies keep typing responsive.
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [normalized, separator, typedCommand, typedArgument, selectedCommand, visibleCommands, actions, state.selectors, state.unavailable]);
@@ -56,10 +58,11 @@ export function CommandWorkspace({ actions, commands, identity, state, busy, onE
     onExecute(value); setLine(""); setActive(0);
   }
 
-  return <section className="command-workspace" aria-label="Command workspace">
+  return <section className="command-workspace" aria-label={t("command.workspace")}>
     <div className="viewer-strip">
-      <div className="viewer-chip"><span className="viewer-avatar">{identity.displayName.slice(0, 1).toUpperCase()}</span><span><strong>{identity.displayName}</strong><small><ShieldCheck />{identity.linked ? "Identity shared" : "Identity required"}</small></span></div>
-      <div className="gold-balance"><Coins /><span><small>Hero gold</small><strong>{state.connected && state.viewer.adopted && typeof state.viewer.gold === "number" ? state.viewer.gold.toLocaleString() : "—"}</strong></span><em>{!state.connected ? "Game offline" : !state.viewer.adopted ? "Adopt a hero" : state.viewer.heroName}</em></div>
+      <div className="viewer-chip"><span className="viewer-avatar">{identity.displayName.slice(0, 1).toUpperCase()}</span><span><strong>{identity.displayName}</strong><small><ShieldCheck />{identity.linked ? t("identity.shared") : t("identity.required")}</small></span></div>
+      <div className="gold-balance"><Coins /><span><small>{t("gold.label")}</small><strong>{state.connected && state.viewer.adopted && typeof state.viewer.gold === "number" ? number(state.viewer.gold) : "—"}</strong></span><em>{!state.connected ? t("gold.offline") : !state.viewer.adopted ? t("gold.adopt") : state.viewer.heroName}</em></div>
+      <LanguageSelector />
     </div>
     <div className="command-center">
       <form className="command-bar" onSubmit={event => { event.preventDefault(); submit(); }}>
@@ -70,23 +73,23 @@ export function CommandWorkspace({ actions, commands, identity, state, busy, onE
           else if (event.key === "Tab" && suggestions.length) { event.preventDefault(); complete(suggestions[active]?.value ?? suggestions[0].value); }
           else if (event.key === "Escape") { setLine(""); setActive(0); }
           else if (event.key === "Enter") { event.preventDefault(); submit(); }
-        }} placeholder="Type a command…" aria-label="Command line" autoComplete="off" />
-        <button type="button" onClick={() => setHelpOpen(true)} aria-label="Open command help"><CircleHelp /></button>
-        <button type="submit" disabled={busy || !line.trim()} aria-label="Run command"><Send /></button>
+        }} placeholder={t("command.placeholder")} aria-label={t("command.line")} autoComplete="off" />
+        <button type="button" onClick={() => setHelpOpen(true)} aria-label={t("command.help.open")}><CircleHelp /></button>
+        <button type="submit" disabled={busy || !line.trim()} aria-label={t("command.run")}><Send /></button>
       </form>
-      {line.trim() && suggestions.length ? <div className="command-suggestions" role="listbox" aria-label="Command suggestions">
+      {line.trim() && suggestions.length ? <div className="command-suggestions" role="listbox" aria-label={t("command.suggestions")}>
         {suggestions.map((suggestion, index) => <button type="button" role="option" aria-selected={index === active} className={index === active ? "active" : ""} key={`${suggestion.value}-${index}`} onMouseDown={event => event.preventDefault()} onClick={() => complete(suggestion.value)}><strong>{suggestion.title}</strong><span>{suggestion.detail}</span>{suggestion.unavailable ? <em>{suggestion.unavailable}</em> : null}</button>)}
       </div> : null}
-      <p className="command-hint"><kbd>Tab</kbd> completes · <kbd>Enter</kbd> runs · type <button type="button" onClick={() => setHelpOpen(true)}>!help</button> for every command</p>
+      <p className="command-hint">{t("command.hint")}</p>
     </div>
     <div className="native-shortcuts">
-      <button onClick={onInventory}><PackageOpen /><span><strong>Inventory</strong><small>Custom items and equipped slots</small></span></button>
-      <button onClick={onRetinue}><Users /><span><strong>Retinue</strong><small>Live troops and elite retinue</small></span></button>
+      <button onClick={onInventory}><PackageOpen /><span><strong>{t("shortcut.inventory")}</strong><small>{t("shortcut.inventory.detail")}</small></span></button>
+      <button onClick={onRetinue}><Users /><span><strong>{t("shortcut.retinue")}</strong><small>{t("shortcut.retinue.detail")}</small></span></button>
     </div>
-    {helpOpen ? <div className="command-help" role="dialog" aria-modal="true" aria-label="Command help">
-      <header><div><h2>Command Help</h2><p>{helpCommands.length} available commands</p></div><button onClick={() => setHelpOpen(false)} aria-label="Close command help"><X /></button></header>
-      <label><Search /><input value={helpQuery} onChange={event => setHelpQuery(event.target.value)} placeholder="Search commands" autoFocus /></label>
-      <div className="help-command-list">{helpCommands.map(command => { const action = actionFor(command); return <button key={command.name} onClick={() => { complete(`!${command.name}${syntaxFor(action) ? " " : ""}`); setHelpOpen(false); }}><span><strong>!{command.name}</strong><small>{action?.category ?? "Command"}</small></span><code>{syntaxFor(action)}</code><p>{command.help || action?.description}</p></button>; })}</div>
+    {helpOpen ? <div className="command-help" role="dialog" aria-modal="true" aria-label={t("command.help.dialog")}>
+      <header><div><h2>{t("command.help.title")}</h2><p>{t("command.help.available", { count: helpCommands.length })}</p></div><button onClick={() => setHelpOpen(false)} aria-label={t("common.close")}><X /></button></header>
+      <label><Search /><input value={helpQuery} onChange={event => setHelpQuery(event.target.value)} placeholder={t("command.help.search")} autoFocus /></label>
+      <div className="help-command-list">{helpCommands.map(command => { const action = actionFor(command); return <button key={command.name} onClick={() => { complete(`!${command.name}${syntaxFor(action) ? " " : ""}`); setHelpOpen(false); }}><span><strong>!{command.name}</strong><small>{action?.category ?? t("command.help.category")}</small></span><code>{syntaxFor(action)}</code><p>{command.help || action?.description}</p></button>; })}</div>
     </div> : null}
   </section>;
 }
