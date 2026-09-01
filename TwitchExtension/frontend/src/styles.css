@@ -390,7 +390,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .viewer-strip {
   position: absolute;
   z-index: 10;
-  top: 88px;
+  top: 34px;
   left: 16px;
   width: clamp(360px,31vw,500px);
   pointer-events: auto;
@@ -398,7 +398,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
 .command-center {
   position: absolute;
   z-index: 20;
-  top: 154px;
+  top: 100px;
   left: 16px;
   width: clamp(360px,31vw,500px);
   margin: 0;
@@ -536,8 +536,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .floating-overlay-toggle { grid-template-rows: 25px 7px; }
   .floating-overlay-toggle img { width: 26px; height: 26px; }
   .floating-overlay-toggle span { font-size: 6px; }
-  .viewer-strip { top: 78px; left: 8px; width: calc(100vw - 16px); }
-  .command-center { top: 134px; left: 8px; width: calc(100vw - 16px); }
+  .viewer-strip { top: 32px; left: 8px; width: calc(100vw - 16px); }
+  .command-center { top: 88px; left: 8px; width: calc(100vw - 16px); }
   .command-hint { display: none; }
   .native-shortcuts { top: auto; right: auto; bottom: 84px; left: 8px; width: min(292px,calc(100vw - 16px)); }
   .native-shortcuts button { min-height: 46px; }
