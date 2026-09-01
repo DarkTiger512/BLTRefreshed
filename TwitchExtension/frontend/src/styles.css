@@ -492,11 +492,14 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   pointer-events: none;
 }
 .battle-stage {
-  grid-template-columns: minmax(270px,.85fr) minmax(0,1.15fr);
-  gap: clamp(12px,2vw,28px);
+  grid-template-columns: minmax(0,1fr);
+  grid-template-rows: auto minmax(0,1fr);
+  align-content: start;
+  gap: 12px;
 }
 .personal-battle-hud,
 .minimal-battle-roster { pointer-events: auto; }
+.personal-battle-hud { width: min(360px,100%); }
 
 @media (max-width:1000px) and (min-width:681px) {
   .viewer-strip,.command-center { width: min(400px,calc(100vw - 310px)); }
@@ -505,11 +508,7 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .command-feed-dock.expanded { width: min(440px,calc(100vw - 24px)); }
   .workspace-main > .inventory-view,.workspace-main > .retinue-view { right: 246px; left: 64px; }
   .battle-workspace { right: auto; left: 64px; width: calc(100vw - 322px); }
-  .battle-stage { grid-template-columns: minmax(250px,.9fr) minmax(0,1.1fr); gap: 10px; }
-}
-
-@media (max-width:800px) and (min-width:681px) {
-  .battle-stage { grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr); }
+  .battle-stage { grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr); gap: 10px; }
 }
 
 @media (max-width:680px) {
