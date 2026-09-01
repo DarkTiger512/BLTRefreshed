@@ -569,30 +569,3 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   .battle-workspace { inset: var(--player-safe-top) 8px var(--player-safe-bottom); width: auto; }
   .battle-stage { display: block; }
 }
-
-/* Fully transparent private feed */
-.command-feed-dock,
-.battle-active .command-feed-dock,
-.command-feed-dock.expanded {
-  background: transparent;
-  box-shadow: none;
-  backdrop-filter: none;
-}
-.command-feed-entry,
-.command-feed-entry.compact {
-  background: transparent;
-}
-.feed-expand-button,
-.feed-expand-button:hover {
-  background: transparent;
-}
-.feed-expand-button strong,
-.feed-expand-button small,
-.command-feed-title strong,
-.command-feed-title span,
-.command-feed-copy p,
-.command-feed-copy small,
-.compact-feed-empty {
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(0,0,0,.95);
-}
