@@ -1,7 +1,28 @@
-import type { ManifestAction, ViewerIdentity } from "./types";
+import type { ChannelConfiguration, ConfigurationContext, ManifestAction, ViewerIdentity } from "./types";
 import { isLiveLocalIntegration } from "./environment";
 
 const apiBase = import.meta.env.VITE_BLT_API_URL ?? "http://127.0.0.1:5188";
+const authHeaders = (identity: ViewerIdentity) => ({ Authorization: `Bearer ${identity.token}` });
+
+export async function getConfigurationContext(identity: ViewerIdentity) {
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/configuration/context`, { headers: authHeaders(identity) });
+  if (!response.ok) throw new Error(response.status === 403 ? "Broadcaster access is required." : "Configuration could not be loaded.");
+  return response.json() as Promise<ConfigurationContext>;
+}
+
+export async function saveConfiguration(identity: ViewerIdentity, configuration: ChannelConfiguration) {
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/configuration`, {
+    method: "PUT", headers: { ...authHeaders(identity), "Content-Type": "application/json" }, body: JSON.stringify(configuration),
+  });
+  if (response.status === 409) throw new Error("Configuration changed in another window. Reload before saving.");
+  if (!response.ok) throw new Error("Configuration could not be saved.");
+  return response.json() as Promise<ChannelConfiguration>;
+}
+
+export async function revokeInstallation(identity: ViewerIdentity, installationId: string) {
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/installations/${encodeURIComponent(installationId)}`, { method: "DELETE", headers: authHeaders(identity) });
+  if (!response.ok) throw new Error("Installation could not be revoked.");
+}
 
 export async function createPairingCode(identity: ViewerIdentity) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) {

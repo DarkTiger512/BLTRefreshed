@@ -18,8 +18,9 @@ public sealed class Database(NpgsqlDataSource dataSource)
         );
         CREATE INDEX IF NOT EXISTS installations_channel_idx ON installations(channel_id);
         CREATE TABLE IF NOT EXISTS channel_configurations (
-          channel_id text PRIMARY KEY, document jsonb NOT NULL, updated_at timestamptz NOT NULL
+          channel_id text PRIMARY KEY, document jsonb NOT NULL, revision bigint NOT NULL DEFAULT 0, updated_at timestamptz NOT NULL
         );
+        ALTER TABLE channel_configurations ADD COLUMN IF NOT EXISTS revision bigint NOT NULL DEFAULT 0;
         CREATE TABLE IF NOT EXISTS action_audit (
           audit_id bigserial PRIMARY KEY, request_id uuid NOT NULL, channel_id text NOT NULL, user_id text NOT NULL,
           action_id text NOT NULL, status text NOT NULL, detail text NULL, created_at timestamptz NOT NULL
@@ -60,12 +61,18 @@ public sealed class Database(NpgsqlDataSource dataSource)
         return await command.ExecuteScalarAsync(token) is Guid;
     }
 
-    public async Task SaveConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token)
+    public async Task<ChannelConfiguration?> SaveConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token)
     {
-        var json = JsonSerializer.Serialize(configuration);
-        await using var command = dataSource.CreateCommand("INSERT INTO channel_configurations(channel_id,document,updated_at) VALUES($1,$2::jsonb,now()) ON CONFLICT(channel_id) DO UPDATE SET document=$2::jsonb,updated_at=now()");
-        command.Parameters.AddWithValue(channel); command.Parameters.AddWithValue(json);
-        await command.ExecuteNonQueryAsync(token);
+        var updated = configuration with { SchemaVersion = 1, Revision = configuration.Revision + 1, UpdatedAt = DateTimeOffset.UtcNow };
+        var json = JsonSerializer.Serialize(updated);
+        await using var command = dataSource.CreateCommand("""
+          INSERT INTO channel_configurations(channel_id,document,revision,updated_at)
+          SELECT $1,$2::jsonb,$3,$4 WHERE $5=0
+          ON CONFLICT(channel_id) DO UPDATE SET document=$2::jsonb,revision=$3,updated_at=$4
+          WHERE channel_configurations.revision=$5 RETURNING revision
+          """);
+        command.Parameters.AddWithValue(channel); command.Parameters.AddWithValue(json); command.Parameters.AddWithValue(updated.Revision); command.Parameters.AddWithValue(updated.UpdatedAt); command.Parameters.AddWithValue(configuration.Revision);
+        return await command.ExecuteScalarAsync(token) is long ? updated : null;
     }
 
     public async Task<ChannelConfiguration> GetConfigurationAsync(string channel, CancellationToken token)
@@ -73,14 +80,30 @@ public sealed class Database(NpgsqlDataSource dataSource)
         await using var command = dataSource.CreateCommand("SELECT document::text FROM channel_configurations WHERE channel_id=$1");
         command.Parameters.AddWithValue(channel);
         var json = (string?)await command.ExecuteScalarAsync(token);
-        return json is null ? new ChannelConfiguration([], DateTimeOffset.UtcNow) : JsonSerializer.Deserialize<ChannelConfiguration>(json)!;
+        if (json is null) return new ChannelConfiguration(1, true, [], 0, DateTimeOffset.UtcNow);
+        var stored = JsonSerializer.Deserialize<ChannelConfiguration>(json)!;
+        return stored.SchemaVersion == 0 ? stored with { SchemaVersion = 1, ExtensionEnabled = true } : stored;
     }
 
     public async Task<bool> IsActionEnabledAsync(string channel, string actionId, CancellationToken token)
     {
         var configuration = await GetConfigurationAsync(channel, token);
         var preference = configuration.Commands.FirstOrDefault(item => string.Equals(item.ActionId, actionId, StringComparison.Ordinal));
-        return preference?.Enabled ?? true;
+        return configuration.ExtensionEnabled && (preference?.Enabled ?? true);
+    }
+
+    public async Task<IReadOnlyList<InstallationSummary>> ListInstallationsAsync(string channel, CancellationToken token)
+    {
+        await using var command = dataSource.CreateCommand("SELECT installation_id,created_at,last_seen_at,revoked_at FROM installations WHERE channel_id=$1 ORDER BY created_at DESC"); command.Parameters.AddWithValue(channel);
+        await using var reader = await command.ExecuteReaderAsync(token); var result = new List<InstallationSummary>();
+        while (await reader.ReadAsync(token)) result.Add(new(reader.GetGuid(0), reader.GetFieldValue<DateTimeOffset>(1), reader.IsDBNull(2) ? null : reader.GetFieldValue<DateTimeOffset>(2), reader.IsDBNull(3) ? null : reader.GetFieldValue<DateTimeOffset>(3)));
+        return result;
+    }
+
+    public async Task<bool> RevokeInstallationAsync(string channel, Guid installationId, CancellationToken token)
+    {
+        await using var command = dataSource.CreateCommand("UPDATE installations SET revoked_at=now() WHERE channel_id=$1 AND installation_id=$2 AND revoked_at IS NULL"); command.Parameters.AddWithValue(channel); command.Parameters.AddWithValue(installationId);
+        return await command.ExecuteNonQueryAsync(token) == 1;
     }
 
     public async Task AuditAsync(Guid requestId, string channel, string user, string action, string status, string? detail, CancellationToken token)

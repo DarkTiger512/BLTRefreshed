@@ -1,10 +1,9 @@
 import { CircleDot } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { requestInventory, requestRetinue, submitAction, submitCommand } from "./api";
 import { isLiveLocalIntegration } from "./environment";
 import { BattleWorkspace } from "./components/BattleWorkspace";
 import { CommandWorkspace } from "./components/CommandWorkspace";
-import { ConfigurationView } from "./components/ConfigurationView";
 import { CommandFeedView } from "./components/CommandFeedView";
 import { InventoryView } from "./components/InventoryView";
 import { IntegrationDiagnostics } from "./components/IntegrationDiagnostics";
@@ -39,9 +38,7 @@ export function App() {
     }).catch(reason => setError(String(reason)));
   }, []);
 
-  const isConfiguration = useMemo(() => new URLSearchParams(window.location.search).get("anchor") === "configuration", []);
   if (!identity || !manifest) return <div className="loading-screen"><CircleDot />{t("app.connecting")}</div>;
-  if (isConfiguration) return <ConfigurationView identity={identity} />;
 
   async function handleActionSubmit(action: ManifestAction, args: Record<string, unknown>) {
     setBusy(true); setError(undefined);

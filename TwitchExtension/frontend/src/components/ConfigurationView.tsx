@@ -1,30 +1,42 @@
-import { CheckCircle2, Copy, Link2, RotateCw } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { createPairingCode } from "../api";
-import type { ViewerIdentity } from "../types";
-import { LanguageSelector, useI18n } from "../i18n";
-
-export function ConfigurationView({ identity }: { identity: ViewerIdentity }) {
-  const { t, time } = useI18n();
-  const [code, setCode] = useState(t("config.requesting"));
-  const [expiresAt, setExpiresAt] = useState<string>();
-  const [error, setError] = useState<string>();
-  const [copied, setCopied] = useState(false);
-  const refresh = useCallback(async () => {
-    setError(undefined); setCode(t("config.requesting"));
-    try { const response = await createPairingCode(identity); setCode(response.code); setExpiresAt(response.expiresAt); }
-    catch (reason) { setCode(t("config.unavailable")); setError(reason instanceof Error ? reason.message : t("config.unavailable")); }
-  }, [identity, t]);
-  useEffect(() => { void refresh(); }, [refresh]);
-  return <main className="configuration-view">
-    <section className="configuration-card">
-      <LanguageSelector /><div className="config-emblem"><Link2 /></div><h1>{t("config.title")}</h1>
-      <p>{t("config.detail")}</p>
-      <div className="pairing-code"><span>{code}</span><button aria-label={t("config.copy")} onClick={() => { navigator.clipboard?.writeText(code); setCopied(true); }}><Copy /></button></div>
-      <div className="pairing-meta"><span>{expiresAt ? t("config.expires", { time: time(expiresAt) }) : t("config.shortLived")}</span><button onClick={() => { setCopied(false); void refresh(); }}><RotateCw />{t("config.new")}</button></div>
-      {error ? <div role="alert" className="copied">{error}</div> : null}
-      {copied ? <div className="copied"><CheckCircle2 />{t("config.copied")}</div> : null}
-      <dl><div><dt>{t("config.channel")}</dt><dd>{identity.channelId}</dd></div><div><dt>{t("config.configuration")}</dt><dd>{t("config.managed")}</dd></div></dl>
-    </section>
+import { Copy, Link2, Power, RotateCw, Save, Search, ShieldAlert, Unplug } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createPairingCode, getConfigurationContext, revokeInstallation, saveConfiguration } from "../api";
+import { LanguageSelector } from "../i18n";
+import { authorizeViewer } from "../twitch";
+import { applyConfigurationPreset } from "../configuration";
+import type { ActionManifest, ChannelConfiguration, ConfigurationContext, ManifestAction, ViewerIdentity } from "../types";
+type ConfigMode = "full" | "live";
+export function ConfigurationApp({ mode }: { mode: ConfigMode }) {
+  const [identity, setIdentity] = useState<ViewerIdentity>(); const [manifest, setManifest] = useState<ActionManifest>(); const [error, setError] = useState<string>();
+  useEffect(() => { Promise.all([authorizeViewer(), fetch("./action-manifest.json").then(r => r.json() as Promise<ActionManifest>)]).then(([viewer, actions]) => { setIdentity(viewer); setManifest(actions); }).catch(reason => setError(String(reason))); }, []);
+  if (error || !identity || !manifest) return <main className="configuration-view"><div className="config-access" role={error ? "alert" : undefined}>{error ? <ShieldAlert /> : null}{error ?? "Loading configuration…"}</div></main>;
+  return <ConfigurationView identity={identity} manifest={manifest} mode={mode} />;
+}
+export function ConfigurationView({ identity, manifest, mode }: { identity: ViewerIdentity; manifest: ActionManifest; mode: ConfigMode }) {
+  const [context, setContext] = useState<ConfigurationContext>(); const [draft, setDraft] = useState<ChannelConfiguration>(); const [query, setQuery] = useState(""); const [category, setCategory] = useState("All");
+  const [code, setCode] = useState<string>(); const [expiresAt, setExpiresAt] = useState<string>(); const [message, setMessage] = useState<string>(); const [error, setError] = useState<string>(); const [saving, setSaving] = useState(false);
+  const broadcaster = identity.roles.includes("broadcaster");
+  const load = useCallback(async () => { setError(undefined); try { const result = await getConfigurationContext(identity); setContext(result); setDraft(result.configuration); } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); } }, [identity]);
+  useEffect(() => { if (broadcaster) void load(); }, [broadcaster, load]);
+  const enabled = useMemo(() => new Map(draft?.commands.map(item => [item.actionId, item.enabled]) ?? []), [draft]);
+  const categories = useMemo(() => ["All", ...new Set(manifest.actions.map(action => action.category))], [manifest]);
+  const filtered = useMemo(() => manifest.actions.filter(action => (category === "All" || action.category === category) && `${action.legacyName} ${action.description} ${action.handler}`.toLowerCase().includes(query.toLowerCase())), [manifest, category, query]);
+  const enabledCount = manifest.actions.filter(action => enabled.get(action.id) ?? action.enabledByDefault).length;
+  const dirty = Boolean(draft && context && (JSON.stringify(draft.commands) !== JSON.stringify(context.configuration.commands) || draft.extensionEnabled !== context.configuration.extensionEnabled));
+  function setCommands(commands: ChannelConfiguration["commands"]) { setDraft(current => current ? { ...current, commands } : current); }
+  function setCommand(action: ManifestAction, value: boolean) { setCommands(manifest.actions.map(item => ({ actionId: item.id, enabled: item.id === action.id ? value : (enabled.get(item.id) ?? item.enabledByDefault) }))); }
+  async function save() { if (!draft) return; setSaving(true); setError(undefined); try { const result = await saveConfiguration(identity, draft); setDraft(result); setContext(current => current ? { ...current, configuration: result } : current); setMessage("Configuration saved and sent to connected overlays."); } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); } finally { setSaving(false); } }
+  async function newCode() { setError(undefined); try { const result = await createPairingCode(identity); setCode(result.code); setExpiresAt(result.expiresAt); } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); } }
+  async function revoke(id: string) { try { await revokeInstallation(identity, id); await load(); setMessage("Installation revoked."); } catch (reason) { setError(reason instanceof Error ? reason.message : String(reason)); } }
+  if (!broadcaster) return <main className="configuration-view"><div className="config-access" role="alert"><ShieldAlert /><h1>Broadcaster access required</h1><p>This public Twitch asset contains no channel data. Open it from your Extension configuration in the broadcaster dashboard.</p></div></main>;
+  if (!draft || !context) return <main className="configuration-view"><div className="config-access">{error ?? "Loading broadcaster configuration…"}</div></main>;
+  return <main className={`configuration-view config-${mode}`}>
+    <header className="config-header"><div><span className="config-kicker">BLT Twitch Extension</span><h1>{mode === "live" ? "Live controls" : "Streamer configuration"}</h1><p>{identity.displayName} · Channel {identity.channelId}</p></div><LanguageSelector /></header>
+    <section className="config-status-row"><div className={context.gameConnected ? "healthy" : "offline"}><span />Game {context.gameConnected ? "connected" : "offline"}</div><div className={context.installations.some(i => !i.revokedAt) ? "healthy" : "offline"}><span />{context.installations.filter(i => !i.revokedAt).length} active installation(s)</div><label className="master-switch"><Power /><span><strong>Extension commands</strong><small>Chat commands and rewards are unaffected</small></span><input type="checkbox" checked={draft.extensionEnabled} onChange={event => setDraft({ ...draft, extensionEnabled: event.target.checked })} /></label></section>
+    <section className="config-presets"><strong>Quick presets</strong><div>{([['defaults','BLT Defaults'],['viewers','Enable Viewer Commands'],['safe','Disable Mutations'],['battle','Battle Only'],['off','Disable All']] as const).map(([id,label]) => <button key={id} onClick={() => setCommands(applyConfigurationPreset(manifest.actions, id))}>{label}</button>)}</div></section>
+    {mode === "full" ? <><section className="config-setup"><div><h2><Link2 /> Pair the game</h2><p>Generate a short-lived code, then enter it in BLT Configure. Codes can only be used once.</p>{code ? <div className="pairing-code"><span>{code}</span><button aria-label="Copy pairing code" onClick={() => navigator.clipboard?.writeText(code)}><Copy /></button></div> : null}<div className="pairing-meta"><span>{expiresAt ? `Expires ${new Date(expiresAt).toLocaleTimeString()}` : "No active pairing code"}</span><button onClick={() => void newCode()}><RotateCw />Generate code</button></div></div><div><h2>Installations</h2>{context.installations.length ? context.installations.map(item => <div className="installation-row" key={item.installationId}><span><strong>{item.revokedAt ? "Revoked" : "Connected mod"}</strong><small>Last seen {item.lastSeenAt ? new Date(item.lastSeenAt).toLocaleString() : "never"}</small></span>{!item.revokedAt ? <button onClick={() => void revoke(item.installationId)}><Unplug />Revoke</button> : null}</div>) : <p>No paired game installation yet.</p>}</div></section>
+    <section className="command-config"><div className="command-config-head"><div><h2>Extension commands</h2><p>{enabledCount} of {manifest.actions.length} enabled · Runtime settings reconcile when the game connects.</p></div><label><Search /><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search commands" /></label></div><div className="config-categories">{categories.map(value => <button className={category === value ? "active" : ""} onClick={() => setCategory(value)} key={value}>{value}</button>)}</div><div className="command-toggle-list">{filtered.map(action => <label key={action.id}><input type="checkbox" checked={enabled.get(action.id) ?? action.enabledByDefault} onChange={event => setCommand(action, event.target.checked)} /><span><strong>!{action.legacyName}</strong><small>{action.description}</small></span><em>{action.mutatesCampaign ? "Changes campaign" : "Read-only"}</em></label>)}</div></section></> : <section className="live-summary"><strong>{enabledCount}</strong><span>of {manifest.actions.length} Extension commands enabled</span><p>Use the full Extension configuration page to change individual commands and manage pairing.</p></section>}
+    {(error || message) ? <div className={error ? "config-message error" : "config-message"} role="status">{error ?? message}</div> : null}
+    <footer className="config-savebar"><span>{dirty ? "Unsaved changes" : "All changes saved"}</span><button disabled={!dirty} onClick={() => { setDraft(context.configuration); setMessage(undefined); }}>Discard</button><button className="primary" disabled={!dirty || saving} onClick={() => void save()}><Save />{saving ? "Saving…" : "Save"}</button></footer>
   </main>;
 }

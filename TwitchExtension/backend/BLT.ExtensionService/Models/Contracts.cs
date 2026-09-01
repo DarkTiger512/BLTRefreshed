@@ -11,7 +11,7 @@ public static class ProtocolKinds
         "hello", "manifest", "state.snapshot", "state.patch", "action.request", "action.accepted",
         "action.result", "action.error", "inventory.request", "inventory.snapshot", "inventory.error",
         "retinue.request", "retinue.snapshot", "retinue.error", "command.request", "viewer.subscribe",
-        "viewer.unsubscribe", "viewer.state", "connection.status"
+        "viewer.unsubscribe", "viewer.state", "connection.status", "configuration.updated"
     };
 }
 
@@ -34,7 +34,8 @@ public sealed record PairingExchangeRequest(string Code);
 public sealed record PairingExchangeResponse(string ChannelId, string InstallationId, string InstallationCredential, DateTimeOffset IssuedAt);
 public sealed record PairingCodeResponse(string Code, DateTimeOffset ExpiresAt);
 public sealed record CommandPreference(string ActionId, bool Enabled);
-public sealed record ChannelConfiguration(IReadOnlyList<CommandPreference> Commands, DateTimeOffset UpdatedAt);
+public sealed record ChannelConfiguration(int SchemaVersion, bool ExtensionEnabled, IReadOnlyList<CommandPreference> Commands, long Revision, DateTimeOffset UpdatedAt);
+public sealed record InstallationSummary(Guid InstallationId, DateTimeOffset CreatedAt, DateTimeOffset? LastSeenAt, DateTimeOffset? RevokedAt);
 
 public sealed record TwitchPrincipal(
     string ChannelId,

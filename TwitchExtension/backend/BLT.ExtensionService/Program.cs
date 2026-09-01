@@ -16,7 +16,7 @@ builder.Services.AddSingleton<ChannelRouter>();
 builder.Services.AddSingleton<RequestGuard>();
 builder.Services.AddSingleton<TwitchExtensionTokenValidator>();
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy
-    .WithOrigins((builder.Configuration["BLT:AllowedOrigins"] ?? "http://127.0.0.1:5173").Split(';', StringSplitOptions.RemoveEmptyEntries))
+    .WithOrigins((builder.Configuration["BLT:AllowedOrigins"] ?? "http://127.0.0.1:5173;http://127.0.0.1:5174").Split(';', StringSplitOptions.RemoveEmptyEntries))
     .AllowAnyHeader().AllowAnyMethod()));
 
 var app = builder.Build();
@@ -60,16 +60,33 @@ app.MapPost("/api/pairing/exchange", async (PairingExchangeRequest request, Data
 
 app.MapGet("/api/channels/{channel}/configuration", async (string channel, HttpContext context, TwitchExtensionTokenValidator validator, Database database, CancellationToken token) =>
 {
-    if (!Authorized(context, validator, channel, out _, out var failure)) return failure!;
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (principal!.Role != "broadcaster") return Results.Forbid();
     return Results.Ok(await database.GetConfigurationAsync(channel, token));
 });
 
-app.MapPut("/api/channels/{channel}/configuration", async (string channel, ChannelConfiguration configuration, HttpContext context, TwitchExtensionTokenValidator validator, Database database, CancellationToken token) =>
+app.MapGet("/api/channels/{channel}/configuration/context", async (string channel, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, CancellationToken token) =>
 {
     if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
     if (principal!.Role != "broadcaster") return Results.Forbid();
-    await database.SaveConfigurationAsync(channel, configuration with { UpdatedAt = DateTimeOffset.UtcNow }, token);
-    return Results.NoContent();
+    return Results.Ok(new { configuration = await database.GetConfigurationAsync(channel, token), gameConnected = router.IsGameConnected(channel), lastStateAt = router.LastStateAt(channel), installations = await database.ListInstallationsAsync(channel, token), runtimeCommands = router.RuntimeCommands(channel) });
+});
+
+app.MapPut("/api/channels/{channel}/configuration", async (string channel, ChannelConfiguration configuration, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (principal!.Role != "broadcaster") return Results.Forbid();
+    var saved = await database.SaveConfigurationAsync(channel, configuration, token);
+    if (saved is null) return Results.Conflict(new { detail = "Configuration was changed by another session." });
+    await router.BroadcastConfigurationAsync(channel, saved, token);
+    return Results.Ok(saved);
+});
+
+app.MapDelete("/api/channels/{channel}/installations/{installationId:guid}", async (string channel, Guid installationId, HttpContext context, TwitchExtensionTokenValidator validator, Database database, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (principal!.Role != "broadcaster") return Results.Forbid();
+    return await database.RevokeInstallationAsync(channel, installationId, token) ? Results.NoContent() : Results.NotFound();
 });
 
 app.MapPost("/api/channels/{channel}/actions", async (string channel, ActionSubmission submission, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, RequestGuard guard, CancellationToken token) =>
@@ -103,6 +120,7 @@ app.MapPost("/api/channels/{channel}/commands", async (string channel, CommandSu
         return Results.Problem("The command line is invalid.", statusCode: 400);
     if (commandLine.StartsWith('!')) commandLine = commandLine[1..].TrimStart();
     var commandName = commandLine.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0];
+    if (!await database.IsActionEnabledAsync(channel, $"command.{commandName.ToLowerInvariant()}", token)) return Results.Problem("This command is disabled by the broadcaster.", statusCode: 403);
     if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:command.{commandName.ToLowerInvariant()}", submission.Timestamp, out var guardError))
         return Results.Problem(guardError, statusCode: 429);
     var envelope = new

@@ -16,6 +16,17 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
 
     public bool IsGameConnected(string channel) => games.TryGetValue(channel, out var socket) && socket.State == WebSocketState.Open;
     public DateTimeOffset? LastStateAt(string channel) => stateCache.LastStateAt(channel);
+    public JsonElement RuntimeCommands(string channel)
+    {
+        if (stateCache.TryGet(channel, out var state))
+        {
+            using var document = JsonDocument.Parse(state);
+            if (document.RootElement.TryGetProperty("data", out var data) && data.TryGetProperty("commands", out var commands)) return commands.Clone();
+        }
+        return JsonSerializer.SerializeToElement(Array.Empty<object>());
+    }
+    public Task BroadcastConfigurationAsync(string channel, ChannelConfiguration configuration, CancellationToken token) =>
+        BroadcastViewerAsync(channel, Envelope("configuration.updated", channel, new { configuration.SchemaVersion, configuration.ExtensionEnabled, configuration.Commands, configuration.Revision, configuration.UpdatedAt }), token);
 
     public async Task AttachGameAsync(string channel, WebSocket socket, CancellationToken token)
     {
