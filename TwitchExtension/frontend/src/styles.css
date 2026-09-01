@@ -439,7 +439,8 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   z-index: 30;
   inset: var(--player-safe-top) 16px auto auto;
   width: 274px;
-  height: min(390px,calc(100vh - 50px));
+  height: auto;
+  max-height: min(390px,calc(100vh - 50px));
   display: grid;
   grid-template-columns: minmax(0,1fr);
   grid-template-rows: 58px minmax(0,1fr);
@@ -462,7 +463,9 @@ button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px s
   padding: 8px;
   overflow-y: auto;
 }
-.command-feed-entry.compact { min-height: 76px; }
+.command-feed-entry.compact { min-height: 58px; padding: 5px 6px; }
+.command-feed-entry.compact .command-status { width: 22px; height: 22px; }
+.command-feed-entry.compact p { margin: 2px 0; -webkit-line-clamp: 1; }
 .command-feed-entry.compact:nth-child(3) { display: grid; }
 .command-feed-dock:not(.expanded):not(:has(.command-feed-entry)) { height: 132px; }
 .command-feed-dock.expanded {
