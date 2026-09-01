@@ -127,10 +127,10 @@ export function App() {
   const battleActive = state.mission.active && (state.mission.kind === "battle" || state.mission.kind === "tournament");
 
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
-    {!open ? <button className="open-launcher" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
+    {!open ? <button className="floating-overlay-toggle" onClick={() => setOpen(true)} aria-label="Open Bannerlord Twitch" title="Open BLT overlay"><img src={bltLogo} alt="" /><span>BLT</span></button> : null}
     {open ? <div className="overlay-window">
       <IntegrationDiagnostics identity={identity} />
-      <button className="floating-overlay-toggle" onClick={() => setOpen(false)} aria-label="Collapse Bannerlord Twitch overlay" title="Collapse BLT overlay"><img src={bltLogo} alt="" /></button>
+      <button className="floating-overlay-toggle" onClick={() => setOpen(false)} aria-label="Collapse Bannerlord Twitch overlay" title="Collapse BLT overlay"><img src={bltLogo} alt="" /><span>BLT</span></button>
       <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
         <div className="workspace-stack">
           <div className="workspace-main">
