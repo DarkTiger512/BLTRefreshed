@@ -5,7 +5,7 @@
 1. Back up the current BLT module, YAML profiles, `Bannerlord-Twitch-Auth.yaml`, and campaign saves.
 2. Deploy the managed backend and Twitch Extension assets before distributing the new mod.
 3. Replace the mod files while retaining existing YAML and save data.
-4. Install the Extension, create a pairing code, and enter the service URL and code in BLT Configure.
+4. Install the Extension, generate a pairing code, submit it from BLT Configure, then approve the pending installation with Twitch Config's Save button.
 5. Confirm the managed connector reports connected and that the manifest contains all enabled commands.
 6. Exercise one read-only and one mutating action through both chat and the Extension before going live.
 

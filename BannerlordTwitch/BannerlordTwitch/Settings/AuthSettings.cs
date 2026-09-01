@@ -29,6 +29,10 @@ namespace BannerlordTwitch
         public string IntegrationChannelId { get; set; }
         public string IntegrationInstallationId { get; set; }
         public string IntegrationCredential { get; set; }
+        public string IntegrationPairingRequestId { get; set; }
+        public string IntegrationPairingRequestToken { get; set; }
+        public string IntegrationCandidateCredential { get; set; }
+        public System.DateTimeOffset? IntegrationPairingExpiresAt { get; set; }
 
         [YamlDotNet.Serialization.YamlIgnore]
         public bool IntegrationConfigured =>

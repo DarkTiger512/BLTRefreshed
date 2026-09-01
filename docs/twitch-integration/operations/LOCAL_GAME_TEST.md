@@ -46,9 +46,10 @@ The diagnostics strip must show `Service online`, the expected channel, and init
 
 ## Pair Bannerlord
 
-1. Open `http://127.0.0.1:5173/?anchor=configuration` and generate a pairing code.
-2. In BLT Configure, set the integration service URL to `http://127.0.0.1:5188` and enter the code.
-3. Restart BLT so the connector exchanges the single-use code.
+1. Open `http://127.0.0.1:5174/config.html` and press **Generate code**.
+2. Paste the code into BLT Configure and explicitly press **Pair**. The local Debug build already targets `http://127.0.0.1:5188`.
+3. Return to Twitch Config, select **Accept**, and press **Save**.
+4. Keep BLT Configure open until it reports **Paired and approved**. Starting Bannerlord never submits or resumes a pending request.
 4. Confirm the strip changes to `Game connected` and receives a state timestamp.
 5. Request another code and verify the consumed code is rejected if reused.
 

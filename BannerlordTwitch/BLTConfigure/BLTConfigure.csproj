@@ -17,6 +17,9 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManagedServiceUrl Condition="'$(ManagedServiceUrl)' == '' and $([System.String]::Copy('$(Configuration)').StartsWith('Debug'))">http://127.0.0.1:5188</ManagedServiceUrl>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug 1.5.10\</OutputPath>
   </PropertyGroup>
@@ -187,6 +190,11 @@
     <Content Include="_Module\ModuleData\Languages\TR\strings-misc-TR.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="GenerateManagedServiceDefaults" BeforeTargets="CoreCompile">
+    <Error Condition="'$(ManagedServiceUrl)' == ''" Text="ManagedServiceUrl is required for production BLTConfigure builds." />
+    <WriteLinesToFile File="$(IntermediateOutputPath)ManagedServiceDefaults.g.cs" Overwrite="true" Lines="namespace BLTConfigure { internal static class ManagedServiceDefaults { internal const string Url = &quot;$(ManagedServiceUrl)&quot;%3B } }" />
+    <ItemGroup><Compile Include="$(IntermediateOutputPath)ManagedServiceDefaults.g.cs" /></ItemGroup>
+  </Target>
   <Import Project="$(SolutionDir)BLTBuildTargets.targets" />
   <Target Name="FinalPackage" DependsOnTargets="Package" AfterTargets="AfterBuild" Condition="'$(CreatePackage)' == 'true'" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -240,8 +240,6 @@ namespace BannerlordTwitch.Integration
             {
                 try
                 {
-                    if (string.IsNullOrWhiteSpace(auth.IntegrationCredential) && !string.IsNullOrWhiteSpace(auth.IntegrationPairingCode))
-                        await ExchangePairingCodeAsync(lifetime.Token);
                     if (!auth.IntegrationConfigured) return;
                     socket?.Dispose();
                     socket = new ClientWebSocket();

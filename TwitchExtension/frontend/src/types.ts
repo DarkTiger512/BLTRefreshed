@@ -118,7 +118,10 @@ export interface CommandPreference { actionId: string; enabled: boolean; setting
 export interface ConfigurationProfile { profileId: number; extensionEnabled: boolean; commands: CommandPreference[] }
 export interface ChannelConfiguration { schemaVersion: number; extensionEnabled: boolean; commands: CommandPreference[]; profiles: ConfigurationProfile[]; activeProfile: number; revision: number; updatedAt: string }
 export interface InstallationSummary { installationId: string; createdAt: string; lastSeenAt?: string; revokedAt?: string }
-export interface ConfigurationContext { configuration: ChannelConfiguration; gameConnected: boolean; lastStateAt?: string; installations: InstallationSummary[]; runtimeCommands: RuntimeCommand[] }
+export type PairingRequestState = "pending" | "approved" | "denied" | "expired" | "cancelled";
+export interface PairingRequestSummary { requestId: string; modVersion: string; platformLabel: string; fingerprint: string; createdAt: string; expiresAt: string; status: PairingRequestState }
+export interface PairingDecision { requestId: string; decision: "approved" | "denied" }
+export interface ConfigurationContext { configuration: ChannelConfiguration; gameConnected: boolean; lastStateAt?: string; installations: InstallationSummary[]; pairingRequests: PairingRequestSummary[]; runtimeCommands: RuntimeCommand[] }
 
 declare global {
   interface Window {

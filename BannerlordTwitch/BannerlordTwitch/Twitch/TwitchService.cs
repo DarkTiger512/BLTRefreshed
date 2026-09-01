@@ -194,8 +194,7 @@ namespace BannerlordTwitch
                     // Managed integration uses an outbound authenticated WebSocket.
                     // The Twitch Extension shared secret never enters the mod.
                     if (!string.IsNullOrWhiteSpace(authSettings.IntegrationServiceUrl) &&
-                        (!string.IsNullOrWhiteSpace(authSettings.IntegrationCredential) ||
-                         !string.IsNullOrWhiteSpace(authSettings.IntegrationPairingCode)))
+                        !string.IsNullOrWhiteSpace(authSettings.IntegrationCredential))
                     {
                         try
                         {

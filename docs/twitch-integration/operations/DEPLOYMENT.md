@@ -15,7 +15,7 @@ The included Compose file is development-only. Its example database password and
 
 ## Pairing and revocation
 
-The broadcaster opens the Extension configuration view and creates a ten-minute, single-use code. They paste the code and the public service URL into BLT Configure, then restart or reconnect BLT. The mod exchanges the code for a random installation credential and stores it in `Bannerlord-Twitch-Auth.yaml`. The credential is scoped to one channel, stored hashed in PostgreSQL, and can be revoked by setting `installations.revoked_at` through the operator administration path.
+The broadcaster opens Twitch Config and creates a ten-minute, single-use code. They paste only that code into BLT Configure and explicitly press **Pair**. Twitch Config then shows the pending installation; **Accept** or **Deny** is staged until the broadcaster presses **Save**. The desktop polls while it remains open and promotes the candidate credential only after approval. The managed-service URL is compiled into BLT Configure (`ManagedServiceUrl`); production builds require an HTTPS value. Credentials are scoped to one channel, stored hashed in PostgreSQL, and remain revocable from Twitch Config.
 
 ## Monitoring
 

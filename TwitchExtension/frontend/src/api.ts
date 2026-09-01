@@ -1,4 +1,4 @@
-import type { ChannelConfiguration, ConfigurationContext, ManifestAction, ViewerIdentity } from "./types";
+import type { ChannelConfiguration, ConfigurationContext, ManifestAction, PairingDecision, ViewerIdentity } from "./types";
 import { isLiveLocalIntegration } from "./environment";
 
 const apiBase = import.meta.env.VITE_BLT_API_URL ?? "http://127.0.0.1:5188";
@@ -11,6 +11,7 @@ export async function getConfigurationContext(identity: ViewerIdentity) {
       gameConnected: true,
       lastStateAt: new Date(Date.now() - 12_000).toISOString(),
       installations: [{ installationId: "a89b210d-50ce-47d0-8b75-244563848001", createdAt: new Date(Date.now() - 86_400_000 * 12).toISOString(), lastSeenAt: new Date(Date.now() - 12_000).toISOString() }],
+      pairingRequests: [{ requestId: "b89b210d-50ce-47d0-8b75-244563848002", modVersion: "5.4.0", platformLabel: "Windows PC", fingerprint: "7A4D91", createdAt: new Date(Date.now() - 45_000).toISOString(), expiresAt: new Date(Date.now() + 480_000).toISOString(), status: "pending" }],
       runtimeCommands: [],
     } satisfies ConfigurationContext;
   }
@@ -19,13 +20,13 @@ export async function getConfigurationContext(identity: ViewerIdentity) {
   return response.json() as Promise<ConfigurationContext>;
 }
 
-export async function saveConfiguration(identity: ViewerIdentity, configuration: ChannelConfiguration) {
+export async function saveConfiguration(identity: ViewerIdentity, configuration: ChannelConfiguration, pairingDecisions: PairingDecision[] = []) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     await new Promise(resolve => setTimeout(resolve, 300));
     return { ...configuration, revision: configuration.revision + 1, updatedAt: new Date().toISOString() };
   }
-  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/configuration`, {
-    method: "PUT", headers: { ...authHeaders(identity), "Content-Type": "application/json" }, body: JSON.stringify(configuration),
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/configuration/apply`, {
+    method: "PUT", headers: { ...authHeaders(identity), "Content-Type": "application/json" }, body: JSON.stringify({ configuration, pairingDecisions }),
   });
   if (response.status === 409) throw new Error("Configuration changed in another window. Reload before saving.");
   if (!response.ok) throw new Error("Configuration could not be saved.");

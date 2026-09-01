@@ -49,6 +49,32 @@ app.MapPost("/api/channels/{channel}/pairing", async (string channel, HttpContex
     return Results.Ok(new PairingCodeResponse(code, expiry));
 });
 
+app.MapPost("/api/pairing/requests", async (PairingRequestSubmission request, Database database, CancellationToken token) =>
+{
+    var code = request.Code?.Trim().ToUpperInvariant();
+    if (string.IsNullOrWhiteSpace(code) || code.Length > 32 || string.IsNullOrWhiteSpace(request.ModVersion) || request.ModVersion.Length > 40 || string.IsNullOrWhiteSpace(request.PlatformLabel) || request.PlatformLabel.Length > 80 || string.IsNullOrWhiteSpace(request.Fingerprint) || request.Fingerprint.Length > 32)
+        return Results.Problem("The pairing request is malformed.", statusCode: 400);
+    var requestId = Guid.NewGuid(); var requestToken = InstallationCredentialService.Create(); var candidateCredential = InstallationCredentialService.Create();
+    var created = await database.CreatePairingRequestAsync(code, requestId, InstallationCredentialService.Hash(requestToken), InstallationCredentialService.Hash(candidateCredential), request.ModVersion.Trim(), request.PlatformLabel.Trim(), request.Fingerprint.Trim(), token);
+    if (created is null) return Results.Problem("The pairing code is invalid, expired, or already used.", statusCode: 400);
+    return Results.Ok(new PairingRequestReceipt(requestId, requestToken, candidateCredential, created.Value.ExpiresAt, "pending"));
+});
+
+app.MapGet("/api/pairing/requests/{requestId:guid}/status", async (Guid requestId, HttpContext context, Database database, CancellationToken token) =>
+{
+    var bearer = context.Request.Headers.Authorization.ToString(); var requestToken = bearer.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ? bearer[7..].Trim() : null;
+    if (string.IsNullOrWhiteSpace(requestToken)) return Unauthorized("A pairing request token is required.");
+    var status = await database.GetPairingRequestStatusAsync(requestId, InstallationCredentialService.Hash(requestToken), token);
+    return status is null ? Results.NotFound() : Results.Ok(status);
+});
+
+app.MapDelete("/api/pairing/requests/{requestId:guid}", async (Guid requestId, HttpContext context, Database database, CancellationToken token) =>
+{
+    var bearer = context.Request.Headers.Authorization.ToString(); var requestToken = bearer.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase) ? bearer[7..].Trim() : null;
+    if (string.IsNullOrWhiteSpace(requestToken)) return Unauthorized("A pairing request token is required.");
+    return await database.CancelPairingRequestAsync(requestId, InstallationCredentialService.Hash(requestToken), token) ? Results.NoContent() : Results.NotFound();
+});
+
 app.MapPost("/api/pairing/exchange", async (PairingExchangeRequest request, Database database, CancellationToken token) =>
 {
     var channel = await database.ConsumePairingCodeAsync(request.Code.Trim().ToUpperInvariant(), token);
@@ -69,7 +95,20 @@ app.MapGet("/api/channels/{channel}/configuration/context", async (string channe
 {
     if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
     if (principal!.Role != "broadcaster") return Results.Forbid();
-    return Results.Ok(new { configuration = await database.GetConfigurationAsync(channel, token), gameConnected = router.IsGameConnected(channel), lastStateAt = router.LastStateAt(channel), installations = await database.ListInstallationsAsync(channel, token), runtimeCommands = router.RuntimeCommands(channel) });
+    return Results.Ok(new { configuration = await database.GetConfigurationAsync(channel, token), gameConnected = router.IsGameConnected(channel), lastStateAt = router.LastStateAt(channel), installations = await database.ListInstallationsAsync(channel, token), pairingRequests = await database.ListPairingRequestsAsync(channel, token), runtimeCommands = router.RuntimeCommands(channel) });
+});
+
+app.MapPut("/api/channels/{channel}/configuration/apply", async (string channel, ConfigurationApplyRequest request, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (principal!.Role != "broadcaster") return Results.Forbid();
+    try
+    {
+        var saved = await database.ApplyConfigurationAsync(channel, request.Configuration, request.PairingDecisions, token);
+        if (saved is null) return Results.Conflict(new { detail = "Configuration was changed by another session." });
+        await router.BroadcastConfigurationAsync(channel, saved, token); return Results.Ok(saved);
+    }
+    catch (InvalidOperationException ex) { return Results.Conflict(new { detail = ex.Message }); }
 });
 
 app.MapPut("/api/channels/{channel}/configuration", async (string channel, ChannelConfiguration configuration, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, CancellationToken token) =>
