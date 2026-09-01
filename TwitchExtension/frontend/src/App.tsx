@@ -1,11 +1,9 @@
 import { CircleDot, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { requestInventory, requestRetinue, submitAction } from "./api";
+import { requestInventory, requestRetinue, submitAction, submitCommand } from "./api";
 import { isLiveLocalIntegration } from "./environment";
-import { ActionBrowser } from "./components/ActionBrowser";
-import { ActionDetail } from "./components/ActionDetail";
 import { BattleWorkspace } from "./components/BattleWorkspace";
-import { CategoryRail } from "./components/CategoryRail";
+import { CommandWorkspace } from "./components/CommandWorkspace";
 import { ConfigurationView } from "./components/ConfigurationView";
 import { CommandFeedView } from "./components/CommandFeedView";
 import { InventoryView } from "./components/InventoryView";
@@ -16,19 +14,15 @@ import { authorizeViewer, requestIdentity } from "./twitch";
 import type { ActionManifest, ManifestAction, ViewerIdentity } from "./types";
 import bltLogo from "./assets/blt-logo-v2.png";
 
-const categories = ["Hero", "Battle", "Retinue", "Kingdom", "Equipment", "Progression", "Tournament", "Community", "General"];
-
 export function App() {
   const [manifest, setManifest] = useState<ActionManifest | null>(null);
   const [identity, setIdentity] = useState<ViewerIdentity | null>(null);
-  const [category, setCategory] = useState("Hero");
-  const [selected, setSelected] = useState<ManifestAction>();
-  const [query, setQuery] = useState("");
+  const [workspace, setWorkspace] = useState<"home" | "inventory" | "retinue">("home");
+  const [inventoryFilter, setInventoryFilter] = useState("");
   const [open, setOpen] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [feedExpanded, setFeedExpanded] = useState(false);
-  const [showInventory, setShowInventory] = useState(false);
   const [inventoryLoading, setInventoryLoading] = useState(false);
   const [retinueLoading, setRetinueLoading] = useState(false);
   const state = useIntegrationState(identity);
@@ -40,7 +34,6 @@ export function App() {
     ]).then(([loadedManifest, viewer]) => {
       setManifest(loadedManifest);
       setIdentity(viewer);
-      setSelected(loadedManifest.actions.find(action => action.id === "command.adopt") ?? loadedManifest.actions.find(action => action.enabledByDefault));
     }).catch(reason => setError(String(reason)));
   }, []);
 
@@ -58,7 +51,23 @@ export function App() {
     } catch (reason) { const message = reason instanceof Error ? reason.message : "Action failed"; state.failCommand(requestId, message); setError(message); }
     finally { setBusy(false); }
   }
-  async function handleSubmit(args: Record<string, unknown>) { if (selected) await handleActionSubmit(selected, args); }
+  async function handleCommand(commandLine: string) {
+    if (!identity!.linked) { requestIdentity(); return; }
+    const normalized = commandLine.trim().replace(/^!/, "");
+    const separator = normalized.indexOf(" ");
+    const name = (separator < 0 ? normalized : normalized.slice(0, separator)).toLowerCase();
+    const args = separator < 0 ? "" : normalized.slice(separator + 1).trim();
+    if (["inv", "slots", "customitems"].includes(name)) { setInventoryFilter(name === "customitems" ? args : ""); openInventory(); return; }
+    if (name === "retinuelist") { openRetinue(); return; }
+    const requestId = crypto.randomUUID();
+    state.recordCommand({ requestId, actionId: `command.${name}`, actionName: name, status: "pending" });
+    setBusy(true); setError(undefined);
+    try {
+      const response = await submitCommand(identity!, normalized, requestId);
+      if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, `${name} completed successfully.`);
+    } catch (reason) { const message = reason instanceof Error ? reason.message : "Command failed"; state.failCommand(requestId, message); setError(message); }
+    finally { setBusy(false); }
+  }
 
   async function loadInventory() {
     setInventoryLoading(true); state.setInventoryError(undefined);
@@ -67,7 +76,7 @@ export function App() {
     finally { setInventoryLoading(false); }
   }
 
-  function openInventory() { setShowInventory(true); if (identity!.linked && !state.inventory && !inventoryLoading) void loadInventory(); }
+  function openInventory() { setWorkspace("inventory"); if (identity!.linked && !state.inventory && !inventoryLoading) void loadInventory(); }
 
   async function loadRetinue() {
     setRetinueLoading(true); state.setRetinueError(undefined);
@@ -76,10 +85,7 @@ export function App() {
     finally { setRetinueLoading(false); }
   }
 
-  function selectCategory(value: string) {
-    setShowInventory(false); setCategory(value); setQuery("");
-    if (value === "Retinue" && identity!.linked && !state.retinue && !retinueLoading) void loadRetinue();
-  }
+  function openRetinue() { setWorkspace("retinue"); if (identity!.linked && !state.retinue && !retinueLoading) void loadRetinue(); }
 
   async function manageRetinue(actionId: "command.retinue" | "command.eliteretinue", operation: string, value?: number) {
     const action = manifest!.actions.find(candidate => candidate.id === actionId);
@@ -116,12 +122,6 @@ export function App() {
     finally { setInventoryLoading(false); }
   }
 
-  const integratedActions = new Set(["command.equipcustom", "command.retinue", "command.eliteretinue", "command.retinuelist"]);
-  const elevated = identity.roles.includes("moderator") || identity.roles.includes("broadcaster");
-  const visibleCategories = elevated ? [...categories, "Stream Control"] : categories;
-  const browserActions = manifest.actions.filter(action => !integratedActions.has(action.id) && action.permissions.some(role => identity.roles.includes(role)));
-  const effectiveUnavailable = state.connected ? state.unavailable : Object.fromEntries(manifest.actions.map(action => [action.id, "The streamer's game is offline."]));
-  const showRetinue = !showInventory && category === "Retinue";
   const redundantBattleActions = new Set(["command.battle", "command.stats", "command.ammo"]);
   const battleActions = manifest.actions.filter(action => Object.hasOwn(state.mission.actionAvailability, action.id) && !redundantBattleActions.has(action.id));
   const battleActive = state.mission.active && (state.mission.kind === "battle" || state.mission.kind === "tournament");
@@ -132,10 +132,9 @@ export function App() {
       <header className="top-bar"><img className="app-logo" src={bltLogo} alt="" /><h1>Bannerlord Twitch</h1><span className={state.connected ? "connection connected" : "connection disconnected"}><i />{state.connected ? "Connected" : "Game offline"}</span><button className="close-button" onClick={() => setOpen(false)} aria-label="Collapse overlay"><X /></button></header>
       <IntegrationDiagnostics identity={identity} />
       <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
-        {!battleActive ? <CategoryRail categories={visibleCategories} selected={category} inventorySelected={showInventory} onSelect={selectCategory} onInventory={openInventory} identityName={identity.displayName} linked={identity.linked} /> : null}
         <div className="workspace-stack">
           <div className="workspace-main">
-            {battleActive ? <BattleWorkspace mission={state.mission} actions={battleActions} identity={identity} cooldowns={state.cooldowns} selectors={state.selectors} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleActionSubmit} /> : showInventory ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : showRetinue ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <><ActionBrowser actions={browserActions} category={category} selectedId={selected?.id} query={query} unavailable={effectiveUnavailable} cooldowns={state.cooldowns} onQuery={setQuery} onSelect={setSelected} /><ActionDetail action={selected} linked={identity.linked} unavailableReason={selected ? effectiveUnavailable[selected.id] : undefined} busy={busy} error={error} selectors={state.selectors} onRequestIdentity={requestIdentity} onSubmit={handleSubmit} /></>}
+            {battleActive ? <BattleWorkspace mission={state.mission} actions={battleActions} identity={identity} cooldowns={state.cooldowns} selectors={state.selectors} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleActionSubmit} /> : workspace === "inventory" ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} initialFilter={inventoryFilter} onBack={() => setWorkspace("home")} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : workspace === "retinue" ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onBack={() => setWorkspace("home")} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <CommandWorkspace actions={manifest.actions} commands={state.commands} identity={identity} state={state} busy={busy} onExecute={handleCommand} onInventory={openInventory} onRetinue={openRetinue} />}
           </div>
           <CommandFeedView entries={state.commandActivity} expanded={feedExpanded} onToggle={() => setFeedExpanded(value => !value)} onClear={state.clearCommandActivity} />
         </div>

@@ -96,6 +96,30 @@ namespace BannerlordTwitch.Integration
         public static IntegrationSelectorSnapshot Current() => current;
     }
 
+    public sealed class IntegrationViewerSnapshot
+    {
+        public bool Adopted { get; set; }
+        public string HeroName { get; set; }
+        public int? Gold { get; set; }
+    }
+
+    public sealed class IntegrationRuntimeCommand
+    {
+        public string Name { get; set; }
+        public string Handler { get; set; }
+        public string Help { get; set; }
+        public bool ModeratorOnly { get; set; }
+        public bool HideHelp { get; set; }
+    }
+
+    public static class IntegrationViewerStateProvider
+    {
+        public static Func<string, IntegrationViewerSnapshot> Get { private get; set; }
+        public static void Set(Func<string, IntegrationViewerSnapshot> provider) => Get = provider;
+        public static void Clear() => Get = null;
+        public static IntegrationViewerSnapshot For(string userName) => Get?.Invoke(userName) ?? new IntegrationViewerSnapshot();
+    }
+
     public sealed class IntegrationBattleCombatant
     {
         [JsonPropertyName("id")] public string Id { get; set; }
@@ -179,16 +203,25 @@ namespace BannerlordTwitch.Integration
         private ClientWebSocket socket;
         private bool disposed;
         private readonly ConcurrentDictionary<Guid, byte> receivedRequests = new();
+        private readonly ConcurrentDictionary<string, IntegrationUser> subscribedViewers = new(StringComparer.Ordinal);
+        private readonly ConcurrentDictionary<string, string> lastViewerStates = new(StringComparer.Ordinal);
         private readonly SemaphoreSlim sendLock = new(1, 1);
+        private readonly IntegrationRuntimeCommand[] runtimeCommands;
 
         public event Action<IntegrationActionRequest> ActionRequested;
+        public event Action<IntegrationCommandRequest> CommandRequested;
         public bool IsConnected => socket?.State == WebSocketState.Open;
 
-        public ManagedIntegrationClient(AuthSettings auth, string channelId)
+        public ManagedIntegrationClient(AuthSettings auth, string channelId, IEnumerable<Command> commands)
         {
             this.auth = auth;
             this.channelId = channelId;
             catalog = IntegrationActionCatalog.Load();
+            runtimeCommands = commands.Select(command => new IntegrationRuntimeCommand
+            {
+                Name = command.Name.ToString(), Handler = command.Handler, Help = command.Help.ToString(),
+                ModeratorOnly = command.ModeratorOnly, HideHelp = command.HideHelp
+            }).ToArray();
             _ = RunAsync();
         }
 
@@ -212,8 +245,8 @@ namespace BannerlordTwitch.Integration
                     await SendAsync("hello", new { modVersion = typeof(ManagedIntegrationClient).Assembly.GetName().Version?.ToString(), protocolVersion = IntegrationProtocol.Version }, lifetime.Token);
                     await SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = Guid.NewGuid(), kind = "manifest", channelId, timestamp = DateTimeOffset.UtcNow, data = JsonSerializer.Deserialize<JsonElement>(catalog.ManifestJson) }), lifetime.Token);
                     var battle = IntegrationBattleProvider.Current();
-                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = IntegrationSelectorProvider.Current(), mission = battle }, lifetime.Token);
-                    await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, lifetime.Token));
+                    await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = IntegrationSelectorProvider.Current(), commands = runtimeCommands, mission = battle }, lifetime.Token);
+                    await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, lifetime.Token), PublishViewerStatesAsync(lifetime.Token));
                 }
                 catch (OperationCanceledException) { return; }
                 catch (Exception ex) { Log.Error($"[Integration] Connection failed: {ex.Message}"); }
@@ -232,6 +265,25 @@ namespace BannerlordTwitch.Integration
                 if (battle.Revision == lastRevision) continue;
                 lastRevision = battle.Revision;
                 await SendAsync("state.patch", new { mission = battle }, token);
+            }
+        }
+
+        private async Task PublishViewerStatesAsync(CancellationToken token)
+        {
+            while (socket?.State == WebSocketState.Open && !token.IsCancellationRequested)
+            {
+                await Task.Delay(500, token);
+                MainThreadSync.Run(() =>
+                {
+                    foreach (var viewer in subscribedViewers.Values)
+                    {
+                        var snapshot = IntegrationViewerStateProvider.For(viewer.Name);
+                        var serialized = JsonSerializer.Serialize(snapshot);
+                        if (lastViewerStates.TryGetValue(viewer.Id, out var previous) && previous == serialized) continue;
+                        lastViewerStates[viewer.Id] = serialized;
+                        _ = SendAsync("viewer.state", new { userId = viewer.Id, snapshot.Adopted, snapshot.HeroName, snapshot.Gold }, lifetime.Token);
+                    }
+                });
             }
         }
 
@@ -279,6 +331,20 @@ namespace BannerlordTwitch.Integration
                 var kind = root.GetProperty("kind").GetString();
                 var data = root.GetProperty("data");
                 var user = root.GetProperty("user");
+                if (kind == "viewer.subscribe")
+                {
+                    var viewer = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) };
+                    subscribedViewers[viewer.Id] = viewer;
+                    lastViewerStates.TryRemove(viewer.Id, out _);
+                    return;
+                }
+                if (kind == "viewer.unsubscribe")
+                {
+                    var userId = user.GetProperty("id").GetString();
+                    subscribedViewers.TryRemove(userId, out _);
+                    lastViewerStates.TryRemove(userId, out _);
+                    return;
+                }
                 if (kind == "inventory.request")
                 {
                     var requestId = root.GetProperty("id").GetGuid();
@@ -303,6 +369,20 @@ namespace BannerlordTwitch.Integration
                             ? SendAsync("retinue.snapshot", retinue, lifetime.Token, requestId)
                             : SendAsync("retinue.error", new { error = retinue.Error }, lifetime.Token, requestId);
                     });
+                    return;
+                }
+                if (kind == "command.request")
+                {
+                    requestIdForError = root.GetProperty("id").GetGuid();
+                    var request = new IntegrationCommandRequest
+                    {
+                        RequestId = requestIdForError.Value, ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
+                        CommandLine = data.GetProperty("commandLine").GetString(),
+                        User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
+                    };
+                    if (!string.Equals(request.ChannelId, channelId, StringComparison.Ordinal)) return;
+                    if (Math.Abs((DateTimeOffset.UtcNow - request.Timestamp).TotalSeconds) > 30 || !receivedRequests.TryAdd(request.RequestId, 0)) return;
+                    CommandRequested?.Invoke(request);
                     return;
                 }
                 if (kind != "action.request") return;

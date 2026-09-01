@@ -118,6 +118,14 @@ namespace BannerlordTwitch
                 IsBroadcaster = request.User.IsBroadcaster,
                 IsSubscriber = request.User.IsSubscriber,
             };
+
+        public static ReplyContext FromIntegration(ActionBase source, IntegrationCommandRequest request, string args) =>
+            new()
+            {
+                UserName = CleanDisplayName(request.User.Name), Args = args, Source = source,
+                IntegrationRequestId = request.RequestId, IsModerator = request.User.IsModerator,
+                IsBroadcaster = request.User.IsBroadcaster, IsSubscriber = request.User.IsSubscriber,
+            };
     }
 
     // https://twitchtokengenerator.com/
@@ -191,8 +199,9 @@ namespace BannerlordTwitch
                     {
                         try
                         {
-                            integrationClient = new ManagedIntegrationClient(authSettings, channelId);
+                            integrationClient = new ManagedIntegrationClient(authSettings, channelId, settings.EnabledCommands);
                             integrationClient.ActionRequested += ExecuteIntegrationAction;
+                            integrationClient.CommandRequested += ExecuteIntegrationCommand;
                             Log.Info("[Integration] Managed service connector started");
                         }
                         catch (Exception ex)
@@ -608,6 +617,38 @@ namespace BannerlordTwitch
                 {
                     Log.Exception($"Integration action {request.ActionId} failed: {ex.Message}", ex);
                     _ = integrationClient.SendActionErrorAsync(request.RequestId, "The game rejected this action.");
+                }
+#endif
+            });
+        }
+
+        private void ExecuteIntegrationCommand(IntegrationCommandRequest request)
+        {
+            MainThreadSync.Run(() =>
+            {
+                if (request == null || integrationClient == null) return;
+                var line = request.CommandLine?.Trim().TrimStart('!').TrimStart();
+                if (string.IsNullOrWhiteSpace(line)) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "Enter a command."); return; }
+                var separator = line.IndexOf(' ');
+                var commandName = separator < 0 ? line : line.Substring(0, separator);
+                var args = separator < 0 ? string.Empty : line.Substring(separator + 1).Trim();
+                var cmd = settings.GetCommand(commandName);
+                if (cmd == null) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "That command is unknown or disabled."); return; }
+                if (cmd.ModeratorOnly && !request.User.IsModerator && !request.User.IsBroadcaster)
+                { _ = integrationClient.SendActionErrorAsync(request.RequestId, "Only moderators and the broadcaster may use this command."); return; }
+                var context = ReplyContext.FromIntegration(cmd, request, args);
+                _ = integrationClient.SendActionAcceptedAsync(request.RequestId);
+#if !DEBUG
+                try
+                {
+#endif
+                    ActionManager.HandleCommand(cmd.Handler, context, cmd.HandlerConfig);
+#if !DEBUG
+                }
+                catch (Exception ex)
+                {
+                    Log.Exception($"Integration command {commandName} failed: {ex.Message}", ex);
+                    _ = integrationClient.SendActionErrorAsync(request.RequestId, "The game rejected this command.");
                 }
 #endif
             });

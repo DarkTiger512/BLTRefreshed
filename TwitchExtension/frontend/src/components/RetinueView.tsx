@@ -1,4 +1,4 @@
-import { Crown, RefreshCw, Shield, UserRoundCheck } from "lucide-react";
+import { ArrowLeft, Crown, RefreshCw, Shield, UserRoundCheck } from "lucide-react";
 import { useState } from "react";
 import type { RetinueSnapshot, RetinueTroop } from "../types";
 
@@ -8,6 +8,7 @@ interface Props {
   error?: string;
   linked: boolean;
   busy: boolean;
+  onBack(): void;
   onRefresh(): void;
   onManage(actionId: "command.retinue" | "command.eliteretinue", operation: string, slot?: number): void;
   onRequestIdentity(): void;
@@ -36,10 +37,10 @@ function Roster({ title, elite, troops, actionId, disabled, onManage }: { title:
   </section>;
 }
 
-export function RetinueView({ retinue, loading, error, linked, busy, onRefresh, onManage, onRequestIdentity }: Props) {
-  if (!linked) return <section className="retinue-view identity-gate"><Crown /><h2>Your retinue is private</h2><p>Share your Twitch identity to see and manage the troops attached to your adopted hero.</p><button onClick={onRequestIdentity}>Share identity</button></section>;
+export function RetinueView({ retinue, loading, error, linked, busy, onBack, onRefresh, onManage, onRequestIdentity }: Props) {
+  if (!linked) return <section className="retinue-view identity-gate"><button className="workspace-back" onClick={onBack} aria-label="Back to command bar"><ArrowLeft /></button><Crown /><h2>Your retinue is private</h2><p>Share your Twitch identity to see and manage the troops attached to your adopted hero.</p><button onClick={onRequestIdentity}>Share identity</button></section>;
   return <section className="retinue-view">
-    <header className="retinue-header"><div><span className="eyebrow">Private live roster</span><h2>My Retinue</h2><p>{retinue ? `${retinue.heroName}'s personal forces` : "Loading your hero's personal forces…"}</p></div><button className="inventory-refresh" onClick={onRefresh} disabled={loading || busy}><RefreshCw className={loading ? "spinning" : ""} /> Refresh</button></header>
+    <header className="retinue-header"><button className="workspace-back" onClick={onBack} aria-label="Back to command bar"><ArrowLeft /></button><div><span className="eyebrow">Private live roster</span><h2>My Retinue</h2><p>{retinue ? `${retinue.heroName}'s personal forces` : "Loading your hero's personal forces…"}</p></div><button className="inventory-refresh" onClick={onRefresh} disabled={loading || busy}><RefreshCw className={loading ? "spinning" : ""} /> Refresh</button></header>
     {error ? <div className="inventory-error" role="alert">{error}</div> : null}
     {loading && !retinue ? <div className="retinue-loading">Calling the banners…</div> : null}
     {retinue ? <div className="retinue-grid">

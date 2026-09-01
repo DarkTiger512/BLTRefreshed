@@ -33,6 +33,9 @@ export interface ManifestAction {
 
 export interface ActionManifest { protocolVersion: number; actions: ManifestAction[] }
 
+export interface RuntimeCommand { name: string; handler: string; help: string; moderatorOnly: boolean; hideHelp: boolean }
+export interface ViewerState { adopted: boolean; heroName?: string; gold?: number }
+
 export interface ViewerIdentity {
   token: string;
   channelId: string;
@@ -57,6 +60,8 @@ export interface GameState {
   unavailable: Record<string, string>;
   cooldowns: Record<string, number>;
   selectors: GameSelectors;
+  commands: RuntimeCommand[];
+  viewer: ViewerState;
   mission: MissionState;
 }
 

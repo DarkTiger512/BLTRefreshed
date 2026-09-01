@@ -29,6 +29,20 @@ export async function submitAction(identity: ViewerIdentity, action: ManifestAct
   return response.json();
 }
 
+export async function submitCommand(identity: ViewerIdentity, commandLine: string, requestId: string = crypto.randomUUID()) {
+  if (identity.token === "development-token" && !isLiveLocalIntegration()) {
+    await new Promise(resolve => setTimeout(resolve, 260));
+    return { requestId, status: "accepted" };
+  }
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/commands`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${identity.token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ requestId, commandLine, timestamp: new Date().toISOString() }),
+  });
+  if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "The command could not be sent.");
+  return response.json();
+}
+
 export async function requestInventory(identity: ViewerIdentity) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) {
     await new Promise(resolve => setTimeout(resolve, 250));

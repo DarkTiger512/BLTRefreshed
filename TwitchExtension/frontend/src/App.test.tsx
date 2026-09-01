@@ -19,17 +19,21 @@ const manifest = { protocolVersion: 1, actions: [
 vi.stubGlobal("fetch", vi.fn(() => Promise.resolve({ json: () => Promise.resolve(manifest) })));
 afterEach(cleanup);
 
-test("renders the command browser and selected action", async () => {
+test("renders the minimal command workspace, autocomplete, help, and native views", async () => {
   window.history.pushState({}, "", "/?mission=inactive");
   render(<App />);
   await waitFor(() => expect(screen.getByText("Bannerlord Twitch")).toBeInTheDocument());
-  expect(screen.getAllByText("adopt").length).toBeGreaterThan(0);
-  expect(screen.getByPlaceholderText("Search actions")).toBeInTheDocument();
-  expect(screen.getAllByRole("button", { name: /confirm action/i }).length).toBeGreaterThan(0);
-  fireEvent.click(screen.getByRole("button", { name: /adoptbycultureadopt by culture/i }));
-  expect(screen.getByRole("combobox", { name: /^Culture/ })).toBeInTheDocument();
-  expect(screen.getByRole("option", { name: "Realm of Thrones" })).toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: /my inventory/i }));
+  expect(screen.getByText("50.000")).toBeInTheDocument();
+  const commandLine = screen.getByRole("textbox", { name: "Command line" });
+  fireEvent.change(commandLine, { target: { value: "ado" } });
+  expect(screen.getByRole("option", { name: /^!adoptAdopt a hero$/i })).toBeInTheDocument();
+  fireEvent.keyDown(commandLine, { key: "Tab" });
+  expect(commandLine).toHaveValue("adopt");
+  fireEvent.click(screen.getByRole("button", { name: "Open command help" }));
+  expect(screen.getByRole("dialog", { name: "Command help" })).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: /!adoptbyculture/i }));
+  expect(commandLine).toHaveValue("adoptByCulture ");
+  fireEvent.click(screen.getByRole("button", { name: /^inventorycustom items/i }));
   await waitFor(() => expect(screen.getByText("Wolf's Oath Longsword — +12 Damage, +8 Swing Speed")).toBeInTheDocument());
   expect(screen.getByText(/visible only to you/i)).toBeInTheDocument();
   expect(screen.getByText("Equipped slots")).toBeInTheDocument();
@@ -42,7 +46,8 @@ test("renders the command browser and selected action", async () => {
   fireEvent.dragStart(horse);
   fireEvent.drop(screen.getByRole("button", { name: /^mount/i }));
   await waitFor(() => expect(screen.getByRole("button", { name: /^mount/i })).toHaveTextContent("Stormhoof"));
-  fireEvent.click(screen.getByRole("button", { name: /^retinue$/i }));
+  fireEvent.click(screen.getByRole("button", { name: "Back to command bar" }));
+  fireEvent.click(screen.getByRole("button", { name: /^retinuelive troops/i }));
   await waitFor(() => expect(screen.getByText("Battle Retinue")).toBeInTheDocument());
   expect(screen.getByText("Elite Retinue")).toBeInTheDocument();
   expect(screen.getByText("Vlandian Banner Knight")).toBeInTheDocument();

@@ -10,7 +10,8 @@ public static class ProtocolKinds
     {
         "hello", "manifest", "state.snapshot", "state.patch", "action.request", "action.accepted",
         "action.result", "action.error", "inventory.request", "inventory.snapshot", "inventory.error",
-        "retinue.request", "retinue.snapshot", "retinue.error", "connection.status"
+        "retinue.request", "retinue.snapshot", "retinue.error", "command.request", "viewer.subscribe",
+        "viewer.unsubscribe", "viewer.state", "connection.status"
     };
 }
 
@@ -26,6 +27,7 @@ public sealed record IntegrationEnvelope(
     JsonElement Data);
 
 public sealed record ActionSubmission(string RequestId, string ActionId, Dictionary<string, JsonElement> Args, DateTimeOffset Timestamp);
+public sealed record CommandSubmission(string RequestId, string CommandLine, DateTimeOffset Timestamp);
 public sealed record InventorySubmission(string RequestId, DateTimeOffset Timestamp);
 public sealed record RetinueSubmission(string RequestId, DateTimeOffset Timestamp);
 public sealed record PairingExchangeRequest(string Code);

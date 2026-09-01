@@ -31,6 +31,15 @@ namespace BannerlordTwitch.Integration
         public Dictionary<string, JsonElement> Args { get; set; } = new();
     }
 
+    public sealed class IntegrationCommandRequest
+    {
+        public Guid RequestId { get; set; }
+        public string ChannelId { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
+        public IntegrationUser User { get; set; }
+        public string CommandLine { get; set; }
+    }
+
     public sealed class IntegrationActionManifest
     {
         public int ProtocolVersion { get; set; }

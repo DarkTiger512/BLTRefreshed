@@ -4,6 +4,7 @@ import { isLiveLocalIntegration } from "../environment";
 
 const initialState: GameState = {
   connected: true, gameStarted: true, unavailable: {}, cooldowns: {}, selectors: { cultures: ["Vlandia", "Calradic Empire", "Realm of Thrones"], heroes: [], clans: [], kingdoms: [], settlements: [], skills: [] },
+  commands: [], viewer: { adopted: true, heroName: "FNC_Chair [BLT]", gold: 50000 },
   mission: {
     active: true, kind: "battle", revision: 12, deploymentFinished: true,
     actionAvailability: { "command.summon": null, "command.attack": null, "command.heal": null, "command.power": null, "command.formation": null },
@@ -23,7 +24,7 @@ const initialState: GameState = {
 
 export function useIntegrationState(identity: ViewerIdentity | null) {
   const [state, setState] = useState<GameState>(() => isLiveLocalIntegration()
-    ? { connected: false, gameStarted: false, unavailable: {}, cooldowns: {}, selectors: { cultures: [], heroes: [], clans: [], kingdoms: [], settlements: [], skills: [] }, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
+    ? { connected: false, gameStarted: false, unavailable: {}, cooldowns: {}, selectors: { cultures: [], heroes: [], clans: [], kingdoms: [], settlements: [], skills: [] }, commands: [], viewer: { adopted: false }, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
     : new URLSearchParams(window.location.search).get("mission") === "inactive"
     ? { ...initialState, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
     : initialState);
@@ -55,6 +56,8 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
           if (nextMission && nextMission.revision < value.mission.revision) return value;
           return { ...value, ...data, mission: nextMission ? { ...value.mission, ...nextMission } : value.mission };
         });
+      } else if (envelope.kind === "viewer.state") {
+        setState(value => ({ ...value, viewer: { adopted: Boolean(data.adopted), heroName: data.heroName, gold: typeof data.gold === "number" ? data.gold : undefined } }));
       } else if (envelope.kind === "inventory.snapshot") {
         setInventory({ ...data, updatedAt: envelope.timestamp } as InventorySnapshot);
         setInventoryError(undefined);

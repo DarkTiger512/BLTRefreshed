@@ -93,6 +93,29 @@ app.MapPost("/api/channels/{channel}/actions", async (string channel, ActionSubm
     return Results.Accepted(value: new { requestId, status = "accepted" });
 });
 
+app.MapPost("/api/channels/{channel}/commands", async (string channel, CommandSubmission submission, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, RequestGuard guard, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (!principal!.IsLinked) return Results.Problem("Share Twitch identity before running commands.", statusCode: 403);
+    if (!Guid.TryParse(submission.RequestId, out var requestId)) return Results.Problem("requestId must be a UUID.", statusCode: 400);
+    var commandLine = submission.CommandLine?.Trim();
+    if (string.IsNullOrWhiteSpace(commandLine) || commandLine.Length > 512 || commandLine.Any(char.IsControl))
+        return Results.Problem("The command line is invalid.", statusCode: 400);
+    commandLine = commandLine.TrimStart('!').TrimStart();
+    var commandName = commandLine.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0];
+    if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:command.{commandName.ToLowerInvariant()}", submission.Timestamp, out var guardError))
+        return Results.Problem(guardError, statusCode: 429);
+    var envelope = new
+    {
+        v = ProtocolKinds.Version, id = requestId, kind = "command.request", channelId = channel, timestamp = submission.Timestamp,
+        user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles), data = new { commandLine }
+    };
+    router.RegisterPrivateRequest(requestId, channel, principal.UserId);
+    if (!await router.SendGameAsync(channel, envelope, token)) { router.ForgetPrivateRequest(requestId); return Results.Problem("The streamer's game is offline.", statusCode: 409); }
+    await database.AuditAsync(requestId, channel, principal.UserId, $"command.{commandName.ToLowerInvariant()}", "accepted", null, token);
+    return Results.Accepted(value: new { requestId, status = "accepted" });
+});
+
 app.MapPost("/api/channels/{channel}/inventory", async (string channel, InventorySubmission submission, HttpContext context, TwitchExtensionTokenValidator validator, ChannelRouter router, RequestGuard guard, CancellationToken token) =>
 {
     if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
@@ -133,7 +156,7 @@ app.Map("/ws/viewer/{channel}", async (string channel, HttpContext context, Twit
     var tokenValue = context.Request.Query["token"].ToString();
     if (!validator.TryValidate($"Bearer {tokenValue}", channel, out var principal, out _)) { context.Response.StatusCode = 401; return; }
     using var socket = await context.WebSockets.AcceptWebSocketAsync("blt.viewer.v1");
-    await router.AttachViewerAsync(channel, principal!.UserId, socket, token);
+    await router.AttachViewerAsync(channel, principal!, socket, token);
 });
 
 app.Run();

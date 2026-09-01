@@ -10,7 +10,7 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
 {
     private static readonly JsonSerializerOptions WireJson = new(JsonSerializerDefaults.Web);
     private readonly ConcurrentDictionary<string, WebSocket> games = new(StringComparer.Ordinal);
-    private sealed record ViewerConnection(string UserId, WebSocket Socket);
+    private sealed record ViewerConnection(string UserId, string DisplayName, IReadOnlyList<string> Roles, WebSocket Socket);
     private readonly ConcurrentDictionary<string, ConcurrentDictionary<Guid, ViewerConnection>> viewers = new(StringComparer.Ordinal);
     private readonly ConcurrentDictionary<Guid, (string Channel, string UserId)> privateRequests = new();
 
@@ -32,14 +32,17 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
         }
     }
 
-    public async Task AttachViewerAsync(string channel, string userId, WebSocket socket, CancellationToken token)
+    public async Task AttachViewerAsync(string channel, TwitchPrincipal principal, WebSocket socket, CancellationToken token)
     {
         var id = Guid.NewGuid();
-        viewers.GetOrAdd(channel, _ => new ConcurrentDictionary<Guid, ViewerConnection>())[id] = new(userId, socket);
+        viewers.GetOrAdd(channel, _ => new ConcurrentDictionary<Guid, ViewerConnection>())[id] = new(principal.UserId, principal.DisplayName, principal.Roles, socket);
         await SendAsync(socket, Envelope("connection.status", channel, new { connected = IsGameConnected(channel), gameStarted = IsGameConnected(channel) }), token);
         if (stateCache.TryGet(channel, out var state)) await SendAsync(socket, state, token);
+        await SendGameAsync(channel, new { v = ProtocolKinds.Version, id = Guid.NewGuid(), kind = "viewer.subscribe", channelId = channel, timestamp = DateTimeOffset.UtcNow, user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles), data = new { } }, token);
         await PumpAsync(socket, _ => Task.CompletedTask, token);
         if (viewers.TryGetValue(channel, out var channelViewers)) channelViewers.TryRemove(id, out _);
+        if (!viewers.TryGetValue(channel, out channelViewers) || !channelViewers.Values.Any(viewer => viewer.UserId == principal.UserId))
+            await SendGameAsync(channel, new { v = ProtocolKinds.Version, id = Guid.NewGuid(), kind = "viewer.unsubscribe", channelId = channel, timestamp = DateTimeOffset.UtcNow, user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles), data = new { } }, CancellationToken.None);
     }
 
     public async Task<bool> SendGameAsync(string channel, object payload, CancellationToken token)
@@ -71,6 +74,12 @@ public sealed class ChannelRouter(ChannelStateCache stateCache)
                     await SendViewerAsync(channel, target.UserId, message, token);
                     if (kind is not "action.accepted") ForgetPrivateRequest(requestId);
                 }
+                return;
+            }
+            if (kind == "viewer.state")
+            {
+                var targetUserId = root.GetProperty("data").GetProperty("userId").GetString();
+                if (!string.IsNullOrWhiteSpace(targetUserId)) await SendViewerAsync(channel, targetUserId, message, token);
                 return;
             }
         }

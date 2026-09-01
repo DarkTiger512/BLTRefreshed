@@ -220,6 +220,14 @@ namespace BLTAdoptAHero
                         Kingdom.All.Where(kingdom => !kingdom.IsEliminated).Select(kingdom => kingdom.Name.ToString()),
                         Settlement.All.Select(settlement => settlement.Name.ToString()),
                         CampaignHelpers.AllSkillObjects.Select(skill => skill.Name.ToString()));
+                    IntegrationViewerStateProvider.Set(userName =>
+                    {
+                        var behavior = BLTAdoptAHeroCampaignBehavior.Current;
+                        var hero = behavior?.GetAdoptedHero(userName);
+                        return hero == null
+                            ? new IntegrationViewerSnapshot { Adopted = false }
+                            : new IntegrationViewerSnapshot { Adopted = true, HeroName = hero.Name.ToString(), Gold = behavior.GetHeroGold(hero) };
+                    });
                     IntegrationInventoryProvider.Get = userName =>
                     {
                         var behavior = BLTAdoptAHeroCampaignBehavior.Current;
@@ -330,6 +338,7 @@ namespace BLTAdoptAHero
             if (game.GameType is Campaign campaign)
             {
                 IntegrationSelectorProvider.Clear();
+                IntegrationViewerStateProvider.Clear();
                 JoinTournament.OnGameEnd(campaign);
             }
         }

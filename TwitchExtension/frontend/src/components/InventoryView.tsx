@@ -1,8 +1,8 @@
-import { GripVertical, PackageOpen, RefreshCw, Search, ShieldCheck, Swords } from "lucide-react";
+import { ArrowLeft, GripVertical, PackageOpen, RefreshCw, Search, ShieldCheck, Swords } from "lucide-react";
 import { useDeferredValue, useState } from "react";
 import type { InventorySnapshot } from "../types";
 
-interface Props { inventory?: InventorySnapshot; loading: boolean; error?: string; linked: boolean; onRefresh(): void; onEquip(itemIndex: number, slotId: string): void; onRequestIdentity(): void }
+interface Props { inventory?: InventorySnapshot; loading: boolean; error?: string; linked: boolean; initialFilter?: string; onBack(): void; onRefresh(): void; onEquip(itemIndex: number, slotId: string): void; onRequestIdentity(): void }
 
 function canEquip(itemType: string | undefined, slotId: string) {
   const type = itemType?.replace(/\s/g, "").toLowerCase() ?? "";
@@ -14,8 +14,8 @@ function canEquip(itemType: string | undefined, slotId: string) {
   return expected[slotId]?.test(type) ?? false;
 }
 
-export function InventoryView({ inventory, loading, error, linked, onRefresh, onEquip, onRequestIdentity }: Props) {
-  const [query, setQuery] = useState("");
+export function InventoryView({ inventory, loading, error, linked, initialFilter = "", onBack, onRefresh, onEquip, onRequestIdentity }: Props) {
+  const [query, setQuery] = useState(initialFilter);
   const [selectedItem, setSelectedItem] = useState<number>();
   const [draggedItem, setDraggedItem] = useState<number>();
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
@@ -23,6 +23,7 @@ export function InventoryView({ inventory, loading, error, linked, onRefresh, on
 
   return <section className="inventory-view" aria-labelledby="inventory-title">
     <header className="inventory-header">
+      <button className="workspace-back" onClick={onBack} aria-label="Back to command bar"><ArrowLeft /></button>
       <div className="inventory-emblem"><PackageOpen /></div>
       <div><p>PERSONAL STORAGE</p><h2 id="inventory-title">My inventory</h2><span>{inventory ? `${inventory.heroName} · ${inventory.items.length} of ${inventory.limit} customs` : "Your custom items, kept here"}</span></div>
       <button className="inventory-refresh" onClick={onRefresh} disabled={loading || !linked}><RefreshCw className={loading ? "spinning" : ""} />{loading ? "Loading" : "Refresh"}</button>
