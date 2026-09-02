@@ -1,6 +1,17 @@
 {$BLT_HOSTNAME} {
 	encode zstd gzip
-	reverse_proxy service:8080
+	handle /privacy {
+		rewrite * /privacy.html
+		root * /srv/blt-public
+		file_server
+	}
+	handle /privacy.html {
+		root * /srv/blt-public
+		file_server
+	}
+	handle {
+		reverse_proxy service:8080
+	}
 
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"

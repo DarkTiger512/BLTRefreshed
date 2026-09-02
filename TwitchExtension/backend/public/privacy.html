@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BLT / BLTredone — Privacy Notice</title>
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; line-height: 1.65; background: #13171d; color: #eef0f3; }
+    body { max-width: 780px; margin: 0 auto; padding: 40px 22px 64px; }
+    h1, h2 { line-height: 1.25; } h2 { margin-top: 32px; font-size: 1.2rem; }
+    a { color: #a8cfff; } .muted { color: #bcc4ce; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>BLT / BLTredone Privacy Notice</h1>
+  <p class="muted">Effective date: 2 September 2026</p>
+  <p>This notice covers the BLTredone Twitch Extension, its managed BLT service, and their connection to the Bannerlord Twitch mod. The BLT project maintainer operates the managed service. For privacy questions or requests, contact <a href="mailto:ghostwing05@gmail.com">ghostwing05@gmail.com</a>.</p>
+
+  <h2>Information we process</h2>
+  <ul>
+    <li><strong>Twitch identity:</strong> Twitch supplies authentication information, an opaque viewer identifier, channel ID, and viewer role. If you choose to share your identity, we use your numeric Twitch user ID and Twitch username/display name to associate you with your adopted hero and authorize interactions.</li>
+    <li><strong>Interactions and game state:</strong> command names, arguments and action requests, results, hero ownership, gold, inventory, equipment, retinue, and battle information are processed to operate the Extension. Do not enter sensitive personal information into commands.</li>
+    <li><strong>Broadcaster setup:</strong> channel configuration, command preferences, pairing requests, installation identifiers, mod version, platform label, installation fingerprint, credential hashes, and connection/decision timestamps.</li>
+    <li><strong>Operational records:</strong> command audit records include request ID, channel ID, Twitch user ID, action identifier, status, optional detail, and timestamp. Network infrastructure also processes connection information such as IP addresses and may record technical errors and request metadata.</li>
+    <li><strong>Browser preferences:</strong> the Extension stores your selected language locally in your browser. The command feed is session-local and is not retained in the browser after reload.</li>
+  </ul>
+
+  <h2>Why we use it</h2>
+  <p>We use this information to connect viewers to their heroes, execute requested gameplay interactions, display current game information, configure and pair a broadcaster's installation, provide support, and protect the service against unauthorized access, duplicate requests, and abuse. Identity sharing is optional, but identity-dependent gameplay actions require it. This integration does not ask viewers for their Twitch password.</p>
+
+  <h2>Who receives information</h2>
+  <p>Requests and necessary identity information are passed to the connected broadcaster's BLT mod. Hero names, roster information and gameplay changes can appear to other viewers or on the broadcast; they are not inherently private. Replies routed privately by the Extension are intended for the requesting viewer, but related game information may also exist in broadcaster-controlled saves or logs.</p>
+  <p>Twitch hosts the Extension frontend and provides identity/authentication services. OVHcloud provides the managed service's hosting infrastructure. These providers process information as needed to provide their services; Twitch's own <a href="https://www.twitch.tv/p/en/legal/privacy-notice/">Privacy Notice</a> also applies to your use of Twitch. BLT does not use this integration to sell personal information or serve targeted advertising. We may disclose information where required by law or necessary to address abuse and security incidents.</p>
+
+  <h2>Storage and retention</h2>
+  <p>Channel configuration, installation/pairing records, and command audit records are stored in the managed service's database. Live viewer and game-state caches are held in service memory and may remain until replaced, cleared, or the service restarts. Pairing codes expire after ten minutes; expiry or revocation prevents their use but does not itself erase their database records.</p>
+  <p>The current service does not automatically expire database audit or configuration records after a fixed period. They remain until removed through maintenance or a privacy request, subject to any applicable legal or security need to retain them. Copies in operational backups, where present, may remain until those backups are replaced. Broadcasters separately control their game saves, mod configuration and logs; deleting managed-service records does not automatically delete those copies or past broadcasts.</p>
+
+  <h2>Your choices and requests</h2>
+  <p>You can stop using the Extension and withdraw identity sharing using Twitch's available Extension privacy controls. Broadcasters can revoke a paired installation in BLT configuration. Neither action automatically erases historical records.</p>
+  <p>To request access, correction or deletion of information held by the managed service, email <a href="mailto:ghostwing05@gmail.com">ghostwing05@gmail.com</a> with your Twitch username and the relevant channel. We may ask you to verify control of the account; never send passwords, access tokens or pairing credentials. For data in a broadcaster's campaign or broadcast, contact that broadcaster as well. Depending on your location, you may have additional rights, including the right to complain to your local data-protection authority.</p>
+
+  <h2>Security and changes</h2>
+  <p>The service uses encrypted HTTPS/WSS connections, authenticated requests, channel-scoped routing and hashed installation credentials. No system can guarantee absolute security. This notice will be updated when the service's data practices change; the effective date above identifies the current version.</p>
+</main>
+</body>
+</html>
