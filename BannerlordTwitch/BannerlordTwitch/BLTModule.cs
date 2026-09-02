@@ -14,6 +14,7 @@ using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.MountAndBlade;
+using BannerlordTwitch.Integration;
 using Debug = TaleWorlds.Library.Debug;
 
 
@@ -130,6 +131,13 @@ namespace BannerlordTwitch
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
             Settings.GameStarted = game.GameType is Campaign;
+            IntegrationRuntimeState.SetSaving(false);
+            IntegrationBattleProvider.Touch();
+            if (game.GameType is Campaign)
+            {
+                CampaignEvents.OnBeforeSaveEvent.AddNonSerializedListener(this, () => IntegrationRuntimeState.SetSaving(true));
+                CampaignEvents.OnSaveOverEvent.AddNonSerializedListener(this, (_, __) => IntegrationRuntimeState.SetSaving(false));
+            }
             RestartTwitchService();
 
             try
@@ -162,6 +170,8 @@ namespace BannerlordTwitch
         public override void OnGameEnd(Game game)
         {
             Settings.GameStarted = false;
+            IntegrationRuntimeState.SetSaving(false);
+            IntegrationBattleProvider.Touch();
             TwitchService?.Dispose();
             TwitchService = null;
         }

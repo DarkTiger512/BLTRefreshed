@@ -51,6 +51,14 @@ namespace BannerlordTwitch.Util
             return waitHandle;
         }
 
+        public static void Post(Action action)
+        {
+            if (Thread.CurrentThread.ManagedThreadId == MainThreadId)
+                action();
+            else
+                actions.Enqueue((action, null));
+        }
+
         public static async Task RunWaitAsync(Action action)
         {
             if (Thread.CurrentThread.ManagedThreadId == MainThreadId)
@@ -59,7 +67,7 @@ namespace BannerlordTwitch.Util
             }
             else
             {
-                var waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
+                using var waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
                 actions.Enqueue((action, waitHandle));
                 await Task.Run(() => waitHandle.WaitOne());
             }

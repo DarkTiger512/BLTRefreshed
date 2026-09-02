@@ -33,9 +33,19 @@ public sealed class ChannelStateCacheTests
         Assert.Null(cache.LastStateAt("42"));
     }
 
-    private static string Envelope(string kind, string channel, long revision, int hp) => JsonSerializer.Serialize(new
+    [Fact]
+    public void AcceptsCampaignTransitionWithoutMissionRevisionChange()
+    {
+        var cache = new ChannelStateCache();
+        Assert.True(cache.TryAccept("42", Envelope("state.snapshot", "42", 5, 100, false), out _));
+        Assert.True(cache.TryAccept("42", Envelope("state.patch", "42", 5, 100, true), out var normalized));
+        using var document = JsonDocument.Parse(normalized);
+        Assert.True(document.RootElement.GetProperty("data").GetProperty("gameStarted").GetBoolean());
+    }
+
+    private static string Envelope(string kind, string channel, long revision, int hp, bool gameStarted = true) => JsonSerializer.Serialize(new
     {
         v = 1, id = Guid.NewGuid(), kind, channelId = channel, timestamp = DateTimeOffset.UtcNow,
-        data = new { gameStarted = true, mission = new { active = true, kind = "battle", revision, combatants = new[] { new { id = "hero", hp } } } }
+        data = new { gameStarted, mission = new { active = true, kind = "battle", revision, combatants = new[] { new { id = "hero", hp } } } }
     });
 }

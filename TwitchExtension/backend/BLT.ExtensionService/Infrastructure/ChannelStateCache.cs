@@ -33,7 +33,8 @@ public sealed class ChannelStateCache
 
         while (entries.TryGetValue(channel, out var current))
         {
-            if (revision <= current.Revision) return false;
+            if (revision < current.Revision) return false;
+            if (revision == current.Revision && !ChangesNonMissionState(current.Envelope, data)) return false;
             var snapshot = (JsonObject)current.Envelope.DeepClone();
             var snapshotData = snapshot["data"]!.AsObject();
             foreach (var property in data) snapshotData[property.Key] = property.Value?.DeepClone();
@@ -63,5 +64,17 @@ public sealed class ChannelStateCache
         revision = 0;
         try { revision = mission["revision"]?.GetValue<long>() ?? -1; return revision >= 0; }
         catch (InvalidOperationException) { return false; }
+    }
+
+    private static bool ChangesNonMissionState(JsonObject envelope, JsonObject patchData)
+    {
+        var currentData = envelope["data"] as JsonObject;
+        if (currentData is null) return true;
+        foreach (var property in patchData)
+        {
+            if (property.Key == "mission") continue;
+            if (!JsonNode.DeepEquals(currentData[property.Key], property.Value)) return true;
+        }
+        return false;
     }
 }
