@@ -38,6 +38,7 @@ public sealed record PairingRequestReceipt(Guid RequestId, string RequestToken, 
 public sealed record PairingRequestStatus(Guid RequestId, string Status, string? ChannelId, string? InstallationId, DateTimeOffset ExpiresAt);
 public sealed record PairingRequestSummary(Guid RequestId, string ModVersion, string PlatformLabel, string Fingerprint, DateTimeOffset CreatedAt, DateTimeOffset ExpiresAt, string Status);
 public sealed record PairingDecision(Guid RequestId, string Decision);
+public sealed record PairingDecisionRequest(IReadOnlyList<PairingDecision> PairingDecisions);
 public sealed record ConfigurationApplyRequest(ChannelConfiguration Configuration, IReadOnlyList<PairingDecision> PairingDecisions);
 public sealed record CommandPreference(string ActionId, bool Enabled, Dictionary<string, JsonElement>? Settings = null);
 public sealed record ConfigurationProfile(int ProfileId, bool ExtensionEnabled, IReadOnlyList<CommandPreference> Commands);

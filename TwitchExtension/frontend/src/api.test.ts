@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from "vitest";
-import { createPairingCode, getConfigurationContext, revokeInstallation, submitAction } from "./api";
+import { applyPairingDecisions, createPairingCode, getConfigurationContext, revokeInstallation, submitAction } from "./api";
 import type { ManifestAction, ViewerIdentity } from "./types";
 
 const identity: ViewerIdentity = { token: "development-token", channelId: "42", userId: "9", displayName: "TestHero", roles: ["viewer"], linked: true };
@@ -37,4 +37,13 @@ test("mock installation revocation persists across configuration refreshes", asy
   const after = await getConfigurationContext(identity);
   expect(after.installations[0].revokedAt).toBeTruthy();
   expect(after.gameConnected).toBe(false);
+});
+
+test("pairing decisions use their own revision-independent endpoint", async () => {
+  vi.stubEnv("VITE_BLT_LIVE_INTEGRATION", "true");
+  const fetch = vi.fn().mockResolvedValue({ ok: true });
+  vi.stubGlobal("fetch", fetch);
+  await applyPairingDecisions(identity, [{ requestId: "0e16493c-60d2-49c0-a19e-d27d6f3db063", decision: "approved" }]);
+  expect(fetch.mock.calls[0][0]).toContain("/api/channels/42/pairing/decisions");
+  expect(JSON.parse(fetch.mock.calls[0][1].body).pairingDecisions[0].decision).toBe("approved");
 });

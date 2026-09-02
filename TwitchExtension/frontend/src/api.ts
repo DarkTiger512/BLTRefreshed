@@ -34,6 +34,14 @@ export async function saveConfiguration(identity: ViewerIdentity, configuration:
   return response.json() as Promise<ChannelConfiguration>;
 }
 
+export async function applyPairingDecisions(identity: ViewerIdentity, pairingDecisions: PairingDecision[]) {
+  if (!pairingDecisions.length || (identity.token === "development-token" && !isLiveLocalIntegration())) return;
+  const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/pairing/decisions`, {
+    method: "POST", headers: { ...authHeaders(identity), "Content-Type": "application/json" }, body: JSON.stringify({ pairingDecisions }),
+  });
+  if (!response.ok) throw new Error((await response.json().catch(() => null))?.detail ?? "Pairing decisions could not be saved.");
+}
+
 export async function revokeInstallation(identity: ViewerIdentity, installationId: string) {
   if (identity.token === "development-token" && !isLiveLocalIntegration()) { await new Promise(resolve => setTimeout(resolve, 200)); if (installationId === "a89b210d-50ce-47d0-8b75-244563848001") mockInstallationRevokedAt = new Date().toISOString(); return; }
   const response = await fetch(`${apiBase}/api/channels/${encodeURIComponent(identity.channelId)}/installations/${encodeURIComponent(installationId)}`, { method: "DELETE", headers: authHeaders(identity) });

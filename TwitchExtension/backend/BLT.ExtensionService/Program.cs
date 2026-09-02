@@ -111,6 +111,14 @@ app.MapPut("/api/channels/{channel}/configuration/apply", async (string channel,
     catch (InvalidOperationException ex) { return Results.Conflict(new { detail = ex.Message }); }
 });
 
+app.MapPost("/api/channels/{channel}/pairing/decisions", async (string channel, PairingDecisionRequest request, HttpContext context, TwitchExtensionTokenValidator validator, Database database, CancellationToken token) =>
+{
+    if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;
+    if (principal!.Role != "broadcaster") return Results.Forbid();
+    try { await database.ApplyPairingDecisionsAsync(channel, request.PairingDecisions, token); return Results.NoContent(); }
+    catch (InvalidOperationException ex) { return Results.Conflict(new { detail = ex.Message }); }
+});
+
 app.MapPut("/api/channels/{channel}/configuration", async (string channel, ChannelConfiguration configuration, HttpContext context, TwitchExtensionTokenValidator validator, Database database, ChannelRouter router, CancellationToken token) =>
 {
     if (!Authorized(context, validator, channel, out var principal, out var failure)) return failure!;

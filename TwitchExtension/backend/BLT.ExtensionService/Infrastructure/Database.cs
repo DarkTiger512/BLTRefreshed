@@ -103,24 +103,37 @@ public sealed class Database(NpgsqlDataSource dataSource)
         await using var save = new NpgsqlCommand("INSERT INTO channel_configurations(channel_id,document,revision,updated_at) SELECT $1,$2::jsonb,$3,$4 WHERE $5=0 ON CONFLICT(channel_id) DO UPDATE SET document=$2::jsonb,revision=$3,updated_at=$4 WHERE channel_configurations.revision=$5 RETURNING revision", connection, transaction);
         save.Parameters.AddWithValue(channel); save.Parameters.AddWithValue(json); save.Parameters.AddWithValue(updated.Revision); save.Parameters.AddWithValue(updated.UpdatedAt); save.Parameters.AddWithValue(configuration.Revision);
         if (await save.ExecuteScalarAsync(token) is not long) { await transaction.RollbackAsync(token); return null; }
+        await ApplyPairingDecisionsAsync(connection, transaction, channel, decisions, token);
+        await transaction.CommitAsync(token); return updated;
+    }
+
+    public async Task ApplyPairingDecisionsAsync(string channel, IReadOnlyList<PairingDecision> decisions, CancellationToken token)
+    {
+        await using var connection = await dataSource.OpenConnectionAsync(token);
+        await using var transaction = await connection.BeginTransactionAsync(token);
+        await ApplyPairingDecisionsAsync(connection, transaction, channel, decisions, token);
+        await transaction.CommitAsync(token);
+    }
+
+    private static async Task ApplyPairingDecisionsAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, string channel, IReadOnlyList<PairingDecision> decisions, CancellationToken token)
+    {
         foreach (var decision in decisions)
         {
-            if (decision.Decision is not ("approved" or "denied")) { await transaction.RollbackAsync(token); throw new InvalidOperationException("Pairing decisions must be approved or denied."); }
+            if (decision.Decision is not ("approved" or "denied")) throw new InvalidOperationException("Pairing decisions must be approved or denied.");
             if (decision.Decision == "approved")
             {
                 var installationId = Guid.NewGuid();
                 await using var approve = new NpgsqlCommand("WITH chosen AS (UPDATE pairing_requests SET status='approved',decided_at=now(),installation_id=$3 WHERE request_id=$1 AND channel_id=$2 AND status='pending' AND expires_at>now() RETURNING credential_hash) INSERT INTO installations(installation_id,channel_id,credential_hash,created_at) SELECT $3,$2,credential_hash,now() FROM chosen", connection, transaction);
                 approve.Parameters.AddWithValue(decision.RequestId); approve.Parameters.AddWithValue(channel); approve.Parameters.AddWithValue(installationId);
-                if (await approve.ExecuteNonQueryAsync(token) != 1) { await transaction.RollbackAsync(token); throw new InvalidOperationException("A pairing request changed or expired before it could be approved."); }
+                if (await approve.ExecuteNonQueryAsync(token) != 1) throw new InvalidOperationException("A pairing request changed or expired before it could be approved.");
             }
             else
             {
                 await using var deny = new NpgsqlCommand("UPDATE pairing_requests SET status='denied',decided_at=now() WHERE request_id=$1 AND channel_id=$2 AND status='pending' AND expires_at>now()", connection, transaction);
                 deny.Parameters.AddWithValue(decision.RequestId); deny.Parameters.AddWithValue(channel);
-                if (await deny.ExecuteNonQueryAsync(token) != 1) { await transaction.RollbackAsync(token); throw new InvalidOperationException("A pairing request changed or expired before it could be denied."); }
+                if (await deny.ExecuteNonQueryAsync(token) != 1) throw new InvalidOperationException("A pairing request changed or expired before it could be denied.");
             }
         }
-        await transaction.CommitAsync(token); return updated;
     }
 
     public async Task<Guid> CreateInstallationAsync(string channel, string credentialHash, CancellationToken token)
