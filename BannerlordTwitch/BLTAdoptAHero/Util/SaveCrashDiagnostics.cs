@@ -23,7 +23,7 @@ namespace BLTAdoptAHero.Util
             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
             "Mount and Blade II Bannerlord", "logs", "BLT-save-diagnostics.log");
 
-        internal static bool Enabled => IsTrue(Environment.GetEnvironmentVariable(EnabledVariable));
+        internal static bool Enabled => !IsFalse(Environment.GetEnvironmentVariable(EnabledVariable));
 
         internal static bool GroupEnabled(string group) =>
             !IsTrue(Environment.GetEnvironmentVariable($"BLT_DISABLE_{group}"));
@@ -48,6 +48,11 @@ namespace BLTAdoptAHero.Util
             string.Equals(value, "1", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(value, "true", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(value, "yes", StringComparison.OrdinalIgnoreCase);
+
+        private static bool IsFalse(string value) =>
+            string.Equals(value, "0", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "false", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(value, "no", StringComparison.OrdinalIgnoreCase);
 
         private static void Write(string message)
         {
@@ -110,8 +115,8 @@ namespace BLTAdoptAHero.Util
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly))
             .Where(method => method != null);
 
-        private static void Prefix(MethodBase __originalMethod, IDataStore dataStore, out IDisposable __state) =>
-            __state = SaveCrashDiagnostics.Scope(dataStore, __originalMethod.DeclaringType?.FullName ?? "unknown behavior");
+        private static void Prefix(MethodBase __originalMethod, IDataStore __0, out IDisposable __state) =>
+            __state = SaveCrashDiagnostics.Scope(__0, __originalMethod.DeclaringType?.FullName ?? "unknown behavior");
 
         private static void Postfix(IDisposable __state) => __state?.Dispose();
 
