@@ -264,7 +264,7 @@ namespace BannerlordTwitch.Integration
                     await SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = Guid.NewGuid(), kind = "manifest", channelId, timestamp = DateTimeOffset.UtcNow, data = JsonSerializer.Deserialize<JsonElement>(catalog.ManifestJson) }), lifetime.Token);
                     var battle = IntegrationBattleProvider.Current();
                     await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = IntegrationSelectorProvider.Current(), commands = runtimeCommands, mission = battle }, lifetime.Token);
-                    await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, lifetime.Token), PublishViewerStatesAsync(lifetime.Token));
+                    await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, Settings.GameStarted, lifetime.Token), PublishViewerStatesAsync(lifetime.Token));
                 }
                 catch (OperationCanceledException) { return; }
                 catch (Exception ex) { Log.Error($"[Integration] Connection failed: {ex.Message}"); }
@@ -274,15 +274,17 @@ namespace BannerlordTwitch.Integration
             }
         }
 
-        private async Task PublishBattleStateAsync(long lastRevision, CancellationToken token)
+        private async Task PublishBattleStateAsync(long lastRevision, bool lastGameStarted, CancellationToken token)
         {
             while (socket?.State == WebSocketState.Open && !token.IsCancellationRequested)
             {
                 await Task.Delay(250, token);
                 var battle = IntegrationBattleProvider.Current();
-                if (battle.Revision == lastRevision) continue;
+                var gameStarted = Settings.GameStarted;
+                if (battle.Revision == lastRevision && gameStarted == lastGameStarted) continue;
                 lastRevision = battle.Revision;
-                await SendAsync("state.patch", new { mission = battle }, token);
+                lastGameStarted = gameStarted;
+                await SendAsync("state.patch", new { gameStarted, mission = battle }, token);
             }
         }
 
