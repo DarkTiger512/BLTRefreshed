@@ -209,7 +209,12 @@ namespace BannerlordTwitch.Integration
         private readonly IntegrationRequestLifecycle requestLifecycle = new();
         private readonly ConcurrentDictionary<string, IntegrationUser> subscribedViewers = new(StringComparer.Ordinal);
         private readonly ConcurrentDictionary<string, string> lastViewerStates = new(StringComparer.Ordinal);
+        private readonly ConcurrentDictionary<string, string> twitchDisplayNames = new(StringComparer.Ordinal);
         private readonly SemaphoreSlim sendLock = new(1, 1);
+        private static readonly JsonSerializerOptions WireJson = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         private readonly IntegrationRuntimeCommand[] runtimeCommands;
         private readonly Dictionary<string, Command> configuredCommands;
 
@@ -322,11 +327,47 @@ namespace BannerlordTwitch.Integration
                     if (result.MessageType == WebSocketMessageType.Close) return;
                     stream.Write(buffer, 0, result.Count);
                 } while (!result.EndOfMessage);
-                if (result.MessageType == WebSocketMessageType.Text) HandleMessage(Encoding.UTF8.GetString(stream.ToArray()));
+                if (result.MessageType == WebSocketMessageType.Text) await HandleMessageAsync(Encoding.UTF8.GetString(stream.ToArray()), token);
             }
         }
 
-        private void HandleMessage(string json)
+        private async Task<string> ResolveTwitchDisplayNameAsync(JsonElement user, CancellationToken token)
+        {
+            var userId = user.GetProperty("id").GetString();
+            var fallback = user.GetProperty("name").GetString();
+            if (string.IsNullOrWhiteSpace(userId)) return fallback;
+            if (twitchDisplayNames.TryGetValue(userId, out var cached)) return cached;
+
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.twitch.tv/helix/users?id={Uri.EscapeDataString(userId)}");
+                request.Headers.TryAddWithoutValidation("Client-Id", auth.ClientID);
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", auth.AccessToken);
+                using var response = await http.SendAsync(request, token);
+                response.EnsureSuccessStatusCode();
+                using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                var users = document.RootElement.GetProperty("data");
+                if (users.GetArrayLength() > 0)
+                {
+                    var resolved = users[0].TryGetProperty("display_name", out var displayName)
+                        ? displayName.GetString()
+                        : users[0].GetProperty("login").GetString();
+                    if (!string.IsNullOrWhiteSpace(resolved))
+                    {
+                        twitchDisplayNames[userId] = resolved;
+                        return resolved;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"[Integration] Could not resolve Twitch user {userId}: {ex.Message}");
+            }
+
+            return fallback;
+        }
+
+        private async Task HandleMessageAsync(string json, CancellationToken token)
         {
             Guid? requestIdForError = null;
             try
@@ -339,7 +380,7 @@ namespace BannerlordTwitch.Integration
                 var user = root.GetProperty("user");
                 if (kind == "viewer.subscribe")
                 {
-                    var viewer = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) };
+                    var viewer = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = await ResolveTwitchDisplayNameAsync(user, token), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) };
                     subscribedViewers[viewer.Id] = viewer;
                     lastViewerStates.TryRemove(viewer.Id, out _);
                     return;
@@ -354,7 +395,7 @@ namespace BannerlordTwitch.Integration
                 if (kind == "inventory.request")
                 {
                     var requestId = root.GetProperty("id").GetGuid();
-                    var userName = user.GetProperty("name").GetString();
+                    var userName = await ResolveTwitchDisplayNameAsync(user, token);
                     MainThreadSync.Run(() =>
                     {
                         var inventory = IntegrationInventoryProvider.For(userName);
@@ -367,7 +408,7 @@ namespace BannerlordTwitch.Integration
                 if (kind == "retinue.request")
                 {
                     var requestId = root.GetProperty("id").GetGuid();
-                    var userName = user.GetProperty("name").GetString();
+                    var userName = await ResolveTwitchDisplayNameAsync(user, token);
                     MainThreadSync.Run(() =>
                     {
                         var retinue = IntegrationRetinueProvider.For(userName);
@@ -384,7 +425,7 @@ namespace BannerlordTwitch.Integration
                     {
                         RequestId = requestIdForError.Value, ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
                         CommandLine = data.GetProperty("commandLine").GetString(),
-                        User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
+                        User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = await ResolveTwitchDisplayNameAsync(user, token), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
                     };
                     if (!string.Equals(commandRequest.ChannelId, channelId, StringComparison.Ordinal)) return;
                     if (Math.Abs((DateTimeOffset.UtcNow - commandRequest.Timestamp).TotalSeconds) > 30 || !receivedRequests.TryAdd(commandRequest.RequestId, 0)) return;
@@ -402,7 +443,7 @@ namespace BannerlordTwitch.Integration
                 {
                     RequestId = requestIdForError.Value, ChannelId = root.GetProperty("channelId").GetString(), Timestamp = root.GetProperty("timestamp").GetDateTimeOffset(),
                     ActionId = data.GetProperty("actionId").GetString(), Args = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(data.GetProperty("args").GetRawText()),
-                    User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = user.GetProperty("name").GetString(), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
+                    User = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = await ResolveTwitchDisplayNameAsync(user, token), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) }
                 };
                 if (!string.Equals(actionRequest.ChannelId, channelId, StringComparison.Ordinal)) return;
                 if (Math.Abs((DateTimeOffset.UtcNow - actionRequest.Timestamp).TotalSeconds) > 30) return;
@@ -498,7 +539,7 @@ namespace BannerlordTwitch.Integration
         }
 
         private Task SendAsync(string kind, object data, CancellationToken token, Guid? id = null) =>
-            SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = id ?? Guid.NewGuid(), kind, channelId, timestamp = DateTimeOffset.UtcNow, data }), token);
+            SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = id ?? Guid.NewGuid(), kind, channelId, timestamp = DateTimeOffset.UtcNow, data }, WireJson), token);
 
         private async Task SendRawAsync(string json, CancellationToken token)
         {

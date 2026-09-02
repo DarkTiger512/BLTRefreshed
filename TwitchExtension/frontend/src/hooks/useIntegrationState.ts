@@ -59,12 +59,28 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
       } else if (envelope.kind === "viewer.state") {
         setState(value => ({ ...value, viewer: { adopted: Boolean(data.adopted), heroName: data.heroName, gold: typeof data.gold === "number" ? data.gold : undefined } }));
       } else if (envelope.kind === "inventory.snapshot") {
-        setInventory({ ...data, updatedAt: envelope.timestamp } as InventorySnapshot);
+        const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data.Items) ? data.Items : [];
+        const rawSlots = Array.isArray(data.slots) ? data.slots : Array.isArray(data.Slots) ? data.Slots : [];
+        setInventory({
+          heroName: String(data.heroName ?? data.HeroName ?? ""),
+          limit: Number(data.limit ?? data.Limit ?? 0),
+          items: rawItems.map((item: Record<string, unknown>) => ({ index: Number(item.index ?? item.Index ?? 0), name: String(item.name ?? item.Name ?? ""), type: String(item.type ?? item.Type ?? ""), equipped: Boolean(item.equipped ?? item.Equipped) })),
+          slots: rawSlots.map((slot: Record<string, unknown>) => ({ id: String(slot.id ?? slot.Id ?? ""), label: String(slot.label ?? slot.Label ?? ""), accepts: String(slot.accepts ?? slot.Accepts ?? "item"), itemName: slot.itemName ?? slot.ItemName, customItemIndex: slot.customItemIndex ?? slot.CustomItemIndex })),
+          updatedAt: envelope.timestamp,
+        } as InventorySnapshot);
         setInventoryError(undefined);
       } else if (envelope.kind === "inventory.error") {
         setInventoryError(data.error);
       } else if (envelope.kind === "retinue.snapshot") {
-        setRetinue({ ...data, updatedAt: envelope.timestamp } as RetinueSnapshot);
+        const rawRetinue = Array.isArray(data.retinue) ? data.retinue : Array.isArray(data.Retinue) ? data.Retinue : [];
+        const rawEliteRetinue = Array.isArray(data.eliteRetinue) ? data.eliteRetinue : Array.isArray(data.EliteRetinue) ? data.EliteRetinue : [];
+        const troop = (item: Record<string, unknown>) => ({ slot: Number(item.slot ?? item.Slot ?? 0), name: String(item.name ?? item.Name ?? ""), tier: Number(item.tier ?? item.Tier ?? 0), culture: String(item.culture ?? item.Culture ?? "") });
+        setRetinue({
+          heroName: String(data.heroName ?? data.HeroName ?? ""),
+          retinue: rawRetinue.map(troop),
+          eliteRetinue: rawEliteRetinue.map(troop),
+          updatedAt: envelope.timestamp,
+        } as RetinueSnapshot);
         setRetinueError(undefined);
       } else if (envelope.kind === "retinue.error") {
         setRetinueError(data.error);

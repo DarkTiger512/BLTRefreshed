@@ -21,13 +21,15 @@ export function InventoryView({ inventory, loading, error, linked, initialFilter
   const [selectedItem, setSelectedItem] = useState<number>();
   const [draggedItem, setDraggedItem] = useState<number>();
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
-  const items = inventory?.items.filter(item => !deferredQuery || `${item.name} ${item.type}`.toLowerCase().includes(deferredQuery)) ?? [];
+  const inventoryItems = inventory?.items ?? [];
+  const inventorySlots = inventory?.slots ?? [];
+  const items = inventoryItems.filter(item => !deferredQuery || `${item.name} ${item.type}`.toLowerCase().includes(deferredQuery));
 
   return <section className="inventory-view" aria-labelledby="inventory-title">
     <header className="inventory-header">
       <button className="workspace-back" onClick={onBack} aria-label={t("common.back")}><ArrowLeft /></button>
       <div className="inventory-emblem"><PackageOpen /></div>
-      <div><p>{t("inventory.storage")}</p><h2 id="inventory-title">{t("inventory.title")}</h2><span>{inventory ? t("inventory.summary", { hero: inventory.heroName, count: inventory.items.length, limit: inventory.limit }) : t("inventory.subtitle")}</span></div>
+      <div><p>{t("inventory.storage")}</p><h2 id="inventory-title">{t("inventory.title")}</h2><span>{inventory ? t("inventory.summary", { hero: inventory.heroName, count: inventoryItems.length, limit: inventory.limit }) : t("inventory.subtitle")}</span></div>
       <button className="inventory-refresh" onClick={onRefresh} disabled={loading || !linked}><RefreshCw className={loading ? "spinning" : ""} />{loading ? t("common.loading") : t("common.refresh")}</button>
     </header>
     {!linked ? <div className="inventory-message"><ShieldCheck /><h3>{t("inventory.private.title")}</h3><p>{t("inventory.private.detail")}</p><button className="primary-action" onClick={onRequestIdentity}>{t("identity.share")}</button></div> : null}
@@ -37,8 +39,8 @@ export function InventoryView({ inventory, loading, error, linked, initialFilter
       <div className="equipment-section">
         <div className="section-heading"><span><Swords />{t("inventory.slots")}</span><small>{selectedItem ? t("inventory.slot.choose") : t("inventory.slot.drag")}</small></div>
         <div className="equipment-slots">
-          {inventory.slots.map(slot => {
-            const pendingItem = inventory.items.find(item => item.index === (selectedItem ?? draggedItem));
+          {inventorySlots.map(slot => {
+            const pendingItem = inventoryItems.find(item => item.index === (selectedItem ?? draggedItem));
             const compatible = pendingItem ? canEquip(pendingItem.type, slot.id) : false;
             return <button key={slot.id} className={`equipment-slot${compatible ? " receiving" : pendingItem ? " incompatible" : ""}`} disabled={loading} onClick={() => { if (selectedItem && compatible) { onEquip(selectedItem, slot.id); setSelectedItem(undefined); } }} onDragOver={event => { if (compatible) event.preventDefault(); }} onDrop={event => { event.preventDefault(); if (draggedItem && compatible) onEquip(draggedItem, slot.id); setDraggedItem(undefined); setSelectedItem(undefined); }}>
             <span>{slot.label}</span><strong>{slot.itemName ?? t("inventory.emptySlot")}</strong><small>{slot.itemName ? slot.accepts : t("inventory.accepts", { type: slot.accepts.toLowerCase() })}</small>
