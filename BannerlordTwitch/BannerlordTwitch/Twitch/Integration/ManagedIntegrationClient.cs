@@ -262,7 +262,8 @@ namespace BannerlordTwitch.Integration
                     Log.LogFeedSystem("[Integration] Connected to managed Twitch Extension service");
                     await SendAsync("hello", new { modVersion = typeof(ManagedIntegrationClient).Assembly.GetName().Version?.ToString(), protocolVersion = IntegrationProtocol.Version }, lifetime.Token);
                     await SendRawAsync(JsonSerializer.Serialize(new { v = IntegrationProtocol.Version, id = Guid.NewGuid(), kind = "manifest", channelId, timestamp = DateTimeOffset.UtcNow, data = JsonSerializer.Deserialize<JsonElement>(catalog.ManifestJson) }), lifetime.Token);
-                    var battle = IntegrationBattleProvider.Current();
+                    IntegrationBattleSnapshot battle = null;
+                    await MainThreadSync.RunWaitAsync(() => battle = IntegrationBattleProvider.Current());
                     await SendAsync("state.snapshot", new { connected = true, gameStarted = Settings.GameStarted, unavailable = new { }, cooldowns = new { }, selectors = IntegrationSelectorProvider.Current(), commands = runtimeCommands, mission = battle }, lifetime.Token);
                     await Task.WhenAll(ReceiveAsync(lifetime.Token), PublishBattleStateAsync(battle.Revision, Settings.GameStarted, lifetime.Token), PublishViewerStatesAsync(lifetime.Token));
                 }
@@ -279,7 +280,8 @@ namespace BannerlordTwitch.Integration
             while (socket?.State == WebSocketState.Open && !token.IsCancellationRequested)
             {
                 await Task.Delay(250, token);
-                var battle = IntegrationBattleProvider.Current();
+                IntegrationBattleSnapshot battle = null;
+                await MainThreadSync.RunWaitAsync(() => battle = IntegrationBattleProvider.Current());
                 var gameStarted = Settings.GameStarted;
                 if (battle.Revision == lastRevision && gameStarted == lastGameStarted) continue;
                 lastRevision = battle.Revision;
