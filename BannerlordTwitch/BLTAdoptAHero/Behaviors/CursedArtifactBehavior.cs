@@ -44,6 +44,7 @@ namespace BLTAdoptAHero.Behaviors
 
         public override void SyncData(IDataStore dataStore)
         {
+            using var diagnosticScope = SaveCrashDiagnostics.Scope(dataStore, nameof(CursedArtifactBehavior));
             using var sync = new ScopedJsonSync(dataStore, nameof(CursedArtifactBehavior));
             sync.SyncDataAsJson("ActiveV1", ref active);
             sync.SyncDataAsJson("HistoryV1", ref history);

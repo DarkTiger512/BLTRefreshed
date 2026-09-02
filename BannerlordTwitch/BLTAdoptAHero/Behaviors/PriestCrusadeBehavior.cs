@@ -39,6 +39,7 @@ namespace BLTAdoptAHero.Behaviors
 
         public override void SyncData(IDataStore dataStore)
         {
+            using var diagnosticScope = SaveCrashDiagnostics.Scope(dataStore, nameof(PriestCrusadeBehavior));
             using var sync = new ScopedJsonSync(dataStore, nameof(PriestCrusadeBehavior));
             sync.SyncDataAsJson("StateV1", ref state);
             dataStore.SyncData("LastSuccessfulTriggerDay", ref lastSuccessfulTriggerDay);

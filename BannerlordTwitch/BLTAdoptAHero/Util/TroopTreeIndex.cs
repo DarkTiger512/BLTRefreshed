@@ -35,6 +35,7 @@ namespace BLTAdoptAHero.Util
 
         public static void BuildIndex()
         {
+            SaveCrashDiagnostics.Mark("TroopTreeIndex.BuildIndex begin");
             Index.Clear();
             foreach (var troop in CharacterObject.All.Where(t => t != null && !t.IsHero))
             {
@@ -49,7 +50,15 @@ namespace BLTAdoptAHero.Util
                 };
             }
             isBuilt = true;
+            SaveCrashDiagnostics.Mark($"TroopTreeIndex.BuildIndex end count={Index.Count}");
             Log.Info($"[TroopTreeIndex] Indexed {Index.Count} loaded troops");
+        }
+
+        public static void Clear()
+        {
+            Index.Clear();
+            isBuilt = false;
+            SaveCrashDiagnostics.Mark("TroopTreeIndex.Clear");
         }
 
         public static TroopInfo GetTroopInfo(CharacterObject troop)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch.Util;
+using BLTAdoptAHero.Util;
 using TaleWorlds.CampaignSystem;
 using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using TaleWorlds.CampaignSystem.Party;
@@ -38,6 +39,7 @@ namespace BLTAdoptAHero.Actions
 
         public override void SyncData(IDataStore dataStore)
         {
+            using var diagnosticScope = SaveCrashDiagnostics.Scope(dataStore, nameof(TrainingBehavior));
             if (dataStore.IsSaving)
             {
                 var keys = _funds?.Keys.ToList() ?? new List<string>();

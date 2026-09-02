@@ -30,6 +30,7 @@ using TaleWorlds.CampaignSystem.ComponentInterfaces;
 using BLTAdoptAHero.Models;
 using BLTAdoptAHero.Actions;
 using BLTAdoptAHero.Behaviors;
+using BLTAdoptAHero.Util;
 using BannerlordTwitch.Integration;
 
 #pragma warning disable 649
@@ -216,6 +217,11 @@ namespace BLTAdoptAHero
             {
                 try
                 {
+                    if (!SaveCrashDiagnostics.GroupEnabled("HARMONY"))
+                    {
+                        SaveCrashDiagnostics.Mark("Adopt-a-Hero Harmony disabled by BLT_DISABLE_HARMONY");
+                        return;
+                    }
                     harmony = new Harmony("mod.bannerlord.bltadoptahero");
                     harmony.PatchAll();
                     NavalHarmonyPatches.ApplyIfAvailable(harmony);
@@ -312,17 +318,23 @@ namespace BLTAdoptAHero
                             EliteRetinue = Map(behavior.GetRetinue2(hero))
                         };
                     };
-                    campaignStarter.AddBehavior(new StreamObjectivesBehavior());
-                    campaignStarter.AddBehavior(new CursedArtifactBehavior());
-                    campaignStarter.AddBehavior(new ImmortalEncounterBehavior());
-                    campaignStarter.AddBehavior(new PriestCrusadeBehavior());
+                    if (SaveCrashDiagnostics.GroupEnabled("EVENTS"))
+                    {
+                        campaignStarter.AddBehavior(new StreamObjectivesBehavior());
+                        campaignStarter.AddBehavior(new CursedArtifactBehavior());
+                        campaignStarter.AddBehavior(new ImmortalEncounterBehavior());
+                        campaignStarter.AddBehavior(new PriestCrusadeBehavior());
+                    }
+                    else SaveCrashDiagnostics.Mark("Objectives/random events disabled by BLT_DISABLE_EVENTS");
                     campaignStarter.AddBehavior(new BLTTournamentQueueBehavior());
                     campaignStarter.AddBehavior(new BLTCustomItemsCampaignBehavior());
                     campaignStarter.AddBehavior(new BLTClanBehavior());
                     campaignStarter.AddBehavior(new GoldIncomeBehavior()); 
                     campaignStarter.AddBehavior(new BLTSettlementUpgradeBehavior());
                     campaignStarter.AddBehavior(new ReinforcementBehavior());
-                    campaignStarter.AddBehavior(new UpgradeBehavior());
+                    if (SaveCrashDiagnostics.GroupEnabled("UPGRADES"))
+                        campaignStarter.AddBehavior(new UpgradeBehavior());
+                    else SaveCrashDiagnostics.Mark("UpgradeBehavior disabled by BLT_DISABLE_UPGRADES");
                     campaignStarter.AddBehavior(new VassalBehavior());
                     campaignStarter.AddBehavior(new KingdomTaxBehavior());
                     campaignStarter.AddBehavior(new BLTLogsBehavior());
@@ -330,7 +342,9 @@ namespace BLTAdoptAHero
                     //campaignStarter.AddBehavior(new BLTClanAllianceBehavior());
                     campaignStarter.AddBehavior(new BLTClanArmyBehavior());
                     campaignStarter.AddBehavior(new PartyOrderBehavior());
-                    campaignStarter.AddBehavior(new TrainingBehavior());
+                    if (SaveCrashDiagnostics.GroupEnabled("TRAINING"))
+                        campaignStarter.AddBehavior(new TrainingBehavior());
+                    else SaveCrashDiagnostics.Mark("TrainingBehavior disabled by BLT_DISABLE_TRAINING");
                     campaignStarter.AddBehavior(new CapitalBehavior());
                     // Diplomacy
                     campaignStarter.AddBehavior(new BLTTreatyManager());         // 1. Core data
@@ -365,6 +379,7 @@ namespace BLTAdoptAHero
                 IntegrationSelectorProvider.Clear();
                 IntegrationViewerStateProvider.Clear();
                 IntegrationIdentityProvider.Clear();
+                TroopTreeIndex.Clear();
                 JoinTournament.OnGameEnd(campaign);
             }
         }

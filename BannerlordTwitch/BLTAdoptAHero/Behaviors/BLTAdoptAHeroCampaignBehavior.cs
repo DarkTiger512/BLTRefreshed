@@ -118,7 +118,10 @@ namespace BLTAdoptAHero
             // We put all initialization that relies on loading being complete into this listener
             CampaignEvents.OnGameLoadFinishedEvent.AddNonSerializedListener(this, () =>
             {
-                TroopTreeIndex.BuildIndex();
+                if (SaveCrashDiagnostics.GroupEnabled("SMART_TROOPS"))
+                    TroopTreeIndex.BuildIndex();
+                else
+                    SaveCrashDiagnostics.Mark("TroopTreeIndex disabled by BLT_DISABLE_SMART_TROOPS");
                 BLTAdoptAHeroModule.RefreshIntegrationSelectors();
 
                 // Ensure all existing heroes are registered
@@ -335,6 +338,7 @@ namespace BLTAdoptAHero
 
         public override void SyncData(IDataStore dataStore)
         {
+            using var diagnosticScope = SaveCrashDiagnostics.Scope(dataStore, nameof(BLTAdoptAHeroCampaignBehavior));
             using var scopedJsonSync = new ScopedJsonSync(dataStore, nameof(BLTAdoptAHeroCampaignBehavior));
 
             scopedJsonSync.SyncDataAsJson("HeroData", ref heroData);

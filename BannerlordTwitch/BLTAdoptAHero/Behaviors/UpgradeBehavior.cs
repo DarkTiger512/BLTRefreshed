@@ -6,6 +6,7 @@ using TaleWorlds.CampaignSystem.Settlements;
 using TaleWorlds.Core;
 using BLTAdoptAHero.Actions.Upgrades;
 using TaleWorlds.CampaignSystem.Actions;
+using BLTAdoptAHero.Util;
 
 namespace BLTAdoptAHero
 {
@@ -52,6 +53,7 @@ namespace BLTAdoptAHero
 
         public override void SyncData(IDataStore dataStore)
         {
+            using var diagnosticScope = SaveCrashDiagnostics.Scope(dataStore, nameof(UpgradeBehavior));
             dataStore.SyncData("BLT_FiefUpgrades", ref _fiefUpgrades);
             dataStore.SyncData("BLT_ClanUpgrades", ref _clanUpgrades);
             dataStore.SyncData("BLT_KingdomUpgrades", ref _kingdomUpgrades);

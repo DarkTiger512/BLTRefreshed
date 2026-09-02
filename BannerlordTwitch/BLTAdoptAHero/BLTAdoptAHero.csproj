@@ -167,6 +167,7 @@
     <Compile Include="Util\StreamObjectivePolicy.cs" />
     <Compile Include="Util\CursedArtifactPolicy.cs" />
     <Compile Include="Util\RandomEventPolicy.cs" />
+    <Compile Include="Util\SaveCrashDiagnostics.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.cs" />
     <Compile Include="Behaviors\StreamObjectivesBehavior.cs" />
     <Compile Include="Behaviors\CursedArtifactBehavior.cs" />
