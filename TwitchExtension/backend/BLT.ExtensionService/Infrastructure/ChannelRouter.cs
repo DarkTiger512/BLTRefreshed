@@ -42,7 +42,7 @@ public sealed class ChannelRouter(ChannelStateCache stateCache, Database databas
         games[channel] = connection;
         var configuration = await database.GetConfigurationAsync(channel, token);
         await SendAsync(socket, Envelope("configuration.updated", channel, new { configuration.SchemaVersion, configuration.ExtensionEnabled, configuration.Commands, configuration.Revision, configuration.UpdatedAt }), token);
-        await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = true, gameStarted = true }), token);
+        await BroadcastViewerAsync(channel, Envelope("connection.status", channel, new { connected = true, gameStarted = false }), token);
         await PumpAsync(socket, async message => await RouteGameMessageAsync(channel, message, token), token);
         if (games.TryRemove(new KeyValuePair<string, GameConnection>(channel, connection)))
         {
@@ -65,7 +65,7 @@ public sealed class ChannelRouter(ChannelStateCache stateCache, Database databas
     {
         var id = Guid.NewGuid();
         viewers.GetOrAdd(channel, _ => new ConcurrentDictionary<Guid, ViewerConnection>())[id] = new(principal.UserId, principal.DisplayName, principal.Roles, socket);
-        await SendAsync(socket, Envelope("connection.status", channel, new { connected = IsGameConnected(channel), gameStarted = IsGameConnected(channel) }), token);
+        await SendAsync(socket, Envelope("connection.status", channel, new { connected = IsGameConnected(channel), gameStarted = false }), token);
         if (stateCache.TryGet(channel, out var state)) await SendAsync(socket, state, token);
         await SendGameAsync(channel, new { v = ProtocolKinds.Version, id = Guid.NewGuid(), kind = "viewer.subscribe", channelId = channel, timestamp = DateTimeOffset.UtcNow, user = new IntegrationUser(principal.UserId, principal.DisplayName, principal.Roles), data = new { } }, token);
         await PumpAsync(socket, _ => Task.CompletedTask, token);

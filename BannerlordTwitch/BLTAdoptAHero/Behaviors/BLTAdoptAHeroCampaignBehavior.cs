@@ -530,6 +530,21 @@ namespace BLTAdoptAHero
             return foundHero;
         }
 
+        public void ReconcileIntegrationOwner(string userId, string displayName)
+        {
+            if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(displayName) ||
+                string.Equals(userId, displayName, StringComparison.OrdinalIgnoreCase) ||
+                GetAdoptedHero(displayName) != null)
+                return;
+
+            var legacyHero = GetAdoptedHero(userId);
+            if (legacyHero == null) return;
+            var data = GetHeroData(legacyHero);
+            data.Owner = displayName;
+            SetHeroAdoptedName(legacyHero, displayName);
+            Log.Info($"[Integration] Migrated adopted hero owner {userId} to {displayName}");
+        }
+
         public string GetHeroOwner(Hero hero) => hero != null && heroData.TryGetValue(hero, out var data)
             ? data.Owner
             : null;

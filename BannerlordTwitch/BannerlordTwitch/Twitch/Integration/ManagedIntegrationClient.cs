@@ -123,6 +123,13 @@ namespace BannerlordTwitch.Integration
         public static IntegrationViewerSnapshot For(string userName) => Get?.Invoke(userName) ?? new IntegrationViewerSnapshot();
     }
 
+    public static class IntegrationIdentityProvider
+    {
+        public static Action<string, string> Reconcile { private get; set; }
+        public static void Apply(string userId, string displayName) => Reconcile?.Invoke(userId, displayName);
+        public static void Clear() => Reconcile = null;
+    }
+
     public sealed class IntegrationBattleCombatant
     {
         [JsonPropertyName("id")] public string Id { get; set; }
@@ -288,6 +295,7 @@ namespace BannerlordTwitch.Integration
                 {
                     foreach (var viewer in subscribedViewers.Values)
                     {
+                        IntegrationIdentityProvider.Apply(viewer.Id, viewer.Name);
                         var snapshot = IntegrationViewerStateProvider.For(viewer.Name);
                         var serialized = JsonSerializer.Serialize(snapshot);
                         if (lastViewerStates.TryGetValue(viewer.Id, out var previous) && previous == serialized) continue;
@@ -383,6 +391,7 @@ namespace BannerlordTwitch.Integration
                     var viewer = new IntegrationUser { Id = user.GetProperty("id").GetString(), Name = await ResolveTwitchDisplayNameAsync(user, token), Roles = JsonSerializer.Deserialize<string[]>(user.GetProperty("roles").GetRawText()) };
                     subscribedViewers[viewer.Id] = viewer;
                     lastViewerStates.TryRemove(viewer.Id, out _);
+                    MainThreadSync.Run(() => IntegrationIdentityProvider.Apply(viewer.Id, viewer.Name));
                     return;
                 }
                 if (kind == "viewer.unsubscribe")
@@ -395,9 +404,11 @@ namespace BannerlordTwitch.Integration
                 if (kind == "inventory.request")
                 {
                     var requestId = root.GetProperty("id").GetGuid();
+                    var userId = user.GetProperty("id").GetString();
                     var userName = await ResolveTwitchDisplayNameAsync(user, token);
                     MainThreadSync.Run(() =>
                     {
+                        IntegrationIdentityProvider.Apply(userId, userName);
                         var inventory = IntegrationInventoryProvider.For(userName);
                         _ = string.IsNullOrEmpty(inventory.Error)
                             ? SendAsync("inventory.snapshot", inventory, lifetime.Token, requestId)
@@ -408,9 +419,11 @@ namespace BannerlordTwitch.Integration
                 if (kind == "retinue.request")
                 {
                     var requestId = root.GetProperty("id").GetGuid();
+                    var userId = user.GetProperty("id").GetString();
                     var userName = await ResolveTwitchDisplayNameAsync(user, token);
                     MainThreadSync.Run(() =>
                     {
+                        IntegrationIdentityProvider.Apply(userId, userName);
                         var retinue = IntegrationRetinueProvider.For(userName);
                         _ = string.IsNullOrEmpty(retinue.Error)
                             ? SendAsync("retinue.snapshot", retinue, lifetime.Token, requestId)

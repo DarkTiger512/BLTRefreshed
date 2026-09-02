@@ -1,4 +1,3 @@
-import { CircleDot } from "lucide-react";
 import { useEffect, useState } from "react";
 import { requestInventory, requestRetinue, submitAction, submitCommand } from "./api";
 import { isLiveLocalIntegration } from "./environment";
@@ -38,7 +37,7 @@ export function App() {
     }).catch(reason => setError(String(reason)));
   }, []);
 
-  if (!identity || !manifest) return <div className="loading-screen"><CircleDot />{t("app.connecting")}</div>;
+  if (!identity || !manifest) return null;
 
   async function handleActionSubmit(action: ManifestAction, args: Record<string, unknown>) {
     setBusy(true); setError(undefined);
@@ -124,6 +123,8 @@ export function App() {
   const redundantBattleActions = new Set(["command.battle", "command.stats", "command.ammo"]);
   const battleActions = manifest.actions.filter(action => Object.hasOwn(state.mission.actionAvailability, action.id) && !redundantBattleActions.has(action.id));
   const battleActive = state.mission.active && (state.mission.kind === "battle" || state.mission.kind === "tournament");
+
+  if (!state.gameStarted) return null;
 
   return <main className={open ? "overlay-shell open" : "overlay-shell collapsed"}>
     {!open ? <button className="floating-overlay-toggle" onClick={() => setOpen(true)} aria-label={t("app.open")} title={t("app.open")}><img src={bltLogo} alt="" /><span>BLT</span></button> : null}

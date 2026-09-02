@@ -251,6 +251,8 @@ namespace BLTAdoptAHero
                             ? new IntegrationViewerSnapshot { Adopted = false }
                             : new IntegrationViewerSnapshot { Adopted = true, HeroName = hero.Name.ToString(), Gold = behavior.GetHeroGold(hero) };
                     });
+                    IntegrationIdentityProvider.Reconcile = (userId, displayName) =>
+                        BLTAdoptAHeroCampaignBehavior.Current?.ReconcileIntegrationOwner(userId, displayName);
                     IntegrationInventoryProvider.Get = userName =>
                     {
                         var behavior = BLTAdoptAHeroCampaignBehavior.Current;
@@ -362,6 +364,7 @@ namespace BLTAdoptAHero
             {
                 IntegrationSelectorProvider.Clear();
                 IntegrationViewerStateProvider.Clear();
+                IntegrationIdentityProvider.Clear();
                 JoinTournament.OnGameEnd(campaign);
             }
         }

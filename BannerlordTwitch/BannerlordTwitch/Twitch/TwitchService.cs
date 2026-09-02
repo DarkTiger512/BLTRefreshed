@@ -563,6 +563,7 @@ namespace BannerlordTwitch
             {
                 if (request == null || integrationClient == null)
                     return;
+                IntegrationIdentityProvider.Apply(request.User.Id, request.User.Name);
                 if (!integrationClient.TryResolve(request, out var action, out var args, out var error))
                 {
                     _ = integrationClient.SendActionErrorAsync(request.RequestId, error ?? "Invalid action request.");
@@ -602,6 +603,7 @@ namespace BannerlordTwitch
             MainThreadSync.Run(() =>
             {
                 if (request == null || integrationClient == null) return;
+                IntegrationIdentityProvider.Apply(request.User.Id, request.User.Name);
                 if (!IntegrationCommandLine.TryParse(request.CommandLine, out var parsed)) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "Enter a command."); return; }
                 var commandName = parsed.Name;
                 var args = parsed.Args;

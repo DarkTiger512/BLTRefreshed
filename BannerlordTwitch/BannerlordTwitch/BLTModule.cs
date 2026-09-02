@@ -129,6 +129,7 @@ namespace BannerlordTwitch
 
         protected override void OnGameStart(Game game, IGameStarter gameStarterObject)
         {
+            Settings.GameStarted = game.GameType is Campaign;
             RestartTwitchService();
 
             try
@@ -160,6 +161,7 @@ namespace BannerlordTwitch
 
         public override void OnGameEnd(Game game)
         {
+            Settings.GameStarted = false;
             TwitchService?.Dispose();
             TwitchService = null;
         }
