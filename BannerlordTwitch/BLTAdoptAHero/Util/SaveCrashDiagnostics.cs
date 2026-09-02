@@ -127,6 +127,8 @@ namespace BLTAdoptAHero.Util
 
         private static Exception Finalizer(Exception __exception, IDisposable __state)
         {
+            if (__exception != null)
+                SaveCrashDiagnostics.Mark($"SyncData THREW {__exception.GetType().FullName}");
             __state?.Dispose();
             return __exception;
         }
