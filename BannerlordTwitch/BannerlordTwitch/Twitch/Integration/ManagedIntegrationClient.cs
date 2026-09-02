@@ -304,6 +304,7 @@ namespace BannerlordTwitch.Integration
                 if (IntegrationRuntimeState.IsSaving) continue;
                 MainThreadSync.Post(() =>
                 {
+                    if (IntegrationRuntimeState.IsSaving) return;
                     foreach (var viewer in subscribedViewers.Values)
                     {
                         IntegrationIdentityProvider.Apply(viewer.Id, viewer.Name);
@@ -409,7 +410,7 @@ namespace BannerlordTwitch.Integration
                     subscribedViewers[viewer.Id] = viewer;
                     lastViewerStates.TryRemove(viewer.Id, out _);
                     if (!IntegrationRuntimeState.IsSaving)
-                        MainThreadSync.Post(() => IntegrationIdentityProvider.Apply(viewer.Id, viewer.Name));
+                        MainThreadSync.Post(() => { if (!IntegrationRuntimeState.IsSaving) IntegrationIdentityProvider.Apply(viewer.Id, viewer.Name); });
                     return;
                 }
                 if (kind == "viewer.unsubscribe")
@@ -427,6 +428,7 @@ namespace BannerlordTwitch.Integration
                     var userName = await ResolveTwitchDisplayNameAsync(user, token);
                     MainThreadSync.Post(() =>
                     {
+                        if (IntegrationRuntimeState.IsSaving) { _ = SendAsync("inventory.error", new { error = "Inventory is temporarily unavailable while the campaign is saving." }, lifetime.Token, requestId); return; }
                         IntegrationIdentityProvider.Apply(userId, userName);
                         var inventory = IntegrationInventoryProvider.For(userName);
                         _ = string.IsNullOrEmpty(inventory.Error)
@@ -443,6 +445,7 @@ namespace BannerlordTwitch.Integration
                     var userName = await ResolveTwitchDisplayNameAsync(user, token);
                     MainThreadSync.Post(() =>
                     {
+                        if (IntegrationRuntimeState.IsSaving) { _ = SendAsync("retinue.error", new { error = "Retinue is temporarily unavailable while the campaign is saving." }, lifetime.Token, requestId); return; }
                         IntegrationIdentityProvider.Apply(userId, userName);
                         var retinue = IntegrationRetinueProvider.For(userName);
                         _ = string.IsNullOrEmpty(retinue.Error)

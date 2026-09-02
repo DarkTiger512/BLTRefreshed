@@ -566,6 +566,7 @@ namespace BannerlordTwitch
             }
             MainThreadSync.Post(() =>
             {
+                if (IntegrationRuntimeState.IsSaving) { _ = integrationClient?.SendActionErrorAsync(request.RequestId, "Wait for the campaign save to finish before using a command."); return; }
                 if (request == null || integrationClient == null)
                     return;
                 IntegrationIdentityProvider.Apply(request.User.Id, request.User.Name);
@@ -612,6 +613,7 @@ namespace BannerlordTwitch
             }
             MainThreadSync.Post(() =>
             {
+                if (IntegrationRuntimeState.IsSaving) { _ = integrationClient?.SendActionErrorAsync(request.RequestId, "Wait for the campaign save to finish before using a command."); return; }
                 if (request == null || integrationClient == null) return;
                 IntegrationIdentityProvider.Apply(request.User.Id, request.User.Name);
                 if (!IntegrationCommandLine.TryParse(request.CommandLine, out var parsed)) { _ = integrationClient.SendActionErrorAsync(request.RequestId, "Enter a command."); return; }
