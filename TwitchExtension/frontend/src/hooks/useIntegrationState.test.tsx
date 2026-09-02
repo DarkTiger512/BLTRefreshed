@@ -33,3 +33,25 @@ test("live local viewer socket starts without demo state and reconnects after in
   expect(TestSocket.instances).toHaveLength(2);
   unmount();
 });
+
+test("authoritative campaign snapshot reveals the live overlay state", () => {
+  vi.stubEnv("VITE_BLT_LIVE_INTEGRATION", "true");
+  vi.stubGlobal("WebSocket", TestSocket);
+  const { result, unmount } = renderHook(() => useIntegrationState(identity));
+  const socket = TestSocket.instances[0];
+  act(() => socket.emit("message", new MessageEvent("message", { data: JSON.stringify({
+    v: 1,
+    channelId: "42",
+    kind: "connection.status",
+    data: { connected: true, gameStarted: false },
+  }) })));
+  expect(result.current.gameStarted).toBe(false);
+  act(() => socket.emit("message", new MessageEvent("message", { data: JSON.stringify({
+    v: 1,
+    channelId: "42",
+    kind: "state.snapshot",
+    data: { connected: true, gameStarted: true, mission: { active: false, kind: "inactive", revision: 1, deploymentFinished: false, combatants: [], actionAvailability: {} } },
+  }) })));
+  expect(result.current.gameStarted).toBe(true);
+  unmount();
+});
