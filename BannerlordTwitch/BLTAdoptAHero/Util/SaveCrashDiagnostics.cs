@@ -26,7 +26,12 @@ namespace BLTAdoptAHero.Util
         internal static bool Enabled => !IsFalse(Environment.GetEnvironmentVariable(EnabledVariable));
 
         internal static bool GroupEnabled(string group) =>
-            !IsTrue(Environment.GetEnvironmentVariable($"BLT_DISABLE_{group}"));
+            !IsTrue(Environment.GetEnvironmentVariable($"BLT_DISABLE_{group}")) &&
+            !File.Exists(IsolationFlagPath(group));
+
+        private static string IsolationFlagPath(string group) => Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+            "Mount and Blade II Bannerlord", "logs", $"BLT-disable-{group}.flag");
 
         internal static IDisposable Scope(IDataStore dataStore, string component)
         {
