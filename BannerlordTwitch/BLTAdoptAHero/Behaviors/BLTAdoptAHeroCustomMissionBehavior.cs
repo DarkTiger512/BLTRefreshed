@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -116,7 +116,8 @@ namespace BLTAdoptAHero
 
         protected override void OnEndMission()
         {
-            ForAll(listeners => listeners.onMissionOver?.Invoke());
+            try { ForAll(listeners => listeners.onMissionOver?.Invoke()); }
+            finally { BLTSummonBehavior.Current?.ClearBalance(); }
         }
 
         private const float SlowTickDuration = 2;

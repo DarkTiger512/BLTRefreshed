@@ -54,7 +54,7 @@ namespace BLTAdoptAHero
             return ImproveSkill(adoptedHero, amount, settings.Skills, settings.Auto);
         }
 
-        public static (bool success, string description) ImproveSkill(Hero hero, int amount, SkillsEnum skills, bool auto)
+        public static (bool success, string description) ImproveSkill(Hero hero, int amount, SkillsEnum skills, bool auto, double rewardMultiplier = 1, Action<int> onAward = null)
         {
             var skill = GetSkill(hero, skills, auto, so
                 => BLTAdoptAHeroModule.CommonConfig.UseRawXP && hero.GetSkillValue(so) < BLTAdoptAHeroModule.CommonConfig.RawXPSkillCap
@@ -66,7 +66,7 @@ namespace BLTAdoptAHero
 
             if (hero.IsDead) return (false, "Hero is dead");
 
-            amount = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(amount, 1 + (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(hero, "insight") ?? 0));
+            amount = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(amount, rewardMultiplier, 1 + (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(hero, "insight") ?? 0));
             int prevSkill = hero.HeroDeveloper.GetSkillXpProgress(skill);
             int prevLevel = hero.GetSkillValue(skill);
             hero.HeroDeveloper.AddSkillXp(skill, amount,
@@ -74,6 +74,7 @@ namespace BLTAdoptAHero
             // Force this immediately instead of waiting for the daily campaign tick
             hero.HeroDeveloper.DevelopCharacterStats();
 
+            onAward?.Invoke(amount);
             int newXp = hero.HeroDeveloper.GetSkillXpProgress(skill);
             int realGainedXp = newXp - prevSkill;
             int newLevel = hero.GetSkillValue(skill);

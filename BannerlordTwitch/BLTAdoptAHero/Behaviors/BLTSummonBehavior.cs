@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch.Helpers;
@@ -13,7 +13,7 @@ using TaleWorlds.MountAndBlade;
 
 namespace BLTAdoptAHero
 {
-    internal class BLTSummonBehavior : AutoMissionBehavior<BLTSummonBehavior>
+    internal partial class BLTSummonBehavior : AutoMissionBehavior<BLTSummonBehavior>
     {
         public class RetinueState
         {
@@ -75,6 +75,8 @@ namespace BLTAdoptAHero
         /// <returns></returns>
         public HeroSummonState AddHeroSummonState(Hero hero, bool playerSide, PartyBase party, bool forced, bool withRetinue)
         {
+            var existing = GetHeroSummonState(hero);
+            if (existing != null) return existing;
             var heroSummonState = new HeroSummonState
             {
                 Hero = hero,
@@ -102,6 +104,8 @@ namespace BLTAdoptAHero
                 if (adoptedHero == null)
                     return;
 
+                RegisterBalanceAgent(agent);
+                if (voluntarySpawns.Contains(adoptedHero) && GetHeroSummonState(adoptedHero) == null) return;
                 var heroSummonState = GetHeroSummonState(adoptedHero)
                                    ?? AddHeroSummonState(adoptedHero,
                                        Mission != null
@@ -109,7 +113,7 @@ namespace BLTAdoptAHero
                                        && Mission.PlayerTeam?.IsValid == true
                                        && agent.Team.IsFriendOf(Mission.PlayerTeam),
                                        adoptedHero.GetMapEventParty(),
-                                       forced: true,
+                                       forced: !voluntarySpawns.Contains(adoptedHero),
                                        withRetinue: true);
 
                 // First spawn, so spawn retinue also

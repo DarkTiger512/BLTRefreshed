@@ -531,6 +531,12 @@ namespace BLTAdoptAHero
                 return;
             }
 
+            using var balanceJoin = BLTSummonBehavior.Current.BeginBalanceJoin(adoptedHero, settings.OnPlayerSide);
+            if (balanceJoin == null)
+            {
+                onFailure("{=BLTBalanceJoinBlocked}You cannot switch sides or submit another join while one is pending.".Translate());
+                return;
+            }
             var heroSummonState = BLTSummonBehavior.Current.GetHeroSummonState(adoptedHero);
             if (heroSummonState != null && heroSummonState.WasPlayerSide != settings.OnPlayerSide)
             {
@@ -609,6 +615,17 @@ namespace BLTAdoptAHero
                     party.AddMember(adoptedHero.CharacterObject, 1);
                 }
 
+                balanceJoin.OnFailure = () =>
+                {
+                    BLTAdoptAHeroCustomMissionBehavior.Current.RemoveListeners(adoptedHero);
+                    if (originalParty?.Party != party)
+                    {
+                        party.AddMember(adoptedHero.CharacterObject, -1);
+                        originalParty?.Party?.MemberRoster.AddToCounts(adoptedHero.CharacterObject, 1, insertAtFront: wasLeader);
+                        if (wasLeader) originalParty?.PartyComponent.ChangePartyLeader(adoptedHero);
+                    }
+                };
+
                 BLTAdoptAHeroCustomMissionBehavior.Current.AddListeners(adoptedHero,
                     onSlowTick: dt =>
                     {
@@ -640,6 +657,8 @@ namespace BLTAdoptAHero
                             Log.Trace($"[{nameof(SummonHero)}] moving {adoptedHero} from {party} back to {originalParty?.Party?.ToString() ?? "no party"}");
                         }
 
+                        if (!balanceJoin.Succeeded) return;
+
                         // No rewards when defender pulled back to keep
                         if (Mission.Current?.MissionResult != null && Mission.Current.MissionResult?.BattleState != BattleState.DefenderPullBack)
                         {
@@ -652,7 +671,7 @@ namespace BLTAdoptAHero
 
                             if (settings.OnPlayerSide == Mission.Current.MissionResult.PlayerVictory)
                             {
-                                int actualGold = BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, BLTAdoptAHeroModule.CommonConfig.WinGold, !settings.OnPlayerSide, finalRewardScaling) + settings.GoldCost;
+                                int actualGold = BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, BLTAdoptAHeroModule.CommonConfig.WinGold, finalRewardScaling) + settings.GoldCost;
                                 if (actualGold > 0)
                                 {
                                     BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, actualGold);
@@ -664,7 +683,7 @@ namespace BLTAdoptAHero
                                 if (BLTAdoptAHeroModule.CommonConfig.WinXP > 0)
                                 {
                                     (bool success, string description) = SkillXP.ImproveSkill(adoptedHero,
-                                        BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(BLTAdoptAHeroModule.CommonConfig.WinXP, finalRewardScaling, BLTAdoptAHeroCampaignBehavior.AttackerFactor(!settings.OnPlayerSide)), SkillsEnum.All, auto: true);
+                                        BLTAdoptAHeroModule.CommonConfig.WinXP, SkillsEnum.All, auto: true, rewardMultiplier: finalRewardScaling * BLTSummonBehavior.BalanceFactor(adoptedHero));
                                     if (success)
                                     {
                                         results.Add(finalRewardScaling != 1
@@ -678,7 +697,7 @@ namespace BLTAdoptAHero
                                 if (BLTAdoptAHeroModule.CommonConfig.LoseGold != 0)
                                 {
                                     var delta = BLTAdoptAHeroModule.CommonConfig.LoseGold;
-                                    if (delta < 0) delta = -BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, -delta, !settings.OnPlayerSide);
+                                    if (delta < 0) delta = -BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, -delta, finalRewardScaling);
                                     BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, -delta);
 
                                     var sign = delta > 0 ? Naming.Dec : Naming.Inc;
@@ -687,11 +706,11 @@ namespace BLTAdoptAHero
                                     results.Add($"{sign}{amount}{Naming.Gold}");
                                 }
 
-                                int xp = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(BLTAdoptAHeroModule.CommonConfig.LoseXP, finalRewardScaling, BLTAdoptAHeroCampaignBehavior.AttackerFactor(!settings.OnPlayerSide));
+                                int xp = BLTAdoptAHeroModule.CommonConfig.LoseXP;
                                 if (xp > 0)
                                 {
                                     (bool success, string description) = SkillXP.ImproveSkill(adoptedHero, xp,
-                                        SkillsEnum.All, auto: true);
+                                        SkillsEnum.All, auto: true, rewardMultiplier: finalRewardScaling * BLTSummonBehavior.BalanceFactor(adoptedHero));
                                     if (success)
                                     {
                                         results.Add(finalRewardScaling != 1
@@ -719,8 +738,15 @@ namespace BLTAdoptAHero
             }
 
             bool DeploymentFlag = Mission.Current.Mode is MissionMode.Deployment;
-            BLTSummonBehavior.SpawnAgent(settings.OnPlayerSide, adoptedHero.CharacterObject, heroSummonState.Party,
+            var joinedAgent = BLTSummonBehavior.SpawnAgent(settings.OnPlayerSide, adoptedHero.CharacterObject, heroSummonState.Party,
                 adoptedHero.CharacterObject.IsMounted && BLTSummonBehavior.ShouldBeMounted(formationClass), false, !DeploymentFlag);
+
+            if (joinedAgent == null)
+            {
+                onFailure("{=BLTBalanceSpawnFailed}Failed to spawn your hero; no joining bonus was recorded.".Translate());
+                return;
+            }
+            balanceJoin.Commit();
 
             // Some random stuff that is required to ensure caches are updated
             foreach (var t in Mission.Current.Teams)
@@ -742,7 +768,7 @@ namespace BLTAdoptAHero
 
             BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, -settings.GoldCost);
 
-            onSuccess("{=TvkEBZeY}You have joined the battle!".Translate());
+            onSuccess("{=TvkEBZeY}You have joined the battle!".Translate() + " " + BLTSummonBehavior.Current.LockedBalanceSummary(adoptedHero));
         }
 
         public static IEnumerable<Shout> GetShouts(Settings settings)

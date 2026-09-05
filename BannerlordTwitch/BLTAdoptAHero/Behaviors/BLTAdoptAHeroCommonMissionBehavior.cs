@@ -441,12 +441,13 @@ namespace BLTAdoptAHero
                 xpStreak = (int)(xpStreak * levelBoost);
             }
 
+            double balanceMultiplier = 1;
             if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle)
             {
                 var agent = hero.GetAgent();
                 bool enemy = agent?.Team != null && Mission.PlayerTeam != null && agent.Team.IsEnemyOf(Mission.PlayerTeam);
-                goldStreak = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldStreak, enemy);
-                xpStreak = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(xpStreak, BLTAdoptAHeroCampaignBehavior.AttackerFactor(enemy));
+                goldStreak = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldStreak);
+                balanceMultiplier = BLTSummonBehavior.BalanceFactor(hero);
             }
             if (goldStreak != 0)
             {
@@ -456,11 +457,8 @@ namespace BLTAdoptAHero
 
             if (xpStreak != 0)
             {
-                (bool success, string _) = SkillXP.ImproveSkill(hero, xpStreak, SkillsEnum.All, auto: true);
-                if (success)
-                {
-                    GetHeroMissionState(hero).WonXP += xpStreak;
-                }
+                SkillXP.ImproveSkill(hero, xpStreak, SkillsEnum.All, auto: true, rewardMultiplier: balanceMultiplier,
+                    onAward: amount => GetHeroMissionState(hero).WonXP += amount);
             }
         }
 
@@ -485,11 +483,12 @@ namespace BLTAdoptAHero
                 xpPerKill = (int)(xpPerKill * levelBoost);
             }
 
+            double balanceMultiplier = 1;
             if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle && killer?.GetAdoptedHero() == hero)
             {
                 bool enemy = killer?.Team != null && Mission.PlayerTeam != null && killer.Team.IsEnemyOf(Mission.PlayerTeam);
-                goldPerKill = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldPerKill, enemy);
-                xpPerKill = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(xpPerKill, BLTAdoptAHeroCampaignBehavior.AttackerFactor(enemy));
+                goldPerKill = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldPerKill);
+                balanceMultiplier = BLTSummonBehavior.BalanceFactor(hero);
             }
             if (goldPerKill != 0)
             {
@@ -504,8 +503,8 @@ namespace BLTAdoptAHero
 
             if (xpPerKill != 0)
             {
-                SkillXP.ImproveSkill(hero, xpPerKill, SkillsEnum.All, auto: true);
-                GetHeroMissionState(hero).WonXP += xpPerKill;
+                SkillXP.ImproveSkill(hero, xpPerKill, SkillsEnum.All, auto: true, rewardMultiplier: balanceMultiplier,
+                    onAward: amount => GetHeroMissionState(hero).WonXP += amount);
             }
         }
 
@@ -523,8 +522,8 @@ namespace BLTAdoptAHero
 
             if (xpPerKilled != 0)
             {
-                SkillXP.ImproveSkill(hero, xpPerKilled, SkillsEnum.All, auto: true);
-                GetHeroMissionState(hero).WonXP += xpPerKilled;
+                SkillXP.ImproveSkill(hero, xpPerKilled, SkillsEnum.All, auto: true,
+                    onAward: amount => GetHeroMissionState(hero).WonXP += amount);
             }
         }
 

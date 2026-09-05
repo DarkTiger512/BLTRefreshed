@@ -23,16 +23,11 @@ tier-1 equipment and 50,000 BLT gold. The entire prior gold balance is replaced;
 the eligibility cost is not subtracted in addition. Ordinary inheritance cannot restore
 the cleared record. Existing campaign holdings continue producing their normal income.
 
-Attacking the streamer gives 10% extra personal kill and battle-result gold/XP,
-including positive loss payouts. Fees, refunds, penalties, passive income, transfers,
-retinue rewards and tournament/practice rewards do not get that attacker bonus.
-Fortune boosts positive battle gold; Insight boosts positive XP awarded through BLT's
-skill XP entry point, never direct skill levels. Modifiers multiply and saturate at the
-integer reward limit. Combat damage reduction stacks multiplicatively with other effects.
+Smaller-side voluntary joins can earn a locked [battle balance bonus](BATTLE-BALANCE.md). Both sides use identical rules; there is no permanent attacker advantage.
 
 Configure the nested `Prestige` section of Common Config. Invalid settings block resets
 and disable perk application. Disabling prestige retains saved progression for later
-re-enablement; the separately configured attacker multiplier remains active.
+re-enablement. Battle balance is configured separately.
 
 ## Release validation
 
@@ -50,3 +45,5 @@ Bannerlord assemblies. Before releasing, use a disposable campaign save to verif
 
 No live campaign smoke test is implied by automated build/test success. Do not deploy
 until these campaign checks have been completed. Both branches retain their own config baseline.
+
+Battle participation incentives now use the symmetric [battle balance joining bonus](BATTLE-BALANCE.md), replacing the permanent attacker multiplier.

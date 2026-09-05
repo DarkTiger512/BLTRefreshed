@@ -48,8 +48,12 @@ namespace BLTAdoptAHero
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
         [LocDisplayName("{=BLTPrestigeSettings}Prestige"), LocCategory("Prestige", "{=BLTPrestigeSettings}Prestige"),
-         LocDescription("{=BLTPrestigeSettingsDescription}Campaign prestige requirements, permanent perks, reset profile and attacker rewards."), ExpandableObject]
+         LocDescription("{=BLTPrestigeSettingsDescription}Campaign prestige requirements, permanent perks, reset profile."), ExpandableObject]
         public BLTAdoptAHero.Util.PrestigeSettings Prestige { get; set; } = new();
+
+        [LocDisplayName("{=BLTBalanceSettings}Battle Balance"), LocCategory("BattleBalance", "{=BLTBalanceSettings}Battle Balance"),
+         LocDescription("{=BLTBalanceSettingsDescription}Optional rewards for joining the smaller viewer side."), ExpandableObject]
+        public BLTAdoptAHero.Util.BattleBalanceSettings BattleBalance { get; set; } = new();
 
         #region Static
         private const string ID = "Adopt A Hero - General Config";

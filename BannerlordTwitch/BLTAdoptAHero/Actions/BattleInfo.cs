@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 using BannerlordTwitch;
@@ -127,7 +127,7 @@ namespace BLTAdoptAHero
 
                 }
 
-                onFailure(battlestring);
+                onFailure(battlestring + " " + BLTSummonBehavior.Current?.LockedBalanceSummary(adoptedHero));
                 return;
             }
             else if (agent == null && MissionHelpers.InTournament())
@@ -283,7 +283,7 @@ namespace BLTAdoptAHero
             if (hasAttacked)
                 message += $"- Active combat";
 
-            onSuccess(message);
+            onSuccess(message + " " + BLTSummonBehavior.Current?.LockedBalanceSummary(adoptedHero));
         }
     }
 }

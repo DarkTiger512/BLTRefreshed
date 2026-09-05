@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<base type="string"><tags><tag language="English" /></tags><strings>
+  <string id="BLTBalanceUnavailable" text="Joining bonuses are available during battle missions." />
+  <string id="BLTBalanceJoinBlocked" text="You cannot switch sides or submit another join while one is pending." />
+  <string id="BLTBalanceBoarded" text="You have boarded a ship!" />
+  <string id="BLTBalanceSpawnFailed" text="Failed to spawn your hero; no joining bonus was recorded." />
+  <string id="BLTBalanceOffers" text="Summon {SUMMON} / Attack {ATTACK} — next join offers: Summon +{SB}%, Attack +{AB}% battle gold and XP. Final bonus is set when the join succeeds." />
+  <string id="BLTBalanceLocked" text="Your locked joining bonus: +{BONUS}% battle gold and XP until this mission ends." />
+  <string id="BLTBalanceSettings" text="Battle Balance" />
+  <string id="BLTBalanceSettingsDescription" text="Optional rewards for joining the smaller viewer side." />
+</strings></base>
