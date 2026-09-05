@@ -112,6 +112,7 @@ namespace BLTAdoptAHero.Actions
             Agent spawnedAgent;
             foreach (var ship in ships)
             {
+                Action cancelReservation = null;
                 try
                 {
 
@@ -133,7 +134,23 @@ namespace BLTAdoptAHero.Actions
                         continue;
                     }
 
-                    AddHeroToShip(ship, adoptedHero.CharacterObject, settings.OnPlayerSide);
+                    // Resolve the engine's single-origin removal before enqueueing. A failed
+                    // attempt must not leave a hero waiting to spawn on a later reinforcement tick.
+                    var getTeam = HarmonyLib.AccessTools.Method(typeof(NavalAgentsLogic), "GetTeamAgents");
+                    var teamArgs = new object[] { teamSide, null };
+                    if (getTeam == null || !(bool)getTeam.Invoke(agentsLogic, teamArgs) || teamArgs[1] == null) continue;
+                    var teamAgents = teamArgs[1];
+                    var removeReserved = HarmonyLib.AccessTools.Method(teamAgents.GetType(), "RemoveReservedTroopFromShip",
+                        new[] { typeof(IAgentOriginBase), typeof(MissionShip) });
+                    var removeOrigin = HarmonyLib.AccessTools.Method(teamAgents.GetType(), "RemoveTroopOriginAux");
+                    if (removeReserved == null || removeOrigin == null) continue;
+                    var reservedOrigin = new SimpleAgentOrigin(adoptedHero.CharacterObject, settings.OnPlayerSide);
+                    cancelReservation = () =>
+                    {
+                        removeReserved.Invoke(teamAgents, new object[] { reservedOrigin, ship });
+                        removeOrigin.Invoke(teamAgents, new object[] { reservedOrigin });
+                    };
+                    if (!agentsLogic.AddReservedTroopToShip(reservedOrigin, ship)) continue;
                     agentsLogic.SpawnNextBatch(teamSide, false, null);
                     spawnedAgent = adoptedHero.GetAgent();
                     if (spawnedAgent == null)
@@ -147,8 +164,12 @@ namespace BLTAdoptAHero.Actions
                 }
                 catch
                 {
-
+                    if (adoptedHero.GetAgent() != null) break;
                     continue;
+                }
+                finally
+                {
+                    if (adoptedHero.GetAgent() == null) cancelReservation?.Invoke();
                 }
             }
 

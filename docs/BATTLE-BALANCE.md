@@ -22,3 +22,10 @@ Positive personal kill, kill-streak and battle-result gold/XP receive the locked
 Common Config has a separate `BattleBalance` section with `Enabled`, `MaximumBonus` (finite and nonnegative), and `DenominatorFloor` (positive integer). Invalid settings yield neutral offers. Disabling yields zero new offers; bonuses already earned remain locked for that mission. The obsolete `Prestige.AttackerRewardMultiplier` is ignored and cannot stack. No campaign migration is needed. Existing troop-strength difficulty settings are unchanged.
 
 Before release, test automatic/voluntary spawning, failed naval spawns, knockouts and replacements in a disposable campaign; compare actual reward and chat amounts on land and sea. Deployment is not part of this change.
+
+## Implementation validation
+
+- Release game builds pass against the installed Bannerlord 1.4.8 assemblies on both branches.
+- Engine-independent policy suites pass on both branches: examples, symmetry/caps, configuration, automatic and voluntary participation, failed/duplicate joins, resummons, replacement/ownership reconciliation, cleanup and reward arithmetic.
+- Twitch: 19 frontend tests, 11 backend tests, and the desktop/mobile balance browser scenario pass. The browser scenario uses mocked game messages; it does not validate engine spawning.
+- Live disposable-campaign checks remain required before release: land/naval automatic entrants, failed spawn rollback, retinues, personal/streak/result rewards, positive loss payouts, and exact chat-versus-engine awards. Native Bannerlord UI control is unavailable in this environment, so these checks have not been performed.

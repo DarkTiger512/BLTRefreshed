@@ -387,6 +387,7 @@
     <Content Include="_Module\ModuleData\Languages\SP\strings-powers-SP.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-actions.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-prestige.xml" />
+    <Content Include="_Module\ModuleData\Languages\strings-balance.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-behaviors.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-default-shouts.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-globalconfigs.xml" />

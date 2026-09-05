@@ -51,14 +51,30 @@ namespace BLTAdoptAHero.Util
             pending.Add(owner, join);
             return join;
         }
+        public void ReconcileOwner(string previous, string current)
+        {
+            if (string.IsNullOrWhiteSpace(previous) || string.IsNullOrWhiteSpace(current)
+                || string.Equals(previous, current, StringComparison.OrdinalIgnoreCase)) return;
+            if (entries.TryGetValue(previous, out var entry))
+            {
+                if (!entries.ContainsKey(current)) entries[current] = entry;
+                entries.Remove(previous);
+            }
+            if (pending.TryGetValue(previous, out var join))
+            {
+                pending.Remove(previous);
+                if (!pending.ContainsKey(current)) { join.Rename(current); pending[current] = join; }
+            }
+        }
         public void Clear() { entries.Clear(); pending.Clear(); }
         public sealed class Join : IDisposable
         {
             private BattleBalanceLedger ledger;
-            private readonly string owner;
+            private string owner;
             private readonly bool playerSide;
             internal Join(BattleBalanceLedger ledger, string owner, bool playerSide)
             { this.ledger = ledger; this.owner = owner; this.playerSide = playerSide; }
+            internal void Rename(string current) { owner = current; }
             public Participation Commit(BattleBalanceSettings settings)
             {
                 if (ledger == null || (!ledger.pending.TryGetValue(owner, out var active) || active != this)) throw new InvalidOperationException("Join is no longer pending.");

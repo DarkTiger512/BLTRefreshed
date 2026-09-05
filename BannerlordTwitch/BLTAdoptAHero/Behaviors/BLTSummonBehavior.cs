@@ -87,7 +87,7 @@ namespace BLTAdoptAHero
             };
             heroSummonStates.Add(heroSummonState);
 
-            BLTAdoptAHeroCampaignBehavior.Current.IncreaseParticipationCount(hero, playerSide, forced);
+            if (forced) BLTAdoptAHeroCampaignBehavior.Current.IncreaseParticipationCount(hero, playerSide, forced: true);
 
             return heroSummonState;
         }
@@ -97,7 +97,7 @@ namespace BLTAdoptAHero
             SafeCall(() =>
             {
                 // We only use this for heroes in battle
-                if (CampaignMission.Current.Location != null)
+                if (CampaignMission.Current?.Location != null)
                     return;
 
                 var adoptedHero = agent.GetAdoptedHero();
@@ -243,10 +243,18 @@ namespace BLTAdoptAHero
             onTickActions.Add(action);
         }
 
+        private float balanceRefresh;
         public override void OnMissionTick(float dt)
         {
             SafeCall(() =>
             {
+                balanceRefresh -= dt;
+                if (balanceRefresh <= 0)
+                {
+                    balanceRefresh = .5f;
+                    ReconcileBalance();
+                    PublishBalance();
+                }
                 var actionsToDo = onTickActions.ToList();
                 onTickActions.Clear();
                 foreach (var action in actionsToDo)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Util;
 using BLTAdoptAHero.Util;
@@ -14,6 +15,7 @@ namespace BLTAdoptAHero
         private readonly BattleBalanceLedger balance = new();
         private readonly Dictionary<Hero, string> balanceOwners = new();
         private readonly HashSet<Hero> voluntarySpawns = new();
+        private readonly HashSet<Agent> failedSpawns = new();
         public static BattleBalanceSettings BalanceConfig => BLTAdoptAHeroModule.CommonConfig.BattleBalance;
         public static bool BalanceBattle => Mission.Current != null && Campaign.Current != null
             && !MissionHelpers.InTournament() && !MissionHelpers.InArenaPracticeMission()
@@ -32,16 +34,27 @@ namespace BLTAdoptAHero
         }
         private void RegisterBalanceAgent(Agent agent)
         {
-            if (!BalanceBattle || agent?.IsHuman != true || agent.Team == null || Mission.PlayerTeam == null) return;
+            if (!BalanceBattle || failedSpawns.Contains(agent) || agent?.IsHuman != true || agent.Team == null || Mission.PlayerTeam == null) return;
             var hero = agent.GetAdoptedHero();
             if (hero == null || voluntarySpawns.Contains(hero)) return;
             if (!agent.Team.IsFriendOf(Mission.PlayerTeam) && !agent.Team.IsEnemyOf(Mission.PlayerTeam)) return;
-            balance.RegisterAutomatic(BalanceOwner(hero), agent.Team.IsFriendOf(Mission.PlayerTeam));
+            string owner = BalanceOwner(hero);
+            if (balance.Find(owner) != null) return;
+            balance.RegisterAutomatic(owner, agent.Team.IsFriendOf(Mission.PlayerTeam));
+            PublishBalance();
         }
         public void ReconcileBalance()
         {
             if (!BalanceBattle) return;
             foreach (var agent in Mission.Agents) RegisterBalanceAgent(agent);
+        }
+        partial void PublishBalance();
+        public void ReconcileBalanceOwner(string previous, string current)
+        {
+            balance.ReconcileOwner(previous, current);
+            foreach (var hero in balanceOwners.Where(x => string.Equals(x.Value, previous, StringComparison.OrdinalIgnoreCase)).Select(x => x.Key).ToArray())
+                balanceOwners[hero] = current;
+            PublishBalance();
         }
         public int BalanceSummoners => balance.Summoners;
         public int BalanceAttackers => balance.Attackers;
@@ -71,26 +84,58 @@ namespace BLTAdoptAHero
             private readonly BLTSummonBehavior behavior;
             private readonly Hero hero;
             private readonly BattleBalanceLedger.Join join;
+            private readonly Agent previousAgent;
+            private readonly HeroSummonState previousState;
+            private readonly (Agent agent, AgentState state, int count, float time) previousSpawn;
             public bool Succeeded { get; private set; }
             public Action OnFailure { get; set; }
             internal BalanceJoin(BLTSummonBehavior behavior, Hero hero, BattleBalanceLedger.Join join)
-            { this.behavior = behavior; this.hero = hero; this.join = join; }
+            {
+                this.behavior = behavior; this.hero = hero; this.join = join;
+                previousAgent = hero.GetAgent();
+                previousState = behavior.GetHeroSummonState(hero);
+                if (previousState != null) previousSpawn = (previousState.CurrentAgent, previousState.State, previousState.TimesSummoned, previousState.SummonTime);
+            }
             public void Commit()
             {
                 behavior.ReconcileBalance();
-                join.Commit(BalanceConfig);
+                bool firstParticipation = behavior.balance.Find(behavior.BalanceOwner(hero)) == null;
+                var participation = join.Commit(BalanceConfig);
                 Succeeded = true;
+                if (firstParticipation)
+                    BLTAdoptAHeroCampaignBehavior.Current.IncreaseParticipationCount(hero, participation.PlayerSide, forced: false);
+                behavior.PublishBalance();
             }
             public void Dispose()
             {
                 join.Dispose();
                 behavior.voluntarySpawns.Remove(hero);
-                if (!Succeeded) OnFailure?.Invoke();
-                if (!Succeeded && behavior.GetHeroSummonState(hero) is HeroSummonState state && state.TimesSummoned == 0)
-                    behavior.heroSummonStates.Remove(state);
+                if (!Succeeded)
+                {
+                    // If the engine spawned before a later setup failure, remove only agents
+                    // created by this attempt. Never remove a hero rejected as already present.
+                    var spawned = hero.GetAgent();
+                    if (spawned != null && spawned != previousAgent)
+                    { behavior.failedSpawns.Add(spawned); spawned.FadeOut(true, true); }
+                    if (previousState == null && behavior.GetHeroSummonState(hero) is HeroSummonState created)
+                    {
+                        foreach (var retinue in created.Retinue.Concat(created.Retinue2))
+                        {
+                            if (retinue.Agent?.IsActive() == true) retinue.Agent.FadeOut(true, true);
+                            created.Party?.MemberRoster?.AddToCounts(retinue.Troop, -1);
+                        }
+                        behavior.heroSummonStates.Remove(created);
+                    }
+                    else if (previousState != null)
+                    {
+                        previousState.CurrentAgent = previousSpawn.agent; previousState.State = previousSpawn.state;
+                        previousState.TimesSummoned = previousSpawn.count; previousState.SummonTime = previousSpawn.time;
+                    }
+                    OnFailure?.Invoke();
+                }
             }
         }
         // Called after custom mission result rewards have consumed the locked bonuses.
-        public void ClearBalance() { balance.Clear(); balanceOwners.Clear(); voluntarySpawns.Clear(); }
+        public void ClearBalance() { balance.Clear(); balanceOwners.Clear(); voluntarySpawns.Clear(); failedSpawns.Clear(); }
     }
 }

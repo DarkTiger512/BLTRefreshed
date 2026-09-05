@@ -49,6 +49,22 @@ internal static class BattleBalanceTests
         Check(PrestigePolicy.ScalePositive(101,1.12,1.2,1.5) == 203,"Compose difficulty, balance and prestige before rounding");
         Check(PrestigePolicy.ScalePositive(-101,1.2,1.2) == -101 && PrestigePolicy.ScalePositive(0,1.2) == 0,"Only positive rewards");
         Check(PrestigePolicy.ScalePositive(100,1.2,1.2)+100 == 244,"Refund added outside multiplier");
+        ledger.ReconcileOwner("Viewer", "DisplayName");
+        Check(ledger.Find("Viewer") == null && Near(ledger.Find("DisplayName").Bonus,.05), "Ownership reconciliation preserves locked reward");
+        Check(ledger.Begin("DisplayName",true) == null, "Reconciled owner still cannot switch sides");
+        using (var pending = ledger.Begin("NumericId",true))
+        {
+            ledger.ReconcileOwner("NumericId","NewName");
+            pending.Commit(config);
+            Check(ledger.Find("NewName") != null && ledger.Find("NumericId") == null,"Pending reconciliation preserves unique identity");
+        }
+        var stale = ledger.Begin("Stale",true);
+        ledger.Clear();
+        using (var fresh = ledger.Begin("Stale",true))
+        {
+            stale.Dispose();
+            fresh.Commit(config);
+        }
         ledger.Clear(); Check(ledger.Summoners == 0 && ledger.Attackers == 0 && ledger.Find("Viewer") == null,"Mission cleanup");
         Console.WriteLine("Battle balance policy and lifecycle tests passed.");
     }
