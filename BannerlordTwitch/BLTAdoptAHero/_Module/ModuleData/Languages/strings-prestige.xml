@@ -23,7 +23,7 @@
     <string id="BLTPrestigeSuccess" text="Prestige complete! {NAME}: {PERK} rank {RANK}." />
     <string id="BLTPrestigeFailed" text="Prestige failed; your previous progression was restored. Contact the streamer." />
     <string id="BLTPrestigeSettings" text="Prestige" />
-    <string id="BLTPrestigeSettingsDescription" text="Campaign prestige requirements, permanent perks, reset profile and attacker rewards." />
+    <string id="BLTPrestigeSettingsDescription" text="Campaign prestige requirements, permanent perks, reset profile." />
     <string id="BLTPrestigeMight" text="Might" />
     <string id="BLTPrestigeResilience" text="Resilience" />
     <string id="BLTPrestigeVitality" text="Vitality" />

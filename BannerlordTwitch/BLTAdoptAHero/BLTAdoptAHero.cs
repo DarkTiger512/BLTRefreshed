@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -255,7 +255,7 @@ namespace BLTAdoptAHero
                         var hero = behavior?.GetAdoptedHero(userName);
                         return hero == null
                             ? new IntegrationViewerSnapshot { Adopted = false }
-                            : new IntegrationViewerSnapshot { Adopted = true, HeroName = hero.Name.ToString(), Gold = behavior.GetHeroGold(hero), Prestige = behavior.GetPrestigeSnapshot(hero) };
+                            : new IntegrationViewerSnapshot { Adopted = true, HeroName = hero.Name.ToString(), Gold = behavior.GetHeroGold(hero), Prestige = behavior.GetPrestigeSnapshot(hero), BattleBalance = BLTSummonBehavior.Current?.ViewerBalance(hero) };
                     });
                     IntegrationIdentityProvider.Reconcile = (userId, displayName) =>
                         BLTAdoptAHeroCampaignBehavior.Current?.ReconcileIntegrationOwner(userId, displayName);

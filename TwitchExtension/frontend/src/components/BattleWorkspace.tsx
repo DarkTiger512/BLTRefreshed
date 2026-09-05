@@ -7,6 +7,8 @@ import { useI18n } from "../i18n";
 
 interface Props {
   mission: GameState["mission"];
+  viewer?: GameState["viewer"];
+  connected?: boolean;
   actions: ManifestAction[];
   identity: ViewerIdentity;
   cooldowns: Record<string, number>;
@@ -45,7 +47,7 @@ function HeroHud({ hero, tournament }: { hero: MissionCombatant; tournament: boo
   </article>;
 }
 
-export function BattleWorkspace({ mission, actions, identity, cooldowns, busy, onRequestIdentity, onSubmit }: Props) {
+export function BattleWorkspace({ mission, viewer, connected, actions, identity, cooldowns, busy, onRequestIdentity, onSubmit }: Props) {
   const { t } = useI18n();
   const ownIndex = mission.combatants.findIndex(hero => hero.name.localeCompare(identity.displayName, undefined, { sensitivity: "accent" }) === 0);
   const ownHero = ownIndex >= 0 ? mission.combatants[ownIndex] : undefined;
@@ -62,7 +64,7 @@ export function BattleWorkspace({ mission, actions, identity, cooldowns, busy, o
       <section className="personal-battle-hud" aria-label={t("battle.yourHero")}>
         <h2>{t("battle.yourHero")}</h2>
         {ownHero ? <HeroHud hero={ownHero} tournament={mission.kind === "tournament"} /> : <div className="viewer-absent"><Shield /><div><strong>{t("battle.notDeployed")}</strong><span>{t("battle.notDeployedHint")}</span></div></div>}
-        <BattleCommandStrip actions={actions} identity={identity} mission={mission} cooldowns={cooldowns} busy={busy} onRequestIdentity={onRequestIdentity} onSubmit={onSubmit} />
+        <BattleCommandStrip viewer={viewer} connected={connected} actions={actions} identity={identity} mission={mission} cooldowns={cooldowns} busy={busy} onRequestIdentity={onRequestIdentity} onSubmit={onSubmit} />
       </section>
       <section className="minimal-battle-roster" aria-label={t("battle.roster")}>
         <h2>{t("battle.roster")} <span>{mission.combatants.length - (ownHero ? 1 : 0)}</span></h2>

@@ -24,7 +24,7 @@ internal static class PrestigeTests
             Check(!PrestigePolicy.CanChoose(settings, progress, perk), "Capped perk rejected.");
         }
         Check(progress.Count == 50 && PrestigePolicy.Perks.All(p => !PrestigePolicy.CanChoose(settings, progress, p)), "Stop after 50 prestiges.");
-        Check(PrestigePolicy.ScalePositive(1000, 1.1) == 1100, "Attacker bonus must be exactly ten percent before rounding.");
+        Check(PrestigePolicy.ScalePositive(1000, 1.1) == 1100, "Multipliers preserve exact percentages before rounding.");
         Check(PrestigePolicy.ScalePositive(1000, 1.1, 1.2, 1.5) == 1980, "Different modifiers multiply.");
         Check(PrestigePolicy.ScalePositive(1, 1.1, 1.2) == 1, "Round once at the end.");
         Check(PrestigePolicy.ScalePositive(-100, 1.1, 1.2) == -100 && PrestigePolicy.ScalePositive(0, 1.1) == 0, "Never boost penalties or zero rewards.");

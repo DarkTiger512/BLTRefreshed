@@ -5,6 +5,10 @@ export type Locale = typeof supportedLocales[number];
 export type MessageValues = Record<string, string | number>;
 
 const en = {
+  "balance.counts": "Summon {summon} / Attack {attack}",
+  "balance.locked": "Your locked bonus: +{bonus}% gold & XP",
+  "balance.offer": "Next join +{bonus}%",
+  "balance.estimate": "Offers are estimates. The game locks your battle gold and XP bonus when you successfully join.",
   "prestige.title": "Prestige", "prestige.back": "Back to commands", "prestige.shortcut": "Start again, keep permanent perks",
   "prestige.offline": "Bannerlord is offline. Reconnect before prestiging.", "prestige.identity": "Share your Twitch identity to prestige.",
   "prestige.adopt": "Adopt a hero to begin prestige progression.", "prestige.unavailable": "Prestige information is unavailable. The game must support prestige and send your hero state.",

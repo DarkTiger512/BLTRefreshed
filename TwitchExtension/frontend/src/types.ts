@@ -46,7 +46,7 @@ export interface PrestigeSnapshot {
   count: number; maximum: number; runKills: number; requiredKills: number; requiredGold: number;
   eligible: boolean; blockingReason?: string; resetSummary: string; perks: PrestigePerk[];
 }
-export interface ViewerState { adopted: boolean; heroName?: string; gold?: number; prestige?: PrestigeSnapshot }
+export interface ViewerState { adopted: boolean; heroName?: string; gold?: number; prestige?: PrestigeSnapshot; battleBalance?: { missionId: string; lockedBonus: number } }
 
 export interface ViewerIdentity {
   token: string;
@@ -103,7 +103,9 @@ export interface MissionCombatant {
   ammoCurrent: number;
   ammoMaximum: number;
 }
+export interface BattleBalanceSnapshot { missionId: string; summoners: number; attackers: number; summonOffer: number; attackOffer: number }
 export interface MissionState {
+  battleBalance?: BattleBalanceSnapshot;
   active: boolean;
   kind: MissionKind;
   revision: number;

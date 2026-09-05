@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -75,7 +75,7 @@ namespace BLTAdoptAHero.UI
             {
                 GlobalHost.ConnectionManager.GetHubContext<MissionInfoHub>()
                     .Clients.All.update(heroState);
-                var supported = MissionHelpers.InTournament() || MissionHelpers.InFieldBattleMission() || MissionHelpers.InSiegeMission();
+                var supported = MissionHelpers.InTournament() || MissionHelpers.InFieldBattleMission() || MissionHelpers.InSiegeMission() || BLTSummonBehavior.BalanceBattle;
                 if (supported)
                 {
                     IntegrationBattleProvider.Update(MissionHelpers.InTournament() ? "tournament" : "battle", Mission.Current?.IsDeploymentFinished == true,
@@ -90,7 +90,7 @@ namespace BLTAdoptAHero.UI
                             DeadEliteRetinue = state.DeadRetinue2, RetinueKills = state.RetinueKills,
                             GoldEarned = state.GoldEarned, XPEarned = state.XPEarned,
                             AmmoCurrent = state.AmmoCurrent, AmmoMaximum = state.AmmoMaximum,
-                        }));
+                        }), BLTSummonBehavior.Current?.PublishedBalance);
                 }
             }
         }

@@ -1,11 +1,15 @@
 import { Flag, HeartPulse, ShieldPlus, Swords, UserPlus, Zap } from "lucide-react";
 import { useEffect, useRef, useState, type ComponentType, type CSSProperties, type SVGProps } from "react";
+import { useI18n } from "../i18n";
+import "./BattleBalance.css";
 import type { GameState, ManifestAction, ViewerIdentity } from "../types";
 
 interface Props {
   actions: ManifestAction[];
   identity: ViewerIdentity;
   mission: GameState["mission"];
+  viewer?: GameState["viewer"];
+  connected?: boolean;
   cooldowns: Record<string, number>;
   busy: boolean;
   onRequestIdentity(): void;
@@ -25,7 +29,11 @@ function commandLabel(action: ManifestAction) {
   return action.legacyName.charAt(0).toUpperCase() + action.legacyName.slice(1);
 }
 
-export function BattleCommandStrip({ actions, identity, mission, cooldowns, busy, onRequestIdentity, onSubmit }: Props) {
+export function BattleCommandStrip({ actions, identity, mission, viewer, connected, cooldowns, busy, onRequestIdentity, onSubmit }: Props) {
+  const { t } = useI18n();
+  const balance = connected && mission.active && mission.kind === "battle" ? mission.battleBalance : undefined;
+  const locked = balance && viewer?.battleBalance?.missionId === balance.missionId ? viewer.battleBalance.lockedBonus : undefined;
+  const percent = (value: number) => (value * 100).toFixed(1).replace(/\.0$/, "");
   const [tooltipId, setTooltipId] = useState<string>();
   const [formationOpen, setFormationOpen] = useState(false);
   const timer = useRef<number | undefined>(undefined);
@@ -67,7 +75,9 @@ export function BattleCommandStrip({ actions, identity, mission, cooldowns, busy
     onSubmit(action, {});
   }
 
-  return <div className="battle-command-strip" ref={strip} aria-label="Battle commands">
+  return <div className="battle-balance-commands">
+    {balance ? <div className="battle-balance-summary" aria-live="polite"><span>{t("balance.counts", { summon: balance.summoners, attack: balance.attackers })}</span>{locked !== undefined ? <strong>{t("balance.locked", { bonus: percent(locked) })}</strong> : null}<small>{t("balance.estimate")}</small></div> : null}
+    <div className="battle-command-strip" ref={strip} aria-label="Battle commands">
     {battleActions.map(action => {
       const Icon = icons[action.id] ?? ShieldPlus;
       const reason = mission.actionAvailability[action.id];
@@ -75,13 +85,15 @@ export function BattleCommandStrip({ actions, identity, mission, cooldowns, busy
       const blocked = busy || Boolean(reason) || cooldown > 0;
       const label = commandLabel(action);
       const tooltipVisible = tooltipId === action.id;
+      const offer = balance && (action.id === "command.summon" ? balance.summonOffer : action.id === "command.attack" ? balance.attackOffer : undefined);
       return <div className={`battle-command-slot command-${action.legacyName}`} key={action.id}>
         <button type="button" className="battle-command-button" aria-label={`${label}${reason ? ` unavailable: ${reason}` : cooldown > 0 ? ` cooldown ${Math.ceil(cooldown)} seconds` : ""}`} aria-disabled={blocked} aria-expanded={action.id === "command.formation" ? formationOpen : undefined} onClick={() => activate(action, blocked)} onMouseEnter={() => showLater(action.id)} onMouseLeave={hideTooltip} onFocus={() => setTooltipId(action.id)} onBlur={event => { if (!event.currentTarget.parentElement?.contains(event.relatedTarget)) hideTooltip(); }}>
           <Icon aria-hidden="true" /><span>{label}</span>{cooldown > 0 ? <i className="command-cooldown" style={{ "--cooldown": `${Math.min(100, cooldown)}%` } as CSSProperties}>{Math.ceil(cooldown)}</i> : null}
         </button>
+        {offer !== undefined ? <span className={`battle-balance-offer ${offer > 0 ? "available" : ""}`}>{t("balance.offer", { bonus: percent(offer) })}</span> : null}
         {tooltipVisible ? <div className="battle-command-tooltip" role="tooltip"><strong>{label}</strong><p>{action.description}</p><span className={blocked ? "blocked" : "ready"}>{reason ?? (cooldown > 0 ? `Cooldown · ${Math.ceil(cooldown)}s` : "Ready")}</span></div> : null}
         {action.id === "command.formation" && formationOpen ? <div className="formation-popover" role="dialog" aria-label="Choose formation"><strong>Formation</strong>{formationOptions.map(option => <button type="button" key={option.value} onClick={() => { onSubmit(action, { formation: option.value }); setFormationOpen(false); }}><Flag aria-hidden="true" />{option.label}</button>)}</div> : null}
       </div>;
     })}
-  </div>;
+  </div></div>;
 }

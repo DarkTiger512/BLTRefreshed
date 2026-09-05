@@ -1,4 +1,4 @@
-﻿using BannerlordTwitch;
+using BannerlordTwitch;
 using BannerlordTwitch.Helpers;
 using BannerlordTwitch.Localization;
 using BannerlordTwitch.Util;
@@ -29,6 +29,12 @@ namespace BLTAdoptAHero.Actions
             if (!Mission.Current.IsNavalBattle)
             {
                 onFailure("Not a naval battle!");
+                return;
+            }
+            using var balanceJoin = BLTSummonBehavior.Current.BeginBalanceJoin(adoptedHero, settings.OnPlayerSide);
+            if (balanceJoin == null)
+            {
+                onFailure("{=BLTBalanceJoinBlocked}You cannot switch sides or submit another join while one is pending.".Translate());
                 return;
             }
             var heroSummonState = BLTSummonBehavior.Current.GetHeroSummonState(adoptedHero);
@@ -87,9 +93,26 @@ namespace BLTAdoptAHero.Actions
                 onFailure("No deployable ships available for that side.");
                 return;
             }
+                var party = adoptedHero.GetMapEventParty() ?? settings.OnPlayerSide switch
+                {
+                    true when Mission.Current.PlayerTeam?.ActiveAgents.Any() == true => PartyBase.MainParty,
+                    false when Mission.Current.PlayerEnemyTeam?.ActiveAgents.Any() == true => Mission.Current
+                        .PlayerEnemyTeam?.TeamAgents?.Select(a => a.Origin?.BattleCombatant as PartyBase)
+                        .Where(p => p != null)
+                        .SelectRandom(),
+                    _ => null
+                };
+
+                if (party == null)
+                {
+                    onFailure("{=jtqEqonE}Could not find a party for you to join!".Translate());
+                    return;
+                }
+
             Agent spawnedAgent;
             foreach (var ship in ships)
             {
+                Action cancelReservation = null;
                 try
                 {
 
@@ -111,7 +134,23 @@ namespace BLTAdoptAHero.Actions
                         continue;
                     }
 
-                    AddHeroToShip(ship, adoptedHero.CharacterObject, settings.OnPlayerSide);
+                    // Resolve the engine's single-origin removal before enqueueing. A failed
+                    // attempt must not leave a hero waiting to spawn on a later reinforcement tick.
+                    var getTeam = HarmonyLib.AccessTools.Method(typeof(NavalAgentsLogic), "GetTeamAgents");
+                    var teamArgs = new object[] { teamSide, null };
+                    if (getTeam == null || !(bool)getTeam.Invoke(agentsLogic, teamArgs) || teamArgs[1] == null) continue;
+                    var teamAgents = teamArgs[1];
+                    var removeReserved = HarmonyLib.AccessTools.Method(teamAgents.GetType(), "RemoveReservedTroopFromShip",
+                        new[] { typeof(IAgentOriginBase), typeof(MissionShip) });
+                    var removeOrigin = HarmonyLib.AccessTools.Method(teamAgents.GetType(), "RemoveTroopOriginAux");
+                    if (removeReserved == null || removeOrigin == null) continue;
+                    var reservedOrigin = new SimpleAgentOrigin(adoptedHero.CharacterObject, settings.OnPlayerSide);
+                    cancelReservation = () =>
+                    {
+                        removeReserved.Invoke(teamAgents, new object[] { reservedOrigin, ship });
+                        removeOrigin.Invoke(teamAgents, new object[] { reservedOrigin });
+                    };
+                    if (!agentsLogic.AddReservedTroopToShip(reservedOrigin, ship)) continue;
                     agentsLogic.SpawnNextBatch(teamSide, false, null);
                     spawnedAgent = adoptedHero.GetAgent();
                     if (spawnedAgent == null)
@@ -125,8 +164,12 @@ namespace BLTAdoptAHero.Actions
                 }
                 catch
                 {
-
+                    if (adoptedHero.GetAgent() != null) break;
                     continue;
+                }
+                finally
+                {
+                    if (adoptedHero.GetAgent() == null) cancelReservation?.Invoke();
                 }
             }
 
@@ -136,8 +179,8 @@ namespace BLTAdoptAHero.Actions
             }
             catch (Exception ex)
             {
-                onFailure($"Naval spawn flow failed: {ex.Message}");
-                return;
+                if (adoptedHero.GetAgent() == null)
+                { onFailure($"Naval spawn flow failed: {ex.Message}"); return; }
             }
 
             spawnedAgent = adoptedHero.GetAgent();
@@ -150,22 +193,6 @@ namespace BLTAdoptAHero.Actions
             bool firstSummon = heroSummonState == null;
             if (firstSummon)
             {
-                var party = adoptedHero.GetMapEventParty() ?? settings.OnPlayerSide switch
-                {
-                    true when Mission.Current.PlayerTeam?.ActiveAgents.Any() == true => PartyBase.MainParty,
-                    false when Mission.Current.PlayerEnemyTeam?.ActiveAgents.Any() == true => Mission.Current
-                        .PlayerEnemyTeam?.TeamAgents?.Select(a => a.Origin?.BattleCombatant as PartyBase)
-                        .Where(p => p != null)
-                        .SelectRandom(),
-                    _ => null
-                };
-
-                if (party == null)
-                {
-                    onFailure("{=jtqEqonE}Could not find a party for you to join!".Translate());
-                    return;
-                }
-
                 var originalParty = adoptedHero.PartyBelongedTo;
                 int oldHP = adoptedHero.HitPoints;
                 bool wasLeader = adoptedHero.PartyBelongedTo?.LeaderHero == adoptedHero;
@@ -174,6 +201,17 @@ namespace BLTAdoptAHero.Actions
                     originalParty?.Party?.AddMember(adoptedHero.CharacterObject, -1);
                     party.AddMember(adoptedHero.CharacterObject, 1);
                 }
+
+                balanceJoin.OnFailure = () =>
+                {
+                    BLTAdoptAHeroCustomMissionBehavior.Current.RemoveListeners(adoptedHero);
+                    if (originalParty?.Party != party)
+                    {
+                        party.AddMember(adoptedHero.CharacterObject, -1);
+                        originalParty?.Party?.MemberRoster.AddToCounts(adoptedHero.CharacterObject, 1, insertAtFront: wasLeader);
+                        if (wasLeader) originalParty?.PartyComponent.ChangePartyLeader(adoptedHero);
+                    }
+                };
 
                 BLTAdoptAHeroCustomMissionBehavior.Current.AddListeners(adoptedHero,
                     onSlowTick: dt =>
@@ -207,6 +245,8 @@ namespace BLTAdoptAHero.Actions
                             Log.Trace($"[{nameof(SummonHero)}] moving {adoptedHero} from {party} back to {originalParty?.Party?.ToString() ?? "no party"}");
                         }
 
+                        if (!balanceJoin.Succeeded) return;
+
                         // No rewards when defender pulled back to keep
                         if (Mission.Current?.MissionResult != null && Mission.Current.MissionResult?.BattleState != BattleState.DefenderPullBack)
                         {
@@ -219,7 +259,7 @@ namespace BLTAdoptAHero.Actions
 
                             if (settings.OnPlayerSide == Mission.Current.MissionResult.PlayerVictory)
                             {
-                                int actualGold = BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, BLTAdoptAHeroModule.CommonConfig.WinGold, !settings.OnPlayerSide, finalRewardScaling) + settings.GoldCost;
+                                int actualGold = BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, BLTAdoptAHeroModule.CommonConfig.WinGold, finalRewardScaling) + settings.GoldCost;
                                 if (actualGold > 0)
                                 {
                                     BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, actualGold);
@@ -231,7 +271,7 @@ namespace BLTAdoptAHero.Actions
                                 if (BLTAdoptAHeroModule.CommonConfig.WinXP > 0)
                                 {
                                     (bool success, string description) = SkillXP.ImproveSkill(adoptedHero,
-                                        BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(BLTAdoptAHeroModule.CommonConfig.WinXP, finalRewardScaling, BLTAdoptAHeroCampaignBehavior.AttackerFactor(!settings.OnPlayerSide)), SkillsEnum.All, auto: true);
+                                        BLTAdoptAHeroModule.CommonConfig.WinXP, SkillsEnum.All, auto: true, rewardMultiplier: finalRewardScaling * BLTSummonBehavior.BalanceFactor(adoptedHero));
                                     if (success)
                                     {
                                         results.Add(finalRewardScaling != 1
@@ -245,7 +285,7 @@ namespace BLTAdoptAHero.Actions
                                 if (BLTAdoptAHeroModule.CommonConfig.LoseGold != 0)
                                 {
                                     var delta = BLTAdoptAHeroModule.CommonConfig.LoseGold;
-                                    if (delta < 0) delta = -BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, -delta, !settings.OnPlayerSide);
+                                    if (delta < 0) delta = -BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, -delta, finalRewardScaling);
                                     BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, -delta);
 
                                     var sign = delta > 0 ? Naming.Dec : Naming.Inc;
@@ -254,11 +294,11 @@ namespace BLTAdoptAHero.Actions
                                     results.Add($"{sign}{amount}{Naming.Gold}");
                                 }
 
-                                int xp = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(BLTAdoptAHeroModule.CommonConfig.LoseXP, finalRewardScaling, BLTAdoptAHeroCampaignBehavior.AttackerFactor(!settings.OnPlayerSide));
+                                int xp = BLTAdoptAHeroModule.CommonConfig.LoseXP;
                                 if (xp > 0)
                                 {
                                     (bool success, string description) = SkillXP.ImproveSkill(adoptedHero, xp,
-                                        SkillsEnum.All, auto: true);
+                                        SkillsEnum.All, auto: true, rewardMultiplier: finalRewardScaling * BLTSummonBehavior.BalanceFactor(adoptedHero));
                                     if (success)
                                     {
                                         results.Add(finalRewardScaling != 1
@@ -280,6 +320,8 @@ namespace BLTAdoptAHero.Actions
                 heroSummonState = BLTSummonBehavior.Current.AddHeroSummonState(adoptedHero, settings.OnPlayerSide, party, forced: false, settings.WithRetinue);
             }
 
+            if (firstSummon) BLTSummonBehavior.Current.OnAgentBuild(spawnedAgent, null);
+            balanceJoin.Commit();
             //BLTRemoveAgentsBehavior.Current.Add(adoptedHero);
 
             foreach (var t in Mission.Current.Teams)
@@ -307,7 +349,7 @@ namespace BLTAdoptAHero.Actions
                 : GetShouts(settings).SelectRandomWeighted(shout => shout.Weight)?.Text?.ToString() ?? "...",
                 adoptedHero.CharacterObject, settings.AlertSound);
 
-            onSuccess("You have boarded a ship!");
+            onSuccess("{=BLTBalanceBoarded}You have boarded a ship!".Translate() + " " + BLTSummonBehavior.Current.LockedBalanceSummary(adoptedHero));
         }
     }
 }

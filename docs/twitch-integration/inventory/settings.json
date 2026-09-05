@@ -2548,8 +2548,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Count",
-    "type": "int",
+    "path": "ManagedIntegrationClient.BattleBalance",
+    "type": "IntegrationViewerBalance",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2557,12 +2557,12 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 111
+      "line": 107
     }
   },
   {
-    "path": "ManagedIntegrationClient.Maximum",
-    "type": "int",
+    "path": "ManagedIntegrationClient.MissionId",
+    "type": "string",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2574,8 +2574,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.RunKills",
-    "type": "int",
+    "path": "ManagedIntegrationClient.LockedBonus",
+    "type": "double",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2587,46 +2587,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.RequiredKills",
-    "type": "long",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 114
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.RequiredGold",
-    "type": "long",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 115
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.Eligible",
-    "type": "bool",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 116
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.BlockingReason",
+    "path": "ManagedIntegrationClient.MissionId",
     "type": "string",
     "default": null,
     "displayName": null,
@@ -2639,8 +2600,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.ResetSummary",
-    "type": "string",
+    "path": "ManagedIntegrationClient.Summoners",
+    "type": "int",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2652,8 +2613,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Perks",
-    "type": "IntegrationPrestigePerk[]",
+    "path": "ManagedIntegrationClient.Attackers",
+    "type": "int",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2665,8 +2626,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Id",
-    "type": "string",
+    "path": "ManagedIntegrationClient.SummonOffer",
+    "type": "double",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2674,12 +2635,12 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 123
+      "line": 120
     }
   },
   {
-    "path": "ManagedIntegrationClient.Name",
-    "type": "string",
+    "path": "ManagedIntegrationClient.AttackOffer",
+    "type": "double",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2687,24 +2648,11 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 124
+      "line": 121
     }
   },
   {
-    "path": "ManagedIntegrationClient.Description",
-    "type": "string",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 125
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.Rank",
+    "path": "ManagedIntegrationClient.Count",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2717,7 +2665,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Cap",
+    "path": "ManagedIntegrationClient.Maximum",
     "type": "int",
     "default": null,
     "displayName": null,
@@ -2730,7 +2678,59 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Name",
+    "path": "ManagedIntegrationClient.RunKills",
+    "type": "int",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 128
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.RequiredKills",
+    "type": "long",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 129
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.RequiredGold",
+    "type": "long",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 130
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Eligible",
+    "type": "bool",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 131
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.BlockingReason",
     "type": "string",
     "default": null,
     "displayName": null,
@@ -2743,7 +2743,7 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Handler",
+    "path": "ManagedIntegrationClient.ResetSummary",
     "type": "string",
     "default": null,
     "displayName": null,
@@ -2756,8 +2756,8 @@
     }
   },
   {
-    "path": "ManagedIntegrationClient.Help",
-    "type": "string",
+    "path": "ManagedIntegrationClient.Perks",
+    "type": "IntegrationPrestigePerk[]",
     "default": null,
     "displayName": null,
     "description": null,
@@ -2766,45 +2766,6 @@
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
       "line": 134
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.HelpKey",
-    "type": "string",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 135
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.ModeratorOnly",
-    "type": "bool",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 136
-    }
-  },
-  {
-    "path": "ManagedIntegrationClient.HideHelp",
-    "type": "bool",
-    "default": null,
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 137
     }
   },
   {
@@ -2817,7 +2778,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 157
+      "line": 138
     }
   },
   {
@@ -2830,7 +2791,150 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 158
+      "line": 139
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Description",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 140
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Rank",
+    "type": "int",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 141
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Cap",
+    "type": "int",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 142
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Name",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 147
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Handler",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 148
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Help",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 149
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.HelpKey",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 150
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.ModeratorOnly",
+    "type": "bool",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 151
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.HideHelp",
+    "type": "bool",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 152
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Id",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 172
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.Name",
+    "type": "string",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 173
     }
   },
   {
@@ -2843,7 +2947,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 159
+      "line": 174
     }
   },
   {
@@ -2856,7 +2960,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 160
+      "line": 175
     }
   },
   {
@@ -2869,7 +2973,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 161
+      "line": 176
     }
   },
   {
@@ -2882,7 +2986,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 162
+      "line": 177
     }
   },
   {
@@ -2895,7 +2999,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 163
+      "line": 178
     }
   },
   {
@@ -2908,7 +3012,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 164
+      "line": 179
     }
   },
   {
@@ -2921,7 +3025,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 165
+      "line": 180
     }
   },
   {
@@ -2934,7 +3038,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 166
+      "line": 181
     }
   },
   {
@@ -2947,7 +3051,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 167
+      "line": 182
     }
   },
   {
@@ -2960,7 +3064,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 168
+      "line": 183
     }
   },
   {
@@ -2973,7 +3077,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 169
+      "line": 184
     }
   },
   {
@@ -2986,7 +3090,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 170
+      "line": 185
     }
   },
   {
@@ -2999,7 +3103,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 171
+      "line": 186
     }
   },
   {
@@ -3012,7 +3116,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 172
+      "line": 187
     }
   },
   {
@@ -3025,7 +3129,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 173
+      "line": 188
     }
   },
   {
@@ -3038,7 +3142,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 174
+      "line": 189
     }
   },
   {
@@ -3051,7 +3155,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 175
+      "line": 190
     }
   },
   {
@@ -3064,7 +3168,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 176
+      "line": 191
     }
   },
   {
@@ -3077,7 +3181,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 177
+      "line": 192
     }
   },
   {
@@ -3090,7 +3194,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 178
+      "line": 193
     }
   },
   {
@@ -3103,7 +3207,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 183
+      "line": 198
     }
   },
   {
@@ -3116,7 +3220,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 184
+      "line": 199
     }
   },
   {
@@ -3129,7 +3233,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 185
+      "line": 200
     }
   },
   {
@@ -3142,7 +3246,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 186
+      "line": 201
     }
   },
   {
@@ -3155,7 +3259,20 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
-      "line": 187
+      "line": 202
+    }
+  },
+  {
+    "path": "ManagedIntegrationClient.BattleBalance",
+    "type": "IntegrationBalanceSnapshot",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/ManagedIntegrationClient.cs",
+      "line": 203
     }
   },
   {
@@ -7172,7 +7289,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 817
+      "line": 843
     }
   },
   {
@@ -7185,7 +7302,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 821
+      "line": 847
     }
   },
   {
@@ -7198,7 +7315,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 825
+      "line": 851
     }
   },
   {
@@ -7211,7 +7328,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 829
+      "line": 855
     }
   },
   {
@@ -7224,7 +7341,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 833
+      "line": 859
     }
   },
   {
@@ -7237,7 +7354,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 837
+      "line": 863
     }
   },
   {
@@ -7250,7 +7367,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 841
+      "line": 867
     }
   },
   {
@@ -7263,7 +7380,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Actions/SummonHero.cs",
-      "line": 845
+      "line": 871
     }
   },
   {
@@ -9317,7 +9434,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1338
+      "line": 1339
     }
   },
   {
@@ -9330,7 +9447,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1344
+      "line": 1345
     }
   },
   {
@@ -9343,7 +9460,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1350
+      "line": 1351
     }
   },
   {
@@ -9356,7 +9473,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1356
+      "line": 1357
     }
   },
   {
@@ -9369,7 +9486,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1362
+      "line": 1363
     }
   },
   {
@@ -9382,7 +9499,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1368
+      "line": 1369
     }
   },
   {
@@ -9395,7 +9512,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1374
+      "line": 1375
     }
   },
   {
@@ -9408,7 +9525,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1395
+      "line": 1396
     }
   },
   {
@@ -9421,7 +9538,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1401
+      "line": 1402
     }
   },
   {
@@ -9434,7 +9551,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1407
+      "line": 1408
     }
   },
   {
@@ -9447,7 +9564,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1413
+      "line": 1414
     }
   },
   {
@@ -9460,7 +9577,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1419
+      "line": 1420
     }
   },
   {
@@ -9473,7 +9590,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1425
+      "line": 1426
     }
   },
   {
@@ -9486,7 +9603,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1431
+      "line": 1432
     }
   },
   {
@@ -9499,7 +9616,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1660
+      "line": 1661
     }
   },
   {
@@ -9512,7 +9629,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1666
+      "line": 1667
     }
   },
   {
@@ -9525,7 +9642,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1672
+      "line": 1673
     }
   },
   {
@@ -9538,7 +9655,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1678
+      "line": 1679
     }
   },
   {
@@ -9551,7 +9668,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1684
+      "line": 1685
     }
   },
   {
@@ -9564,7 +9681,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1690
+      "line": 1691
     }
   },
   {
@@ -9577,7 +9694,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1696
+      "line": 1697
     }
   },
   {
@@ -9590,7 +9707,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1717
+      "line": 1718
     }
   },
   {
@@ -9603,7 +9720,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1723
+      "line": 1724
     }
   },
   {
@@ -9616,7 +9733,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1729
+      "line": 1730
     }
   },
   {
@@ -9629,7 +9746,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1735
+      "line": 1736
     }
   },
   {
@@ -9642,7 +9759,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1741
+      "line": 1742
     }
   },
   {
@@ -9655,7 +9772,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1747
+      "line": 1748
     }
   },
   {
@@ -9668,7 +9785,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.cs",
-      "line": 1753
+      "line": 1754
     }
   },
   {
@@ -10111,6 +10228,45 @@
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTLogsBehavior.cs",
       "line": 31
+    }
+  },
+  {
+    "path": "BLTSummonBehavior.Balance.Succeeded",
+    "type": "bool",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSummonBehavior.Balance.cs",
+      "line": 90
+    }
+  },
+  {
+    "path": "BLTSummonBehavior.Balance.OnFailure",
+    "type": "Action",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSummonBehavior.Balance.cs",
+      "line": 91
+    }
+  },
+  {
+    "path": "BLTSummonBehavior.BalanceIntegration.PublishedBalance",
+    "type": "IntegrationBalanceSnapshot",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSummonBehavior.BalanceIntegration.cs",
+      "line": 10
     }
   },
   {
@@ -11782,12 +11938,25 @@
     "type": "BLTAdoptAHero.Util.PrestigeSettings",
     "default": "new()",
     "displayName": "{=BLTPrestigeSettings}Prestige",
-    "description": "{=BLTPrestigeSettingsDescription}Campaign prestige requirements, permanent perks, reset profile and attacker rewards.",
+    "description": "{=BLTPrestigeSettingsDescription}Campaign prestige requirements, permanent perks, reset profile.",
     "constraints": null,
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
       "line": 52
+    }
+  },
+  {
+    "path": "GlobalCommonConfig.BattleBalance",
+    "type": "BLTAdoptAHero.Util.BattleBalanceSettings",
+    "default": "new()",
+    "displayName": "{=BLTBalanceSettings}Battle Balance",
+    "description": "{=BLTBalanceSettingsDescription}Optional rewards for joining the smaller viewer side.",
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
+      "line": 56
     }
   },
   {
@@ -11800,7 +11969,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 61
+      "line": 65
     }
   },
   {
@@ -11813,7 +11982,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 71
+      "line": 75
     }
   },
   {
@@ -11826,7 +11995,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 77
+      "line": 81
     }
   },
   {
@@ -11839,7 +12008,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 83
+      "line": 87
     }
   },
   {
@@ -11852,7 +12021,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 89
+      "line": 93
     }
   },
   {
@@ -11865,7 +12034,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 95
+      "line": 99
     }
   },
   {
@@ -11878,7 +12047,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 101
+      "line": 105
     }
   },
   {
@@ -11891,7 +12060,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 106
+      "line": 110
     }
   },
   {
@@ -11904,7 +12073,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 110
+      "line": 114
     }
   },
   {
@@ -11917,7 +12086,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 114
+      "line": 118
     }
   },
   {
@@ -11930,7 +12099,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 118
+      "line": 122
     }
   },
   {
@@ -11943,7 +12112,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 122
+      "line": 126
     }
   },
   {
@@ -11956,7 +12125,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 126
+      "line": 130
     }
   },
   {
@@ -11969,7 +12138,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 130
+      "line": 134
     }
   },
   {
@@ -11982,7 +12151,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 134
+      "line": 138
     }
   },
   {
@@ -11995,7 +12164,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 138
+      "line": 142
     }
   },
   {
@@ -12008,7 +12177,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 142
+      "line": 146
     }
   },
   {
@@ -12021,7 +12190,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 146
+      "line": 150
     }
   },
   {
@@ -12034,7 +12203,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 150
+      "line": 154
     }
   },
   {
@@ -12047,7 +12216,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 154
+      "line": 158
     }
   },
   {
@@ -12060,7 +12229,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 158
+      "line": 162
     }
   },
   {
@@ -12073,7 +12242,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 162
+      "line": 166
     }
   },
   {
@@ -12086,7 +12255,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 166
+      "line": 170
     }
   },
   {
@@ -12099,7 +12268,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 170
+      "line": 174
     }
   },
   {
@@ -12112,7 +12281,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 174
+      "line": 178
     }
   },
   {
@@ -12125,7 +12294,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 178
+      "line": 182
     }
   },
   {
@@ -12138,7 +12307,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 182
+      "line": 186
     }
   },
   {
@@ -12151,7 +12320,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 186
+      "line": 190
     }
   },
   {
@@ -12164,7 +12333,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 190
+      "line": 194
     }
   },
   {
@@ -12177,7 +12346,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 194
+      "line": 198
     }
   },
   {
@@ -12190,7 +12359,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 198
+      "line": 202
     }
   },
   {
@@ -12203,7 +12372,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 202
+      "line": 206
     }
   },
   {
@@ -12216,7 +12385,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 206
+      "line": 210
     }
   },
   {
@@ -12229,7 +12398,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 210
+      "line": 214
     }
   },
   {
@@ -12242,7 +12411,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 214
+      "line": 218
     }
   },
   {
@@ -12255,7 +12424,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 218
+      "line": 222
     }
   },
   {
@@ -12268,7 +12437,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 222
+      "line": 226
     }
   },
   {
@@ -12281,7 +12450,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 226
+      "line": 230
     }
   },
   {
@@ -12294,7 +12463,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 230
+      "line": 234
     }
   },
   {
@@ -12307,7 +12476,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 234
+      "line": 238
     }
   },
   {
@@ -12320,7 +12489,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 238
+      "line": 242
     }
   },
   {
@@ -12333,7 +12502,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 242
+      "line": 246
     }
   },
   {
@@ -12346,7 +12515,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 246
+      "line": 250
     }
   },
   {
@@ -12359,7 +12528,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 250
+      "line": 254
     }
   },
   {
@@ -12372,7 +12541,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 254
+      "line": 258
     }
   },
   {
@@ -12385,7 +12554,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 258
+      "line": 262
     }
   },
   {
@@ -12398,7 +12567,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 262
+      "line": 266
     }
   },
   {
@@ -12411,7 +12580,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 266
+      "line": 270
     }
   },
   {
@@ -12424,7 +12593,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 270
+      "line": 274
     }
   },
   {
@@ -12437,7 +12606,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 274
+      "line": 278
     }
   },
   {
@@ -12450,7 +12619,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 278
+      "line": 282
     }
   },
   {
@@ -12463,7 +12632,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 284
+      "line": 288
     }
   },
   {
@@ -12476,7 +12645,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 290
+      "line": 294
     }
   },
   {
@@ -12489,7 +12658,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 296
+      "line": 300
     }
   },
   {
@@ -12502,7 +12671,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 302
+      "line": 306
     }
   },
   {
@@ -12515,7 +12684,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 308
+      "line": 312
     }
   },
   {
@@ -12528,7 +12697,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 314
+      "line": 318
     }
   },
   {
@@ -12541,7 +12710,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 338
+      "line": 342
     }
   },
   {
@@ -12554,7 +12723,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 346
+      "line": 350
     }
   },
   {
@@ -12567,7 +12736,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 354
+      "line": 358
     }
   },
   {
@@ -12580,7 +12749,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 362
+      "line": 366
     }
   },
   {
@@ -12593,7 +12762,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 370
+      "line": 374
     }
   },
   {
@@ -12606,7 +12775,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 378
+      "line": 382
     }
   },
   {
@@ -12619,7 +12788,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 384
+      "line": 388
     }
   },
   {
@@ -12632,7 +12801,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 392
+      "line": 396
     }
   },
   {
@@ -12645,7 +12814,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 403
+      "line": 407
     }
   },
   {
@@ -12658,7 +12827,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 418
+      "line": 422
     }
   },
   {
@@ -12671,7 +12840,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 426
+      "line": 430
     }
   },
   {
@@ -12684,7 +12853,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 434
+      "line": 438
     }
   },
   {
@@ -12697,7 +12866,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 442
+      "line": 446
     }
   },
   {
@@ -12710,7 +12879,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 449
+      "line": 453
     }
   },
   {
@@ -12723,7 +12892,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 457
+      "line": 461
     }
   },
   {
@@ -12736,7 +12905,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 463
+      "line": 467
     }
   },
   {
@@ -12749,7 +12918,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 466
+      "line": 470
     }
   },
   {
@@ -12762,7 +12931,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 484
+      "line": 488
     }
   },
   {
@@ -12775,7 +12944,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 500
+      "line": 504
     }
   },
   {
@@ -12788,7 +12957,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 516
+      "line": 520
     }
   },
   {
@@ -12801,7 +12970,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 524
+      "line": 528
     }
   },
   {
@@ -12814,7 +12983,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 531
+      "line": 535
     }
   },
   {
@@ -12827,7 +12996,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 537
+      "line": 541
     }
   },
   {
@@ -12840,7 +13009,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 543
+      "line": 547
     }
   },
   {
@@ -12853,7 +13022,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 549
+      "line": 553
     }
   },
   {
@@ -12866,7 +13035,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 555
+      "line": 559
     }
   },
   {
@@ -12879,7 +13048,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 562
+      "line": 566
     }
   },
   {
@@ -12892,7 +13061,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 568
+      "line": 572
     }
   },
   {
@@ -12905,7 +13074,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 574
+      "line": 578
     }
   },
   {
@@ -12918,7 +13087,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 584
+      "line": 588
     }
   },
   {
@@ -12931,7 +13100,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 633
+      "line": 637
     }
   },
   {
@@ -12944,7 +13113,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 667
+      "line": 671
     }
   },
   {
@@ -12957,7 +13126,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 704
+      "line": 708
     }
   },
   {
@@ -12970,7 +13139,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 712
+      "line": 716
     }
   },
   {
@@ -12983,7 +13152,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 718
+      "line": 722
     }
   },
   {
@@ -12996,7 +13165,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 726
+      "line": 730
     }
   },
   {
@@ -13009,7 +13178,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 732
+      "line": 736
     }
   },
   {
@@ -13022,7 +13191,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 738
+      "line": 742
     }
   },
   {
@@ -13035,7 +13204,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 744
+      "line": 748
     }
   },
   {
@@ -13048,7 +13217,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 750
+      "line": 754
     }
   },
   {
@@ -13061,7 +13230,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 756
+      "line": 760
     }
   },
   {
@@ -13074,7 +13243,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 764
+      "line": 768
     }
   },
   {
@@ -13087,7 +13256,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 772
+      "line": 776
     }
   },
   {
@@ -13100,7 +13269,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 780
+      "line": 784
     }
   },
   {
@@ -13113,7 +13282,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 788
+      "line": 792
     }
   },
   {
@@ -13126,7 +13295,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 794
+      "line": 798
     }
   },
   {
@@ -13139,7 +13308,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 800
+      "line": 804
     }
   },
   {
@@ -13152,7 +13321,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 806
+      "line": 810
     }
   },
   {
@@ -13165,7 +13334,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 812
+      "line": 816
     }
   },
   {
@@ -13178,7 +13347,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 818
+      "line": 822
     }
   },
   {
@@ -13191,7 +13360,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 825
+      "line": 829
     }
   },
   {
@@ -13204,7 +13373,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 833
+      "line": 837
     }
   },
   {
@@ -13217,7 +13386,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 843
+      "line": 847
     }
   },
   {
@@ -13230,7 +13399,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 854
+      "line": 858
     }
   },
   {
@@ -13243,7 +13412,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 860
+      "line": 864
     }
   },
   {
@@ -13256,7 +13425,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 866
+      "line": 870
     }
   },
   {
@@ -13269,7 +13438,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 872
+      "line": 876
     }
   },
   {
@@ -13282,7 +13451,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 881
+      "line": 885
     }
   },
   {
@@ -13295,7 +13464,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 890
+      "line": 894
     }
   },
   {
@@ -13308,7 +13477,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/GlobalConfigs/GlobalCommonConfig.cs",
-      "line": 896
+      "line": 900
     }
   },
   {
@@ -16666,6 +16835,71 @@
     }
   },
   {
+    "path": "BattleBalancePolicy.Enabled",
+    "type": "bool",
+    "default": "true",
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Util/BattleBalancePolicy.cs",
+      "line": 9
+    }
+  },
+  {
+    "path": "BattleBalancePolicy.MaximumBonus",
+    "type": "double",
+    "default": ".20",
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Util/BattleBalancePolicy.cs",
+      "line": 10
+    }
+  },
+  {
+    "path": "BattleBalancePolicy.DenominatorFloor",
+    "type": "int",
+    "default": "4",
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Util/BattleBalancePolicy.cs",
+      "line": 11
+    }
+  },
+  {
+    "path": "BattleBalancePolicy.PlayerSide",
+    "type": "bool",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Util/BattleBalancePolicy.cs",
+      "line": 30
+    }
+  },
+  {
+    "path": "BattleBalancePolicy.Bonus",
+    "type": "double",
+    "default": null,
+    "displayName": null,
+    "description": null,
+    "constraints": null,
+    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
+    "source": {
+      "file": "BannerlordTwitch/BLTAdoptAHero/Util/BattleBalancePolicy.cs",
+      "line": 31
+    }
+  },
+  {
     "path": "CampaignMapGeometry.MinX",
     "type": "float",
     "default": null,
@@ -17238,19 +17472,6 @@
     }
   },
   {
-    "path": "PrestigePolicy.AttackerRewardMultiplier",
-    "type": "double",
-    "default": "1.10",
-    "displayName": null,
-    "description": null,
-    "constraints": null,
-    "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
-    "source": {
-      "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 20
-    }
-  },
-  {
     "path": "PrestigePolicy.StartingLevel",
     "type": "int",
     "default": "1",
@@ -17260,7 +17481,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 21
+      "line": 20
     }
   },
   {
@@ -17273,7 +17494,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 22
+      "line": 21
     }
   },
   {
@@ -17286,7 +17507,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 23
+      "line": 22
     }
   },
   {
@@ -17299,7 +17520,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 24
+      "line": 23
     }
   },
   {
@@ -17312,7 +17533,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 25
+      "line": 24
     }
   },
   {
@@ -17325,7 +17546,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 26
+      "line": 25
     }
   },
   {
@@ -17338,7 +17559,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 27
+      "line": 26
     }
   },
   {
@@ -17351,7 +17572,7 @@
     "persistence": "Bannerlord-Twitch-v4-p{profile}.yaml",
     "source": {
       "file": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
-      "line": 40
+      "line": 39
     }
   },
   {

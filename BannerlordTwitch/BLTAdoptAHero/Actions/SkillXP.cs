@@ -54,7 +54,7 @@ namespace BLTAdoptAHero
             return ImproveSkill(adoptedHero, amount, settings.Skills, settings.Auto);
         }
 
-        public static (bool success, string description) ImproveSkill(Hero hero, int amount, SkillsEnum skills, bool auto)
+        public static (bool success, string description) ImproveSkill(Hero hero, int amount, SkillsEnum skills, bool auto, double rewardMultiplier = 1, Action<int> onAward = null)
         {
             var skill = GetSkill(hero, skills, auto, so
                 => BLTAdoptAHeroModule.CommonConfig.UseRawXP && hero.GetSkillValue(so) < BLTAdoptAHeroModule.CommonConfig.RawXPSkillCap
@@ -66,8 +66,8 @@ namespace BLTAdoptAHero
 
             if (hero.IsDead) return (false, "Hero is dead");
 
-            amount = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(amount, 1 + (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(hero, "insight") ?? 0));
-            int prevSkill = hero.HeroDeveloper.GetSkillXpProgress(skill);
+            amount = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(amount, rewardMultiplier, 1 + (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(hero, "insight") ?? 0));
+            float previousTotalXP = hero.HeroDeveloper.GetSkillXp(skill);
             int prevLevel = hero.GetSkillValue(skill);
             hero.HeroDeveloper.AddSkillXp(skill, amount,
                 isAffectedByFocusFactor: !BLTAdoptAHeroModule.CommonConfig.UseRawXP);
@@ -75,7 +75,8 @@ namespace BLTAdoptAHero
             hero.HeroDeveloper.DevelopCharacterStats();
 
             int newXp = hero.HeroDeveloper.GetSkillXpProgress(skill);
-            int realGainedXp = newXp - prevSkill;
+            int realGainedXp = (int)Math.Max(0, Math.Round(hero.HeroDeveloper.GetSkillXp(skill) - previousTotalXP));
+            onAward?.Invoke(realGainedXp);
             int newLevel = hero.GetSkillValue(skill);
             int gainedLevels = newLevel - prevLevel;
             return gainedLevels > 0

@@ -67,7 +67,7 @@ function categoryFor(command) {
   if (command.ModeratorOnly) return "Stream Control";
   const name = cleanLoc(command.Name).toLowerCase();
   if (["retinue", "retinuelist", "eliteretinue"].includes(name)) return "Retinue";
-  if (name === "power") return "Battle";
+  if (name === "power" || name === "balance") return "Battle";
   if (name === "prestige") return "Progression";
   const haystack = `${command.Name ?? ""} ${command.Handler ?? ""} ${command.Documentation ?? ""}`.toLowerCase();
   const categories = [
@@ -91,6 +91,7 @@ const confirm = (confirmationPolicy = "ui-only", legacyToken = undefined) => ({ 
 const when = (input, visibleWhenInput, visibleWhenValues) => ({ ...input, visibleWhenInput, visibleWhenValues });
 
 const actionDescriptions = {
+  balance: "View current viewer counts and estimated summon/attack joining bonuses. Your reward bonus locks when your join succeeds.",
   prestige: "View prestige progress, preview a permanent perk, and confirm a character reset within 60 seconds.",
   objective: "Manage community stream objectives as a moderator.",
   objectives: "View the active community objective and your contribution.",
@@ -157,7 +158,7 @@ const actionDescriptions = {
 
 function actionInput(command) {
   const name = cleanLoc(command.Name).toLowerCase();
-  const noInput = new Set(["objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "inv", "powers", "retinuelist", "stats", "tournament", "battle", "income", "skills"]);
+  const noInput = new Set(["balance", "objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "inv", "powers", "retinuelist", "stats", "tournament", "battle", "income", "skills"]);
   if (noInput.has(name)) return [];
   const definitions = {
     prestige: [choice("operation", "Prestige operation", ["status", "perks", "choose", "confirm"]), when(choice("perk", "Permanent perk", ["might", "resilience", "vitality", "fortune", "insight"]), "operation", ["choose", "confirm"])],

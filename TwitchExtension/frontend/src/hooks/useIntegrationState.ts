@@ -54,10 +54,10 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
         setState(value => {
           const nextMission = data.mission;
           if (nextMission && nextMission.revision < value.mission.revision) return value;
-          return { ...value, ...data, mission: nextMission ? { ...value.mission, ...nextMission } : value.mission };
+          return { ...value, ...data, mission: nextMission ? { ...value.mission, ...nextMission, battleBalance: nextMission.battleBalance ?? undefined } : value.mission };
         });
       } else if (envelope.kind === "viewer.state") {
-        setState(value => ({ ...value, viewer: { adopted: Boolean(data.adopted), heroName: data.heroName, gold: typeof data.gold === "number" ? data.gold : undefined, prestige: data.prestige ?? undefined } }));
+        setState(value => ({ ...value, viewer: { adopted: Boolean(data.adopted), heroName: data.heroName, gold: typeof data.gold === "number" ? data.gold : undefined, prestige: data.prestige ?? undefined, battleBalance: data.battleBalance ?? undefined } }));
       } else if (envelope.kind === "inventory.snapshot") {
         const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data.Items) ? data.Items : [];
         const rawSlots = Array.isArray(data.slots) ? data.slots : Array.isArray(data.Slots) ? data.Slots : [];
@@ -98,7 +98,7 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
       socket.addEventListener("message", handleMessage);
       socket.addEventListener("close", () => {
         if (disposed) return;
-        setState(value => ({ ...value, connected: false }));
+        setState(value => ({ ...value, connected: false, mission: { ...value.mission, battleBalance: undefined }, viewer: { ...value.viewer, battleBalance: undefined } }));
         reconnectTimer = window.setTimeout(connect, reconnectDelay);
         reconnectDelay = Math.min(reconnectDelay * 2, 30000);
       });

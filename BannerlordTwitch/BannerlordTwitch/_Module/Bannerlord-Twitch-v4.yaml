@@ -1,4 +1,16 @@
 Commands:
+- Documentation: Current viewer participation and estimated smaller-side joining bonuses. The game locks your bonus on a successful join.
+  Enabled: true
+  Handler: BalanceCommand
+  HandlerConfig:
+  Help: view current summon and attack joining bonuses
+  HideHelp: false
+  ID: 806847c1-2692-4d3c-a6be-a043235ba913
+  ModeratorOnly: false
+  Name: balance
+  RespondInExtension: false
+  RespondInOverlay: true
+  RespondInTwitch: true
 - Documentation: Prestige status, perks, choose <perk>, or confirm <perk>. A confirmed prestige resets progression.
   Enabled: true
   Handler: PrestigeCommand
@@ -3061,6 +3073,10 @@ GlobalConfigs:
     NametagWidth: 150
     PartySizeEffectiveness: 1
     ProsperityMultiplier: 25
+    BattleBalance:
+      Enabled: true
+      MaximumBonus: 0.20
+      DenominatorFloor: 4
     Prestige:
       Enabled: true
       BaseKills: 500
@@ -3073,7 +3089,6 @@ GlobalConfigs:
       VitalityPerRank: 5
       FortunePerRank: 0.02
       InsightPerRank: 0.02
-      AttackerRewardMultiplier: 1.10
       StartingLevel: 1
       StartingAttributes: 2
       StartingCombatSkills: 50

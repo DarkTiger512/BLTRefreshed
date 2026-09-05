@@ -442,25 +442,23 @@ namespace BLTAdoptAHero
 
         public void ApplyStreakEffects(Hero hero, int goldStreak, int xpStreak, float subBoost, float? relativeLevelScaling, float? levelScalingCap)
         {
-            goldStreak = (int)(goldStreak * subBoost);
-            xpStreak = (int)(xpStreak * subBoost);
+            double rewardScaling = subBoost;
 
             if (relativeLevelScaling.HasValue)
             {
                 // More reward for killing higher level characters
                 float levelBoost = RelativeLevelScaling(hero.Level, BLTAdoptAHeroModule.CommonConfig.ReferenceLevelReward, relativeLevelScaling.Value, levelScalingCap ?? 5);
 
-                goldStreak = (int)(goldStreak * levelBoost);
-                xpStreak = (int)(xpStreak * levelBoost);
+                rewardScaling *= levelBoost;
             }
 
+            double balanceMultiplier = 1;
             if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle)
             {
-                var agent = hero.GetAgent();
-                bool enemy = agent?.Team != null && Mission.PlayerTeam != null && agent.Team.IsEnemyOf(Mission.PlayerTeam);
-                goldStreak = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldStreak, enemy);
-                xpStreak = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(xpStreak, BLTAdoptAHeroCampaignBehavior.AttackerFactor(enemy));
+                goldStreak = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldStreak, rewardScaling);
+                balanceMultiplier = BLTSummonBehavior.BalanceFactor(hero);
             }
+            else goldStreak = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(goldStreak, rewardScaling);
             if (goldStreak != 0)
             {
                 BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, goldStreak);
@@ -469,19 +467,15 @@ namespace BLTAdoptAHero
 
             if (xpStreak != 0)
             {
-                (bool success, string _) = SkillXP.ImproveSkill(hero, xpStreak, SkillsEnum.All, auto: true);
-                if (success)
-                {
-                    GetHeroMissionState(hero).WonXP += xpStreak;
-                }
+                SkillXP.ImproveSkill(hero, xpStreak, SkillsEnum.All, auto: true, rewardMultiplier: rewardScaling * balanceMultiplier,
+                    onAward: amount => GetHeroMissionState(hero).WonXP += amount);
             }
         }
 
         public void ApplyKillEffects(Hero hero, Agent killer, Agent killed, AgentState state, int goldPerKill, int healPerKill, int xpPerKill, float subBoost, float? relativeLevelScaling, float? levelScalingCap, float MinimumGoldPerKill)
         {
-            goldPerKill = (int)(goldPerKill * subBoost);
+            double goldScaling = subBoost, xpScaling = subBoost;
             healPerKill = (int)(healPerKill * subBoost);
-            xpPerKill = (int)(xpPerKill * subBoost);
 
             if (relativeLevelScaling.HasValue && killed?.Character != null)
             {
@@ -493,17 +487,18 @@ namespace BLTAdoptAHero
                     if (!killed.IsHuman) //Ignore if horse
                     goldLevelBoost=levelBoost;
                 
-                goldPerKill = (int)(goldPerKill * goldLevelBoost);
+                goldScaling *= goldLevelBoost;
                 healPerKill = (int)(healPerKill * levelBoost);
-                xpPerKill = (int)(xpPerKill * levelBoost);
+                xpScaling *= levelBoost;
             }
 
+            double balanceMultiplier = 1;
             if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle && killer?.GetAdoptedHero() == hero)
             {
-                bool enemy = killer?.Team != null && Mission.PlayerTeam != null && killer.Team.IsEnemyOf(Mission.PlayerTeam);
-                goldPerKill = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldPerKill, enemy);
-                xpPerKill = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(xpPerKill, BLTAdoptAHeroCampaignBehavior.AttackerFactor(enemy));
+                goldPerKill = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldPerKill, goldScaling);
+                balanceMultiplier = BLTSummonBehavior.BalanceFactor(hero);
             }
+            else goldPerKill = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(goldPerKill, goldScaling);
             if (goldPerKill != 0)
             {
                 BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, goldPerKill);
@@ -517,8 +512,8 @@ namespace BLTAdoptAHero
 
             if (xpPerKill != 0)
             {
-                SkillXP.ImproveSkill(hero, xpPerKill, SkillsEnum.All, auto: true);
-                GetHeroMissionState(hero).WonXP += xpPerKill;
+                SkillXP.ImproveSkill(hero, xpPerKill, SkillsEnum.All, auto: true, rewardMultiplier: xpScaling * balanceMultiplier,
+                    onAward: amount => GetHeroMissionState(hero).WonXP += amount);
             }
         }
 
@@ -536,8 +531,8 @@ namespace BLTAdoptAHero
 
             if (xpPerKilled != 0)
             {
-                SkillXP.ImproveSkill(hero, xpPerKilled, SkillsEnum.All, auto: true);
-                GetHeroMissionState(hero).WonXP += xpPerKilled;
+                SkillXP.ImproveSkill(hero, xpPerKilled, SkillsEnum.All, auto: true,
+                    onAward: amount => GetHeroMissionState(hero).WonXP += amount);
             }
         }
 

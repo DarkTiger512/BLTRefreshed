@@ -554,6 +554,7 @@ namespace BLTAdoptAHero
                 viewerPrestige.Remove(data.Owner);
                 viewerPrestige[displayName] = prestige;
             }
+            BLTSummonBehavior.Current?.ReconcileBalanceOwner(data.Owner, displayName);
             data.Owner = displayName;
             SetHeroAdoptedName(legacyHero, displayName);
             Log.Info($"[Integration] Migrated adopted hero owner {userId} to {displayName}");

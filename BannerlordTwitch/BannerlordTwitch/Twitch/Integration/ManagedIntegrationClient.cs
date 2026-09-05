@@ -104,6 +104,21 @@ namespace BannerlordTwitch.Integration
         public string HeroName { get; set; }
         public int? Gold { get; set; }
         public IntegrationPrestigeSnapshot Prestige { get; set; }
+        public IntegrationViewerBalance BattleBalance { get; set; }
+    }
+
+    public sealed class IntegrationViewerBalance
+    {
+        public string MissionId { get; set; }
+        public double LockedBonus { get; set; }
+    }
+    public sealed class IntegrationBalanceSnapshot
+    {
+        public string MissionId { get; set; }
+        public int Summoners { get; set; }
+        public int Attackers { get; set; }
+        public double SummonOffer { get; set; }
+        public double AttackOffer { get; set; }
     }
 
     public sealed class IntegrationPrestigeSnapshot
@@ -185,6 +200,7 @@ namespace BannerlordTwitch.Integration
         [JsonPropertyName("revision")] public long Revision { get; set; }
         [JsonPropertyName("deploymentFinished")] public bool DeploymentFinished { get; set; }
         [JsonPropertyName("combatants")] public IntegrationBattleCombatant[] Combatants { get; set; } = Array.Empty<IntegrationBattleCombatant>();
+        [JsonPropertyName("battleBalance")] public IntegrationBalanceSnapshot BattleBalance { get; set; }
         [JsonPropertyName("actionAvailability")] public Dictionary<string, string> ActionAvailability { get; set; } = new();
     }
 
@@ -193,10 +209,10 @@ namespace BannerlordTwitch.Integration
         private static readonly object sync = new();
         private static IntegrationBattleSnapshot current = new();
         private static string signature = "inactive";
-        public static void Update(string kind, bool deploymentFinished, IEnumerable<IntegrationBattleCombatant> combatants)
+        public static void Update(string kind, bool deploymentFinished, IEnumerable<IntegrationBattleCombatant> combatants, IntegrationBalanceSnapshot battleBalance = null)
         {
             var nextCombatants = new List<IntegrationBattleCombatant>(combatants ?? Array.Empty<IntegrationBattleCombatant>()).ToArray();
-            var nextSignature = kind + "|" + deploymentFinished + "|" + JsonSerializer.Serialize(nextCombatants);
+            var nextSignature = kind + "|" + deploymentFinished + "|" + JsonSerializer.Serialize(nextCombatants) + "|" + JsonSerializer.Serialize(battleBalance);
             lock (sync)
             {
                 if (signature == nextSignature) return;
@@ -205,7 +221,7 @@ namespace BannerlordTwitch.Integration
                 {
                     Active = kind == "battle" || kind == "tournament", Kind = kind, Revision = current.Revision + 1,
                     DeploymentFinished = deploymentFinished, Combatants = nextCombatants,
-                    ActionAvailability = MissionActions(kind, deploymentFinished)
+                    ActionAvailability = MissionActions(kind, deploymentFinished), BattleBalance = battleBalance
                 };
             }
         }
@@ -334,7 +350,7 @@ namespace BannerlordTwitch.Integration
                         var serialized = JsonSerializer.Serialize(snapshot);
                         if (lastViewerStates.TryGetValue(viewer.Id, out var previous) && previous == serialized) continue;
                         lastViewerStates[viewer.Id] = serialized;
-                        _ = SendAsync("viewer.state", new { userId = viewer.Id, snapshot.Adopted, snapshot.HeroName, snapshot.Gold, snapshot.Prestige }, lifetime.Token);
+                        _ = SendAsync("viewer.state", new { userId = viewer.Id, snapshot.Adopted, snapshot.HeroName, snapshot.Gold, snapshot.Prestige, snapshot.BattleBalance }, lifetime.Token);
                     }
                 });
             }

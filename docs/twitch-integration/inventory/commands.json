@@ -2,6 +2,22 @@
   {
     "sourceLine": 2,
     "settings": {},
+    "Documentation": "Current viewer participation and estimated smaller-side joining bonuses. The game locks your bonus on a successful join.",
+    "Enabled": true,
+    "Handler": "BalanceCommand",
+    "HandlerConfig": {},
+    "Help": "view current summon and attack joining bonuses",
+    "HideHelp": false,
+    "ID": "806847c1-2692-4d3c-a6be-a043235ba913",
+    "ModeratorOnly": false,
+    "Name": "balance",
+    "RespondInExtension": false,
+    "RespondInOverlay": true,
+    "RespondInTwitch": true
+  },
+  {
+    "sourceLine": 14,
+    "settings": {},
     "Documentation": "Prestige status, perks, choose <perk>, or confirm <perk>. A confirmed prestige resets progression.",
     "Enabled": true,
     "Handler": "PrestigeCommand",
@@ -16,7 +32,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 14,
+    "sourceLine": 26,
     "settings": {},
     "Documentation": "Moderator controls for community stream objectives. Use list, start, status, or stop.",
     "Enabled": true,
@@ -32,7 +48,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 26,
+    "sourceLine": 38,
     "settings": {},
     "Documentation": "Show the active community objective and your contribution.",
     "Enabled": true,
@@ -48,7 +64,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 38,
+    "sourceLine": 50,
     "settings": {},
     "Documentation": "Check how much live ammunition your adopted hero has remaining in the current mission. Shows each ammunition stack and the combined total.",
     "Enabled": true,
@@ -64,7 +80,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 50,
+    "sourceLine": 62,
     "settings": {},
     "Documentation": "{=ZVxCqyJL}Show the heroes achievements and tracked stats.",
     "Enabled": true,
@@ -97,7 +113,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 79,
+    "sourceLine": 91,
     "settings": {},
     "Documentation": "Adopt a newly created Hero. Almost all other actions require an adopted hero.",
     "Enabled": true,
@@ -136,7 +152,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 123,
+    "sourceLine": 135,
     "settings": {},
     "Documentation": "Adopt a randomly selected Hero, filtered by Clan",
     "Enabled": false,
@@ -175,7 +191,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 158,
+    "sourceLine": 170,
     "settings": {},
     "Documentation": "Adopt a randomly selected Hero, filtered by Culture <br> Can do \"!adoptByCulture list\" for a list of cultures",
     "Enabled": true,
@@ -214,7 +230,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 193,
+    "sourceLine": 205,
     "settings": {},
     "Documentation": "Adopt a randomly selected Hero, filtered by Faction <br> Can do \"!adoptByFaction list\" for a list of factions",
     "Enabled": false,
@@ -253,7 +269,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 228,
+    "sourceLine": 240,
     "settings": {},
     "Documentation": "Adopt a randomly selected Hero, filtered by Hero Name",
     "Enabled": false,
@@ -292,7 +308,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 263,
+    "sourceLine": 275,
     "settings": {},
     "Documentation": "Adopt a randomly selected Hero",
     "Enabled": false,
@@ -331,7 +347,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 298,
+    "sourceLine": 310,
     "settings": {},
     "Documentation": "Use this when the streamer enters a battle, to spawn your adopted hero on the enemy side (along with your retinue).",
     "Enabled": true,
@@ -360,7 +376,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 323,
+    "sourceLine": 335,
     "settings": {},
     "Documentation": "Start an auction on a custom item you own, with a specified reserve price. Other viewers are able to bid upon your item, and the highest bidder will receive it at the end of the auction.<br>Usage is <code>!auction (custom item index) (reserve price)</code>, e.g. <code>!auction 3 50000</code> would start a new auction for your custom item with the index of 3 (as shown by the 'customitems' command), with a reserve price of 50000.",
     "Enabled": true,
@@ -378,7 +394,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 337,
+    "sourceLine": 349,
     "settings": {},
     "Documentation": "{=1TBIIJVZ}Place a bid on the current auction, if one is active.<br>Usage is <code>!bid (gold amount)</code>, e.g. <code>!bid 100000</code>. If there is no auction, or the bid doesn't exceed the reserve price, it will be rejected.",
     "Enabled": true,
@@ -394,7 +410,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 349,
+    "sourceLine": 361,
     "settings": {},
     "Documentation": "{=thajdk5s}Use this to bet on tournament matches, when available.<br>Usage is <code>!bltbet (team) (gold)</code>, for example <code>!bltbet red 10000</code> to bet 10000 gold on red. Winnings are divided up from the whole pot, based on relative bet size.<br>If only one team is bet upon, the bets will be refunded.",
     "Enabled": true,
@@ -410,7 +426,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 361,
+    "sourceLine": 373,
     "settings": {},
     "Documentation": "Buy a randomly tiered mount for your Hero.Only for mounted classes.(1250000 gold)",
     "Enabled": true,
@@ -433,7 +449,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 380,
+    "sourceLine": 392,
     "settings": {},
     "Documentation": "Use to manage clan actions <br> Usage is <code>!clan (join/create/lead/rename/stats/leave/buy title/banner) name </code> <br> Example: !clan join Banu Tammar or !clan stats",
     "Enabled": true,
@@ -470,7 +486,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 413,
+    "sourceLine": 425,
     "settings": {},
     "Documentation": "{=K3297TEM}Selects a new class for your hero, updating your existing equipment to match the class requirements.<br>Usage is <code>!class (new class name)</code>, e.g. <code>!class archer</code>.",
     "Enabled": true,
@@ -494,7 +510,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 433,
+    "sourceLine": 445,
     "settings": {},
     "Documentation": "Shows the viewers custom item list, which is required so they know what item index to use in the custom item related commands.",
     "Enabled": true,
@@ -527,7 +543,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 462,
+    "sourceLine": 474,
     "settings": {},
     "Documentation": "Throw away one of your custom items.<br>Usage is <code>!discarditem (custom item index)</code>, e.g. <code>!discarditem 3</code> would discard your custom item with the index 3. The custom item index is shown in the 'customs' command.",
     "Enabled": true,
@@ -543,7 +559,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 474,
+    "sourceLine": 486,
     "settings": {},
     "Documentation": "Upgrades your heroes equipment tier, replacing any existing equipment of lower tier, except for custom items. The cost depends on the tier you are trying to upgrade to. <br> Usage is <code>!equip (blank for auto upgrade/tier number) </code> <br> Example: !equip 1 or !equip",
     "Enabled": true,
@@ -567,7 +583,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 494,
+    "sourceLine": 506,
     "settings": {},
     "Documentation": "Give one of your custom items to another viewer.<br>Usage is <code>!giveitem (custom item index) (viewer)</code>, e.g. <code>!giveitem 3 C4alad0g</code> would give your custom item with the index 3 to the viewer called C4lad0g. The custom item index is shown in the 'customitems' command.",
     "Enabled": true,
@@ -583,7 +599,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 506,
+    "sourceLine": 518,
     "settings": {},
     "Documentation": "{=eWI5oDce}Show your heroes current gold.",
     "Enabled": true,
@@ -616,7 +632,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 535,
+    "sourceLine": 547,
     "settings": {},
     "Documentation": "Heals your hero over time. Only works in battle, when your hero is summoned.",
     "Enabled": true,
@@ -649,7 +665,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 564,
+    "sourceLine": 576,
     "settings": {},
     "Documentation": "Use to adjust hero physical features <br> Usage is <code>!hero gender (male/female) / !hero looks (appearance string) / !hero marry (culture/clan/name)</code> <br> Example: !hero gender male",
     "Enabled": true,
@@ -677,7 +693,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 588,
+    "sourceLine": 600,
     "settings": {},
     "Documentation": "Shows your heroes equipped loadout and inventory, excluding custom items (do !customItems instead)",
     "Enabled": true,
@@ -710,7 +726,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 617,
+    "sourceLine": 629,
     "settings": {},
     "Documentation": "Use to manage clan actions <br> Usage is <code>!kingdom (join/rebel/leave/stats) name </code> <br> Example: !kingdom join Aserai or !clan stats",
     "Enabled": true,
@@ -765,7 +781,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 668,
+    "sourceLine": 680,
     "settings": {},
     "Documentation": "You can use this to name your custom items.<br>Usage is <code>!nameitem (custom item index) (name)</code>, for example <code>!nameitem 3 Foehammer</code>. The custom item index is shown in the 'customitems' command.",
     "Enabled": true,
@@ -781,7 +797,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 680,
+    "sourceLine": 692,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -797,7 +813,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 692,
+    "sourceLine": 704,
     "settings": {},
     "Documentation": "{=GYYbCXmu}Shows your available powers",
     "Enabled": true,
@@ -830,7 +846,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 721,
+    "sourceLine": 733,
     "settings": {},
     "Documentation": "{=zBIv0a4I}Randomizes your equipment, at its current tier. It will not replace items that are higher than your current tier, or custom items. e.g. if you are equipment tier 3, but also have a tier 6 weapon won in a tournament, this command will not replace that weapon. Sometimes you will end up with some items not changing, particularly if there aren't many items of that type available at your current tier.",
     "Enabled": true,
@@ -854,7 +870,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 741,
+    "sourceLine": 753,
     "settings": {},
     "Documentation": "Purchases new retinue troops, or upgrades existing ones to the next tier if you have reached the limit. Retinue will appear with you in battle when you summon, earning you money when they make kills. <br> Usage is <code>!retinue (blank or all for auto upgrade/upgrade amount) </code> <br> Example: !retinue 1 or !retinue all",
     "Enabled": true,
@@ -886,7 +902,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 769,
+    "sourceLine": 781,
     "settings": {},
     "Documentation": "{=BlBiEmbf}Shows your current retinue troops.",
     "Enabled": true,
@@ -919,7 +935,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 798,
+    "sourceLine": 810,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -936,7 +952,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 811,
+    "sourceLine": 823,
     "settings": {},
     "Documentation": "Smith a custom armor item(500000 gold)",
     "Enabled": true,
@@ -959,7 +975,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 830,
+    "sourceLine": 842,
     "settings": {},
     "Documentation": "Smith a custom weapon(1000000 gold)",
     "Enabled": true,
@@ -982,7 +998,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 849,
+    "sourceLine": 861,
     "settings": {},
     "Documentation": "{=JiMaaypq}Shows your heroes general information, including clan, gold, location, HP, skills, attributes and retinue.",
     "Enabled": true,
@@ -1015,7 +1031,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 878,
+    "sourceLine": 890,
     "settings": {},
     "Documentation": "Use this when the streamer enters a battle, to spawn your adopted hero on the streamers side (along with your retinue).",
     "Enabled": true,
@@ -1044,7 +1060,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 903,
+    "sourceLine": 915,
     "settings": {},
     "Documentation": "Join the tournament queue with your adopted hero. You can see the queue in the overlay. Each tournament can have up to 16 heroes in it, once it is full further heroes will remain in the queue for the next tournament.",
     "Enabled": true,
@@ -1061,7 +1077,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 916,
+    "sourceLine": 928,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1077,7 +1093,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 928,
+    "sourceLine": 940,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1097,7 +1113,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 944,
+    "sourceLine": 956,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1113,7 +1129,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 956,
+    "sourceLine": 968,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1132,7 +1148,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 971,
+    "sourceLine": 983,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1148,7 +1164,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 983,
+    "sourceLine": 995,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1174,7 +1190,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1005,
+    "sourceLine": 1017,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1227,7 +1243,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1054,
+    "sourceLine": 1066,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1243,7 +1259,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1066,
+    "sourceLine": 1078,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1274,7 +1290,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1093,
+    "sourceLine": 1105,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1292,7 +1308,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1107,
+    "sourceLine": 1119,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1313,7 +1329,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1124,
+    "sourceLine": 1136,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1356,7 +1372,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1163,
+    "sourceLine": 1175,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1372,7 +1388,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1175,
+    "sourceLine": 1187,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1395,7 +1411,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1194,
+    "sourceLine": 1206,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1412,7 +1428,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1207,
+    "sourceLine": 1219,
     "settings": {},
     "Documentation": null,
     "Enabled": false,
@@ -1432,7 +1448,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1223,
+    "sourceLine": 1235,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1450,7 +1466,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1237,
+    "sourceLine": 1249,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1468,7 +1484,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1251,
+    "sourceLine": 1263,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1484,7 +1500,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1263,
+    "sourceLine": 1275,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1507,7 +1523,7 @@
     "RespondInTwitch": false
   },
   {
-    "sourceLine": 1282,
+    "sourceLine": 1294,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1524,7 +1540,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1295,
+    "sourceLine": 1307,
     "settings": {},
     "Documentation": null,
     "Enabled": true,
@@ -1556,7 +1572,7 @@
     "RespondInTwitch": true
   },
   {
-    "sourceLine": 1323,
+    "sourceLine": 1335,
     "settings": {},
     "Documentation": null,
     "Enabled": true,

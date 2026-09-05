@@ -1,0 +1,6 @@
+.battle-balance-commands { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 100%; }
+.battle-balance-summary { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px; color: #e0e8ed; text-align: center; font-size: 12px; padding: 6px 12px; background: #111a23e8; border-radius: 8px; }
+.battle-balance-summary strong { color: #86ddb5; }
+.battle-balance-summary small { flex-basis: 100%; color: #afbbc5; font-size: 10px; }
+.battle-balance-offer { display: block; margin-top: 4px; color: #c4ced7; text-align: center; font-size: 10px; white-space: nowrap; background: #111a23e8; border-radius: 4px; padding: 3px 5px; }
+.battle-balance-offer.available { color: #86ddb5; }

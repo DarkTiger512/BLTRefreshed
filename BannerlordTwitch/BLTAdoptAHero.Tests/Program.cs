@@ -2,6 +2,7 @@ using BLTAdoptAHero.Util;
 using BannerlordTwitch.Integration;
 
 PrestigeTests.Run();
+BattleBalanceTests.Run();
 
 static void Assert(bool condition, string message)
 {

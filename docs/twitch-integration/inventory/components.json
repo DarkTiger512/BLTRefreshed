@@ -813,6 +813,8 @@
       "IntegrationSelectorSnapshot",
       "IntegrationSelectorProvider",
       "IntegrationViewerSnapshot",
+      "IntegrationViewerBalance",
+      "IntegrationBalanceSnapshot",
       "IntegrationPrestigeSnapshot",
       "IntegrationPrestigePerk",
       "IntegrationRuntimeCommand",
@@ -1686,6 +1688,16 @@
     ]
   },
   {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/BalanceCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler"
+    ],
+    "symbols": [
+      "BalanceCommand"
+    ]
+  },
+  {
     "path": "BannerlordTwitch/BLTAdoptAHero/Actions/BattleInfo.cs",
     "project": "BLTAdoptAHero",
     "kinds": [
@@ -2552,6 +2564,27 @@
     ],
     "symbols": [
       "BLTSettlementUpgradeBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSummonBehavior.Balance.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "BLTSummonBehavior",
+      "BalanceJoin"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTSummonBehavior.BalanceIntegration.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTSummonBehavior"
     ]
   },
   {
@@ -3597,6 +3630,20 @@
     ]
   },
   {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/BattleBalancePolicy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "BattleBalanceSettings",
+      "BattleBalancePolicy",
+      "BattleBalanceLedger",
+      "Participation",
+      "Join"
+    ]
+  },
+  {
     "path": "BannerlordTwitch/BLTAdoptAHero/Util/CampaignMapGeometry.cs",
     "project": "BLTAdoptAHero",
     "kinds": [
@@ -3772,6 +3819,17 @@
     ],
     "symbols": [
       "UIExtensions"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero.Tests/BattleBalanceTests.cs",
+    "project": "BLTAdoptAHero.Tests",
+    "kinds": [
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "BattleBalanceTests"
     ]
   },
   {

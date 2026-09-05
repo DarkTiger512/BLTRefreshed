@@ -40,9 +40,8 @@ namespace BLTAdoptAHero
                 "vitality" => c.VitalityPerRank, "fortune" => c.FortunePerRank, "insight" => c.InsightPerRank, _ => 0 };
             return Math.Min(GetPrestige(hero).Rank(perk), c.RankCap) * step;
         }
-        public static int BattleGold(Hero hero, int amount, bool enemy, double scaling = 1) => PrestigePolicy.ScalePositive(amount,
-            scaling, AttackerFactor(enemy), 1 + (Current?.PrestigeBonus(hero, "fortune") ?? 0));
-        public static double AttackerFactor(bool enemy) => enemy && PrestigeConfig.IsValid() ? PrestigeConfig.AttackerRewardMultiplier : 1;
+        public static int BattleGold(Hero hero, int amount, double scaling = 1) => PrestigePolicy.ScalePositive(amount,
+            scaling, BLTSummonBehavior.BalanceFactor(hero), 1 + (Current?.PrestigeBonus(hero, "fortune") ?? 0));
         public static bool IsPrestigeBattle => Mission.Current != null && Campaign.Current != null
             && !MissionHelpers.InTournament() && !MissionHelpers.InArenaPracticeMission() && !MissionHelpers.InTrainingFieldMission()
             && !MissionHelpers.InFriendlyMission() && Mission.Current.Mode == MissionMode.Battle;

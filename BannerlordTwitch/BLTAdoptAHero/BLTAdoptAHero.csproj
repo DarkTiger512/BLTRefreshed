@@ -113,6 +113,10 @@
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.Prestige.cs" />
     <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.PrestigeIntegration.cs" />
     <Compile Include="Util\PrestigePolicy.cs" />
+    <Compile Include="Util\BattleBalancePolicy.cs" />
+    <Compile Include="Behaviors\BLTSummonBehavior.Balance.cs" />
+    <Compile Include="Behaviors\BLTSummonBehavior.BalanceIntegration.cs" />
+    <Compile Include="Actions\BalanceCommand.cs" />
     <Compile Include="Util\PrestigeHeroSnapshot.cs" />
     <Compile Include="Actions\StreamObjectiveCommands.cs" />
     <Compile Include="Actions\DuelCommand.cs" />
@@ -386,6 +390,7 @@
     <Content Include="_Module\ModuleData\Languages\SP\strings-powers-SP.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-actions.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-prestige.xml" />
+    <Content Include="_Module\ModuleData\Languages\strings-balance.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-behaviors.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-default-shouts.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-globalconfigs.xml" />

@@ -17,7 +17,6 @@ namespace BLTAdoptAHero.Util
         public double VitalityPerRank { get; set; } = 5;
         public double FortunePerRank { get; set; } = .02;
         public double InsightPerRank { get; set; } = .02;
-        public double AttackerRewardMultiplier { get; set; } = 1.10;
         public int StartingLevel { get; set; } = 1;
         public int StartingAttributes { get; set; } = 2;
         public int StartingCombatSkills { get; set; } = 50;
@@ -30,9 +29,9 @@ namespace BLTAdoptAHero.Util
             && RankCap > 0 && RankCap <= 10 && StartingLevel >= 1 && StartingAttributes >= 1 && StartingAttributes <= 10
             && StartingCombatSkills >= 1 && StartingCombatSkills <= 300 && StartingMovementSkills >= 0 && StartingMovementSkills <= 300
             && StartingOtherSkills >= 0 && StartingOtherSkills <= 300 && StartingGold >= 0 && StartingEquipmentTier >= 0 && StartingEquipmentTier <= 6
-            && new[] { MightPerRank, ResiliencePerRank, VitalityPerRank, FortunePerRank, InsightPerRank, AttackerRewardMultiplier }
+            && new[] { MightPerRank, ResiliencePerRank, VitalityPerRank, FortunePerRank, InsightPerRank }
                 .All(x => !double.IsNaN(x) && !double.IsInfinity(x) && x >= 0)
-            && ResiliencePerRank * RankCap < 1 && AttackerRewardMultiplier >= 1;
+            && ResiliencePerRank * RankCap < 1;
     }
 
     public class PrestigeProgress

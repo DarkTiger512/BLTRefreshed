@@ -1,5 +1,14 @@
 [
   {
+    "actionId": "command.balance",
+    "legacyName": "balance",
+    "handler": "BalanceCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/BalanceCommand.cs",
+    "legacyPattern": "",
+    "parameters": [],
+    "auditBasis": "handler-source"
+  },
+  {
     "actionId": "command.prestige",
     "legacyName": "prestige",
     "handler": "PrestigeCommand",

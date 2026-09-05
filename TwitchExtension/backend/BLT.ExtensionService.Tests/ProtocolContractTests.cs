@@ -20,6 +20,20 @@ public sealed class ProtocolContractTests
         Assert.Contains("\"prestige\"", json);
     }
     [Fact]
+    public void BalanceIsOptionalAndPrivateViewerLockRoundTrips()
+    {
+        var options = new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web);
+        var old = System.Text.Json.JsonSerializer.Deserialize<ViewerSnapshot>("{}", options)!;
+        Assert.Null(old.BattleBalance);
+        var current = old with { BattleBalance = new ViewerBattleBalance("mission-1", .12) };
+        var json = System.Text.Json.JsonSerializer.Serialize(current, options);
+        var restored = System.Text.Json.JsonSerializer.Deserialize<ViewerSnapshot>(json, options)!;
+        Assert.Equal("mission-1", restored.BattleBalance!.MissionId);
+        Assert.Equal(.12, restored.BattleBalance.LockedBonus);
+        var publicJson = System.Text.Json.JsonSerializer.Serialize(new BattleBalanceSnapshot("mission-1", 8, 2, 0, .12), options);
+        Assert.DoesNotContain("lockedBonus", publicJson);
+    }
+    [Fact]
     public void VersionOneContainsEveryRequiredMessageKind()
     {
         string[] required = ["hello", "manifest", "state.snapshot", "state.patch", "action.request", "command.request", "action.accepted", "action.result", "action.error", "inventory.request", "inventory.snapshot", "inventory.error", "retinue.request", "retinue.snapshot", "retinue.error", "viewer.subscribe", "viewer.unsubscribe", "viewer.state", "connection.status"];

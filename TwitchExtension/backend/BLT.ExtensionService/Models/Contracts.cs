@@ -34,7 +34,9 @@ public sealed record RetinueSubmission(string RequestId, DateTimeOffset Timestam
 public sealed record PrestigePerk(string Id, string Name, string Description, int Rank, int Cap);
 public sealed record PrestigeSnapshot(int Count, int Maximum, int RunKills, long RequiredKills, long RequiredGold,
     bool Eligible, string? BlockingReason, string ResetSummary, IReadOnlyList<PrestigePerk> Perks);
-public sealed record ViewerSnapshot(bool Adopted, string? HeroName, int? Gold, PrestigeSnapshot? Prestige = null);
+public sealed record ViewerSnapshot(bool Adopted, string? HeroName, int? Gold, PrestigeSnapshot? Prestige = null, ViewerBattleBalance? BattleBalance = null);
+public sealed record ViewerBattleBalance(string MissionId, double LockedBonus);
+public sealed record BattleBalanceSnapshot(string MissionId, int Summoners, int Attackers, double SummonOffer, double AttackOffer);
 public sealed record PairingExchangeRequest(string Code);
 public sealed record PairingExchangeResponse(string ChannelId, string InstallationId, string InstallationCredential, DateTimeOffset IssuedAt);
 public sealed record PairingCodeResponse(string Code, DateTimeOffset ExpiresAt);
