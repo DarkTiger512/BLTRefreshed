@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -47,6 +47,10 @@ namespace BLTAdoptAHero
      LocDisplayName("{=vDjnDtoL}Common Config")]
     internal class GlobalCommonConfig : IUpdateFromDefault, IDocumentable, INotifyPropertyChanged
     {
+        [LocDisplayName("{=BLTPrestigeSettings}Prestige"), LocCategory("Prestige", "{=BLTPrestigeSettings}Prestige"),
+         LocDescription("{=BLTPrestigeSettingsDescription}Campaign prestige requirements, permanent perks, reset profile and attacker rewards."), ExpandableObject]
+        public BLTAdoptAHero.Util.PrestigeSettings Prestige { get; set; } = new();
+
         #region Static
         private const string ID = "Adopt A Hero - General Config";
 

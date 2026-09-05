@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using BannerlordTwitch;
@@ -177,6 +177,7 @@ namespace BLTAdoptAHero
 
                 if (settings.ShowGeneral)
                 {
+                    infoStrings.Add(BLTAdoptAHeroCampaignBehavior.Current.PrestigeStatus(adoptedHero));
                     var cl = BLTAdoptAHeroCampaignBehavior.Current.GetClass(adoptedHero);
                     infoStrings.Add($"{cl?.Name ?? "{=ZI2UKbNp}No Class".Translate()}");
                     if (adoptedHero.Clan != null)
@@ -420,7 +421,7 @@ namespace BLTAdoptAHero
                         + " " + string.Join(Naming.Sep,
                             achievementList.Select(a =>
                                 $"{a.shortName}:" +
-                                $"{BLTAdoptAHeroCampaignBehavior.Current.GetAchievementTotalStat(adoptedHero, a.id)}" +
+                                $"{BLTAdoptAHeroCampaignBehavior.Current.GetLifetimeStat(adoptedHero, a.id)}" +
                                 $"({BLTAdoptAHeroCampaignBehavior.Current.GetAchievementClassStat(adoptedHero, a.id)})"
                         )));
                 }

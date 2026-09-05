@@ -66,6 +66,7 @@ namespace BLTAdoptAHero
 
             if (hero.IsDead) return (false, "Hero is dead");
 
+            amount = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(amount, 1 + (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(hero, "insight") ?? 0));
             int prevSkill = hero.HeroDeveloper.GetSkillXpProgress(skill);
             int prevLevel = hero.GetSkillValue(skill);
             hero.HeroDeveloper.AddSkillXp(skill, amount,

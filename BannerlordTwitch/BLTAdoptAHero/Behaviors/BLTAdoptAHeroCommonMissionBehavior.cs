@@ -203,6 +203,8 @@ namespace BLTAdoptAHero
 #endif
         }
 
+        private readonly HashSet<Agent> prestigeDefeated = new();
+
         public override void OnAgentRemoved(Agent affectedAgent, Agent affectorAgent, AgentState agentState, KillingBlow blow)
         {
             SafeCall(() =>
@@ -236,6 +238,10 @@ namespace BLTAdoptAHero
                 }
 
                 var affectorHero = affectorAgent.GetAdoptedHero();
+                if (BLTAdoptAHero.Util.PrestigePolicy.QualifyingKill(BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle,
+                    affectedAgent?.IsHuman == true, affectorAgent != null && affectedAgent?.IsEnemyOf(affectorAgent) == true,
+                    affectorHero != null, agentState is AgentState.Killed or AgentState.Unconscious) && prestigeDefeated.Add(affectedAgent))
+                    BLTAdoptAHeroCampaignBehavior.Current.RecordPrestigeKill(affectorHero);
                 if (affectorHero != null)
                 {
                     Log.Trace($"[{nameof(BLTAdoptAHeroCommonMissionBehavior)}] {affectorHero} made " +
@@ -472,6 +478,12 @@ namespace BLTAdoptAHero
                 xpPerKill = (int)(xpPerKill * levelBoost);
             }
 
+            if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle)
+            {
+                bool enemy = killer?.Team != null && Mission.PlayerTeam != null && killer.Team.IsEnemyOf(Mission.PlayerTeam);
+                goldPerKill = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldPerKill, enemy);
+                xpPerKill = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(xpPerKill, BLTAdoptAHeroCampaignBehavior.AttackerFactor(enemy));
+            }
             if (goldPerKill != 0)
             {
                 BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, goldPerKill);
