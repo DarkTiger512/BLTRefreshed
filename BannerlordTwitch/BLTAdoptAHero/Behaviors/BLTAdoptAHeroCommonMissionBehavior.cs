@@ -441,6 +441,13 @@ namespace BLTAdoptAHero
                 xpStreak = (int)(xpStreak * levelBoost);
             }
 
+            if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle)
+            {
+                var agent = hero.GetAgent();
+                bool enemy = agent?.Team != null && Mission.PlayerTeam != null && agent.Team.IsEnemyOf(Mission.PlayerTeam);
+                goldStreak = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldStreak, enemy);
+                xpStreak = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(xpStreak, BLTAdoptAHeroCampaignBehavior.AttackerFactor(enemy));
+            }
             if (goldStreak != 0)
             {
                 BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(hero, goldStreak);
@@ -478,7 +485,7 @@ namespace BLTAdoptAHero
                 xpPerKill = (int)(xpPerKill * levelBoost);
             }
 
-            if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle)
+            if (BLTAdoptAHeroCampaignBehavior.IsPrestigeBattle && killer?.GetAdoptedHero() == hero)
             {
                 bool enemy = killer?.Team != null && Mission.PlayerTeam != null && killer.Team.IsEnemyOf(Mission.PlayerTeam);
                 goldPerKill = BLTAdoptAHeroCampaignBehavior.BattleGold(hero, goldPerKill, enemy);

@@ -64,8 +64,8 @@ namespace BLTAdoptAHero
                 return "{=BLTPrestigeRequirements}You need more qualifying kills or gold.".Translate();
             return null;
         }
-        public string PrestigeResetSummary() => "{=BLTPrestigeReset}Resets level, XP, skills, attributes, focus, perks, gold, equipment, custom items, both retinues and achievement unlocks. Keeps identity, class, family, property, relationships and lifetime statistics. Starting gold: {GOLD}; equipment tier: {TIER}."
-            .Translate(("GOLD", PrestigeConfig.StartingGold), ("TIER", PrestigeConfig.StartingEquipmentTier));
+        public string PrestigeResetSummary() => "{=BLTPrestigeReset}Resets level, XP, skills, attributes, focus, perks, gold, equipment, custom items, both retinues and achievement unlocks. Keeps identity, class, family, property, relationships and lifetime statistics. Starts at level {LEVEL}, attributes {ATTR}, no focus/unspent points, melee/ranged {COMBAT}, riding/athletics {MOVE}, other skills {OTHER}, gold {GOLD}, equipment tier {TIER}."
+            .Translate(("LEVEL", PrestigeConfig.StartingLevel), ("ATTR", PrestigeConfig.StartingAttributes), ("COMBAT", PrestigeConfig.StartingCombatSkills), ("MOVE", PrestigeConfig.StartingMovementSkills), ("OTHER", PrestigeConfig.StartingOtherSkills), ("GOLD", PrestigeConfig.StartingGold), ("TIER", PrestigeConfig.StartingEquipmentTier));
         public string PrestigeStatus(Hero hero) => "{=BLTPrestigeStatus}Prestige {COUNT}/{MAX}: {KILLS}/{NEEDKILLS} personal battle kills, {GOLD}/{NEEDGOLD} gold. Perks: {PERKS}. {BLOCK}"
             .Translate(("COUNT", GetPrestige(hero).Count), ("MAX", PrestigePolicy.Maximum(PrestigeConfig)),
                 ("KILLS", GetPrestigeKills(hero)), ("NEEDKILLS", PrestigePolicy.RequiredKills(PrestigeConfig, GetPrestige(hero).Count)),
@@ -106,7 +106,7 @@ namespace BLTAdoptAHero
                 // Swap the BLT record so rollback restores every list and history without lossy reconstruction.
                 heroData[hero] = new HeroData { Owner = old.Owner, Iteration = old.Iteration, IsCreatedHero = old.IsCreatedHero,
                     LegacyName = old.LegacyName, ClassID = old.ClassID, EquipmentClassID = old.ClassID,
-                    EquipmentTier = PrestigeConfig.StartingEquipmentTier, Gold = PrestigeConfig.StartingGold,
+                    EquipmentTier = PrestigeConfig.StartingEquipmentTier - 1, Gold = PrestigeConfig.StartingGold,
                     LifetimeStats = old.LifetimeStats ?? old.AchievementStats };
                 var dev = hero.HeroDeveloper;
                 dev.ClearHero();
@@ -125,7 +125,8 @@ namespace BLTAdoptAHero
                 foreach (var skill in CampaignHelpers.AllSkillObjects) dev.RemoveFocus(skill, dev.GetFocus(skill));
                 hero.BattleEquipment.FillFrom(new Equipment());
                 hero.CivilianEquipment.FillFrom(new Equipment(Equipment.EquipmentType.Civilian));
-                EquipHero.UpgradeEquipment(hero, PrestigeConfig.StartingEquipmentTier, hero.GetClass(), true, customKeepFilter: _ => false);
+                if (PrestigeConfig.StartingEquipmentTier > 0)
+                    EquipHero.UpgradeEquipment(hero, PrestigeConfig.StartingEquipmentTier - 1, hero.GetClass(), true, customKeepFilter: _ => false, restrictedItemIds: BLTAdoptAHeroModule.CommonConfig.RestrictedItemIds);
                 heroAchievementPassivePowers.Remove(hero);
                 progress.Count++;
                 progress.Ranks[perk] = progress.Rank(perk) + 1;

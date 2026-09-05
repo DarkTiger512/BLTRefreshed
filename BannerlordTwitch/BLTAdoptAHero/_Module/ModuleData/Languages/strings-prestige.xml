@@ -16,7 +16,7 @@
     <string id="BLTPrestigeAuction" text="Wait for the item auction to finish." />
     <string id="BLTPrestigeBusy" text="Prestige is already in progress." />
     <string id="BLTPrestigeRequirements" text="You need more qualifying kills or gold." />
-    <string id="BLTPrestigeReset" text="Resets level, XP, skills, attributes, focus, perks, gold, equipment, custom items, both retinues and achievement unlocks. Keeps identity, class, family, property, relationships and lifetime statistics. Starting gold: {GOLD}; equipment tier: {TIER}." />
+    <string id="BLTPrestigeReset" text="Resets level, XP, skills, attributes, focus, perks, gold, equipment, custom items, both retinues and achievement unlocks. Keeps identity, class, family, property, relationships and lifetime statistics. Starts at level {LEVEL}, attributes {ATTR}, no focus/unspent points, melee/ranged {COMBAT}, riding/athletics {MOVE}, other skills {OTHER}, gold {GOLD}, equipment tier {TIER}." />
     <string id="BLTPrestigeStatus" text="Prestige {COUNT}/{MAX}: {KILLS}/{NEEDKILLS} personal battle kills, {GOLD}/{NEEDGOLD} gold. Perks: {PERKS}. {BLOCK}" />
     <string id="BLTPrestigeConfirmPrompt" text="Choose {PERK}: type !prestige confirm {PERK} within 60 seconds." />
     <string id="BLTPrestigePreviewExpired" text="Preview missing or expired. Use !prestige choose &lt;perk&gt; again." />
