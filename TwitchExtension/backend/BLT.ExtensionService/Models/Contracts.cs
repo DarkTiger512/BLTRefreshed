@@ -30,6 +30,11 @@ public sealed record ActionSubmission(string RequestId, string ActionId, Diction
 public sealed record CommandSubmission(string RequestId, string CommandLine, DateTimeOffset Timestamp);
 public sealed record InventorySubmission(string RequestId, DateTimeOffset Timestamp);
 public sealed record RetinueSubmission(string RequestId, DateTimeOffset Timestamp);
+// Optional additive viewer data. The router forwards the complete private envelope unchanged.
+public sealed record PrestigePerk(string Id, string Name, string Description, int Rank, int Cap);
+public sealed record PrestigeSnapshot(int Count, int Maximum, int RunKills, long RequiredKills, long RequiredGold,
+    bool Eligible, string? BlockingReason, string ResetSummary, IReadOnlyList<PrestigePerk> Perks);
+public sealed record ViewerSnapshot(bool Adopted, string? HeroName, int? Gold, PrestigeSnapshot? Prestige = null);
 public sealed record PairingExchangeRequest(string Code);
 public sealed record PairingExchangeResponse(string ChannelId, string InstallationId, string InstallationCredential, DateTimeOffset IssuedAt);
 public sealed record PairingCodeResponse(string Code, DateTimeOffset ExpiresAt);

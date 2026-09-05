@@ -12,13 +12,14 @@ interface Props {
   onExecute(commandLine: string): void;
   onInventory(): void;
   onRetinue(): void;
+  onPrestige?(): void;
 }
 
 interface Suggestion { value: string; title: string; detail: string; unavailable?: string }
 
 const syntaxFor = (action?: ManifestAction) => action?.inputs.map(input => input.required ? `<${input.label ?? input.id}>` : `[${input.label ?? input.id}]`).join(" ") ?? "";
 
-export function CommandWorkspace({ actions, commands, identity, state, busy, onExecute, onInventory, onRetinue }: Props) {
+export function CommandWorkspace({ actions, commands, identity, state, busy, onExecute, onInventory, onRetinue, onPrestige }: Props) {
   const { t, number } = useI18n();
   const [line, setLine] = useState("");
   const [active, setActive] = useState(0);
@@ -85,6 +86,7 @@ export function CommandWorkspace({ actions, commands, identity, state, busy, onE
     <div className="native-shortcuts">
       <button onClick={onInventory}><PackageOpen /><span><strong>{t("shortcut.inventory")}</strong><small>{t("shortcut.inventory.detail")}</small></span></button>
       <button onClick={onRetinue}><Users /><span><strong>{t("shortcut.retinue")}</strong><small>{t("shortcut.retinue.detail")}</small></span></button>
+      {onPrestige ? <button onClick={onPrestige}><ShieldCheck /><span><strong>{t("prestige.title")}</strong><small>{t("prestige.shortcut")}</small></span></button> : null}
     </div>
     {helpOpen ? <div className="command-help" role="dialog" aria-modal="true" aria-label={t("command.help.dialog")}>
       <header><div><h2>{t("command.help.title")}</h2><p>{t("command.help.available", { count: helpCommands.length })}</p></div><button onClick={() => setHelpOpen(false)} aria-label={t("common.close")}><X /></button></header>

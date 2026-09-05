@@ -51,8 +51,19 @@ namespace BLTAdoptAHero
             });
         }
 
+        private readonly HashSet<Agent> prestigeHealthApplied = new();
         public override void OnAgentBuild(Agent agent, Banner banner)
-            => powerHandler.CallHandlersForAgent(agent, handlers => handlers.AgentBuild(agent));
+        {
+            powerHandler.CallHandlersForAgent(agent, handlers => handlers.AgentBuild(agent));
+            var hero = agent.GetAdoptedHero();
+            if (hero != null && prestigeHealthApplied.Add(agent))
+            {
+                float health = (float)(BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(hero, "vitality") ?? 0);
+                agent.BaseHealthLimit += health;
+                agent.HealthLimit += health;
+                agent.Health += health;
+            }
+        }
 
         // public override void OnMissileHit(Agent attacker, Agent victim, bool isCanceled)
         //     => CallHandlersForAgent(agent, (hero, handlers) => handlers.OnMissileHit(attacker, victim, isCanceled));
@@ -226,10 +237,9 @@ namespace BLTAdoptAHero
                 combatLogData = combatLogData,
             };
 
-            if (!powerHandler.CallHandlersForAgentPair(attackerAgent, victimAgent,
+            powerHandler.CallHandlersForAgentPair(attackerAgent, victimAgent,
                 handlers => handlers.DoDamage(attackerAgent, victimAgent, param),
-                handlers => handlers.TakeDamage(victimAgent, attackerAgent, param)))
-                return;
+                handlers => handlers.TakeDamage(victimAgent, attackerAgent, param));
 
             // Apply the saved curse once, after ordinary passive powers have produced their final damage.
             var curse = Behaviors.CursedArtifactBehavior.Current;
@@ -238,6 +248,9 @@ namespace BLTAdoptAHero
             var victimHero = (victimAgent?.IsMount == true ? victimAgent.RiderAgent : victimAgent)?.GetAdoptedHero();
             if (attackerHero != null) curseMultiplier *= curse?.OutgoingDamageMultiplier(attackerHero) ?? 1f;
             if (victimHero != null) curseMultiplier *= curse?.IncomingDamageMultiplier(victimHero) ?? 1f;
+            // Prestige affects the actual hero only, never their mount or retinue.
+            curseMultiplier *= (float)(1 + (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(attackerAgent?.GetAdoptedHero(), "might") ?? 0));
+            curseMultiplier *= (float)(1 - (BLTAdoptAHeroCampaignBehavior.Current?.PrestigeBonus(victimAgent?.GetAdoptedHero(), "resilience") ?? 0));
             if (Math.Abs(curseMultiplier - 1f) > .0001f)
             {
                 param.blow.BaseMagnitude *= curseMultiplier;

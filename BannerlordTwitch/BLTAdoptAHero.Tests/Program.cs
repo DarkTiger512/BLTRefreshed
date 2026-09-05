@@ -1,6 +1,8 @@
 using BLTAdoptAHero.Util;
 using BannerlordTwitch.Integration;
 
+PrestigeTests.Run();
+
 static void Assert(bool condition, string message)
 {
     if (!condition) throw new InvalidOperationException(message);

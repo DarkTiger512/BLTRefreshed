@@ -68,6 +68,7 @@ function categoryFor(command) {
   const name = cleanLoc(command.Name).toLowerCase();
   if (["retinue", "retinuelist", "eliteretinue"].includes(name)) return "Retinue";
   if (name === "power") return "Battle";
+  if (name === "prestige") return "Progression";
   const haystack = `${command.Name ?? ""} ${command.Handler ?? ""} ${command.Documentation ?? ""}`.toLowerCase();
   const categories = [
     ["Tournament", /tournament|arena|bet/],
@@ -90,6 +91,7 @@ const confirm = (confirmationPolicy = "ui-only", legacyToken = undefined) => ({ 
 const when = (input, visibleWhenInput, visibleWhenValues) => ({ ...input, visibleWhenInput, visibleWhenValues });
 
 const actionDescriptions = {
+  prestige: "View prestige progress, preview a permanent perk, and confirm a character reset within 60 seconds.",
   objective: "Manage community stream objectives as a moderator.",
   objectives: "View the active community objective and your contribution.",
   ammo: "Check the ammunition remaining for your hero in the current battle.",
@@ -158,6 +160,7 @@ function actionInput(command) {
   const noInput = new Set(["objectives", "ammo", "ach", "adopt", "adoptrandom", "gold", "heal", "inv", "powers", "retinuelist", "stats", "tournament", "battle", "income", "skills"]);
   if (noInput.has(name)) return [];
   const definitions = {
+    prestige: [choice("operation", "Prestige operation", ["status", "perks", "choose", "confirm"]), when(choice("perk", "Permanent perk", ["might", "resilience", "vitality", "fortune", "insight"]), "operation", ["choose", "confirm"])],
     objective: [choice("operation", "Objective operation", ["list", "start", "status", "stop"]), when(textInput("objective", "Objective type and goal options", false), "operation", ["start"])],
     adoptbyclan: [textInput("clan", "Clan")], adoptbyculture: [dynamicChoice("culture", "Culture", "cultures")], adoptbyfaction: [textInput("faction", "Faction")], adoptbyname: [textInput("hero", "Hero name")],
     attack: [textInput("shout", "Optional battle shout", false)], auction: [numberInput("item", "Custom item number"), numberInput("reserve", "Reserve price")], bid: [numberInput("amount", "Bid amount")],

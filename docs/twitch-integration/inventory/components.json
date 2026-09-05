@@ -80,7 +80,8 @@
     "path": "BannerlordTwitch/BannerlordTwitch/BLTModule.cs",
     "project": "BannerlordTwitch",
     "kinds": [
-      "twitch-service"
+      "twitch-service",
+      "configuration"
     ],
     "symbols": [
       "BLTModule"
@@ -776,11 +777,23 @@
       "IntegrationProtocol",
       "IntegrationUser",
       "IntegrationActionRequest",
+      "IntegrationCommandRequest",
+      "IntegrationCommandLine",
       "IntegrationActionManifest",
       "IntegrationActionDefinition",
       "IntegrationActionInput",
       "IntegrationActionOption",
       "PairingExchangeResponse"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BannerlordTwitch/Twitch/Integration/IntegrationRequestLifecycle.cs",
+    "project": "BannerlordTwitch",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "IntegrationRequestLifecycle"
     ]
   },
   {
@@ -799,9 +812,16 @@
       "IntegrationRetinueProvider",
       "IntegrationSelectorSnapshot",
       "IntegrationSelectorProvider",
+      "IntegrationViewerSnapshot",
+      "IntegrationPrestigeSnapshot",
+      "IntegrationPrestigePerk",
+      "IntegrationRuntimeCommand",
+      "IntegrationViewerStateProvider",
+      "IntegrationIdentityProvider",
       "IntegrationBattleCombatant",
       "IntegrationBattleSnapshot",
       "IntegrationBattleProvider",
+      "IntegrationRuntimeState",
       "ManagedIntegrationClient"
     ]
   },
@@ -2046,6 +2066,17 @@
     ]
   },
   {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Actions/PrestigeCommand.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "action-handler",
+      "configuration"
+    ],
+    "symbols": [
+      "PrestigeCommand"
+    ]
+  },
+  {
     "path": "BannerlordTwitch/BLTAdoptAHero/Actions/ReinforceAction.cs",
     "project": "BLTAdoptAHero",
     "kinds": [
@@ -2342,6 +2373,26 @@
       "change",
       "RetinueSettings",
       "Retinue2Settings"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.Prestige.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "BLTAdoptAHeroCampaignBehavior"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Behaviors/BLTAdoptAHeroCampaignBehavior.PrestigeIntegration.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "BLTAdoptAHeroCampaignBehavior"
     ]
   },
   {
@@ -3614,6 +3665,29 @@
     ]
   },
   {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigeHeroSnapshot.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "support"
+    ],
+    "symbols": [
+      "PrestigeHeroSnapshot"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/PrestigePolicy.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "configuration"
+    ],
+    "symbols": [
+      "PrestigeSettings",
+      "PrestigeProgress",
+      "PrestigePolicy",
+      "PrestigeConfirmation"
+    ]
+  },
+  {
     "path": "BannerlordTwitch/BLTAdoptAHero/Util/RandomEventPolicy.cs",
     "project": "BLTAdoptAHero",
     "kinds": [
@@ -3624,6 +3698,21 @@
       "ImmortalEncounterState",
       "PriestCrusadeState",
       "RandomEventPolicy"
+    ]
+  },
+  {
+    "path": "BannerlordTwitch/BLTAdoptAHero/Util/SaveCrashDiagnostics.cs",
+    "project": "BLTAdoptAHero",
+    "kinds": [
+      "behavior",
+      "harmony-patch",
+      "persistence"
+    ],
+    "symbols": [
+      "SaveCrashDiagnostics",
+      "DiagnosticScope",
+      "EmptyScope",
+      "CampaignBehaviorSyncDiagnosticsPatch"
     ]
   },
   {
@@ -3694,10 +3783,21 @@
     "symbols": []
   },
   {
+    "path": "BannerlordTwitch/BLTAdoptAHero.Tests/PrestigeTests.cs",
+    "project": "BLTAdoptAHero.Tests",
+    "kinds": [
+      "test",
+      "configuration"
+    ],
+    "symbols": [
+      "PrestigeTests"
+    ]
+  },
+  {
     "path": "BannerlordTwitch/BLTAdoptAHero.Tests/Program.cs",
     "project": "BLTAdoptAHero.Tests",
     "kinds": [
-      "support"
+      "test"
     ],
     "symbols": []
   },
@@ -3860,13 +3960,15 @@
       "persistence",
       "configuration"
     ],
-    "symbols": []
+    "symbols": [
+      "ManagedServiceDefaults"
+    ]
   },
   {
     "path": "BannerlordTwitch/BLTConfigure/BLTConfigureWindow.xaml",
     "project": "BLTConfigure",
     "kinds": [
-      "configuration"
+      "support"
     ],
     "symbols": []
   },
@@ -3878,11 +3980,10 @@
     ],
     "symbols": [
       "NewActionViewModel",
-      "LogMessage",
       "BLTConfigureWindow",
       "TypeGroupDescription",
-      "ResponseFile",
-      "ResponseFiles"
+      "PairingReceipt",
+      "PairingStatus"
     ]
   },
   {

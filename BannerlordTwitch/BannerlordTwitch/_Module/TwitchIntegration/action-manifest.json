@@ -1,8 +1,97 @@
 {
   "protocolVersion": 1,
-  "manifestVersion": 2,
-  "generatedAt": "2026-09-01T10:29:51.355Z",
+  "generatedAt": "2026-09-05T13:56:46.681Z",
   "actions": [
+    {
+      "id": "command.prestige",
+      "legacyName": "prestige",
+      "handler": "PrestigeCommand",
+      "category": "Progression",
+      "description": "View prestige progress, preview a permanent perk, and confirm a character reset within 60 seconds.",
+      "enabledByDefault": true,
+      "hiddenFromHelp": false,
+      "permissions": [
+        "viewer",
+        "moderator",
+        "broadcaster"
+      ],
+      "response": {
+        "twitch": true,
+        "overlay": true,
+        "extension": true,
+        "privateByDefault": true
+      },
+      "availability": [
+        "game.started"
+      ],
+      "cooldown": {
+        "strategy": "legacy"
+      },
+      "mutatesCampaign": true,
+      "inputs": [
+        {
+          "id": "operation",
+          "label": "Prestige operation",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "status",
+              "label": "Status"
+            },
+            {
+              "value": "perks",
+              "label": "Perks"
+            },
+            {
+              "value": "choose",
+              "label": "Choose"
+            },
+            {
+              "value": "confirm",
+              "label": "Confirm"
+            }
+          ]
+        },
+        {
+          "id": "perk",
+          "label": "Permanent perk",
+          "type": "choice",
+          "required": true,
+          "options": [
+            {
+              "value": "might",
+              "label": "Might"
+            },
+            {
+              "value": "resilience",
+              "label": "Resilience"
+            },
+            {
+              "value": "vitality",
+              "label": "Vitality"
+            },
+            {
+              "value": "fortune",
+              "label": "Fortune"
+            },
+            {
+              "value": "insight",
+              "label": "Insight"
+            }
+          ],
+          "visibleWhenInput": "operation",
+          "visibleWhenValues": [
+            "choose",
+            "confirm"
+          ]
+        }
+      ],
+      "source": {
+        "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
+        "line": 2
+      }
+    },
     {
       "id": "command.objective",
       "legacyName": "objective",
@@ -66,7 +155,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 2
+        "line": 14
       }
     },
     {
@@ -98,7 +187,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 15
+        "line": 26
       }
     },
     {
@@ -130,7 +219,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 28
+        "line": 38
       }
     },
     {
@@ -162,7 +251,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 41
+        "line": 50
       }
     },
     {
@@ -194,7 +283,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 70
+        "line": 79
       }
     },
     {
@@ -233,7 +322,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 114
+        "line": 123
       }
     },
     {
@@ -274,7 +363,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 149
+        "line": 158
       }
     },
     {
@@ -313,7 +402,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 184
+        "line": 193
       }
     },
     {
@@ -352,7 +441,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 219
+        "line": 228
       }
     },
     {
@@ -384,7 +473,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 254
+        "line": 263
       }
     },
     {
@@ -423,7 +512,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 289
+        "line": 298
       }
     },
     {
@@ -468,7 +557,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 314
+        "line": 323
       }
     },
     {
@@ -507,7 +596,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 328
+        "line": 337
       }
     },
     {
@@ -552,7 +641,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 340
+        "line": 349
       }
     },
     {
@@ -593,7 +682,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 352
+        "line": 361
       }
     },
     {
@@ -697,7 +786,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 371
+        "line": 380
       }
     },
     {
@@ -736,7 +825,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 404
+        "line": 413
       }
     },
     {
@@ -775,7 +864,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 424
+        "line": 433
       }
     },
     {
@@ -814,7 +903,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 453
+        "line": 462
       }
     },
     {
@@ -855,7 +944,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 465
+        "line": 474
       }
     },
     {
@@ -900,7 +989,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 485
+        "line": 494
       }
     },
     {
@@ -932,7 +1021,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 497
+        "line": 506
       }
     },
     {
@@ -964,7 +1053,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 526
+        "line": 535
       }
     },
     {
@@ -1039,7 +1128,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 555
+        "line": 564
       }
     },
     {
@@ -1071,7 +1160,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 579
+        "line": 588
       }
     },
     {
@@ -1178,7 +1267,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 608
+        "line": 617
       }
     },
     {
@@ -1223,7 +1312,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 659
+        "line": 668
       }
     },
     {
@@ -1255,7 +1344,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 671
+        "line": 680
       }
     },
     {
@@ -1287,7 +1376,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 683
+        "line": 692
       }
     },
     {
@@ -1328,7 +1417,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 712
+        "line": 721
       }
     },
     {
@@ -1401,7 +1490,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 732
+        "line": 741
       }
     },
     {
@@ -1433,7 +1522,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 759
+        "line": 769
       }
     },
     {
@@ -1474,7 +1563,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 788
+        "line": 798
       }
     },
     {
@@ -1515,7 +1604,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 801
+        "line": 811
       }
     },
     {
@@ -1556,7 +1645,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 820
+        "line": 830
       }
     },
     {
@@ -1588,7 +1677,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 839
+        "line": 849
       }
     },
     {
@@ -1627,7 +1716,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 868
+        "line": 878
       }
     },
     {
@@ -1659,7 +1748,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 893
+        "line": 903
       }
     },
     {
@@ -1722,7 +1811,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 906
+        "line": 916
       }
     },
     {
@@ -1761,7 +1850,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 918
+        "line": 928
       }
     },
     {
@@ -1864,7 +1953,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 934
+        "line": 944
       }
     },
     {
@@ -1904,7 +1993,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 946
+        "line": 956
       }
     },
     {
@@ -1959,7 +2048,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 961
+        "line": 971
       }
     },
     {
@@ -1998,7 +2087,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 973
+        "line": 983
       }
     },
     {
@@ -2065,7 +2154,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 995
+        "line": 1005
       }
     },
     {
@@ -2097,7 +2186,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1044
+        "line": 1054
       }
     },
     {
@@ -2167,7 +2256,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1056
+        "line": 1066
       }
     },
     {
@@ -2244,7 +2333,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1083
+        "line": 1093
       }
     },
     {
@@ -2283,7 +2372,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1097
+        "line": 1107
       }
     },
     {
@@ -2382,7 +2471,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1114
+        "line": 1124
       }
     },
     {
@@ -2414,7 +2503,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1153
+        "line": 1163
       }
     },
     {
@@ -2520,7 +2609,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1165
+        "line": 1175
       }
     },
     {
@@ -2583,7 +2672,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1184
+        "line": 1194
       }
     },
     {
@@ -2646,7 +2735,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1197
+        "line": 1207
       }
     },
     {
@@ -2685,7 +2774,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1213
+        "line": 1223
       }
     },
     {
@@ -2794,7 +2883,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1227
+        "line": 1237
       }
     },
     {
@@ -2868,7 +2957,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1240
+        "line": 1251
       }
     },
     {
@@ -2907,7 +2996,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1252
+        "line": 1263
       }
     },
     {
@@ -2974,7 +3063,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1271
+        "line": 1282
       }
     },
     {
@@ -3047,7 +3136,7 @@
       ],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1284
+        "line": 1295
       }
     },
     {
@@ -3079,7 +3168,7 @@
       "inputs": [],
       "source": {
         "file": "BannerlordTwitch/BannerlordTwitch/_Module/Bannerlord-Twitch-v4.yaml",
-        "line": 1311
+        "line": 1323
       }
     }
   ]

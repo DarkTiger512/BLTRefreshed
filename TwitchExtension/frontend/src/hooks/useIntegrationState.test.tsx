@@ -14,6 +14,21 @@ class TestSocket {
 
 const identity: ViewerIdentity = { token: "development-token", channelId: "42", userId: "9", displayName: "TestHero", roles: ["viewer"], linked: true };
 
+test("viewer updates retain prestige and discard it when an older snapshot omits the field", () => {
+  vi.stubEnv("VITE_BLT_LIVE_INTEGRATION", "true");
+  vi.stubGlobal("WebSocket", TestSocket);
+  const { result, unmount } = renderHook(() => useIntegrationState(identity));
+  const prestige = { count: 4, maximum: 50, runKills: 123, requiredKills: 1500, requiredGold: 15000000, eligible: false, resetSummary: "Reset", perks: [] };
+  const emit = (data: object) => act(() => TestSocket.instances[0].emit("message", new MessageEvent("message", {
+    data: JSON.stringify({ v: 1, channelId: "42", kind: "viewer.state", data }),
+  })));
+  emit({ adopted: true, heroName: "TestHero [P4]", gold: 900000, prestige });
+  expect(result.current.viewer.prestige).toEqual(prestige);
+  emit({ adopted: true, heroName: "TestHero", gold: 100 });
+  expect(result.current.viewer.prestige).toBeUndefined();
+  unmount();
+});
+
 afterEach(() => { vi.useRealTimers(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); TestSocket.instances = []; });
 
 test("live local viewer socket starts without demo state and reconnects after interruption", () => {

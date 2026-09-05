@@ -57,7 +57,7 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
           return { ...value, ...data, mission: nextMission ? { ...value.mission, ...nextMission } : value.mission };
         });
       } else if (envelope.kind === "viewer.state") {
-        setState(value => ({ ...value, viewer: { adopted: Boolean(data.adopted), heroName: data.heroName, gold: typeof data.gold === "number" ? data.gold : undefined } }));
+        setState(value => ({ ...value, viewer: { adopted: Boolean(data.adopted), heroName: data.heroName, gold: typeof data.gold === "number" ? data.gold : undefined, prestige: data.prestige ?? undefined } }));
       } else if (envelope.kind === "inventory.snapshot") {
         const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data.Items) ? data.Items : [];
         const rawSlots = Array.isArray(data.slots) ? data.slots : Array.isArray(data.Slots) ? data.Slots : [];

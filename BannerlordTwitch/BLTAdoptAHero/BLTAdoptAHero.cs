@@ -255,7 +255,7 @@ namespace BLTAdoptAHero
                         var hero = behavior?.GetAdoptedHero(userName);
                         return hero == null
                             ? new IntegrationViewerSnapshot { Adopted = false }
-                            : new IntegrationViewerSnapshot { Adopted = true, HeroName = hero.Name.ToString(), Gold = behavior.GetHeroGold(hero) };
+                            : new IntegrationViewerSnapshot { Adopted = true, HeroName = hero.Name.ToString(), Gold = behavior.GetHeroGold(hero), Prestige = behavior.GetPrestigeSnapshot(hero) };
                     });
                     IntegrationIdentityProvider.Reconcile = (userId, displayName) =>
                         BLTAdoptAHeroCampaignBehavior.Current?.ReconcileIntegrationOwner(userId, displayName);

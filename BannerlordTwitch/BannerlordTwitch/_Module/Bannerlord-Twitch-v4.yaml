@@ -1,4 +1,16 @@
 Commands:
+- Documentation: Prestige status, perks, choose <perk>, or confirm <perk>. A confirmed prestige resets progression.
+  Enabled: true
+  Handler: PrestigeCommand
+  HandlerConfig:
+  Help: view prestige progress and choose permanent perks
+  HideHelp: false
+  ID: 5d4dcbde-937b-4ed5-88a5-b909d31bdb21
+  ModeratorOnly: false
+  Name: prestige
+  RespondInExtension: false
+  RespondInOverlay: true
+  RespondInTwitch: true
 - Documentation: Moderator controls for community stream objectives. Use list, start, status, or stop.
   Enabled: true
   Handler: StreamObjectiveAdminCommand
@@ -3049,6 +3061,26 @@ GlobalConfigs:
     NametagWidth: 150
     PartySizeEffectiveness: 1
     ProsperityMultiplier: 25
+    Prestige:
+      Enabled: true
+      BaseKills: 500
+      KillsPerPrestige: 250
+      BaseGold: 5000000
+      GoldPerPrestige: 2500000
+      RankCap: 10
+      MightPerRank: 0.02
+      ResiliencePerRank: 0.02
+      VitalityPerRank: 5
+      FortunePerRank: 0.02
+      InsightPerRank: 0.02
+      AttackerRewardMultiplier: 1.10
+      StartingLevel: 1
+      StartingAttributes: 2
+      StartingCombatSkills: 50
+      StartingMovementSkills: 25
+      StartingOtherSkills: 0
+      StartingEquipmentTier: 1
+      StartingGold: 50000
     RawXPSkillCap: 330
     ReferenceLevelReward: 15
     RelativeLevelScaling: 0.5

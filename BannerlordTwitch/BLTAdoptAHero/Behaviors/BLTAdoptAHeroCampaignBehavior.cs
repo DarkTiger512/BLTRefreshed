@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ using TaleWorlds.LinQuick;
 
 namespace BLTAdoptAHero
 {
-    public class BLTAdoptAHeroCampaignBehavior : CampaignBehaviorBase
+    public partial class BLTAdoptAHeroCampaignBehavior : CampaignBehaviorBase
     {
         public static BLTAdoptAHeroCampaignBehavior Current => Campaign.Current?.GetCampaignBehavior<BLTAdoptAHeroCampaignBehavior>();
 
@@ -54,6 +54,8 @@ namespace BLTAdoptAHero
             public List<RetinueData> Retinue { get; set; } = new();
             public List<Retinue2Data> Retinue2 { get; set; } = new();
             public int SpentGold { get; set; }
+            public int PrestigeKills { get; set; }
+            public AchievementStatsData LifetimeStats { get; set; }
             public int EquipmentTier { get; set; } = -2;
             public Guid EquipmentClassID { get; set; }
             public Guid ClassID { get; set; }
@@ -341,6 +343,8 @@ namespace BLTAdoptAHero
             using var diagnosticScope = SaveCrashDiagnostics.Scope(dataStore, nameof(BLTAdoptAHeroCampaignBehavior));
             using var scopedJsonSync = new ScopedJsonSync(dataStore, nameof(BLTAdoptAHeroCampaignBehavior));
 
+            scopedJsonSync.SyncDataAsJson("ViewerPrestige", ref viewerPrestige);
+            viewerPrestige = new Dictionary<string, PrestigeProgress>(viewerPrestige ?? new Dictionary<string, PrestigeProgress>(), StringComparer.OrdinalIgnoreCase);
             scopedJsonSync.SyncDataAsJson("HeroData", ref heroData);
 
             if (dataStore.IsLoading)
@@ -506,6 +510,7 @@ namespace BLTAdoptAHero
             var hd = GetHeroData(newHero);
             hd.Owner = userName;
             hd.IsRetiredOrDead = false;
+            hd.PrestigeKills = 0;
             hd.LegacyName = newHero.Name.ToString();
             hd.Iteration = GetAncestors(userName).Max(a => (int?)a.Iteration + 1) ?? 0;
             SetHeroAdoptedName(newHero, userName);
@@ -544,6 +549,11 @@ namespace BLTAdoptAHero
             var legacyHero = GetAdoptedHero(userId);
             if (legacyHero == null) return;
             var data = GetHeroData(legacyHero);
+            if (viewerPrestige.TryGetValue(data.Owner, out var prestige))
+            {
+                viewerPrestige.Remove(data.Owner);
+                viewerPrestige[displayName] = prestige;
+            }
             data.Owner = displayName;
             SetHeroAdoptedName(legacyHero, displayName);
             Log.Info($"[Integration] Migrated adopted hero owner {userId} to {displayName}");
@@ -658,7 +668,7 @@ namespace BLTAdoptAHero
         public int ChangeHeroGold(Hero hero, int change, bool isSpending = false)
         {
             var hd = GetHeroData(hero);
-            hd.Gold = Math.Max(0, change + hd.Gold);
+            hd.Gold = (int)Math.Min(int.MaxValue, Math.Max(0L, (long)change + hd.Gold));
             if (isSpending && change < 0)
             {
                 hd.SpentGold += -change;
@@ -832,6 +842,8 @@ namespace BLTAdoptAHero
             var achievementStatsData = GetHeroData(hero).AchievementStats;
 
             achievementStatsData.UpdateValue(statistic, hero.GetClass()?.ID ?? default, amount, forced);
+            var lifetime = GetHeroData(hero).LifetimeStats;
+            if (lifetime != null && !ReferenceEquals(lifetime, achievementStatsData)) lifetime.UpdateValue(statistic, hero.GetClass()?.ID ?? default, amount, forced);
 
             CheckForAchievements(hero);
         }
@@ -862,6 +874,8 @@ namespace BLTAdoptAHero
                 achievement.Apply(hero);
             }
         }
+
+        public int GetLifetimeStat(Hero hero, AchievementStatsData.Statistic type) => (GetHeroData(hero).LifetimeStats ?? GetHeroData(hero).AchievementStats).GetTotalValue(type);
 
         public int GetAchievementTotalStat(Hero hero, AchievementStatsData.Statistic type)
             => GetHeroData(hero)?.AchievementStats?.GetTotalValue(type) ?? 0;
@@ -2004,7 +2018,7 @@ namespace BLTAdoptAHero
         }
 
         public static void SetHeroAdoptedName(Hero hero, string userName) =>
-            CampaignHelpers.SetHeroName(hero, new(GetFullName(userName)), new(userName));
+            CampaignHelpers.SetHeroName(hero, new(GetFullName(userName) + ((Current?.GetPrestige(hero).Count ?? 0) > 0 ? $" [P{Current.GetPrestige(hero).Count}]" : "")), new(userName));
         public string GetHeroLegacyName(Hero hero) =>
             GetHeroData(hero).LegacyName;
         public bool GetIsCreatedHero(Hero hero) =>

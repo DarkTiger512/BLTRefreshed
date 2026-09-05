@@ -6,15 +6,16 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 
 | Area | Count |
 |---|---:|
-| Commands | 61 |
+| Commands | 62 |
 | Rewards | 15 |
-| Settings | 1375 |
-| Source components | 343 |
+| Settings | 1442 |
+| Source components | 351 |
 
 ## Action categories
 
 | Category | Commands |
 |---|---:|
+| Progression | 7 |
 | Stream Control | 1 |
 | Community | 2 |
 | Battle | 8 |
@@ -22,7 +23,6 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 | Kingdom | 9 |
 | Equipment | 15 |
 | Tournament | 3 |
-| Progression | 6 |
 | Retinue | 3 |
 | General | 4 |
 
@@ -30,14 +30,14 @@ Generated from tracked source and the default v4 YAML configuration. Re-run with
 
 | Kind | Files |
 |---|---:|
-| action-handler | 65 |
-| persistence | 72 |
+| action-handler | 66 |
+| persistence | 73 |
 | twitch-service | 10 |
-| configuration | 141 |
-| test | 17 |
-| support | 135 |
-| harmony-patch | 15 |
-| behavior | 40 |
+| configuration | 145 |
+| test | 19 |
+| support | 138 |
+| harmony-patch | 16 |
+| behavior | 41 |
 | overlay-hub | 6 |
 
 ## Current data flow

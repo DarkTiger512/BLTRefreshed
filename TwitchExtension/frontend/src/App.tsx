@@ -7,6 +7,7 @@ import { CommandFeedView } from "./components/CommandFeedView";
 import { InventoryView } from "./components/InventoryView";
 import { IntegrationDiagnostics } from "./components/IntegrationDiagnostics";
 import { RetinueView } from "./components/RetinueView";
+import { PrestigeView } from "./components/PrestigeView";
 import { useIntegrationState } from "./hooks/useIntegrationState";
 import { authorizeViewer, requestIdentity } from "./twitch";
 import type { ActionManifest, ManifestAction, ViewerIdentity } from "./types";
@@ -17,7 +18,7 @@ export function App() {
   const { t } = useI18n();
   const [manifest, setManifest] = useState<ActionManifest | null>(null);
   const [identity, setIdentity] = useState<ViewerIdentity | null>(null);
-  const [workspace, setWorkspace] = useState<"home" | "inventory" | "retinue">("home");
+  const [workspace, setWorkspace] = useState<"home" | "inventory" | "retinue" | "prestige">("home");
   const [inventoryFilter, setInventoryFilter] = useState("");
   const [open, setOpen] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -57,12 +58,14 @@ export function App() {
     const args = separator < 0 ? "" : normalized.slice(separator + 1).trim();
     if (["inv", "slots", "customitems"].includes(name)) { setInventoryFilter(name === "customitems" ? args : ""); openInventory(); return; }
     if (name === "retinuelist") { openRetinue(); return; }
+    if (name === "prestige" && !args) { setWorkspace("prestige"); return; }
     const requestId = crypto.randomUUID();
     state.recordCommand({ requestId, actionId: `command.${name}`, actionName: name, status: "pending" });
     setBusy(true); setError(undefined);
     try {
       const response = await submitCommand(identity!, normalized, requestId);
       if (identity!.token === "development-token" && !isLiveLocalIntegration()) state.completeDevelopmentCommand(response.requestId, `${name} completed successfully.`);
+      return response.requestId;
     } catch (reason) { const message = reason instanceof Error ? reason.message : t("error.command"); state.failCommand(requestId, message); setError(message); }
     finally { setBusy(false); }
   }
@@ -134,7 +137,7 @@ export function App() {
       <div className={`overlay-content ${battleActive ? "battle-active" : ""}`}>
         <div className="workspace-stack">
           <div className="workspace-main">
-            {battleActive ? <BattleWorkspace mission={state.mission} actions={battleActions} identity={identity} cooldowns={state.cooldowns} selectors={state.selectors} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleActionSubmit} /> : workspace === "inventory" ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} initialFilter={inventoryFilter} onBack={() => setWorkspace("home")} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : workspace === "retinue" ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onBack={() => setWorkspace("home")} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <CommandWorkspace actions={manifest.actions} commands={state.commands} identity={identity} state={state} busy={busy} onExecute={handleCommand} onInventory={openInventory} onRetinue={openRetinue} />}
+            {battleActive ? <BattleWorkspace mission={state.mission} actions={battleActions} identity={identity} cooldowns={state.cooldowns} selectors={state.selectors} busy={busy} error={error} onRequestIdentity={requestIdentity} onSubmit={handleActionSubmit} /> : workspace === "prestige" ? <PrestigeView key={`${state.viewer.heroName}:${state.viewer.prestige?.count}`} viewer={state.viewer} connected={state.connected} linked={identity.linked} busy={busy} activity={state.commandActivity} onBack={() => setWorkspace("home")} onCommand={handleCommand} /> : workspace === "inventory" ? <InventoryView inventory={state.inventory} loading={inventoryLoading} error={state.inventoryError} linked={identity.linked} initialFilter={inventoryFilter} onBack={() => setWorkspace("home")} onRefresh={loadInventory} onEquip={equipInventoryItem} onRequestIdentity={requestIdentity} /> : workspace === "retinue" ? <RetinueView retinue={state.retinue} loading={retinueLoading} error={state.retinueError} linked={identity.linked} busy={busy} onBack={() => setWorkspace("home")} onRefresh={loadRetinue} onManage={manageRetinue} onRequestIdentity={requestIdentity} /> : <CommandWorkspace actions={manifest.actions} commands={state.commands} identity={identity} state={state} busy={busy} onExecute={handleCommand} onInventory={openInventory} onRetinue={openRetinue} onPrestige={() => setWorkspace("prestige")} />}
           </div>
           <CommandFeedView entries={state.commandActivity} expanded={feedExpanded} onToggle={() => setFeedExpanded(value => !value)} onClear={state.clearCommandActivity} />
         </div>

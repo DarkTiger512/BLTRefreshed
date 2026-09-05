@@ -4,6 +4,7 @@ Generated from the active `main` v4 profile. Outcomes are valid only when backed
 
 | Command | Handler | Permission | Valid | Invalid/missing | Boundary/multi-word | Reconnect | Outcome | Evidence |
 |---|---|---|---|---|---|---|---|---|
+| `!prestige` | `PrestigeCommand` | Viewer | ☐ | ☐ | ☐ | ☐ | Not Run | — |
 | `!objective` | `StreamObjectiveAdminCommand` | Moderator/broadcaster | ☐ | ☐ | ☐ | ☐ | Not Run | — |
 | `!objectives` | `StreamObjectivesStatusCommand` | Viewer | ☐ | ☐ | ☐ | ☐ | Not Run | — |
 | `!ammo` | `CheckAmmo` | Viewer | ☐ | ☐ | ☐ | ☐ | Not Run | — |

@@ -1,0 +1,25 @@
+.prestige-view { pointer-events: auto; padding: 24px; color: #ecede9; background: #182018; border: 1px solid #46513d; border-radius: 12px; overflow-y: auto; max-height: 75vh; }
+.workspace-main > .prestige-view { position: absolute; z-index: 25; top: 42px; right: 306px; bottom: 24px; left: 74px; max-height: none; box-shadow: 0 20px 55px #0006; }
+.prestige-view header, .prestige-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.prestige-view h2 { margin: 0; font-size: 22px; }
+.prestige-view p { font-size: 13px; line-height: 1.6; color: #c6cbc4; }
+.prestige-heading { margin: 22px 0 18px; }
+.prestige-heading > span { color: #cce89b; font-weight: 700; }
+.prestige-progress { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.prestige-progress label { display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+.prestige-progress strong { font-size: 16px; }
+.prestige-progress progress { width: 100%; height: 8px; accent-color: #bedf83; }
+.prestige-perks { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 18px 0; }
+.prestige-view button { border: 1px solid #4b5542; border-radius: 8px; background: #283322; color: #f0f5e9; padding: 10px 14px; cursor: pointer; }
+.prestige-perks button { text-align: left; min-height: 90px; }
+.prestige-perks strong { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.prestige-perks small { display: block; font-size: 12px; line-height: 1.5; }
+.prestige-view button:disabled { opacity: .55; cursor: not-allowed; }
+.prestige-view button[aria-pressed="true"], .prestige-view button:focus-visible { outline: 2px solid #cce89b; outline-offset: 2px; }
+.prestige-reset { padding: 14px 16px; border: 1px solid #5a5040; border-radius: 8px; background: #302b22; }
+.prestige-reset h3 { margin: 0; font-size: 14px; }
+.prestige-reset p { margin-bottom: 0; }
+.prestige-confirm { padding-top: 18px; }
+.prestige-confirm button { margin: 0 10px 8px 0; }
+@media (max-width: 560px) { .prestige-view { padding: 14px; } .prestige-progress { grid-template-columns: 1fr; } .prestige-heading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 900px) { .workspace-main > .prestige-view { inset: var(--player-safe-top, 42px) 8px var(--player-safe-bottom, 90px); } }

@@ -103,6 +103,28 @@ namespace BannerlordTwitch.Integration
         public bool Adopted { get; set; }
         public string HeroName { get; set; }
         public int? Gold { get; set; }
+        public IntegrationPrestigeSnapshot Prestige { get; set; }
+    }
+
+    public sealed class IntegrationPrestigeSnapshot
+    {
+        public int Count { get; set; }
+        public int Maximum { get; set; }
+        public int RunKills { get; set; }
+        public long RequiredKills { get; set; }
+        public long RequiredGold { get; set; }
+        public bool Eligible { get; set; }
+        public string BlockingReason { get; set; }
+        public string ResetSummary { get; set; }
+        public IntegrationPrestigePerk[] Perks { get; set; }
+    }
+    public sealed class IntegrationPrestigePerk
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int Rank { get; set; }
+        public int Cap { get; set; }
     }
 
     public sealed class IntegrationRuntimeCommand
@@ -312,7 +334,7 @@ namespace BannerlordTwitch.Integration
                         var serialized = JsonSerializer.Serialize(snapshot);
                         if (lastViewerStates.TryGetValue(viewer.Id, out var previous) && previous == serialized) continue;
                         lastViewerStates[viewer.Id] = serialized;
-                        _ = SendAsync("viewer.state", new { userId = viewer.Id, snapshot.Adopted, snapshot.HeroName, snapshot.Gold }, lifetime.Token);
+                        _ = SendAsync("viewer.state", new { userId = viewer.Id, snapshot.Adopted, snapshot.HeroName, snapshot.Gold, snapshot.Prestige }, lifetime.Token);
                     }
                 });
             }

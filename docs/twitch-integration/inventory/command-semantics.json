@@ -1,5 +1,53 @@
 [
   {
+    "actionId": "command.prestige",
+    "legacyName": "prestige",
+    "handler": "PrestigeCommand",
+    "parserSource": "BannerlordTwitch/BLTAdoptAHero/Actions/PrestigeCommand.cs",
+    "legacyPattern": "<operation> <perk>",
+    "parameters": [
+      {
+        "id": "operation",
+        "label": "Prestige operation",
+        "type": "choice",
+        "position": 0,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "status",
+          "perks",
+          "choose",
+          "confirm"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": null,
+        "visibleWhenValues": null
+      },
+      {
+        "id": "perk",
+        "label": "Permanent perk",
+        "type": "choice",
+        "position": 1,
+        "required": true,
+        "optionsSource": null,
+        "acceptedValues": [
+          "might",
+          "resilience",
+          "vitality",
+          "fortune",
+          "insight"
+        ],
+        "confirmationPolicy": null,
+        "visibleWhenInput": "operation",
+        "visibleWhenValues": [
+          "choose",
+          "confirm"
+        ]
+      }
+    ],
+    "auditBasis": "handler-source"
+  },
+  {
     "actionId": "command.objective",
     "legacyName": "objective",
     "handler": "StreamObjectiveAdminCommand",

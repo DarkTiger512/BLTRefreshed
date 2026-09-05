@@ -219,8 +219,7 @@ namespace BLTAdoptAHero.Actions
 
                             if (settings.OnPlayerSide == Mission.Current.MissionResult.PlayerVictory)
                             {
-                                int actualGold = (int)(finalRewardScaling * BLTAdoptAHeroModule.CommonConfig.WinGold +
-                                                       settings.GoldCost);
+                                int actualGold = BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, BLTAdoptAHeroModule.CommonConfig.WinGold, !settings.OnPlayerSide, finalRewardScaling) + settings.GoldCost;
                                 if (actualGold > 0)
                                 {
                                     BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, actualGold);
@@ -232,7 +231,7 @@ namespace BLTAdoptAHero.Actions
                                 if (BLTAdoptAHeroModule.CommonConfig.WinXP > 0)
                                 {
                                     (bool success, string description) = SkillXP.ImproveSkill(adoptedHero,
-                                        BLTAdoptAHeroModule.CommonConfig.WinXP, SkillsEnum.All, auto: true);
+                                        BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(BLTAdoptAHeroModule.CommonConfig.WinXP, finalRewardScaling, BLTAdoptAHeroCampaignBehavior.AttackerFactor(!settings.OnPlayerSide)), SkillsEnum.All, auto: true);
                                     if (success)
                                     {
                                         results.Add(finalRewardScaling != 1
@@ -246,6 +245,7 @@ namespace BLTAdoptAHero.Actions
                                 if (BLTAdoptAHeroModule.CommonConfig.LoseGold != 0)
                                 {
                                     var delta = BLTAdoptAHeroModule.CommonConfig.LoseGold;
+                                    if (delta < 0) delta = -BLTAdoptAHeroCampaignBehavior.BattleGold(adoptedHero, -delta, !settings.OnPlayerSide);
                                     BLTAdoptAHeroCampaignBehavior.Current.ChangeHeroGold(adoptedHero, -delta);
 
                                     var sign = delta > 0 ? Naming.Dec : Naming.Inc;
@@ -254,7 +254,7 @@ namespace BLTAdoptAHero.Actions
                                     results.Add($"{sign}{amount}{Naming.Gold}");
                                 }
 
-                                int xp = (int)(finalRewardScaling * BLTAdoptAHeroModule.CommonConfig.LoseXP);
+                                int xp = BLTAdoptAHero.Util.PrestigePolicy.ScalePositive(BLTAdoptAHeroModule.CommonConfig.LoseXP, finalRewardScaling, BLTAdoptAHeroCampaignBehavior.AttackerFactor(!settings.OnPlayerSide));
                                 if (xp > 0)
                                 {
                                     (bool success, string description) = SkillXP.ImproveSkill(adoptedHero, xp,

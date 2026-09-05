@@ -41,7 +41,12 @@ export interface StreamerSetting { id: string; label: string; type: "boolean" | 
 export interface ActionManifest { protocolVersion: number; manifestVersion?: number; actions: ManifestAction[] }
 
 export interface RuntimeCommand { name: string; handler: string; help: string; helpKey?: string; moderatorOnly: boolean; hideHelp: boolean }
-export interface ViewerState { adopted: boolean; heroName?: string; gold?: number }
+export interface PrestigePerk { id: string; name: string; description: string; rank: number; cap: number }
+export interface PrestigeSnapshot {
+  count: number; maximum: number; runKills: number; requiredKills: number; requiredGold: number;
+  eligible: boolean; blockingReason?: string; resetSummary: string; perks: PrestigePerk[];
+}
+export interface ViewerState { adopted: boolean; heroName?: string; gold?: number; prestige?: PrestigeSnapshot }
 
 export interface ViewerIdentity {
   token: string;

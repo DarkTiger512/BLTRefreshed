@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\PropertyChanged.Fody.4.1.0\build\PropertyChanged.Fody.props" Condition="Exists('..\packages\PropertyChanged.Fody.4.1.0\build\PropertyChanged.Fody.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -109,6 +109,11 @@
     <Compile Include="Actions\BattleInfo.cs" />
     <Compile Include="Actions\CampaignLogs.cs" />
     <Compile Include="Actions\CheckAmmo.cs" />
+    <Compile Include="Actions\PrestigeCommand.cs" />
+    <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.Prestige.cs" />
+    <Compile Include="Behaviors\BLTAdoptAHeroCampaignBehavior.PrestigeIntegration.cs" />
+    <Compile Include="Util\PrestigePolicy.cs" />
+    <Compile Include="Util\PrestigeHeroSnapshot.cs" />
     <Compile Include="Actions\StreamObjectiveCommands.cs" />
     <Compile Include="Actions\DuelCommand.cs" />
     <Compile Include="Actions\FollowCommand.cs" />
@@ -380,6 +385,7 @@
     <Content Include="_Module\ModuleData\Languages\SP\strings-misc-SP.xml" />
     <Content Include="_Module\ModuleData\Languages\SP\strings-powers-SP.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-actions.xml" />
+    <Content Include="_Module\ModuleData\Languages\strings-prestige.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-behaviors.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-default-shouts.xml" />
     <Content Include="_Module\ModuleData\Languages\strings-globalconfigs.xml" />

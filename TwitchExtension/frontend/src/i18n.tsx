@@ -5,6 +5,14 @@ export type Locale = typeof supportedLocales[number];
 export type MessageValues = Record<string, string | number>;
 
 const en = {
+  "prestige.title": "Prestige", "prestige.back": "Back to commands", "prestige.shortcut": "Start again, keep permanent perks",
+  "prestige.offline": "Bannerlord is offline. Reconnect before prestiging.", "prestige.identity": "Share your Twitch identity to prestige.",
+  "prestige.adopt": "Adopt a hero to begin prestige progression.", "prestige.unavailable": "Prestige information is unavailable. The game must support prestige and send your hero state.",
+  "prestige.rank": "Prestige", "prestige.kills": "Personal battle kills", "prestige.gold": "Gold held",
+  "prestige.permanence": "Choose one permanent perk per reset. Perks survive replacement heroes in this campaign. Each perk has a rank cap; completing all ranks ends prestige progression.",
+  "prestige.reset": "What will reset", "prestige.confirmation": "Confirm prestige", "prestige.waiting": "Waiting for Bannerlord…",
+  "prestige.expired": "Preview expired. Choose a perk again.", "prestige.ready": "Preview accepted. Confirm within 60 seconds to reset your character.",
+  "prestige.confirm": "Reset character and gain perk", "prestige.cancel": "Cancel",
   "language.label": "Language", "common.back": "Back to command bar", "common.loading": "Loading", "common.refresh": "Refresh", "common.tryAgain": "Try again", "common.ready": "Ready", "common.offline": "Offline", "common.close": "Close",
   "app.connecting": "Connecting to Bannerlord Twitch…", "app.open": "Open Bannerlord Twitch", "app.collapse": "Collapse Bannerlord Twitch overlay",
   "identity.shared": "Identity shared", "identity.required": "Identity required", "identity.share": "Share Twitch identity",
