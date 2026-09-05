@@ -3,10 +3,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace BannerlordTwitch.UI
 {
-    public partial class CollectionPropertyEditor
+    public partial class CollectionPropertyEditor : UserControl
     {
         #region Owner
         public static readonly DependencyProperty OwnerProperty
