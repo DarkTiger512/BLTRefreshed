@@ -1,0 +1,96 @@
+diff --git a/BannerlordTwitch/BLTAdoptAHero/Actions/NameItem.cs b/BannerlordTwitch/BLTAdoptAHero/Actions/NameItem.cs
+index 5c0b53c..d2dde69 100644
+--- a/BannerlordTwitch/BLTAdoptAHero/Actions/NameItem.cs
++++ b/BannerlordTwitch/BLTAdoptAHero/Actions/NameItem.cs
+@@ -58,6 +58,11 @@ namespace BLTAdoptAHero
+ 
+             // sanitize # out of the new name in case it breaks something 
+             string itemNewName = string.Join(" ", argParts.Skip(1)).Replace("#", "");
++            if (ContainsHtmlMarkup(itemNewName))
++            {
++                ActionManager.SendReply(context, "{=}Item names cannot contain HTML.".Translate());
++                return;
++            }
+ 
+             BLTCustomItemsCampaignBehavior.Current.NameItem(element.ItemModifier, itemNewName);
+             ActionManager.SendReply(context,
+@@ -65,5 +70,11 @@ namespace BLTAdoptAHero
+                     .Translate(("PreviousName", previousName), ("NewName", element.GetModifiedItemName().ToString()))
+                 );
+         }
++
++        private static bool ContainsHtmlMarkup(string value)
++        {
++            string lower = value.ToLowerInvariant();
++            return value.Contains("<") || value.Contains(">") || lower.Contains("&lt;") || lower.Contains("&gt;");
++        }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.html b/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.html
+index 0e96304..fbd2537 100644
+--- a/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.html
++++ b/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.html
+@@ -3,7 +3,13 @@
+         <transition-group name='bltconsole-items-t' tag='div'>
+             <div class='bltconsole-entry' v-for='item in items' v-bind:key='item.id'>
+                 <div class='bltconsole-text' 
+-                     v-bind:class="'bltconsole-text-style-' + item.style" v-html='item.message'></div>
++                     v-bind:class="'bltconsole-text-style-' + item.style">
++                    <template v-if='item.parts'>
++                        <span v-for='(part, index) in item.parts' v-bind:key='index'
++                              v-bind:class='part.className' v-bind:style='part.style'>{{ part.text }}</span>
++                    </template>
++                    <template v-else>{{ item.message }}</template>
++                </div>
+             </div>
+         </transition-group>
+     </div>
+diff --git a/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.js b/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.js
+index a0d9f78..f855249 100644
+--- a/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.js
++++ b/BannerlordTwitch/BannerlordTwitch/Overlay/ConsoleFeed/ConsoleFeed.js
+@@ -21,26 +21,26 @@ $(document).ready(function () {
+             .map(s => s.split(userNameRegex)).reduce((a, b) => a.concat(b))
+             .map(s => {
+                 if(s.match(plusRegex)) {
+-                    return "<span class='plus-text-style'>+</span>"
++                    return { className: 'plus-text-style', text: '+' };
+                 }
+                 else if(s.match(minusRegex)) {
+-                    return "<span class='minus-text-style'>−</span>"
++                    return { className: 'minus-text-style', text: '−' };
+                 }
+                 else if(s.match(goldRegex)) {
+-                    return "<span class='gold-text-style'>"
+-                        + (s.length > 1 ? o.format(parseInt(s.substring(0, s.length - 1))) : "")
+-                        + "⦷</span>";
++                    return {
++                        className: 'gold-text-style',
++                        text: (s.length > 1 ? o.format(parseInt(s.substring(0, s.length - 1))) : "") + "⦷"
++                    };
+                 }
+                 else if(s.match(userNameRegex)) {
+                     const nameColor = twitch.getUserColor(s.substr(1));
+-                    return "<span class='username-text-style' style='color: " + nameColor
+-                        + "'>" + s + "</span><span class='default-text-style'></span>";
++                    return { className: 'username-text-style', style: { color: nameColor }, text: s };
+                 }
+-                return "<span class='default-text-style'>" + s + "</span>";
++                return { className: 'default-text-style', text: s };
+             });
+         const processedMessage = {
+             id: message.id,
+-            message: splitMessage.join(''),
++            parts: splitMessage,
+             style: message.style
+         };
+         bltConsole.items.push(processedMessage);
+@@ -96,4 +96,4 @@ $(document).ready(function () {
+         addMessage({ id: 1, message: "Version x.y.z", style: "system" });
+         addMessage({ id: 2, message: "@testName: some message!", style: "response" });
+     }
+-});
+\ No newline at end of file
++});

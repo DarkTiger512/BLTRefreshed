@@ -27,6 +27,12 @@ export function useIntegrationState(identity: ViewerIdentity | null) {
     ? { connected: false, gameStarted: false, unavailable: {}, cooldowns: {}, selectors: { cultures: [], heroes: [], clans: [], kingdoms: [], settlements: [], skills: [] }, commands: [], viewer: { adopted: false }, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
     : new URLSearchParams(window.location.search).get("mission") === "inactive"
     ? { ...initialState, mission: { active: false, kind: "inactive", revision: 0, deploymentFinished: false, combatants: [], actionAvailability: {} } }
+    : import.meta.env.DEV && new URLSearchParams(window.location.search).get("balance") === "uneven"
+    ? { ...initialState, mission: { ...initialState.mission,
+      battleBalance: { missionId: "temporary-preview", summoners: 8, attackers: 2, summonOffer: 0, attackOffer: .12 },
+      combatants: [...initialState.mission.combatants, { ...initialState.mission.combatants[0], id: "preview-extra", name: "Preview Knight" }]
+        .map((hero, index) => ({ ...hero, isPlayerSide: index < 8 })),
+    } }
     : initialState);
   const [inventory, setInventory] = useState<InventorySnapshot>();
   const [inventoryError, setInventoryError] = useState<string>();
