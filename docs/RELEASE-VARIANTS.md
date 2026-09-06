@@ -34,7 +34,7 @@ Use `-MSBuildPath`, `-GameDirectory`, `-NuGetPackagesPath` and `-NodeModulesPath
 
 The script resolves refs once, exports committed snapshots with `git archive`, and builds into separate folders. It never runs Clean/Rebuild targets, never writes into the installed game, and sets `DeployToGame=false` and `CreatePackage=false`. It excludes auth YAML, credential files, local environment files and debug symbols. The temporary uneven preview and other uncommitted edits are not exported. Existing output directories are rejected rather than overwritten.
 
-Outputs: two variant-named `.7z` archives, one production frontend ZIP, `SHA256SUMS.txt`, `release-manifest.json`, `RELEASE-NOTES.md`, `VALIDATION.md`, and per-step logs. The `_work` directory holds isolated source/staging/extraction directories for investigation; do not distribute it. A failed run writes an incomplete report; do not distribute its artifacts.
+Outputs: two variant-named `.7z` archives, one production frontend ZIP, `SHA256SUMS.txt`, `release-manifest.json`, `RELEASE-NOTES.md`, `VALIDATION.md`, and per-step logs. The short temporary workspace recorded in `build-workspace.txt` holds isolated source/staging/extraction directories for investigation and avoids legacy Windows path limits; do not distribute it. A failed run writes an incomplete report; do not distribute its artifacts.
 
 ## Paired maintenance and release gate
 
