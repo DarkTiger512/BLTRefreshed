@@ -131,7 +131,7 @@ try {
             New-Item -ItemType Junction -Path (Join-Path $frontend 'node_modules') -Target $NodeModulesPath | Out-Null
             # Reject reuse of a dependency tree from a different lockfile.
             $dependencySource = Split-Path $NodeModulesPath -Parent
-            if ((Get-FileHash (Join-Path $frontend 'package-lock.json')).Hash -ne (Get-FileHash (Join-Path $dependencySource 'package-lock.json')).Hash) { throw 'Frontend dependency lock differs. Run npm ci for the selected integration ref and pass its node_modules path.' }
+            if ((Get-Content (Join-Path $frontend 'package-lock.json') -Raw).Replace("`r`n", "`n") -cne (Get-Content (Join-Path $dependencySource 'package-lock.json') -Raw).Replace("`r`n", "`n")) { throw 'Frontend dependency lock differs. Run npm ci for the selected integration ref and pass its node_modules path.' }
             $env:VITE_BLT_API_URL = $ManagedServiceUrl
             $env:VITE_BLT_LIVE_INTEGRATION = 'false'
             Run 'TwitchExtension-frontend-tests' $frontend 'npm.cmd' @('test')
