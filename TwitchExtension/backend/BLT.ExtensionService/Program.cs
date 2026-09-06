@@ -145,6 +145,8 @@ app.MapPost("/api/channels/{channel}/actions", async (string channel, ActionSubm
     if (!Guid.TryParse(submission.RequestId, out var requestId)) return Results.Problem("requestId must be a UUID.", statusCode: 400);
     if (!submission.ActionId.StartsWith("command.", StringComparison.Ordinal)) return Results.Problem("Unknown action namespace.", statusCode: 400);
     if (!await database.IsActionEnabledAsync(channel, submission.ActionId, token)) return Results.Problem("This action is disabled by the broadcaster.", statusCode: 403);
+    if (HtmlInputGuard.ContainsHtml(submission.Args))
+        return Results.Problem("Command input cannot contain HTML.", statusCode: 400);
     if (!guard.Accept(requestId, $"{channel}:{principal.UserId}:{submission.ActionId}", submission.Timestamp, out var guardError))
         return Results.Problem(guardError, statusCode: 429);
     var envelope = new
@@ -167,6 +169,8 @@ app.MapPost("/api/channels/{channel}/commands", async (string channel, CommandSu
     var commandLine = submission.CommandLine?.Trim();
     if (string.IsNullOrWhiteSpace(commandLine) || commandLine.Length > 512 || commandLine.Any(char.IsControl))
         return Results.Problem("The command line is invalid.", statusCode: 400);
+    if (HtmlInputGuard.ContainsHtml(commandLine))
+        return Results.Problem("Command input cannot contain HTML.", statusCode: 400);
     if (commandLine.StartsWith('!')) commandLine = commandLine[1..].TrimStart();
     var commandName = commandLine.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries)[0];
     if (!await database.IsActionEnabledAsync(channel, $"command.{commandName.ToLowerInvariant()}", token)) return Results.Problem("This command is disabled by the broadcaster.", statusCode: 403);
@@ -230,3 +234,30 @@ app.Map("/ws/viewer/{channel}", async (string channel, HttpContext context, Twit
 app.Run();
 
 public partial class Program;
+
+public static class HtmlInputGuard
+{
+    public static bool ContainsHtml(string? value)
+    {
+        if (string.IsNullOrEmpty(value)) return false;
+        var lower = value.ToLowerInvariant();
+        return value.Contains('<') || value.Contains('>') || lower.Contains("&lt;") || lower.Contains("&gt;");
+    }
+
+    public static bool ContainsHtml(IReadOnlyDictionary<string, JsonElement>? values)
+    {
+        if (values is null) return false;
+        return values.Any(pair => ContainsHtml(pair.Key) || ContainsHtml(pair.Value));
+    }
+
+    public static bool ContainsHtml(JsonElement value)
+    {
+        return value.ValueKind switch
+        {
+            JsonValueKind.String => ContainsHtml(value.GetString()),
+            JsonValueKind.Array => value.EnumerateArray().Any(ContainsHtml),
+            JsonValueKind.Object => value.EnumerateObject().Any(property => ContainsHtml(property.Name) || ContainsHtml(property.Value)),
+            _ => false
+        };
+    }
+}
