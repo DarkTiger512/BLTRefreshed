@@ -34,7 +34,9 @@ $NuGetPackagesPath = (Resolve-Path -LiteralPath $NuGetPackagesPath).Path
 $NodeModulesPath = (Resolve-Path -LiteralPath $NodeModulesPath).Path
 $modules = @('BannerlordTwitch', 'BLTAdoptAHero', 'BLTBuffet', 'BLTConfigure')
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
-$work = New-Item -ItemType Directory -Path (Join-Path $OutputDirectory '_work')
+$workspacePath = Join-Path ([IO.Path]::GetTempPath()) ('blt-' + [Guid]::NewGuid().ToString('N').Substring(0,8))
+$work = New-Item -ItemType Directory -Path $workspacePath
+$work.FullName | Set-Content (Join-Path $OutputDirectory 'build-workspace.txt') -Encoding utf8
 $logs = New-Item -ItemType Directory -Path (Join-Path $OutputDirectory 'logs')
 $artifacts = [Collections.Generic.List[string]]::new()
 $checks = [Collections.Generic.List[string]]::new()
@@ -48,8 +50,8 @@ function Run([string]$Name, [string]$Directory, [string]$Exe, [string[]]$Argumen
         $checks.Add("PASS: $Name")
     } finally { Pop-Location }
 }
-function Git([string[]]$Arguments) {
-    $result = & git -C $repo @Arguments
+function Read-Git([string[]]$Arguments) {
+    $result = & git.exe -C $repo @Arguments
     if ($LASTEXITCODE -ne 0) { throw 'Git command failed.' }
     return ($result -join "`n").Trim()
 }
@@ -77,8 +79,8 @@ function CheckBundle([string]$Directory, $Record, [string]$ExpectedConfig) {
 $savedVite = @{}
 Get-ChildItem Env: | Where-Object Name -Like 'VITE_*' | ForEach-Object { $savedVite[$_.Name] = $_.Value; Remove-Item -LiteralPath "Env:$($_.Name)" }
 try {
-    $classicCommit = Git @('rev-parse', '--verify', "$ClassicRef^{commit}")
-    $integrationCommit = Git @('rev-parse', '--verify', "$IntegrationRef^{commit}")
+    $classicCommit = Read-Git @('rev-parse', '--verify', "$ClassicRef^{commit}")
+    $integrationCommit = Read-Git @('rev-parse', '--verify', "$IntegrationRef^{commit}")
     Run 'shared-parity' $repo 'node' @('tools/verify-release-parity.mjs', '--classic-ref', $classicCommit, '--integration-ref', $integrationCommit)
     foreach ($variant in @('Classic', 'TwitchExtension')) {
         $sourceCommit = if ($variant -eq 'Classic') { $classicCommit } else { $integrationCommit }
