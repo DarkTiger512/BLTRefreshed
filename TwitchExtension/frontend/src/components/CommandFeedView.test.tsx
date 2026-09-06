@@ -1,7 +1,9 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { expect, test, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, expect, test, vi } from "vitest";
 import { CommandFeedView } from "./CommandFeedView";
 import type { CommandActivity } from "../types";
+
+afterEach(cleanup);
 
 const entries: CommandActivity[] = [
   { requestId: "1", actionId: "command.retinue", actionName: "retinue", status: "pending", submittedAt: "2026-08-31T18:00:00Z", messages: [] },
@@ -9,6 +11,13 @@ const entries: CommandActivity[] = [
   { requestId: "3", actionId: "command.summon", actionName: "summon", status: "failed", submittedAt: "2026-08-31T17:58:00Z", completedAt: "2026-08-31T17:58:01Z", messages: ["No mission is active."] },
   { requestId: "4", actionId: "command.gold", actionName: "gold", status: "succeeded", submittedAt: "2026-08-31T17:57:00Z", messages: ["25,000 gold."] },
 ];
+
+test("renders markup in command results as text without creating HTML elements", () => {
+  const message = '<img src=x onerror="console.log(\'BLT_TEST\')"><b>fake gold</b>';
+  const { container } = render(<CommandFeedView entries={[{ ...entries[1], messages: [message] }]} expanded onToggle={vi.fn()} onClear={vi.fn()} />);
+  expect(screen.getByText(message)).toBeInTheDocument();
+  expect(container.querySelector("img, b, script")).toBeNull();
+});
 
 test("shows three compact results and exposes full private history", () => {
   const toggle = vi.fn();
