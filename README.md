@@ -1,5 +1,11 @@
 # [Download](https://github.com/DarkTiger512/BLTRefreshed/releases/latest) | [Discord](https://discord.gg/AnStVFb2jG) | [Github](https://github.com/DarkTiger512/BLTRefreshed) | [Installation Guide](https://youtu.be/ATf5zilwNWk)
 
+## Choose your version
+
+BLT is maintained in two variants: **Classic** (`main`, chat and existing overlays) and **Twitch Extension** (`BLT/twitch-integration`, chat plus extension UI and pairing). Both support prestige and battle balance. Install one variant at a time.
+
+See [release variants, installation and draft validation](docs/RELEASE-VARIANTS.md) before choosing a package or switching variants.
+
 # Bannerlord Twitch (BLT)
 This is a modification for [Mount & Blade II: Bannerlord](https://www.taleworlds.com/en/Games/Bannerlord) that adds Twitch integration to the game. This allows events in a Twitch stream to trigger actions in game, for instance redemption of Channel Point Rewards, or specific chat messages.
 
