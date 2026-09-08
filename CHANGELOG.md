@@ -2,7 +2,7 @@
 
 ## 5.5.0 — 2026-09-09
 
-Stable **Classic** release for **Bannerlord 1.4.8**, built from `main`. This entry covers changes since the published 5.3.0 beta, including unpublished 5.4.0 work.
+Stable **Classic** release for **Bannerlord 1.4.8**, built from `main`. This entry summarizes changes since the upstream 5.3.0 beta. Stream objectives, the campaign map, smart retinues, live ammunition reporting, and the 1.4.8 startup fix were already published in this fork in 5.4.0; they are retained below as historical context. New changes since 5.4.0 are prestige, battle balance, restored random events, and the adoption, save, overflow, and overlay security fixes.
 
 ### Added
 
