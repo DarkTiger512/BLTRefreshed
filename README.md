@@ -1,3 +1,11 @@
+# Development has moved
+
+BLTRefreshed has been consolidated into [DarkTiger512/Bannerlord-Twitch](https://github.com/DarkTiger512/Bannerlord-Twitch).
+
+The consolidated fork contains the project history, active branches, tags, and releases. Please use it for new development, downloads, and issues. This repository is retained as a read-only historical archive.
+
+---
+
 # [Download](https://github.com/DarkTiger512/BLTRefreshed/releases/latest) | [Discord](https://discord.gg/AnStVFb2jG) | [Github](https://github.com/DarkTiger512/BLTRefreshed) | [Installation Guide](https://youtu.be/ATf5zilwNWk)
 
 ## Choose your version
